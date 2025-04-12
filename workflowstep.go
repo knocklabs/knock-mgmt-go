@@ -1,0 +1,392 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package knockmapi
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
+
+	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
+	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
+	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
+	"github.com/stainless-sdks/knock-mapi-go/option"
+	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+)
+
+// WorkflowStepService contains methods and other services that help with
+// interacting with the knock mgmt API.
+//
+// Note, unlike clients, this service does not read variables from the environment
+// automatically. You should not instantiate this service directly, and instead use
+// the [NewWorkflowStepService] method instead.
+type WorkflowStepService struct {
+	Options []option.RequestOption
+}
+
+// NewWorkflowStepService generates a new service that applies the given options to
+// each request. These options are applied after the parent client's options (if
+// there is one), and before any request-specific options.
+func NewWorkflowStepService(opts ...option.RequestOption) (r WorkflowStepService) {
+	r = WorkflowStepService{}
+	r.Options = opts
+	return
+}
+
+// Generates a rendered template for a given channel step in a workflow.
+func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, workflowKey string, stepRef string, params WorkflowStepPreviewTemplateParams, opts ...option.RequestOption) (res *WorkflowStepPreviewTemplateResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	if workflowKey == "" {
+		err = errors.New("missing required workflow_key parameter")
+		return
+	}
+	if stepRef == "" {
+		err = errors.New("missing required step_ref parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/workflows/%s/steps/%s/preview_template", workflowKey, stepRef)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
+// A response to a preview workflow template request.
+type WorkflowStepPreviewTemplateResponse struct {
+	// The content type of the preview.
+	//
+	// Any of "email", "in_app_feed", "push", "chat", "sms", "http".
+	ContentType WorkflowStepPreviewTemplateResponseContentType `json:"content_type,required"`
+	// The result of the preview.
+	//
+	// Any of "success", "error".
+	Result WorkflowStepPreviewTemplateResponseResult `json:"result,required"`
+	// The rendered template, ready to be previewed.
+	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template,required"`
+	// Metadata for the response, check the presence of optional fields with the
+	// [resp.Field.IsPresent] method.
+	JSON struct {
+		ContentType resp.Field
+		Result      resp.Field
+		Template    resp.Field
+		ExtraFields map[string]resp.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepPreviewTemplateResponse) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepPreviewTemplateResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The content type of the preview.
+type WorkflowStepPreviewTemplateResponseContentType string
+
+const (
+	WorkflowStepPreviewTemplateResponseContentTypeEmail     WorkflowStepPreviewTemplateResponseContentType = "email"
+	WorkflowStepPreviewTemplateResponseContentTypeInAppFeed WorkflowStepPreviewTemplateResponseContentType = "in_app_feed"
+	WorkflowStepPreviewTemplateResponseContentTypePush      WorkflowStepPreviewTemplateResponseContentType = "push"
+	WorkflowStepPreviewTemplateResponseContentTypeChat      WorkflowStepPreviewTemplateResponseContentType = "chat"
+	WorkflowStepPreviewTemplateResponseContentTypeSMS       WorkflowStepPreviewTemplateResponseContentType = "sms"
+	WorkflowStepPreviewTemplateResponseContentTypeHTTP      WorkflowStepPreviewTemplateResponseContentType = "http"
+)
+
+// The result of the preview.
+type WorkflowStepPreviewTemplateResponseResult string
+
+const (
+	WorkflowStepPreviewTemplateResponseResultSuccess WorkflowStepPreviewTemplateResponseResult = "success"
+	WorkflowStepPreviewTemplateResponseResultError   WorkflowStepPreviewTemplateResponseResult = "error"
+)
+
+// WorkflowStepPreviewTemplateResponseTemplateUnion contains all possible
+// properties and values from [EmailTemplate], [InAppFeedTemplate], [PushTemplate],
+// [ChatTemplate], [SMSTemplate], [RequestTemplate].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
+	// This field is from variant [EmailTemplate].
+	Subject string `json:"subject"`
+	// This field is from variant [EmailTemplate].
+	HTMLBody string `json:"html_body"`
+	// This field is a union of [EmailTemplateSettings], [PushTemplateSettings],
+	// [SMSTemplateSettings]
+	Settings WorkflowStepPreviewTemplateResponseTemplateUnionSettings `json:"settings"`
+	TextBody string                                                   `json:"text_body"`
+	// This field is from variant [EmailTemplate].
+	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
+	MarkdownBody string                          `json:"markdown_body"`
+	// This field is from variant [InAppFeedTemplate].
+	ActionButtons []InAppFeedTemplateActionButton `json:"action_buttons"`
+	// This field is from variant [InAppFeedTemplate].
+	ActionURL string `json:"action_url"`
+	// This field is from variant [PushTemplate].
+	Title string `json:"title"`
+	// This field is from variant [ChatTemplate].
+	JsonBody string `json:"json_body"`
+	// This field is from variant [ChatTemplate].
+	Summary string `json:"summary"`
+	// This field is from variant [RequestTemplate].
+	Method RequestTemplateMethod `json:"method"`
+	// This field is from variant [RequestTemplate].
+	URL string `json:"url"`
+	// This field is from variant [RequestTemplate].
+	Body string `json:"body"`
+	// This field is from variant [RequestTemplate].
+	Headers []RequestTemplateHeader `json:"headers"`
+	// This field is from variant [RequestTemplate].
+	QueryParams []RequestTemplateQueryParam `json:"query_params"`
+	JSON        struct {
+		Subject       resp.Field
+		HTMLBody      resp.Field
+		Settings      resp.Field
+		TextBody      resp.Field
+		VisualBlocks  resp.Field
+		MarkdownBody  resp.Field
+		ActionButtons resp.Field
+		ActionURL     resp.Field
+		Title         resp.Field
+		JsonBody      resp.Field
+		Summary       resp.Field
+		Method        resp.Field
+		URL           resp.Field
+		Body          resp.Field
+		Headers       resp.Field
+		QueryParams   resp.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) AsEmailTemplate() (v EmailTemplate) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) AsInAppFeedTemplate() (v InAppFeedTemplate) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) AsPushTemplate() (v PushTemplate) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) AsChatTemplate() (v ChatTemplate) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) AsSMSTemplate() (v SMSTemplate) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) AsRequestTemplate() (v RequestTemplate) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u WorkflowStepPreviewTemplateResponseTemplateUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *WorkflowStepPreviewTemplateResponseTemplateUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// WorkflowStepPreviewTemplateResponseTemplateUnionSettings is an implicit subunion
+// of [WorkflowStepPreviewTemplateResponseTemplateUnion].
+// WorkflowStepPreviewTemplateResponseTemplateUnionSettings provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepPreviewTemplateResponseTemplateUnion].
+type WorkflowStepPreviewTemplateResponseTemplateUnionSettings struct {
+	// This field is from variant [EmailTemplateSettings].
+	AttachmentKey string `json:"attachment_key"`
+	// This field is from variant [EmailTemplateSettings].
+	LayoutKey string `json:"layout_key"`
+	// This field is from variant [EmailTemplateSettings].
+	PreContent string `json:"pre_content"`
+	// This field is from variant [PushTemplateSettings].
+	DeliveryType     string `json:"delivery_type"`
+	PayloadOverrides string `json:"payload_overrides"`
+	// This field is from variant [SMSTemplateSettings].
+	ToNumber string `json:"to_number"`
+	JSON     struct {
+		AttachmentKey    resp.Field
+		LayoutKey        resp.Field
+		PreContent       resp.Field
+		DeliveryType     resp.Field
+		PayloadOverrides resp.Field
+		ToNumber         resp.Field
+		raw              string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepPreviewTemplateResponseTemplateUnionSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowStepPreviewTemplateParams struct {
+	// The environment slug.
+	Environment string `query:"environment,required" json:"-"`
+	// A recipient reference, used when referencing a recipient by either their ID (for
+	// a user), or by a reference for an object.
+	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero,required"`
+	// The tenant to associate the workflow with.
+	Tenant param.Opt[string] `json:"tenant,omitzero"`
+	// A recipient reference, used when referencing a recipient by either their ID (for
+	// a user), or by a reference for an object.
+	Actor WorkflowStepPreviewTemplateParamsActorUnion `json:"actor,omitzero"`
+	// The data to pass to the workflow template for rendering.
+	Data map[string]interface{} `json:"data,omitzero"`
+	paramObj
+}
+
+// IsPresent returns true if the field's value is not omitted and not the JSON
+// "null". To check if this field is omitted, use [param.IsOmitted].
+func (f WorkflowStepPreviewTemplateParams) IsPresent() bool {
+	return !param.IsOmitted(f) && !f.IsNull()
+}
+
+func (r WorkflowStepPreviewTemplateParams) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepPreviewTemplateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+
+// URLQuery serializes [WorkflowStepPreviewTemplateParams]'s query parameters as
+// `url.Values`.
+func (r WorkflowStepPreviewTemplateParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type WorkflowStepPreviewTemplateParamsRecipientUnion struct {
+	OfString                                      param.Opt[string]                                 `json:",omitzero,inline"`
+	OfWorkflowStepPreviewTemplatesRecipientObject *WorkflowStepPreviewTemplateParamsRecipientObject `json:",omitzero,inline"`
+	paramUnion
+}
+
+// IsPresent returns true if the field's value is not omitted and not the JSON
+// "null". To check if this field is omitted, use [param.IsOmitted].
+func (u WorkflowStepPreviewTemplateParamsRecipientUnion) IsPresent() bool {
+	return !param.IsOmitted(u) && !u.IsNull()
+}
+func (u WorkflowStepPreviewTemplateParamsRecipientUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsRecipientUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesRecipientObject)
+}
+
+func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfWorkflowStepPreviewTemplatesRecipientObject) {
+		return u.OfWorkflowStepPreviewTemplatesRecipientObject
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepPreviewTemplateParamsRecipientUnion) GetID() *string {
+	if vt := u.OfWorkflowStepPreviewTemplatesRecipientObject; vt != nil {
+		return &vt.ID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepPreviewTemplateParamsRecipientUnion) GetCollection() *string {
+	if vt := u.OfWorkflowStepPreviewTemplatesRecipientObject; vt != nil {
+		return &vt.Collection
+	}
+	return nil
+}
+
+// An object reference.
+//
+// The properties ID, Collection are required.
+type WorkflowStepPreviewTemplateParamsRecipientObject struct {
+	ID         string `json:"id,required"`
+	Collection string `json:"collection,required"`
+	paramObj
+}
+
+// IsPresent returns true if the field's value is not omitted and not the JSON
+// "null". To check if this field is omitted, use [param.IsOmitted].
+func (f WorkflowStepPreviewTemplateParamsRecipientObject) IsPresent() bool {
+	return !param.IsOmitted(f) && !f.IsNull()
+}
+func (r WorkflowStepPreviewTemplateParamsRecipientObject) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepPreviewTemplateParamsRecipientObject
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type WorkflowStepPreviewTemplateParamsActorUnion struct {
+	OfString                                  param.Opt[string]                             `json:",omitzero,inline"`
+	OfWorkflowStepPreviewTemplatesActorObject *WorkflowStepPreviewTemplateParamsActorObject `json:",omitzero,inline"`
+	paramUnion
+}
+
+// IsPresent returns true if the field's value is not omitted and not the JSON
+// "null". To check if this field is omitted, use [param.IsOmitted].
+func (u WorkflowStepPreviewTemplateParamsActorUnion) IsPresent() bool {
+	return !param.IsOmitted(u) && !u.IsNull()
+}
+func (u WorkflowStepPreviewTemplateParamsActorUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsActorUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesActorObject)
+}
+
+func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfWorkflowStepPreviewTemplatesActorObject) {
+		return u.OfWorkflowStepPreviewTemplatesActorObject
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepPreviewTemplateParamsActorUnion) GetID() *string {
+	if vt := u.OfWorkflowStepPreviewTemplatesActorObject; vt != nil {
+		return &vt.ID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepPreviewTemplateParamsActorUnion) GetCollection() *string {
+	if vt := u.OfWorkflowStepPreviewTemplatesActorObject; vt != nil {
+		return &vt.Collection
+	}
+	return nil
+}
+
+// An object reference.
+//
+// The properties ID, Collection are required.
+type WorkflowStepPreviewTemplateParamsActorObject struct {
+	ID         string `json:"id,required"`
+	Collection string `json:"collection,required"`
+	paramObj
+}
+
+// IsPresent returns true if the field's value is not omitted and not the JSON
+// "null". To check if this field is omitted, use [param.IsOmitted].
+func (f WorkflowStepPreviewTemplateParamsActorObject) IsPresent() bool {
+	return !param.IsOmitted(f) && !f.IsNull()
+}
+func (r WorkflowStepPreviewTemplateParamsActorObject) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepPreviewTemplateParamsActorObject
+	return param.MarshalObject(r, (*shadow)(&r))
+}
