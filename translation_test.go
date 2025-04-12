@@ -1,0 +1,151 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package knockmapi_test
+
+import (
+	"context"
+	"errors"
+	"os"
+	"testing"
+
+	"github.com/stainless-sdks/knock-mapi-go"
+	"github.com/stainless-sdks/knock-mapi-go/internal/testutil"
+	"github.com/stainless-sdks/knock-mapi-go/option"
+)
+
+func TestTranslationGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Translations.Get(
+		context.TODO(),
+		"locale_code",
+		knockmapi.TranslationGetParams{
+			Environment:            "development",
+			Annotate:               knockmapi.Bool(true),
+			Format:                 knockmapi.TranslationGetParamsFormatJson,
+			HideUncommittedChanges: knockmapi.Bool(true),
+			Namespace:              knockmapi.String("namespace"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestTranslationListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Translations.List(context.TODO(), knockmapi.TranslationListParams{
+		Environment:            "development",
+		After:                  knockmapi.String("after"),
+		Annotate:               knockmapi.Bool(true),
+		Before:                 knockmapi.String("before"),
+		Format:                 knockmapi.TranslationListParamsFormatJson,
+		HideUncommittedChanges: knockmapi.Bool(true),
+		Limit:                  knockmapi.Int(0),
+		LocaleCode:             knockmapi.String("locale_code"),
+		Namespace:              knockmapi.String("namespace"),
+	})
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestTranslationUpsertWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Translations.Upsert(
+		context.TODO(),
+		"locale_code",
+		knockmapi.TranslationUpsertParams{
+			Environment: "development",
+			Namespace:   "namespace",
+			Translation: knockmapi.TranslationUpsertParamsTranslation{
+				Content: `{"hello":"Hello, world!"}`,
+				Format:  "json",
+			},
+			Annotate:      knockmapi.Bool(true),
+			Commit:        knockmapi.Bool(true),
+			CommitMessage: knockmapi.String("commit_message"),
+			Format:        knockmapi.TranslationUpsertParamsFormatJson,
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestTranslationValidate(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Translations.Validate(
+		context.TODO(),
+		"locale_code",
+		knockmapi.TranslationValidateParams{
+			Environment: "development",
+			Translation: knockmapi.TranslationValidateParamsTranslation{
+				Content: `{"hello":"Hello, world!"}`,
+				Format:  "json",
+			},
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}

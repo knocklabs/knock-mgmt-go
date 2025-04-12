@@ -1,0 +1,140 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package knockmapi_test
+
+import (
+	"context"
+	"errors"
+	"os"
+	"testing"
+
+	"github.com/stainless-sdks/knock-mapi-go"
+	"github.com/stainless-sdks/knock-mapi-go/internal/testutil"
+	"github.com/stainless-sdks/knock-mapi-go/option"
+)
+
+func TestCommitGet(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Commits.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCommitListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Commits.List(context.TODO(), knockmapi.CommitListParams{
+		Environment: "development",
+		After:       knockmapi.String("after"),
+		Before:      knockmapi.String("before"),
+		Limit:       knockmapi.Int(0),
+		Promoted:    knockmapi.Bool(true),
+	})
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCommitCommitAllWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Commits.CommitAll(context.TODO(), knockmapi.CommitCommitAllParams{
+		Environment:   "development",
+		CommitMessage: knockmapi.String("commit_message"),
+	})
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCommitPromoteAll(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Commits.PromoteAll(context.TODO(), knockmapi.CommitPromoteAllParams{
+		ToEnvironment: "to_environment",
+	})
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCommitPromoteOne(t *testing.T) {
+	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Commits.PromoteOne(context.TODO(), "id")
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
