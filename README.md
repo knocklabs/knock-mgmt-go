@@ -2,8 +2,8 @@
 
 <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/knock-mapi-go.svg" alt="Go Reference"></a>
 
-The Knock Mgmt Go library provides convenient access to [the Knock Mgmt REST
-API](https://docs.knock.app/mapi) from applications written in Go. The full API of this library can be found in [api.md](api.md).
+The Knock Mgmt Go library provides convenient access to the [Knock Mgmt REST API](https://docs.knock.app/mapi)
+from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
