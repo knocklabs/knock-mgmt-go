@@ -243,7 +243,7 @@ type WorkflowStepPreviewTemplateParams struct {
 	// a user), or by a reference for an object.
 	Actor WorkflowStepPreviewTemplateParamsActorUnion `json:"actor,omitzero"`
 	// The data to pass to the workflow template for rendering.
-	Data map[string]interface{} `json:"data,omitzero"`
+	Data map[string]any `json:"data,omitzero"`
 	paramObj
 }
 
@@ -294,22 +294,6 @@ func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
 	return nil
 }
 
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepPreviewTemplateParamsRecipientUnion) GetID() *string {
-	if vt := u.OfWorkflowStepPreviewTemplatesRecipientObject; vt != nil {
-		return &vt.ID
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepPreviewTemplateParamsRecipientUnion) GetCollection() *string {
-	if vt := u.OfWorkflowStepPreviewTemplatesRecipientObject; vt != nil {
-		return &vt.Collection
-	}
-	return nil
-}
-
 // An object reference.
 //
 // The properties ID, Collection are required.
@@ -352,22 +336,6 @@ func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfWorkflowStepPreviewTemplatesActorObject) {
 		return u.OfWorkflowStepPreviewTemplatesActorObject
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepPreviewTemplateParamsActorUnion) GetID() *string {
-	if vt := u.OfWorkflowStepPreviewTemplatesActorObject; vt != nil {
-		return &vt.ID
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepPreviewTemplateParamsActorUnion) GetCollection() *string {
-	if vt := u.OfWorkflowStepPreviewTemplatesActorObject; vt != nil {
-		return &vt.Collection
 	}
 	return nil
 }

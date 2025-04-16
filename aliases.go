@@ -5,7 +5,6 @@ package knockmapi
 import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/apierror"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
 	"github.com/stainless-sdks/knock-mapi-go/shared"
 )
 
@@ -21,13 +20,3 @@ type Error = apierror.Error
 //
 // This is an alias to an internal type.
 type PageInfo = shared.PageInfo
-
-func toParam[T comparable](value T, meta resp.Field) param.Opt[T] {
-	if meta.IsPresent() {
-		return param.NewOpt(value)
-	}
-	if meta.IsExplicitNull() {
-		return param.NullOpt[T]()
-	}
-	return param.Opt[T]{}
-}
