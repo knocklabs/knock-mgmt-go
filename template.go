@@ -195,7 +195,7 @@ type EmailTemplateVisualBlockUnion struct {
 	// This field is from variant [EmailTemplateVisualBlockEmailMarkdownBlock].
 	Variant string `json:"variant"`
 	// This field is from variant [EmailTemplateVisualBlockEmailPartialBlock].
-	Attrs map[string]interface{} `json:"attrs"`
+	Attrs map[string]any `json:"attrs"`
 	// This field is from variant [EmailTemplateVisualBlockEmailPartialBlock].
 	Key string `json:"key"`
 	// This field is from variant [EmailTemplateVisualBlockEmailPartialBlock].
@@ -687,7 +687,7 @@ type EmailTemplateVisualBlockEmailPartialBlock struct {
 	// The ID of the block.
 	ID string `json:"id,required" format:"uuid"`
 	// The attributes to pass to the partial block.
-	Attrs map[string]interface{} `json:"attrs,required"`
+	Attrs map[string]any `json:"attrs,required"`
 	// The key of the partial block to invoke.
 	Key string `json:"key,required"`
 	// The name of the partial block.
@@ -891,7 +891,7 @@ func (u EmailTemplateVisualBlockUnionParam) GetVariant() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EmailTemplateVisualBlockUnionParam) GetAttrs() map[string]interface{} {
+func (u EmailTemplateVisualBlockUnionParam) GetAttrs() map[string]any {
 	if vt := u.OfEmailPartialBlock; vt != nil {
 		return vt.Attrs
 	}
@@ -983,29 +983,26 @@ func (u EmailTemplateVisualBlockUnionParam) GetContent() *string {
 // Or use AsAny() to get the underlying value
 func (u EmailTemplateVisualBlockUnionParam) GetLayoutAttrs() (res emailTemplateVisualBlockUnionParamLayoutAttrs) {
 	if vt := u.OfEmailButtonSetBlock; vt != nil {
-		res.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs = &vt.LayoutAttrs
+		res.any = &vt.LayoutAttrs
 	} else if vt := u.OfEmailDividerBlock; vt != nil {
-		res.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs = &vt.LayoutAttrs
+		res.any = &vt.LayoutAttrs
 	} else if vt := u.OfEmailImageBlock; vt != nil {
-		res.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs = &vt.LayoutAttrs
+		res.any = &vt.LayoutAttrs
 	} else if vt := u.OfEmailMarkdownBlock; vt != nil {
-		res.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs = &vt.LayoutAttrs
+		res.any = &vt.LayoutAttrs
 	} else if vt := u.OfEmailPartialBlock; vt != nil {
-		res.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs = &vt.LayoutAttrs
+		res.any = &vt.LayoutAttrs
 	}
 	return
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type emailTemplateVisualBlockUnionParamLayoutAttrs struct {
-	ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam
-	ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs   *EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam
-	ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs     *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam
-	ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs  *EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam
-	ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs   *EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam
-}
+// Can have the runtime types
+// [*EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam],
+// [*EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam],
+// [*EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam],
+// [*EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam],
+// [*EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam]
+type emailTemplateVisualBlockUnionParamLayoutAttrs struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
@@ -1018,24 +1015,12 @@ type emailTemplateVisualBlockUnionParamLayoutAttrs struct {
 //	default:
 //	    fmt.Errorf("not present")
 //	}
-func (u emailTemplateVisualBlockUnionParamLayoutAttrs) AsAny() any {
-	if !param.IsOmitted(u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs) {
-		return u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs
-	} else if !param.IsOmitted(u.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs) {
-		return u.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs
-	} else if !param.IsOmitted(u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs) {
-		return u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs
-	} else if !param.IsOmitted(u.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs) {
-		return u.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs
-	} else if !param.IsOmitted(u.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs) {
-		return u.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs
-	}
-	return nil
-}
+func (u emailTemplateVisualBlockUnionParamLayoutAttrs) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetColumnGap() *int64 {
-	if vt := u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs; vt != nil {
+	switch vt := u.any.(type) {
+	case *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam:
 		return &vt.ColumnGap
 	}
 	return nil
@@ -1043,9 +1028,10 @@ func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetColumnGap() *int64 {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetHorizontalAlign() *string {
-	if vt := u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs; vt != nil {
+	switch vt := u.any.(type) {
+	case *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam:
 		return (*string)(&vt.HorizontalAlign)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam:
 		return (*string)(&vt.HorizontalAlign)
 	}
 	return nil
@@ -1053,15 +1039,16 @@ func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetHorizontalAlign() *str
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingBottom() *int64 {
-	if vt := u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs; vt != nil {
+	switch vt := u.any.(type) {
+	case *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingBottom)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingBottom)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingBottom)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingBottom)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingBottom)
 	}
 	return nil
@@ -1069,15 +1056,16 @@ func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingBottom() *int64
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingLeft() *int64 {
-	if vt := u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs; vt != nil {
+	switch vt := u.any.(type) {
+	case *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingLeft)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingLeft)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingLeft)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingLeft)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingLeft)
 	}
 	return nil
@@ -1085,15 +1073,16 @@ func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingLeft() *int64 {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingRight() *int64 {
-	if vt := u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs; vt != nil {
+	switch vt := u.any.(type) {
+	case *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingRight)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingRight)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingRight)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingRight)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingRight)
 	}
 	return nil
@@ -1101,15 +1090,16 @@ func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingRight() *int64 
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u emailTemplateVisualBlockUnionParamLayoutAttrs) GetPaddingTop() *int64 {
-	if vt := u.ofEmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs; vt != nil {
+	switch vt := u.any.(type) {
+	case *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingTop)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailDividerBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingTop)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailImageBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingTop)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingTop)
-	} else if vt := u.ofEmailTemplateVisualBlockEmailPartialBlockLayoutAttrs; vt != nil {
+	case *EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam:
 		return (*int64)(&vt.PaddingTop)
 	}
 	return nil
@@ -1484,7 +1474,7 @@ type EmailTemplateVisualBlockEmailPartialBlockParam struct {
 	// The ID of the block.
 	ID string `json:"id,required" format:"uuid"`
 	// The attributes to pass to the partial block.
-	Attrs map[string]interface{} `json:"attrs,omitzero,required"`
+	Attrs map[string]any `json:"attrs,omitzero,required"`
 	// The key of the partial block to invoke.
 	Key string `json:"key,required"`
 	// The name of the partial block.

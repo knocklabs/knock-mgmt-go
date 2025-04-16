@@ -13,6 +13,7 @@ import (
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
+	"github.com/stainless-sdks/knock-mapi-go/internal/paramutil"
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
@@ -400,22 +401,6 @@ func (u *ConditionGroupUnionParam) asAny() any {
 	return nil
 }
 
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConditionGroupUnionParam) GetAll() []ConditionParam {
-	if vt := u.OfConditionGroupAllMatch; vt != nil {
-		return vt.All
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConditionGroupUnionParam) GetAny() []ConditionGroupConditionGroupAnyMatchAnyUnionParam {
-	if vt := u.OfConditionGroupAnyMatch; vt != nil {
-		return vt.Any
-	}
-	return nil
-}
-
 // A group of conditions that must all be met.
 type ConditionGroupConditionGroupAllMatchParam struct {
 	// A list of conditions.
@@ -473,38 +458,6 @@ func (u *ConditionGroupConditionGroupAnyMatchAnyUnionParam) asAny() any {
 		return u.OfCondition
 	} else if !param.IsOmitted(u.OfConditionGroupAllMatch) {
 		return u.OfConditionGroupAllMatch
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) GetOperator() *string {
-	if vt := u.OfCondition; vt != nil {
-		return (*string)(&vt.Operator)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) GetVariable() *string {
-	if vt := u.OfCondition; vt != nil {
-		return &vt.Variable
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) GetArgument() *string {
-	if vt := u.OfCondition; vt != nil && vt.Argument.IsPresent() {
-		return &vt.Argument.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) GetAll() []ConditionParam {
-	if vt := u.OfConditionGroupAllMatch; vt != nil {
-		return vt.All
 	}
 	return nil
 }
@@ -721,7 +674,7 @@ type Workflow struct {
 	// A JSON schema for the expected structure of the workflow trigger's data payload.
 	// Used to validate trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
-	TriggerDataJsonSchema map[string]interface{} `json:"trigger_data_json_schema"`
+	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema"`
 	// The frequency at which the workflow should be triggered. One of:
 	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
 	// to `every_trigger`. Read more in
@@ -1613,23 +1566,18 @@ func (u WorkflowChannelStepTemplateUnionParam) GetMarkdownBody() *string {
 // Or use AsAny() to get the underlying value
 func (u WorkflowChannelStepTemplateUnionParam) GetSettings() (res workflowChannelStepTemplateUnionParamSettings) {
 	if vt := u.OfEmailTemplate; vt != nil {
-		res.ofEmailTemplateSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfSMSTemplate; vt != nil {
-		res.ofSMSTemplateSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfPushTemplate; vt != nil {
-		res.ofPushTemplateSettings = &vt.Settings
+		res.any = &vt.Settings
 	}
 	return
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type workflowChannelStepTemplateUnionParamSettings struct {
-	ofEmailTemplateSettings *EmailTemplateSettingsParam
-	ofSMSTemplateSettings   *SMSTemplateSettingsParam
-	ofPushTemplateSettings  *PushTemplateSettingsParam
-}
+// Can have the runtime types [*EmailTemplateSettingsParam],
+// [*SMSTemplateSettingsParam], [*PushTemplateSettingsParam]
+type workflowChannelStepTemplateUnionParamSettings struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
@@ -1640,52 +1588,48 @@ type workflowChannelStepTemplateUnionParamSettings struct {
 //	default:
 //	    fmt.Errorf("not present")
 //	}
-func (u workflowChannelStepTemplateUnionParamSettings) AsAny() any {
-	if !param.IsOmitted(u.ofEmailTemplateSettings) {
-		return u.ofEmailTemplateSettings
-	} else if !param.IsOmitted(u.ofSMSTemplateSettings) {
-		return u.ofSMSTemplateSettings
-	} else if !param.IsOmitted(u.ofPushTemplateSettings) {
-		return u.ofPushTemplateSettings
-	}
-	return nil
-}
+func (u workflowChannelStepTemplateUnionParamSettings) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowChannelStepTemplateUnionParamSettings) GetAttachmentKey() *string {
-	if vt := u.ofEmailTemplateSettings; vt != nil && vt.AttachmentKey.IsPresent() {
-		return &vt.AttachmentKey.Value
+	switch vt := u.any.(type) {
+	case *EmailTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.AttachmentKey)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowChannelStepTemplateUnionParamSettings) GetLayoutKey() *string {
-	if vt := u.ofEmailTemplateSettings; vt != nil && vt.LayoutKey.IsPresent() {
-		return &vt.LayoutKey.Value
+	switch vt := u.any.(type) {
+	case *EmailTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.LayoutKey)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowChannelStepTemplateUnionParamSettings) GetPreContent() *string {
-	if vt := u.ofEmailTemplateSettings; vt != nil && vt.PreContent.IsPresent() {
-		return &vt.PreContent.Value
+	switch vt := u.any.(type) {
+	case *EmailTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.PreContent)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowChannelStepTemplateUnionParamSettings) GetToNumber() *string {
-	if vt := u.ofSMSTemplateSettings; vt != nil && vt.ToNumber.IsPresent() {
-		return &vt.ToNumber.Value
+	switch vt := u.any.(type) {
+	case *SMSTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.ToNumber)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowChannelStepTemplateUnionParamSettings) GetDeliveryType() *string {
-	if vt := u.ofPushTemplateSettings; vt != nil {
+	switch vt := u.any.(type) {
+	case *PushTemplateSettingsParam:
 		return &vt.DeliveryType
 	}
 	return nil
@@ -1693,10 +1637,11 @@ func (u workflowChannelStepTemplateUnionParamSettings) GetDeliveryType() *string
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowChannelStepTemplateUnionParamSettings) GetPayloadOverrides() *string {
-	if vt := u.ofSMSTemplateSettings; vt != nil && vt.PayloadOverrides.IsPresent() {
-		return &vt.PayloadOverrides.Value
-	} else if vt := u.ofPushTemplateSettings; vt != nil && vt.PayloadOverrides.IsPresent() {
-		return &vt.PayloadOverrides.Value
+	switch vt := u.any.(type) {
+	case *SMSTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.PayloadOverrides)
+	case *PushTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.PayloadOverrides)
 	}
 	return nil
 }
@@ -2436,29 +2381,24 @@ func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
 // Or use AsAny() to get the underlying value
 func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSettings) {
 	if vt := u.OfWorkflowDelayStep; vt != nil {
-		res.ofWorkflowDelayStepSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
-		res.ofWorkflowBatchStepSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
-		res.ofRequestTemplate = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
-		res.ofWorkflowThrottleStepSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil {
-		res.ofWorkflowTriggerWorkflowStepSettings = &vt.Settings
+		res.any = &vt.Settings
 	}
 	return
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type workflowStepUnionParamSettings struct {
-	ofWorkflowDelayStepSettings           *WorkflowDelayStepSettingsParam
-	ofWorkflowBatchStepSettings           *WorkflowBatchStepSettingsParam
-	ofRequestTemplate                     *RequestTemplateParam
-	ofWorkflowThrottleStepSettings        *WorkflowThrottleStepSettingsParam
-	ofWorkflowTriggerWorkflowStepSettings *WorkflowTriggerWorkflowStepSettingsParam
-}
+// Can have the runtime types [*WorkflowDelayStepSettingsParam],
+// [*WorkflowBatchStepSettingsParam], [*RequestTemplateParam],
+// [*WorkflowThrottleStepSettingsParam],
+// [*WorkflowTriggerWorkflowStepSettingsParam]
+type workflowStepUnionParamSettings struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
@@ -2471,228 +2411,7 @@ type workflowStepUnionParamSettings struct {
 //	default:
 //	    fmt.Errorf("not present")
 //	}
-func (u workflowStepUnionParamSettings) AsAny() any {
-	if !param.IsOmitted(u.ofWorkflowDelayStepSettings) {
-		return u.ofWorkflowDelayStepSettings
-	} else if !param.IsOmitted(u.ofWorkflowBatchStepSettings) {
-		return u.ofWorkflowBatchStepSettings
-	} else if !param.IsOmitted(u.ofRequestTemplate) {
-		return u.ofRequestTemplate
-	} else if !param.IsOmitted(u.ofWorkflowThrottleStepSettings) {
-		return u.ofWorkflowThrottleStepSettings
-	} else if !param.IsOmitted(u.ofWorkflowTriggerWorkflowStepSettings) {
-		return u.ofWorkflowTriggerWorkflowStepSettings
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetDelayFor() *DurationParam {
-	if vt := u.ofWorkflowDelayStepSettings; vt != nil {
-		return &vt.DelayFor
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetDelayUntilFieldPath() *string {
-	if vt := u.ofWorkflowDelayStepSettings; vt != nil && vt.DelayUntilFieldPath.IsPresent() {
-		return &vt.DelayUntilFieldPath.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchExecutionMode() *string {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil {
-		return &vt.BatchExecutionMode
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchItemsMaxLimit() *int64 {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil && vt.BatchItemsMaxLimit.IsPresent() {
-		return &vt.BatchItemsMaxLimit.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchItemsRenderLimit() *int64 {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil && vt.BatchItemsRenderLimit.IsPresent() {
-		return &vt.BatchItemsRenderLimit.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchKey() *string {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil && vt.BatchKey.IsPresent() {
-		return &vt.BatchKey.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchOrder() *string {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil {
-		return &vt.BatchOrder
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchUntilFieldPath() *string {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil && vt.BatchUntilFieldPath.IsPresent() {
-		return &vt.BatchUntilFieldPath.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchWindow() *DurationParam {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil {
-		return &vt.BatchWindow
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchWindowExtensionLimit() *DurationParam {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil {
-		return &vt.BatchWindowExtensionLimit
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBatchWindowType() *string {
-	if vt := u.ofWorkflowBatchStepSettings; vt != nil {
-		return &vt.BatchWindowType
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetMethod() *string {
-	if vt := u.ofRequestTemplate; vt != nil {
-		return (*string)(&vt.Method)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetURL() *string {
-	if vt := u.ofRequestTemplate; vt != nil {
-		return &vt.URL
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetBody() *string {
-	if vt := u.ofRequestTemplate; vt != nil && vt.Body.IsPresent() {
-		return &vt.Body.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetHeaders() []RequestTemplateHeaderParam {
-	if vt := u.ofRequestTemplate; vt != nil {
-		return vt.Headers
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetQueryParams() []RequestTemplateQueryParamParam {
-	if vt := u.ofRequestTemplate; vt != nil {
-		return vt.QueryParams
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetThrottleKey() *string {
-	if vt := u.ofWorkflowThrottleStepSettings; vt != nil && vt.ThrottleKey.IsPresent() {
-		return &vt.ThrottleKey.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetThrottleLimit() *int64 {
-	if vt := u.ofWorkflowThrottleStepSettings; vt != nil && vt.ThrottleLimit.IsPresent() {
-		return &vt.ThrottleLimit.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetThrottleWindow() *DurationParam {
-	if vt := u.ofWorkflowThrottleStepSettings; vt != nil {
-		return &vt.ThrottleWindow
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetThrottleWindowFieldPath() *string {
-	if vt := u.ofWorkflowThrottleStepSettings; vt != nil && vt.ThrottleWindowFieldPath.IsPresent() {
-		return &vt.ThrottleWindowFieldPath.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetActor() *string {
-	if vt := u.ofWorkflowTriggerWorkflowStepSettings; vt != nil && vt.Actor.IsPresent() {
-		return &vt.Actor.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetCancellationKey() *string {
-	if vt := u.ofWorkflowTriggerWorkflowStepSettings; vt != nil && vt.CancellationKey.IsPresent() {
-		return &vt.CancellationKey.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetData() *string {
-	if vt := u.ofWorkflowTriggerWorkflowStepSettings; vt != nil && vt.Data.IsPresent() {
-		return &vt.Data.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetRecipients() *string {
-	if vt := u.ofWorkflowTriggerWorkflowStepSettings; vt != nil && vt.Recipients.IsPresent() {
-		return &vt.Recipients.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetTenant() *string {
-	if vt := u.ofWorkflowTriggerWorkflowStepSettings; vt != nil && vt.Tenant.IsPresent() {
-		return &vt.Tenant.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetWorkflowKey() *string {
-	if vt := u.ofWorkflowTriggerWorkflowStepSettings; vt != nil && vt.WorkflowKey.IsPresent() {
-		return &vt.WorkflowKey.Value
-	}
-	return nil
-}
+func (u workflowStepUnionParamSettings) AsAny() any { return u.any }
 
 // A throttle function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/throttle-function).
@@ -3148,7 +2867,7 @@ type WorkflowRunParams struct {
 	// a user), or by a reference for an object.
 	Actor WorkflowRunParamsActorUnion `json:"actor,omitzero"`
 	// A map of data to be used in the workflow run.
-	Data map[string]interface{} `json:"data,omitzero"`
+	Data map[string]any `json:"data,omitzero"`
 	paramObj
 }
 
@@ -3194,22 +2913,6 @@ func (u *WorkflowRunParamsRecipientUnion) asAny() any {
 	return nil
 }
 
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowRunParamsRecipientUnion) GetID() *string {
-	if vt := u.OfWorkflowRunsRecipientObject; vt != nil {
-		return &vt.ID
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowRunParamsRecipientUnion) GetCollection() *string {
-	if vt := u.OfWorkflowRunsRecipientObject; vt != nil {
-		return &vt.Collection
-	}
-	return nil
-}
-
 // An object reference.
 //
 // The properties ID, Collection are required.
@@ -3248,22 +2951,6 @@ func (u *WorkflowRunParamsActorUnion) asAny() any {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfWorkflowRunsActorObject) {
 		return u.OfWorkflowRunsActorObject
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowRunParamsActorUnion) GetID() *string {
-	if vt := u.OfWorkflowRunsActorObject; vt != nil {
-		return &vt.ID
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowRunParamsActorUnion) GetCollection() *string {
-	if vt := u.OfWorkflowRunsActorObject; vt != nil {
-		return &vt.Collection
 	}
 	return nil
 }
@@ -3338,7 +3025,7 @@ type WorkflowUpsertParamsWorkflow struct {
 	// A JSON schema for the expected structure of the workflow trigger's data payload.
 	// Used to validate trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
-	TriggerDataJsonSchema map[string]interface{} `json:"trigger_data_json_schema,omitzero"`
+	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
 	// The frequency at which the workflow should be triggered. One of:
 	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
 	// to `every_trigger`. Read more in
@@ -3431,7 +3118,7 @@ type WorkflowValidateParamsWorkflow struct {
 	// A JSON schema for the expected structure of the workflow trigger's data payload.
 	// Used to validate trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
-	TriggerDataJsonSchema map[string]interface{} `json:"trigger_data_json_schema,omitzero"`
+	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
 	// The frequency at which the workflow should be triggered. One of:
 	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
 	// to `every_trigger`. Read more in

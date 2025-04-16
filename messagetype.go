@@ -13,6 +13,7 @@ import (
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
+	"github.com/stainless-sdks/knock-mapi-go/internal/paramutil"
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
@@ -1258,41 +1259,38 @@ func (u MessageTypeVariantFieldUnionParam) GetType() *string {
 // Or use AsAny() to get the underlying value
 func (u MessageTypeVariantFieldUnionParam) GetSettings() (res messageTypeVariantFieldUnionParamSettings) {
 	if vt := u.OfMessageTypeBooleanField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeButtonField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeButtonFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeImageFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
-		res.ofMessageTypeTextFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeURLField; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeURLFieldSettings = &vt.Settings
+		res.any = &vt.Settings
 	}
 	return
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type messageTypeVariantFieldUnionParamSettings struct {
-	ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings     *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeButtonFieldSettings      *MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeImageFieldSettings       *MessageTypeVariantFieldMessageTypeImageFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings    *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeSelectFieldSettings      *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam
-	ofMessageTypeTextFieldSettings                               *MessageTypeTextFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings    *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam
-	ofMessageTypeVariantFieldMessageTypeURLFieldSettings         *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam
-}
+// Can have the runtime types
+// [*MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeImageFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam],
+// [*MessageTypeTextFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeURLFieldSettingsParam]
+type messageTypeVariantFieldUnionParamSettings struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
@@ -1309,93 +1307,76 @@ type messageTypeVariantFieldUnionParamSettings struct {
 //	default:
 //	    fmt.Errorf("not present")
 //	}
-func (u messageTypeVariantFieldUnionParamSettings) AsAny() any {
-	if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeButtonFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeButtonFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeImageFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeImageFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeTextFieldSettings) {
-		return u.ofMessageTypeTextFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeURLFieldSettings) {
-		return u.ofMessageTypeVariantFieldMessageTypeURLFieldSettings
-	}
-	return nil
-}
+func (u messageTypeVariantFieldUnionParamSettings) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetDescription() *string {
-	if vt := u.ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeButtonFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeImageFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeTextFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeURLFieldSettings; vt != nil && vt.Description.IsPresent() {
-		return &vt.Description.Value
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeImageFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetRequired() *bool {
-	if vt := u.ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeButtonFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeImageFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeTextFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeURLFieldSettings; vt != nil && vt.Required.IsPresent() {
-		return &vt.Required.Value
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeImageFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetMaxLength() *int64 {
-	if vt := u.ofMessageTypeTextFieldSettings; vt != nil && vt.MaxLength.IsPresent() {
-		return &vt.MaxLength.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings; vt != nil && vt.MaxLength.IsPresent() {
-		return &vt.MaxLength.Value
+	switch vt := u.any.(type) {
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.MaxLength)
+	case *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.MaxLength)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetMinLength() *int64 {
-	if vt := u.ofMessageTypeTextFieldSettings; vt != nil && vt.MinLength.IsPresent() {
-		return &vt.MinLength.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings; vt != nil && vt.MinLength.IsPresent() {
-		return &vt.MinLength.Value
+	switch vt := u.any.(type) {
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.MinLength)
+	case *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.MinLength)
 	}
 	return nil
 }
@@ -1404,32 +1385,27 @@ func (u messageTypeVariantFieldUnionParamSettings) GetMinLength() *int64 {
 //
 // Or use AsAny() to get the underlying value
 func (u messageTypeVariantFieldUnionParamSettings) GetDefault() (res messageTypeVariantFieldUnionParamSettingsDefault) {
-	if vt := u.ofMessageTypeVariantFieldMessageTypeBooleanFieldSettings; vt != nil && vt.Default.IsPresent() {
-		res.ofBool = &vt.Default.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeMarkdownFieldSettings; vt != nil && vt.Default.IsPresent() {
-		res.ofString = &vt.Default.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault = &vt.Default
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings; vt != nil && vt.Default.IsPresent() {
-		res.ofString = &vt.Default.Value
-	} else if vt := u.ofMessageTypeTextFieldSettings; vt != nil && vt.Default.IsPresent() {
-		res.ofString = &vt.Default.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeTextareaFieldSettings; vt != nil && vt.Default.IsPresent() {
-		res.ofString = &vt.Default.Value
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeURLFieldSettings; vt != nil && vt.Default.IsPresent() {
-		res.ofString = &vt.Default.Value
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam:
+		res.any = &vt.Default
+	case *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
 	}
-	return
+	return res
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type messageTypeVariantFieldUnionParamSettingsDefault struct {
-	ofBool                                                              *bool
-	ofString                                                            *string
-	ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault *[]string
-}
+// Can have the runtime types [*bool], [*string], [\*[]string]
+type messageTypeVariantFieldUnionParamSettingsDefault struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
@@ -1440,44 +1416,25 @@ type messageTypeVariantFieldUnionParamSettingsDefault struct {
 //	default:
 //	    fmt.Errorf("not present")
 //	}
-func (u messageTypeVariantFieldUnionParamSettingsDefault) AsAny() any {
-	if !param.IsOmitted(u.ofBool) {
-		return u.ofBool
-	} else if !param.IsOmitted(u.ofString) {
-		return u.ofString
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault) {
-		return u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault
-	} else if !param.IsOmitted(u.ofString) {
-		return u.ofString
-	} else if !param.IsOmitted(u.ofString) {
-		return u.ofString
-	} else if !param.IsOmitted(u.ofString) {
-		return u.ofString
-	} else if !param.IsOmitted(u.ofString) {
-		return u.ofString
-	}
-	return nil
-}
+func (u messageTypeVariantFieldUnionParamSettingsDefault) AsAny() any { return u.any }
 
 // Returns a subunion which exports methods to access subproperties
 //
 // Or use AsAny() to get the underlying value
 func (u messageTypeVariantFieldUnionParamSettings) GetOptions() (res messageTypeVariantFieldUnionParamSettingsOptions) {
-	if vt := u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettings; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptions = &vt.Options
-	} else if vt := u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettings; vt != nil {
-		res.ofMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions = &vt.Options
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam:
+		res.any = &vt.Options
+	case *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam:
+		res.any = &vt.Options
 	}
-	return
+	return res
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type messageTypeVariantFieldUnionParamSettingsOptions struct {
-	ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptions *[]MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam
-	ofMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions      *[]MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam
-}
+// Can have the runtime types
+// [_[]MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam],
+// [_[]MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam]
+type messageTypeVariantFieldUnionParamSettingsOptions struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
@@ -1487,14 +1444,7 @@ type messageTypeVariantFieldUnionParamSettingsOptions struct {
 //	default:
 //	    fmt.Errorf("not present")
 //	}
-func (u messageTypeVariantFieldUnionParamSettingsOptions) AsAny() any {
-	if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptions) {
-		return u.ofMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptions
-	} else if !param.IsOmitted(u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions) {
-		return u.ofMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions
-	}
-	return nil
-}
+func (u messageTypeVariantFieldUnionParamSettingsOptions) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's Action property, if present.
 func (u MessageTypeVariantFieldUnionParam) GetAction() *MessageTypeTextFieldParam {

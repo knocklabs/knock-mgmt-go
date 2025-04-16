@@ -133,7 +133,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 				},
 			},
 			CancellationKey: knockmapi.String("cancellation_key"),
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"park_id": "bar",
 			},
 			Tenant: knockmapi.String("tenant"),
@@ -231,7 +231,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
-				TriggerDataJsonSchema: map[string]interface{}{
+				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
 				TriggerFrequency: "every_trigger",
@@ -333,7 +333,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
-				TriggerDataJsonSchema: map[string]interface{}{
+				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
 				TriggerFrequency: "every_trigger",

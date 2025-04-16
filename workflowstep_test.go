@@ -38,7 +38,7 @@ func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
 			Actor: knockmapi.WorkflowStepPreviewTemplateParamsActorUnion{
 				OfString: knockmapi.String("dnedry"),
 			},
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"park_id": "bar",
 			},
 			Tenant: knockmapi.String("acme-corp"),
