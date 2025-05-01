@@ -38,9 +38,9 @@ func NewWorkflowStepService(opts ...option.RequestOption) (r WorkflowStepService
 }
 
 // Generates a rendered template for a given channel step in a workflow.
-func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, workflowKey string, stepRef string, params WorkflowStepPreviewTemplateParams, opts ...option.RequestOption) (res *WorkflowStepPreviewTemplateResponse, err error) {
+func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, stepRef string, params WorkflowStepPreviewTemplateParams, opts ...option.RequestOption) (res *WorkflowStepPreviewTemplateResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	if workflowKey == "" {
+	if params.WorkflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return
 	}
@@ -48,7 +48,7 @@ func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, workflowKey s
 		err = errors.New("missing required step_ref parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/workflows/%s/steps/%s/preview_template", workflowKey, stepRef)
+	path := fmt.Sprintf("v1/workflows/%s/steps/%s/preview_template", params.WorkflowKey, stepRef)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -232,6 +232,7 @@ func (r *WorkflowStepPreviewTemplateResponseTemplateUnionSettings) UnmarshalJSON
 }
 
 type WorkflowStepPreviewTemplateParams struct {
+	WorkflowKey string `path:"workflow_key,required" json:"-"`
 	// The environment slug.
 	Environment string `query:"environment,required" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for

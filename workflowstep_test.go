@@ -28,9 +28,9 @@ func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Workflows.Steps.PreviewTemplate(
 		context.TODO(),
-		"workflow_key",
 		"step_ref",
 		knockmapi.WorkflowStepPreviewTemplateParams{
+			WorkflowKey: "workflow_key",
 			Environment: "development",
 			Recipient: knockmapi.WorkflowStepPreviewTemplateParamsRecipientUnion{
 				OfString: knockmapi.String("dnedry"),
