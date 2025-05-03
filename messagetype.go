@@ -475,20 +475,19 @@ func (r *MessageTypeVariantFieldUnionSettings) UnmarshalJSON(data []byte) error 
 // [MessageTypeVariantFieldUnion].
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfString
-// OfMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault]
+// will be valid: OfBool OfString OfStringArray]
 type MessageTypeVariantFieldUnionSettingsDefault struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field will be present if the value is a [[]string] instead of an object.
-	OfMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault []string `json:",inline"`
-	JSON                                                                struct {
-		OfBool                                                              resp.Field
-		OfString                                                            resp.Field
-		OfMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsDefault resp.Field
-		raw                                                                 string
+	OfStringArray []string `json:",inline"`
+	JSON          struct {
+		OfBool        resp.Field
+		OfString      resp.Field
+		OfStringArray resp.Field
+		raw           string
 	} `json:"-"`
 }
 
