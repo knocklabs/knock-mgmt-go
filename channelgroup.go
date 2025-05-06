@@ -14,7 +14,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // ChannelGroupService contains methods and other services that help with
@@ -88,17 +88,17 @@ type ChannelGroup struct {
 	Source ChannelGroupSource `json:"source,required"`
 	// The timestamp of when the channel group was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ChannelRules resp.Field
-		ChannelType  resp.Field
-		CreatedAt    resp.Field
-		Key          resp.Field
-		Name         resp.Field
-		Operator     resp.Field
-		Source       resp.Field
-		UpdatedAt    resp.Field
-		ExtraFields  map[string]resp.Field
+		ChannelRules respjson.Field
+		ChannelType  respjson.Field
+		CreatedAt    respjson.Field
+		Key          respjson.Field
+		Name         respjson.Field
+		Operator     respjson.Field
+		Source       respjson.Field
+		UpdatedAt    respjson.Field
+		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
 }
@@ -168,17 +168,17 @@ type ChannelGroupRule struct {
 	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
 	// For conditional rules, the variable to evaluate.
 	Variable string `json:"variable,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Channel     resp.Field
-		CreatedAt   resp.Field
-		Index       resp.Field
-		RuleType    resp.Field
-		UpdatedAt   resp.Field
-		Argument    resp.Field
-		Operator    resp.Field
-		Variable    resp.Field
-		ExtraFields map[string]resp.Field
+		Channel     respjson.Field
+		CreatedAt   respjson.Field
+		Index       respjson.Field
+		RuleType    respjson.Field
+		UpdatedAt   respjson.Field
+		Argument    respjson.Field
+		Operator    respjson.Field
+		Variable    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

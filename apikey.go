@@ -11,7 +11,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // APIKeyService contains methods and other services that help with interacting
@@ -47,10 +47,10 @@ func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams,
 type APIKeyExchangeResponse struct {
 	// The secret API key exchanged from the service token.
 	APIKey string `json:"api_key,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		APIKey      resp.Field
-		ExtraFields map[string]resp.Field
+		APIKey      respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

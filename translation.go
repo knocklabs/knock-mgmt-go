@@ -16,7 +16,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // TranslationService contains methods and other services that help with
@@ -124,15 +124,15 @@ type Translation struct {
 	Namespace string `json:"namespace,required"`
 	// The timestamp of when the translation was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content     resp.Field
-		Format      resp.Field
-		InsertedAt  resp.Field
-		LocaleCode  resp.Field
-		Namespace   resp.Field
-		UpdatedAt   resp.Field
-		ExtraFields map[string]resp.Field
+		Content     respjson.Field
+		Format      respjson.Field
+		InsertedAt  respjson.Field
+		LocaleCode  respjson.Field
+		Namespace   respjson.Field
+		UpdatedAt   respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -156,10 +156,10 @@ const (
 type TranslationGetResponse struct {
 	// A translation object.
 	Translation Translation `json:"translation,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Translation resp.Field
-		ExtraFields map[string]resp.Field
+		Translation respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -174,10 +174,10 @@ func (r *TranslationGetResponse) UnmarshalJSON(data []byte) error {
 type TranslationUpsertResponse struct {
 	// A translation object.
 	Translation Translation `json:"translation,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Translation resp.Field
-		ExtraFields map[string]resp.Field
+		Translation respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -192,10 +192,10 @@ func (r *TranslationUpsertResponse) UnmarshalJSON(data []byte) error {
 type TranslationValidateResponse struct {
 	// A translation object.
 	Translation Translation `json:"translation,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Translation resp.Field
-		ExtraFields map[string]resp.Field
+		Translation respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

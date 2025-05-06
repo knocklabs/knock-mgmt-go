@@ -8,7 +8,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // TemplateService contains methods and other services that help with interacting
@@ -40,12 +40,12 @@ type ChatTemplate struct {
 	// The summary of the chat template. Used by some chat apps in their push
 	// notifications.
 	Summary string `json:"summary"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		MarkdownBody resp.Field
-		JsonBody     resp.Field
-		Summary      resp.Field
-		ExtraFields  map[string]resp.Field
+		MarkdownBody respjson.Field
+		JsonBody     respjson.Field
+		Summary      respjson.Field
+		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
 }
@@ -101,14 +101,14 @@ type EmailTemplate struct {
 	// The visual blocks of the email. Either `html_body` or `visual_blocks` must be
 	// provided.
 	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Subject      resp.Field
-		HTMLBody     resp.Field
-		Settings     resp.Field
-		TextBody     resp.Field
-		VisualBlocks resp.Field
-		ExtraFields  map[string]resp.Field
+		Subject      respjson.Field
+		HTMLBody     respjson.Field
+		Settings     respjson.Field
+		TextBody     respjson.Field
+		VisualBlocks respjson.Field
+		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
 }
@@ -139,12 +139,12 @@ type EmailTemplateSettings struct {
 	// A liquid template that will be injected into the layout above the message
 	// template content.
 	PreContent string `json:"pre_content,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AttachmentKey resp.Field
-		LayoutKey     resp.Field
-		PreContent    resp.Field
-		ExtraFields   map[string]resp.Field
+		AttachmentKey respjson.Field
+		LayoutKey     respjson.Field
+		PreContent    respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -195,20 +195,20 @@ type EmailTemplateVisualBlockUnion struct {
 	// This field is from variant [EmailTemplateVisualBlockEmailPartialBlock].
 	Name string `json:"name"`
 	JSON struct {
-		ID          resp.Field
-		Buttons     resp.Field
-		Type        resp.Field
-		Version     resp.Field
-		LayoutAttrs resp.Field
-		Content     resp.Field
-		URL         resp.Field
-		Action      resp.Field
-		Alt         resp.Field
-		StyleAttrs  resp.Field
-		Variant     resp.Field
-		Attrs       resp.Field
-		Key         resp.Field
-		Name        resp.Field
+		ID          respjson.Field
+		Buttons     respjson.Field
+		Type        respjson.Field
+		Version     respjson.Field
+		LayoutAttrs respjson.Field
+		Content     respjson.Field
+		URL         respjson.Field
+		Action      respjson.Field
+		Alt         respjson.Field
+		StyleAttrs  respjson.Field
+		Variant     respjson.Field
+		Attrs       respjson.Field
+		Key         respjson.Field
+		Name        respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -266,12 +266,12 @@ type EmailTemplateVisualBlockUnionLayoutAttrs struct {
 	PaddingRight    int64  `json:"padding_right"`
 	PaddingTop      int64  `json:"padding_top"`
 	JSON            struct {
-		ColumnGap       resp.Field
-		HorizontalAlign resp.Field
-		PaddingBottom   resp.Field
-		PaddingLeft     resp.Field
-		PaddingRight    resp.Field
-		PaddingTop      resp.Field
+		ColumnGap       respjson.Field
+		HorizontalAlign respjson.Field
+		PaddingBottom   respjson.Field
+		PaddingLeft     respjson.Field
+		PaddingRight    respjson.Field
+		PaddingTop      respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -292,14 +292,14 @@ type EmailTemplateVisualBlockEmailButtonSetBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs `json:"layout_attrs"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          resp.Field
-		Buttons     resp.Field
-		Type        resp.Field
-		Version     resp.Field
-		LayoutAttrs resp.Field
-		ExtraFields map[string]resp.Field
+		ID          respjson.Field
+		Buttons     respjson.Field
+		Type        respjson.Field
+		Version     respjson.Field
+		LayoutAttrs respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -322,14 +322,14 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButton struct {
 	SizeAttrs EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrs `json:"size_attrs"`
 	// The style attributes of the button.
 	StyleAttrs EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrs `json:"style_attrs"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Action      resp.Field
-		Label       resp.Field
-		Variant     resp.Field
-		SizeAttrs   resp.Field
-		StyleAttrs  resp.Field
-		ExtraFields map[string]resp.Field
+		Action      respjson.Field
+		Label       respjson.Field
+		Variant     respjson.Field
+		SizeAttrs   respjson.Field
+		StyleAttrs  respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -348,11 +348,11 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrs struct {
 	//
 	// Any of "sm", "md", "lg".
 	Size string `json:"size"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		IsFullwidth resp.Field
-		Size        resp.Field
-		ExtraFields map[string]resp.Field
+		IsFullwidth respjson.Field
+		Size        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -377,14 +377,14 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrs struct {
 	BorderWidth int64 `json:"border_width"`
 	// The text color of the button.
 	TextColor string `json:"text_color"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		BackgroundColor resp.Field
-		BorderColor     resp.Field
-		BorderRadius    resp.Field
-		BorderWidth     resp.Field
-		TextColor       resp.Field
-		ExtraFields     map[string]resp.Field
+		BackgroundColor respjson.Field
+		BorderColor     respjson.Field
+		BorderRadius    respjson.Field
+		BorderWidth     respjson.Field
+		TextColor       respjson.Field
+		ExtraFields     map[string]respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -413,15 +413,15 @@ type EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ColumnGap       resp.Field
-		HorizontalAlign resp.Field
-		PaddingBottom   resp.Field
-		PaddingLeft     resp.Field
-		PaddingRight    resp.Field
-		PaddingTop      resp.Field
-		ExtraFields     map[string]resp.Field
+		ColumnGap       respjson.Field
+		HorizontalAlign respjson.Field
+		PaddingBottom   respjson.Field
+		PaddingLeft     respjson.Field
+		PaddingRight    respjson.Field
+		PaddingTop      respjson.Field
+		ExtraFields     map[string]respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -442,13 +442,13 @@ type EmailTemplateVisualBlockEmailDividerBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailDividerBlockLayoutAttrs `json:"layout_attrs"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          resp.Field
-		Type        resp.Field
-		Version     resp.Field
-		LayoutAttrs resp.Field
-		ExtraFields map[string]resp.Field
+		ID          respjson.Field
+		Type        respjson.Field
+		Version     respjson.Field
+		LayoutAttrs respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -469,13 +469,13 @@ type EmailTemplateVisualBlockEmailDividerBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		PaddingBottom resp.Field
-		PaddingLeft   resp.Field
-		PaddingRight  resp.Field
-		PaddingTop    resp.Field
-		ExtraFields   map[string]resp.Field
+		PaddingBottom respjson.Field
+		PaddingLeft   respjson.Field
+		PaddingRight  respjson.Field
+		PaddingTop    respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -496,13 +496,13 @@ type EmailTemplateVisualBlockEmailHTMLBlock struct {
 	Type string `json:"type,required"`
 	// The version of the block.
 	Version int64 `json:"version,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          resp.Field
-		Content     resp.Field
-		Type        resp.Field
-		Version     resp.Field
-		ExtraFields map[string]resp.Field
+		ID          respjson.Field
+		Content     respjson.Field
+		Type        respjson.Field
+		Version     respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -531,17 +531,17 @@ type EmailTemplateVisualBlockEmailImageBlock struct {
 	LayoutAttrs EmailTemplateVisualBlockEmailImageBlockLayoutAttrs `json:"layout_attrs"`
 	// The style attributes of the image.
 	StyleAttrs EmailTemplateVisualBlockEmailImageBlockStyleAttrs `json:"style_attrs"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          resp.Field
-		Type        resp.Field
-		URL         resp.Field
-		Version     resp.Field
-		Action      resp.Field
-		Alt         resp.Field
-		LayoutAttrs resp.Field
-		StyleAttrs  resp.Field
-		ExtraFields map[string]resp.Field
+		ID          respjson.Field
+		Type        respjson.Field
+		URL         respjson.Field
+		Version     respjson.Field
+		Action      respjson.Field
+		Alt         respjson.Field
+		LayoutAttrs respjson.Field
+		StyleAttrs  respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -566,14 +566,14 @@ type EmailTemplateVisualBlockEmailImageBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		HorizontalAlign resp.Field
-		PaddingBottom   resp.Field
-		PaddingLeft     resp.Field
-		PaddingRight    resp.Field
-		PaddingTop      resp.Field
-		ExtraFields     map[string]resp.Field
+		HorizontalAlign respjson.Field
+		PaddingBottom   respjson.Field
+		PaddingLeft     respjson.Field
+		PaddingRight    respjson.Field
+		PaddingTop      respjson.Field
+		ExtraFields     map[string]respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -588,10 +588,10 @@ func (r *EmailTemplateVisualBlockEmailImageBlockLayoutAttrs) UnmarshalJSON(data 
 type EmailTemplateVisualBlockEmailImageBlockStyleAttrs struct {
 	// The width of the image.
 	Width string `json:"width"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Width       resp.Field
-		ExtraFields map[string]resp.Field
+		Width       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -616,15 +616,15 @@ type EmailTemplateVisualBlockEmailMarkdownBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs `json:"layout_attrs"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          resp.Field
-		Content     resp.Field
-		Type        resp.Field
-		Variant     resp.Field
-		Version     resp.Field
-		LayoutAttrs resp.Field
-		ExtraFields map[string]resp.Field
+		ID          respjson.Field
+		Content     respjson.Field
+		Type        respjson.Field
+		Variant     respjson.Field
+		Version     respjson.Field
+		LayoutAttrs respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -645,13 +645,13 @@ type EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		PaddingBottom resp.Field
-		PaddingLeft   resp.Field
-		PaddingRight  resp.Field
-		PaddingTop    resp.Field
-		ExtraFields   map[string]resp.Field
+		PaddingBottom respjson.Field
+		PaddingLeft   respjson.Field
+		PaddingRight  respjson.Field
+		PaddingTop    respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -679,16 +679,16 @@ type EmailTemplateVisualBlockEmailPartialBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailPartialBlockLayoutAttrs `json:"layout_attrs"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          resp.Field
-		Attrs       resp.Field
-		Key         resp.Field
-		Name        resp.Field
-		Type        resp.Field
-		Version     resp.Field
-		LayoutAttrs resp.Field
-		ExtraFields map[string]resp.Field
+		ID          respjson.Field
+		Attrs       respjson.Field
+		Key         respjson.Field
+		Name        respjson.Field
+		Type        respjson.Field
+		Version     respjson.Field
+		LayoutAttrs respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -709,13 +709,13 @@ type EmailTemplateVisualBlockEmailPartialBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		PaddingBottom resp.Field
-		PaddingLeft   resp.Field
-		PaddingRight  resp.Field
-		PaddingTop    resp.Field
-		ExtraFields   map[string]resp.Field
+		PaddingBottom respjson.Field
+		PaddingLeft   respjson.Field
+		PaddingRight  respjson.Field
+		PaddingTop    respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -1426,12 +1426,12 @@ type InAppFeedTemplate struct {
 	// The URL to navigate to when the in-app feed is tapped. Can be omitted for
 	// multi-action templates, where the action buttons will be used instead.
 	ActionURL string `json:"action_url,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		MarkdownBody  resp.Field
-		ActionButtons resp.Field
-		ActionURL     resp.Field
-		ExtraFields   map[string]resp.Field
+		MarkdownBody  respjson.Field
+		ActionButtons respjson.Field
+		ActionURL     respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -1457,11 +1457,11 @@ type InAppFeedTemplateActionButton struct {
 	Action string `json:"action,required"`
 	// The label of the action button.
 	Label string `json:"label,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Action      resp.Field
-		Label       resp.Field
-		ExtraFields map[string]resp.Field
+		Action      respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1516,12 +1516,12 @@ type PushTemplate struct {
 	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
 	// for the push template. Can be omitted.
 	Settings PushTemplateSettings `json:"settings,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		TextBody    resp.Field
-		Title       resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		TextBody    respjson.Field
+		Title       respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1551,11 +1551,11 @@ type PushTemplateSettings struct {
 	DeliveryType string `json:"delivery_type"`
 	// A JSON object that overrides the payload sent to the push provider.
 	PayloadOverrides string `json:"payload_overrides"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		DeliveryType     resp.Field
-		PayloadOverrides resp.Field
-		ExtraFields      map[string]resp.Field
+		DeliveryType     respjson.Field
+		PayloadOverrides respjson.Field
+		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -1625,14 +1625,14 @@ type RequestTemplate struct {
 	// A list of key-value pairs for the request query params. Each object should
 	// contain key and value fields with string values.
 	QueryParams []RequestTemplateQueryParam `json:"query_params"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Method      resp.Field
-		URL         resp.Field
-		Body        resp.Field
-		Headers     resp.Field
-		QueryParams resp.Field
-		ExtraFields map[string]resp.Field
+		Method      respjson.Field
+		URL         respjson.Field
+		Body        respjson.Field
+		Headers     respjson.Field
+		QueryParams respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1668,11 +1668,11 @@ type RequestTemplateHeader struct {
 	Key string `json:"key,required"`
 	// The value of the header.
 	Value string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Value       resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1688,11 +1688,11 @@ type RequestTemplateQueryParam struct {
 	Key string `json:"key,required"`
 	// The value of the query param.
 	Value string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Value       resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1764,11 +1764,11 @@ type SMSTemplate struct {
 	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
 	// for the SMS template.
 	Settings SMSTemplateSettings `json:"settings,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		TextBody    resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		TextBody    respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1796,11 +1796,11 @@ type SMSTemplateSettings struct {
 	// An override for the phone number to send the SMS to. When not set, defaults to
 	// `recipient.phone_number`.
 	ToNumber string `json:"to_number,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		PayloadOverrides resp.Field
-		ToNumber         resp.Field
-		ExtraFields      map[string]resp.Field
+		PayloadOverrides respjson.Field
+		ToNumber         respjson.Field
+		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -1862,14 +1862,14 @@ type WebhookTemplate struct {
 	// A list of key-value pairs for the request query params. Each object should
 	// contain key and value fields with string values.
 	QueryParams []WebhookTemplateQueryParam `json:"query_params"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Method      resp.Field
-		URL         resp.Field
-		Body        resp.Field
-		Headers     resp.Field
-		QueryParams resp.Field
-		ExtraFields map[string]resp.Field
+		Method      respjson.Field
+		URL         respjson.Field
+		Body        respjson.Field
+		Headers     respjson.Field
+		QueryParams respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1905,11 +1905,11 @@ type WebhookTemplateHeader struct {
 	Key string `json:"key,required"`
 	// The value of the header.
 	Value string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Value       resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1925,11 +1925,11 @@ type WebhookTemplateQueryParam struct {
 	Key string `json:"key,required"`
 	// The value of the query param.
 	Value string `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Value       resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

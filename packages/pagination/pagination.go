@@ -9,7 +9,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding
@@ -20,10 +20,10 @@ type paramObj = param.APIObject
 
 type EntriesCursorPageInfo struct {
 	After string `json:"after"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		After       resp.Field
-		ExtraFields map[string]resp.Field
+		After       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -37,11 +37,11 @@ func (r *EntriesCursorPageInfo) UnmarshalJSON(data []byte) error {
 type EntriesCursor[T any] struct {
 	Entries  []T                   `json:"entries"`
 	PageInfo EntriesCursorPageInfo `json:"page_info"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Entries     resp.Field
-		PageInfo    resp.Field
-		ExtraFields map[string]resp.Field
+		Entries     respjson.Field
+		PageInfo    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 	cfg *requestconfig.RequestConfig

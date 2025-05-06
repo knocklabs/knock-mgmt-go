@@ -16,7 +16,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // CommitService contains methods and other services that help with interacting
@@ -120,16 +120,16 @@ type Commit struct {
 	Resource CommitResource `json:"resource,required"`
 	// The timestamp of when the commit was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            resp.Field
-		CommitAuthor  resp.Field
-		CommitMessage resp.Field
-		CreatedAt     resp.Field
-		Environment   resp.Field
-		Resource      resp.Field
-		UpdatedAt     resp.Field
-		ExtraFields   map[string]resp.Field
+		ID            respjson.Field
+		CommitAuthor  respjson.Field
+		CommitMessage respjson.Field
+		CreatedAt     respjson.Field
+		Environment   respjson.Field
+		Resource      respjson.Field
+		UpdatedAt     respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -146,11 +146,11 @@ type CommitCommitAuthor struct {
 	Email string `json:"email,required"`
 	// The name of the commit author.
 	Name string `json:"name,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Email       resp.Field
-		Name        resp.Field
-		ExtraFields map[string]resp.Field
+		Email       respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -169,11 +169,11 @@ type CommitResource struct {
 	//
 	// Any of "email_layout", "workflow", "translation", "partial", "message_type".
 	Type string `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Identifier  resp.Field
-		Type        resp.Field
-		ExtraFields map[string]resp.Field
+		Identifier  respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -188,10 +188,10 @@ func (r *CommitResource) UnmarshalJSON(data []byte) error {
 type CommitCommitAllResponse struct {
 	// The result of the commit operation.
 	Result string `json:"result,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Result      resp.Field
-		ExtraFields map[string]resp.Field
+		Result      respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -206,10 +206,10 @@ func (r *CommitCommitAllResponse) UnmarshalJSON(data []byte) error {
 type CommitPromoteAllResponse struct {
 	// The result of the promote operation.
 	Result string `json:"result,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Result      resp.Field
-		ExtraFields map[string]resp.Field
+		Result      respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -224,10 +224,10 @@ func (r *CommitPromoteAllResponse) UnmarshalJSON(data []byte) error {
 type CommitPromoteOneResponse struct {
 	// A commit is a change to a resource within an environment, made by an author.
 	Commit Commit `json:"commit,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Commit      resp.Field
-		ExtraFields map[string]resp.Field
+		Commit      respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

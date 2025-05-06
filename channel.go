@@ -14,7 +14,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // ChannelService contains methods and other services that help with interacting
@@ -87,18 +87,18 @@ type Channel struct {
 	CustomIconURL string `json:"custom_icon_url,nullable"`
 	// Optional description of the channel's purpose or usage.
 	Description string `json:"description,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CreatedAt     resp.Field
-		Key           resp.Field
-		Name          resp.Field
-		Provider      resp.Field
-		Type          resp.Field
-		UpdatedAt     resp.Field
-		ArchivedAt    resp.Field
-		CustomIconURL resp.Field
-		Description   resp.Field
-		ExtraFields   map[string]resp.Field
+		CreatedAt     respjson.Field
+		Key           respjson.Field
+		Name          respjson.Field
+		Provider      respjson.Field
+		Type          respjson.Field
+		UpdatedAt     respjson.Field
+		ArchivedAt    respjson.Field
+		CustomIconURL respjson.Field
+		Description   respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -131,11 +131,11 @@ type ChatChannelSettings struct {
 	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
 	// Whether to track link clicks on chat notifications.
 	LinkTracking bool `json:"link_tracking"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		EmailBasedUserIDResolution resp.Field
-		LinkTracking               resp.Field
-		ExtraFields                map[string]resp.Field
+		EmailBasedUserIDResolution respjson.Field
+		LinkTracking               respjson.Field
+		ExtraFields                map[string]respjson.Field
 		raw                        string
 	} `json:"-"`
 }
@@ -194,18 +194,18 @@ type EmailChannelSettings struct {
 	// The email address to which this channel will send. Defaults to
 	// `recipient.email`. Supports liquid.
 	ToAddress string `json:"to_address"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		BccAddress     resp.Field
-		CcAddress      resp.Field
-		FromAddress    resp.Field
-		FromName       resp.Field
-		JsonOverrides  resp.Field
-		LinkTracking   resp.Field
-		OpenTracking   resp.Field
-		ReplyToAddress resp.Field
-		ToAddress      resp.Field
-		ExtraFields    map[string]resp.Field
+		BccAddress     respjson.Field
+		CcAddress      respjson.Field
+		FromAddress    respjson.Field
+		FromName       respjson.Field
+		JsonOverrides  respjson.Field
+		LinkTracking   respjson.Field
+		OpenTracking   respjson.Field
+		ReplyToAddress respjson.Field
+		ToAddress      respjson.Field
+		ExtraFields    map[string]respjson.Field
 		raw            string
 	} `json:"-"`
 }
@@ -261,10 +261,10 @@ func (r EmailChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 type InAppFeedChannelSettings struct {
 	// Whether to track link clicks on in-app feed notifications.
 	LinkTracking bool `json:"link_tracking"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		LinkTracking resp.Field
-		ExtraFields  map[string]resp.Field
+		LinkTracking respjson.Field
+		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
 }
@@ -304,10 +304,10 @@ type PushChannelSettings struct {
 	// Whether to deregister a push-token when a push send hard bounces. This is to
 	// prevent the same token from being used for future pushes.
 	TokenDeregistration bool `json:"token_deregistration"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		TokenDeregistration resp.Field
-		ExtraFields         map[string]resp.Field
+		TokenDeregistration respjson.Field
+		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
 }
@@ -346,10 +346,10 @@ func (r PushChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 type SMSChannelSettings struct {
 	// Whether to track link clicks on SMS notifications.
 	LinkTracking bool `json:"link_tracking"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		LinkTracking resp.Field
-		ExtraFields  map[string]resp.Field
+		LinkTracking respjson.Field
+		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
 }

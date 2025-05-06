@@ -18,7 +18,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // WorkflowService contains methods and other services that help with interacting
@@ -157,12 +157,12 @@ type Condition struct {
 	// lists, objects, numbers, and booleans. Dynamic values should be path
 	// expressions.
 	Argument string `json:"argument,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Operator    resp.Field
-		Variable    resp.Field
-		Argument    resp.Field
-		ExtraFields map[string]resp.Field
+		Operator    respjson.Field
+		Variable    respjson.Field
+		Argument    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -240,8 +240,8 @@ type ConditionGroupUnion struct {
 	// This field is from variant [ConditionGroupConditionGroupAnyMatch].
 	Any  []ConditionGroupConditionGroupAnyMatchAnyUnion `json:"any"`
 	JSON struct {
-		All resp.Field
-		Any resp.Field
+		All respjson.Field
+		Any respjson.Field
 		raw string
 	} `json:"-"`
 }
@@ -276,10 +276,10 @@ func (r ConditionGroupUnion) ToParam() ConditionGroupUnionParam {
 type ConditionGroupConditionGroupAllMatch struct {
 	// A list of conditions.
 	All []Condition `json:"all"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		All         resp.Field
-		ExtraFields map[string]resp.Field
+		All         respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -294,10 +294,10 @@ func (r *ConditionGroupConditionGroupAllMatch) UnmarshalJSON(data []byte) error 
 type ConditionGroupConditionGroupAnyMatch struct {
 	// An array of conditions or nested condition groups to evaluate.
 	Any []ConditionGroupConditionGroupAnyMatchAnyUnion `json:"any"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Any         resp.Field
-		ExtraFields map[string]resp.Field
+		Any         respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -324,10 +324,10 @@ type ConditionGroupConditionGroupAnyMatchAnyUnion struct {
 	// [ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch].
 	All  []Condition `json:"all"`
 	JSON struct {
-		Operator resp.Field
-		Variable resp.Field
-		Argument resp.Field
-		All      resp.Field
+		Operator respjson.Field
+		Variable respjson.Field
+		Argument respjson.Field
+		All      respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -353,10 +353,10 @@ func (r *ConditionGroupConditionGroupAnyMatchAnyUnion) UnmarshalJSON(data []byte
 type ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch struct {
 	// A list of conditions.
 	All []Condition `json:"all"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		All         resp.Field
-		ExtraFields map[string]resp.Field
+		All         respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -457,11 +457,11 @@ type Duration struct {
 	Unit DurationUnit `json:"unit,required"`
 	// The value of the duration.
 	Value int64 `json:"value,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Unit        resp.Field
-		Value       resp.Field
-		ExtraFields map[string]resp.Field
+		Unit        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -525,13 +525,13 @@ type SendWindow struct {
 	From string `json:"from,nullable" format:"time"`
 	// The end time of the send window.
 	Until string `json:"until,nullable" format:"time"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Day         resp.Field
-		Type        resp.Field
-		From        resp.Field
-		Until       resp.Field
-		ExtraFields map[string]resp.Field
+		Day         respjson.Field
+		Type        respjson.Field
+		From        respjson.Field
+		Until       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -644,25 +644,25 @@ type Workflow struct {
 	//
 	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
 	TriggerFrequency WorkflowTriggerFrequency `json:"trigger_frequency"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Active                resp.Field
-		CreatedAt             resp.Field
-		Environment           resp.Field
-		Key                   resp.Field
-		Name                  resp.Field
-		Sha                   resp.Field
-		Steps                 resp.Field
-		UpdatedAt             resp.Field
-		Valid                 resp.Field
-		Categories            resp.Field
-		Conditions            resp.Field
-		DeletedAt             resp.Field
-		Description           resp.Field
-		Settings              resp.Field
-		TriggerDataJsonSchema resp.Field
-		TriggerFrequency      resp.Field
-		ExtraFields           map[string]resp.Field
+		Active                respjson.Field
+		CreatedAt             respjson.Field
+		Environment           respjson.Field
+		Key                   respjson.Field
+		Name                  respjson.Field
+		Sha                   respjson.Field
+		Steps                 respjson.Field
+		UpdatedAt             respjson.Field
+		Valid                 respjson.Field
+		Categories            respjson.Field
+		Conditions            respjson.Field
+		DeletedAt             respjson.Field
+		Description           respjson.Field
+		Settings              respjson.Field
+		TriggerDataJsonSchema respjson.Field
+		TriggerFrequency      respjson.Field
+		ExtraFields           map[string]respjson.Field
 		raw                   string
 	} `json:"-"`
 }
@@ -681,11 +681,11 @@ type WorkflowSettings struct {
 	// true, will send for every channel in the workflow even if the recipient has
 	// opted out of a certain kind. Defaults to false.
 	OverridePreferences bool `json:"override_preferences"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		IsCommercial        resp.Field
-		OverridePreferences resp.Field
-		ExtraFields         map[string]resp.Field
+		IsCommercial        respjson.Field
+		OverridePreferences respjson.Field
+		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
 }
@@ -724,14 +724,14 @@ type WorkflowBatchStep struct {
 	//
 	// Any of "batch".
 	Type WorkflowBatchStepType `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Description resp.Field
-		Name        resp.Field
-		Ref         resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		ExtraFields map[string]resp.Field
+		Description respjson.Field
+		Name        respjson.Field
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -784,18 +784,18 @@ type WorkflowBatchStepSettings struct {
 	//
 	// Any of "fixed", "sliding".
 	BatchWindowType string `json:"batch_window_type,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		BatchExecutionMode        resp.Field
-		BatchItemsMaxLimit        resp.Field
-		BatchItemsRenderLimit     resp.Field
-		BatchKey                  resp.Field
-		BatchOrder                resp.Field
-		BatchUntilFieldPath       resp.Field
-		BatchWindow               resp.Field
-		BatchWindowExtensionLimit resp.Field
-		BatchWindowType           resp.Field
-		ExtraFields               map[string]resp.Field
+		BatchExecutionMode        respjson.Field
+		BatchItemsMaxLimit        respjson.Field
+		BatchItemsRenderLimit     respjson.Field
+		BatchKey                  respjson.Field
+		BatchOrder                respjson.Field
+		BatchUntilFieldPath       respjson.Field
+		BatchWindow               respjson.Field
+		BatchWindowExtensionLimit respjson.Field
+		BatchWindowType           respjson.Field
+		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
 }
@@ -908,14 +908,14 @@ type WorkflowBranchStep struct {
 	//
 	// Any of "branch".
 	Type WorkflowBranchStepType `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Branches    resp.Field
-		Description resp.Field
-		Name        resp.Field
-		Ref         resp.Field
-		Type        resp.Field
-		ExtraFields map[string]resp.Field
+		Branches    respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		Ref         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -945,13 +945,13 @@ type WorkflowBranchStepBranch struct {
 	Steps []WorkflowStepUnion `json:"steps"`
 	// If the workflow should halt at the end of the branch.
 	Terminates bool `json:"terminates"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Conditions  resp.Field
-		Name        resp.Field
-		Steps       resp.Field
-		Terminates  resp.Field
-		ExtraFields map[string]resp.Field
+		Conditions  respjson.Field
+		Name        respjson.Field
+		Steps       respjson.Field
+		Terminates  respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1046,19 +1046,19 @@ type WorkflowChannelStep struct {
 	// A list of send window objects. Must include one send window object per day of
 	// the week.
 	SendWindows []SendWindow `json:"send_windows,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Name             resp.Field
-		Ref              resp.Field
-		Template         resp.Field
-		Type             resp.Field
-		ChannelGroupKey  resp.Field
-		ChannelKey       resp.Field
-		ChannelOverrides resp.Field
-		Conditions       resp.Field
-		Description      resp.Field
-		SendWindows      resp.Field
-		ExtraFields      map[string]resp.Field
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -1116,22 +1116,22 @@ type WorkflowChannelStepTemplateUnion struct {
 	// This field is from variant [WebhookTemplate].
 	QueryParams []WebhookTemplateQueryParam `json:"query_params"`
 	JSON        struct {
-		Subject       resp.Field
-		HTMLBody      resp.Field
-		Settings      resp.Field
-		TextBody      resp.Field
-		VisualBlocks  resp.Field
-		MarkdownBody  resp.Field
-		ActionButtons resp.Field
-		ActionURL     resp.Field
-		Title         resp.Field
-		JsonBody      resp.Field
-		Summary       resp.Field
-		Method        resp.Field
-		URL           resp.Field
-		Body          resp.Field
-		Headers       resp.Field
-		QueryParams   resp.Field
+		Subject       respjson.Field
+		HTMLBody      respjson.Field
+		Settings      respjson.Field
+		TextBody      respjson.Field
+		VisualBlocks  respjson.Field
+		MarkdownBody  respjson.Field
+		ActionButtons respjson.Field
+		ActionURL     respjson.Field
+		Title         respjson.Field
+		JsonBody      respjson.Field
+		Summary       respjson.Field
+		Method        respjson.Field
+		URL           respjson.Field
+		Body          respjson.Field
+		Headers       respjson.Field
+		QueryParams   respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -1192,12 +1192,12 @@ type WorkflowChannelStepTemplateUnionSettings struct {
 	// This field is from variant [PushTemplateSettings].
 	DeliveryType string `json:"delivery_type"`
 	JSON         struct {
-		AttachmentKey    resp.Field
-		LayoutKey        resp.Field
-		PreContent       resp.Field
-		PayloadOverrides resp.Field
-		ToNumber         resp.Field
-		DeliveryType     resp.Field
+		AttachmentKey    respjson.Field
+		LayoutKey        respjson.Field
+		PreContent       respjson.Field
+		PayloadOverrides respjson.Field
+		ToNumber         respjson.Field
+		DeliveryType     respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -1241,17 +1241,17 @@ type WorkflowChannelStepChannelOverridesUnion struct {
 	// This field is from variant [ChatChannelSettings].
 	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
 	JSON                       struct {
-		BccAddress                 resp.Field
-		CcAddress                  resp.Field
-		FromAddress                resp.Field
-		FromName                   resp.Field
-		JsonOverrides              resp.Field
-		LinkTracking               resp.Field
-		OpenTracking               resp.Field
-		ReplyToAddress             resp.Field
-		ToAddress                  resp.Field
-		TokenDeregistration        resp.Field
-		EmailBasedUserIDResolution resp.Field
+		BccAddress                 respjson.Field
+		CcAddress                  respjson.Field
+		FromAddress                respjson.Field
+		FromName                   respjson.Field
+		JsonOverrides              respjson.Field
+		LinkTracking               respjson.Field
+		OpenTracking               respjson.Field
+		ReplyToAddress             respjson.Field
+		ToAddress                  respjson.Field
+		TokenDeregistration        respjson.Field
+		EmailBasedUserIDResolution respjson.Field
 		raw                        string
 	} `json:"-"`
 }
@@ -1729,15 +1729,15 @@ type WorkflowDelayStep struct {
 	//
 	// Any of "delay".
 	Type WorkflowDelayStepType `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Conditions  resp.Field
-		Description resp.Field
-		Name        resp.Field
-		Ref         resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		ExtraFields map[string]resp.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1765,11 +1765,11 @@ type WorkflowDelayStepSettings struct {
 	// When set will use the path to resolve the delay into a timestamp from the
 	// property referenced
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		DelayFor            resp.Field
-		DelayUntilFieldPath resp.Field
-		ExtraFields         map[string]resp.Field
+		DelayFor            respjson.Field
+		DelayUntilFieldPath respjson.Field
+		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
 }
@@ -1850,15 +1850,15 @@ type WorkflowFetchStep struct {
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
 	Description string `json:"description,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Name        resp.Field
-		Ref         resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		Conditions  resp.Field
-		Description resp.Field
-		ExtraFields map[string]resp.Field
+		Name        respjson.Field
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1943,18 +1943,18 @@ type WorkflowStepUnion struct {
 	// This field is from variant [WorkflowBranchStep].
 	Branches []WorkflowBranchStepBranch `json:"branches"`
 	JSON     struct {
-		Name             resp.Field
-		Ref              resp.Field
-		Template         resp.Field
-		Type             resp.Field
-		ChannelGroupKey  resp.Field
-		ChannelKey       resp.Field
-		ChannelOverrides resp.Field
-		Conditions       resp.Field
-		Description      resp.Field
-		SendWindows      resp.Field
-		Settings         resp.Field
-		Branches         resp.Field
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		Settings         respjson.Field
+		Branches         respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -2061,32 +2061,32 @@ type WorkflowStepUnionSettings struct {
 	// This field is from variant [WorkflowTriggerWorkflowStepSettings].
 	WorkflowKey string `json:"workflow_key"`
 	JSON        struct {
-		DelayFor                  resp.Field
-		DelayUntilFieldPath       resp.Field
-		BatchExecutionMode        resp.Field
-		BatchItemsMaxLimit        resp.Field
-		BatchItemsRenderLimit     resp.Field
-		BatchKey                  resp.Field
-		BatchOrder                resp.Field
-		BatchUntilFieldPath       resp.Field
-		BatchWindow               resp.Field
-		BatchWindowExtensionLimit resp.Field
-		BatchWindowType           resp.Field
-		Method                    resp.Field
-		URL                       resp.Field
-		Body                      resp.Field
-		Headers                   resp.Field
-		QueryParams               resp.Field
-		ThrottleKey               resp.Field
-		ThrottleLimit             resp.Field
-		ThrottleWindow            resp.Field
-		ThrottleWindowFieldPath   resp.Field
-		Actor                     resp.Field
-		CancellationKey           resp.Field
-		Data                      resp.Field
-		Recipients                resp.Field
-		Tenant                    resp.Field
-		WorkflowKey               resp.Field
+		DelayFor                  respjson.Field
+		DelayUntilFieldPath       respjson.Field
+		BatchExecutionMode        respjson.Field
+		BatchItemsMaxLimit        respjson.Field
+		BatchItemsRenderLimit     respjson.Field
+		BatchKey                  respjson.Field
+		BatchOrder                respjson.Field
+		BatchUntilFieldPath       respjson.Field
+		BatchWindow               respjson.Field
+		BatchWindowExtensionLimit respjson.Field
+		BatchWindowType           respjson.Field
+		Method                    respjson.Field
+		URL                       respjson.Field
+		Body                      respjson.Field
+		Headers                   respjson.Field
+		QueryParams               respjson.Field
+		ThrottleKey               respjson.Field
+		ThrottleLimit             respjson.Field
+		ThrottleWindow            respjson.Field
+		ThrottleWindowFieldPath   respjson.Field
+		Actor                     respjson.Field
+		CancellationKey           respjson.Field
+		Data                      respjson.Field
+		Recipients                respjson.Field
+		Tenant                    respjson.Field
+		WorkflowKey               respjson.Field
 		raw                       string
 	} `json:"-"`
 }
@@ -2346,15 +2346,15 @@ type WorkflowThrottleStep struct {
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
 	Description string `json:"description,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Name        resp.Field
-		Ref         resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		Conditions  resp.Field
-		Description resp.Field
-		ExtraFields map[string]resp.Field
+		Name        respjson.Field
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -2387,13 +2387,13 @@ type WorkflowThrottleStepSettings struct {
 	// an ISO-8601 timestamp. See more in the
 	// [docs](https://docs.knock.app/designing-workflows/throttle-function#set-a-dynamic-throttle-window).
 	ThrottleWindowFieldPath string `json:"throttle_window_field_path,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ThrottleKey             resp.Field
-		ThrottleLimit           resp.Field
-		ThrottleWindow          resp.Field
-		ThrottleWindowFieldPath resp.Field
-		ExtraFields             map[string]resp.Field
+		ThrottleKey             respjson.Field
+		ThrottleLimit           respjson.Field
+		ThrottleWindow          respjson.Field
+		ThrottleWindowFieldPath respjson.Field
+		ExtraFields             map[string]respjson.Field
 		raw                     string
 	} `json:"-"`
 }
@@ -2477,15 +2477,15 @@ type WorkflowTriggerWorkflowStep struct {
 	Conditions ConditionGroupUnion `json:"conditions,nullable"`
 	// A description for the workflow step.
 	Description string `json:"description"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Name        resp.Field
-		Ref         resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		Conditions  resp.Field
-		Description resp.Field
-		ExtraFields map[string]resp.Field
+		Name        respjson.Field
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -2520,15 +2520,15 @@ type WorkflowTriggerWorkflowStepSettings struct {
 	Tenant string `json:"tenant"`
 	// The key of the workflow to trigger. Supports liquid.
 	WorkflowKey string `json:"workflow_key"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Actor           resp.Field
-		CancellationKey resp.Field
-		Data            resp.Field
-		Recipients      resp.Field
-		Tenant          resp.Field
-		WorkflowKey     resp.Field
-		ExtraFields     map[string]resp.Field
+		Actor           respjson.Field
+		CancellationKey respjson.Field
+		Data            respjson.Field
+		Recipients      respjson.Field
+		Tenant          respjson.Field
+		WorkflowKey     respjson.Field
+		ExtraFields     map[string]respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -2599,10 +2599,10 @@ func (r WorkflowTriggerWorkflowStepSettingsParam) MarshalJSON() (data []byte, er
 type WorkflowActivateResponse struct {
 	// A workflow object.
 	Workflow Workflow `json:"workflow,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Workflow    resp.Field
-		ExtraFields map[string]resp.Field
+		Workflow    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -2617,10 +2617,10 @@ func (r *WorkflowActivateResponse) UnmarshalJSON(data []byte) error {
 type WorkflowRunResponse struct {
 	// The ID of the workflow run.
 	WorkflowRunID string `json:"workflow_run_id,required" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		WorkflowRunID resp.Field
-		ExtraFields   map[string]resp.Field
+		WorkflowRunID respjson.Field
+		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -2635,10 +2635,10 @@ func (r *WorkflowRunResponse) UnmarshalJSON(data []byte) error {
 type WorkflowUpsertResponse struct {
 	// A workflow object.
 	Workflow Workflow `json:"workflow,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Workflow    resp.Field
-		ExtraFields map[string]resp.Field
+		Workflow    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -2653,10 +2653,10 @@ func (r *WorkflowUpsertResponse) UnmarshalJSON(data []byte) error {
 type WorkflowValidateResponse struct {
 	// A workflow object.
 	Workflow Workflow `json:"workflow,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Workflow    resp.Field
-		ExtraFields map[string]resp.Field
+		Workflow    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
