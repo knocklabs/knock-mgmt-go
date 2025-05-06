@@ -18,7 +18,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // MessageTypeService contains methods and other services that help with
@@ -142,24 +142,24 @@ type MessageType struct {
 	Description string `json:"description,nullable"`
 	// The icon name of the message type.
 	IconName string `json:"icon_name"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CreatedAt   resp.Field
-		Environment resp.Field
-		Key         resp.Field
-		Name        resp.Field
-		Owner       resp.Field
-		Preview     resp.Field
-		Semver      resp.Field
-		Sha         resp.Field
-		UpdatedAt   resp.Field
-		Valid       resp.Field
-		Variants    resp.Field
-		ArchivedAt  resp.Field
-		DeletedAt   resp.Field
-		Description resp.Field
-		IconName    resp.Field
-		ExtraFields map[string]resp.Field
+		CreatedAt   respjson.Field
+		Environment respjson.Field
+		Key         respjson.Field
+		Name        respjson.Field
+		Owner       respjson.Field
+		Preview     respjson.Field
+		Semver      respjson.Field
+		Sha         respjson.Field
+		UpdatedAt   respjson.Field
+		Valid       respjson.Field
+		Variants    respjson.Field
+		ArchivedAt  respjson.Field
+		DeletedAt   respjson.Field
+		Description respjson.Field
+		IconName    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -190,13 +190,13 @@ type MessageTypeTextField struct {
 	Type MessageTypeTextFieldType `json:"type,required"`
 	// Settings for the text field.
 	Settings MessageTypeTextFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -232,14 +232,14 @@ type MessageTypeTextFieldSettings struct {
 	MinLength   int64  `json:"min_length"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		MaxLength   resp.Field
-		MinLength   resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -298,12 +298,12 @@ type MessageTypeVariant struct {
 	Key string `json:"key,required"`
 	// A name for the variant. Must be at maximum 255 characters in length.
 	Name string `json:"name,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Fields      resp.Field
-		Key         resp.Field
-		Name        resp.Field
-		ExtraFields map[string]resp.Field
+		Fields      respjson.Field
+		Key         respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -358,14 +358,14 @@ type MessageTypeVariantFieldUnion struct {
 	// This field is from variant [MessageTypeVariantFieldMessageTypeImageField].
 	URL  MessageTypeVariantFieldMessageTypeImageFieldURL `json:"url"`
 	JSON struct {
-		Key      resp.Field
-		Label    resp.Field
-		Type     resp.Field
-		Settings resp.Field
-		Action   resp.Field
-		Text     resp.Field
-		Alt      resp.Field
-		URL      resp.Field
+		Key      respjson.Field
+		Label    respjson.Field
+		Type     respjson.Field
+		Settings respjson.Field
+		Action   respjson.Field
+		Text     respjson.Field
+		Alt      respjson.Field
+		URL      respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -441,12 +441,12 @@ type MessageTypeVariantFieldUnionSettings struct {
 	MaxLength int64                                       `json:"max_length"`
 	MinLength int64                                       `json:"min_length"`
 	JSON      struct {
-		Default     resp.Field
-		Description resp.Field
-		Required    resp.Field
-		Options     resp.Field
-		MaxLength   resp.Field
-		MinLength   resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		Options     respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -472,9 +472,9 @@ type MessageTypeVariantFieldUnionSettingsDefault struct {
 	// This field will be present if the value is a [[]string] instead of an object.
 	OfStringArray []string `json:",inline"`
 	JSON          struct {
-		OfBool        resp.Field
-		OfString      resp.Field
-		OfStringArray resp.Field
+		OfBool        respjson.Field
+		OfString      respjson.Field
+		OfStringArray respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -504,8 +504,8 @@ type MessageTypeVariantFieldUnionSettingsOptions struct {
 	// object.
 	OfMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions []MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption `json:",inline"`
 	JSON                                                           struct {
-		OfMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptions resp.Field
-		OfMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions      resp.Field
+		OfMessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptions respjson.Field
+		OfMessageTypeVariantFieldMessageTypeSelectFieldSettingsOptions      respjson.Field
 		raw                                                                 string
 	} `json:"-"`
 }
@@ -526,13 +526,13 @@ type MessageTypeVariantFieldMessageTypeBooleanField struct {
 	Type string `json:"type,required"`
 	// Settings for the boolean field.
 	Settings MessageTypeVariantFieldMessageTypeBooleanFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -550,12 +550,12 @@ type MessageTypeVariantFieldMessageTypeBooleanFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -582,15 +582,15 @@ type MessageTypeVariantFieldMessageTypeButtonField struct {
 	Type string `json:"type,required"`
 	// Settings for the button field.
 	Settings MessageTypeVariantFieldMessageTypeButtonFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Action      resp.Field
-		Key         resp.Field
-		Label       resp.Field
-		Text        resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Action      respjson.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Text        respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -606,11 +606,11 @@ type MessageTypeVariantFieldMessageTypeButtonFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Description resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -639,16 +639,16 @@ type MessageTypeVariantFieldMessageTypeImageField struct {
 	URL MessageTypeVariantFieldMessageTypeImageFieldURL `json:"url,required"`
 	// Settings for the image field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Action      resp.Field
-		Alt         resp.Field
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		URL         resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Action      respjson.Field
+		Alt         respjson.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		URL         respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -671,13 +671,13 @@ type MessageTypeVariantFieldMessageTypeImageFieldURL struct {
 	Type string `json:"type,required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldURLSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -695,12 +695,12 @@ type MessageTypeVariantFieldMessageTypeImageFieldURLSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -716,11 +716,11 @@ type MessageTypeVariantFieldMessageTypeImageFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Description resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -743,13 +743,13 @@ type MessageTypeVariantFieldMessageTypeMarkdownField struct {
 	Type string `json:"type,required"`
 	// Settings for the markdown field.
 	Settings MessageTypeVariantFieldMessageTypeMarkdownFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -767,12 +767,12 @@ type MessageTypeVariantFieldMessageTypeMarkdownFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -795,13 +795,13 @@ type MessageTypeVariantFieldMessageTypeMultiSelectField struct {
 	//
 	// Any of "multi_select".
 	Type string `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -821,13 +821,13 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings struct {
 	Options []MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption `json:"options"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		Options     resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Options     respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -845,11 +845,11 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption struct {
 	Value string `json:"value,required"`
 	// The display label for the option.
 	Label string `json:"label"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Value       resp.Field
-		Label       resp.Field
-		ExtraFields map[string]resp.Field
+		Value       respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -874,13 +874,13 @@ type MessageTypeVariantFieldMessageTypeSelectField struct {
 	//
 	// Any of "select".
 	Type string `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Settings    resp.Field
-		Type        resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -900,13 +900,13 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettings struct {
 	Options []MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption `json:"options"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		Options     resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Options     respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -922,11 +922,11 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption struct {
 	Value string `json:"value,required"`
 	// The display label for the option.
 	Label string `json:"label"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Value       resp.Field
-		Label       resp.Field
-		ExtraFields map[string]resp.Field
+		Value       respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -951,13 +951,13 @@ type MessageTypeVariantFieldMessageTypeTextareaField struct {
 	Type string `json:"type,required"`
 	// Settings for the textarea field.
 	Settings MessageTypeVariantFieldMessageTypeTextareaFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -977,14 +977,14 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldSettings struct {
 	MinLength   int64  `json:"min_length"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		MaxLength   resp.Field
-		MinLength   resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1007,13 +1007,13 @@ type MessageTypeVariantFieldMessageTypeURLField struct {
 	Type string `json:"type,required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeURLFieldSettings `json:"settings"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key         resp.Field
-		Label       resp.Field
-		Type        resp.Field
-		Settings    resp.Field
-		ExtraFields map[string]resp.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1031,12 +1031,12 @@ type MessageTypeVariantFieldMessageTypeURLFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Default     resp.Field
-		Description resp.Field
-		Required    resp.Field
-		ExtraFields map[string]resp.Field
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1847,10 +1847,10 @@ type MessageTypeUpsertResponse struct {
 	// A message type is a schema for a message that maps to a UI component or element
 	// within your application.
 	MessageType MessageType `json:"message_type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		MessageType resp.Field
-		ExtraFields map[string]resp.Field
+		MessageType respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -1866,10 +1866,10 @@ type MessageTypeValidateResponse struct {
 	// A message type is a schema for a message that maps to a UI component or element
 	// within your application.
 	MessageType MessageType `json:"message_type,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		MessageType resp.Field
-		ExtraFields map[string]resp.Field
+		MessageType respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

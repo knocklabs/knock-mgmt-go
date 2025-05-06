@@ -16,7 +16,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // EnvironmentService contains methods and other services that help with
@@ -101,19 +101,19 @@ type Environment struct {
 	LabelColor string `json:"label_color,nullable"`
 	// The timestamp of the most-recent commit in the environment.
 	LastCommitAt time.Time `json:"last_commit_at,nullable" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CreatedAt    resp.Field
-		Name         resp.Field
-		Order        resp.Field
-		Owner        resp.Field
-		Slug         resp.Field
-		UpdatedAt    resp.Field
-		DeletedAt    resp.Field
-		HidePiiData  resp.Field
-		LabelColor   resp.Field
-		LastCommitAt resp.Field
-		ExtraFields  map[string]resp.Field
+		CreatedAt    respjson.Field
+		Name         respjson.Field
+		Order        respjson.Field
+		Owner        respjson.Field
+		Slug         respjson.Field
+		UpdatedAt    respjson.Field
+		DeletedAt    respjson.Field
+		HidePiiData  respjson.Field
+		LabelColor   respjson.Field
+		LastCommitAt respjson.Field
+		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
 }

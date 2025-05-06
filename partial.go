@@ -16,7 +16,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // PartialService contains methods and other services that help with interacting
@@ -130,20 +130,20 @@ type Partial struct {
 	// Indicates whether the partial can be used in the visual editor. Only applies to
 	// HTML partials.
 	VisualBlockEnabled bool `json:"visual_block_enabled"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content            resp.Field
-		InsertedAt         resp.Field
-		Key                resp.Field
-		Name               resp.Field
-		Type               resp.Field
-		UpdatedAt          resp.Field
-		Valid              resp.Field
-		Description        resp.Field
-		Environment        resp.Field
-		IconName           resp.Field
-		VisualBlockEnabled resp.Field
-		ExtraFields        map[string]resp.Field
+		Content            respjson.Field
+		InsertedAt         respjson.Field
+		Key                respjson.Field
+		Name               respjson.Field
+		Type               respjson.Field
+		UpdatedAt          respjson.Field
+		Valid              respjson.Field
+		Description        respjson.Field
+		Environment        respjson.Field
+		IconName           respjson.Field
+		VisualBlockEnabled respjson.Field
+		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
 }
@@ -168,10 +168,10 @@ const (
 type PartialUpsertResponse struct {
 	// A partial is a reusable piece of content that can be used in a template.
 	Partial Partial `json:"partial,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Partial     resp.Field
-		ExtraFields map[string]resp.Field
+		Partial     respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -186,10 +186,10 @@ func (r *PartialUpsertResponse) UnmarshalJSON(data []byte) error {
 type PartialValidateResponse struct {
 	// A partial is a reusable piece of content that can be used in a template.
 	Partial Partial `json:"partial,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Partial     resp.Field
-		ExtraFields map[string]resp.Field
+		Partial     respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

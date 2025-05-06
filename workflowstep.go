@@ -15,7 +15,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // WorkflowStepService contains methods and other services that help with
@@ -65,12 +65,12 @@ type WorkflowStepPreviewTemplateResponse struct {
 	Result WorkflowStepPreviewTemplateResponseResult `json:"result,required"`
 	// The rendered template, ready to be previewed.
 	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ContentType resp.Field
-		Result      resp.Field
-		Template    resp.Field
-		ExtraFields map[string]resp.Field
+		ContentType respjson.Field
+		Result      respjson.Field
+		Template    respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -139,22 +139,22 @@ type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
 	// This field is from variant [RequestTemplate].
 	QueryParams []RequestTemplateQueryParam `json:"query_params"`
 	JSON        struct {
-		Subject       resp.Field
-		HTMLBody      resp.Field
-		Settings      resp.Field
-		TextBody      resp.Field
-		VisualBlocks  resp.Field
-		MarkdownBody  resp.Field
-		ActionButtons resp.Field
-		ActionURL     resp.Field
-		Title         resp.Field
-		JsonBody      resp.Field
-		Summary       resp.Field
-		Method        resp.Field
-		URL           resp.Field
-		Body          resp.Field
-		Headers       resp.Field
-		QueryParams   resp.Field
+		Subject       respjson.Field
+		HTMLBody      respjson.Field
+		Settings      respjson.Field
+		TextBody      respjson.Field
+		VisualBlocks  respjson.Field
+		MarkdownBody  respjson.Field
+		ActionButtons respjson.Field
+		ActionURL     respjson.Field
+		Title         respjson.Field
+		JsonBody      respjson.Field
+		Summary       respjson.Field
+		Method        respjson.Field
+		URL           respjson.Field
+		Body          respjson.Field
+		Headers       respjson.Field
+		QueryParams   respjson.Field
 		raw           string
 	} `json:"-"`
 }
@@ -216,12 +216,12 @@ type WorkflowStepPreviewTemplateResponseTemplateUnionSettings struct {
 	// This field is from variant [SMSTemplateSettings].
 	ToNumber string `json:"to_number"`
 	JSON     struct {
-		AttachmentKey    resp.Field
-		LayoutKey        resp.Field
-		PreContent       resp.Field
-		DeliveryType     resp.Field
-		PayloadOverrides resp.Field
-		ToNumber         resp.Field
+		AttachmentKey    respjson.Field
+		LayoutKey        respjson.Field
+		PreContent       respjson.Field
+		DeliveryType     respjson.Field
+		PayloadOverrides respjson.Field
+		ToNumber         respjson.Field
 		raw              string
 	} `json:"-"`
 }

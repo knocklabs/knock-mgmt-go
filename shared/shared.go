@@ -5,7 +5,7 @@ package shared
 import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding
@@ -24,12 +24,12 @@ type PageInfo struct {
 	// The cursor to fetch entries before. Will only be present if there are more
 	// entries to fetch before the current page.
 	Before string `json:"before,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		PageSize    resp.Field
-		After       resp.Field
-		Before      resp.Field
-		ExtraFields map[string]resp.Field
+		PageSize    respjson.Field
+		After       respjson.Field
+		Before      respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

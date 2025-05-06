@@ -16,7 +16,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // EmailLayoutService contains methods and other services that help with
@@ -121,18 +121,18 @@ type EmailLayout struct {
 	FooterLinks []EmailLayoutFooterLink `json:"footer_links"`
 	// The timestamp of when the email layout was last updated.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CreatedAt   resp.Field
-		HTMLLayout  resp.Field
-		Key         resp.Field
-		Name        resp.Field
-		Sha         resp.Field
-		TextLayout  resp.Field
-		Environment resp.Field
-		FooterLinks resp.Field
-		UpdatedAt   resp.Field
-		ExtraFields map[string]resp.Field
+		CreatedAt   respjson.Field
+		HTMLLayout  respjson.Field
+		Key         respjson.Field
+		Name        respjson.Field
+		Sha         respjson.Field
+		TextLayout  respjson.Field
+		Environment respjson.Field
+		FooterLinks respjson.Field
+		UpdatedAt   respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -148,11 +148,11 @@ type EmailLayoutFooterLink struct {
 	Text string `json:"text,required"`
 	// The URL to link to.
 	URL string `json:"url,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Text        resp.Field
-		URL         resp.Field
-		ExtraFields map[string]resp.Field
+		Text        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -167,10 +167,10 @@ func (r *EmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
 type EmailLayoutUpsertResponse struct {
 	// A versioned email layout used within an environment.
 	EmailLayout EmailLayout `json:"email_layout,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		EmailLayout resp.Field
-		ExtraFields map[string]resp.Field
+		EmailLayout respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -185,10 +185,10 @@ func (r *EmailLayoutUpsertResponse) UnmarshalJSON(data []byte) error {
 type EmailLayoutValidateResponse struct {
 	// A versioned email layout used within an environment.
 	EmailLayout EmailLayout `json:"email_layout,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		EmailLayout resp.Field
-		ExtraFields map[string]resp.Field
+		EmailLayout respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/option"
 	"github.com/stainless-sdks/knock-mapi-go/packages/pagination"
 	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // VariableService contains methods and other services that help with interacting
@@ -75,15 +75,15 @@ type Variable struct {
 	Value string `json:"value,required"`
 	// The description of the variable.
 	Description string `json:"description,nullable"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		InsertedAt  resp.Field
-		Key         resp.Field
-		Type        resp.Field
-		UpdatedAt   resp.Field
-		Value       resp.Field
-		Description resp.Field
-		ExtraFields map[string]resp.Field
+		InsertedAt  respjson.Field
+		Key         respjson.Field
+		Type        respjson.Field
+		UpdatedAt   respjson.Field
+		Value       respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }

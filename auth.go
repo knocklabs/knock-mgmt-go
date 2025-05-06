@@ -9,7 +9,7 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
-	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
+	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
 )
 
 // AuthService contains methods and other services that help with interacting with
@@ -44,12 +44,12 @@ type AuthVerifyResponse struct {
 	AccountName      string `json:"account_name,required"`
 	AccountSlug      string `json:"account_slug,required"`
 	ServiceTokenName string `json:"service_token_name,required"`
-	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AccountName      resp.Field
-		AccountSlug      resp.Field
-		ServiceTokenName resp.Field
-		ExtraFields      map[string]resp.Field
+		AccountName      respjson.Field
+		AccountSlug      respjson.Field
+		ServiceTokenName respjson.Field
+		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
 }
