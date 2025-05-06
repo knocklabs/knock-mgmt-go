@@ -142,8 +142,7 @@ type MessageType struct {
 	Description string `json:"description,nullable"`
 	// The icon name of the message type.
 	IconName string `json:"icon_name"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		CreatedAt   resp.Field
 		Environment resp.Field
@@ -191,8 +190,7 @@ type MessageTypeTextField struct {
 	Type MessageTypeTextFieldType `json:"type,required"`
 	// Settings for the text field.
 	Settings MessageTypeTextFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -213,9 +211,9 @@ func (r *MessageTypeTextField) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// MessageTypeTextFieldParam.IsOverridden()
+// MessageTypeTextFieldParam.Overrides()
 func (r MessageTypeTextField) ToParam() MessageTypeTextFieldParam {
-	return param.OverrideObj[MessageTypeTextFieldParam](r.RawJSON())
+	return param.Override[MessageTypeTextFieldParam](r.RawJSON())
 }
 
 // The type of the field.
@@ -234,8 +232,7 @@ type MessageTypeTextFieldSettings struct {
 	MinLength   int64  `json:"min_length"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -270,9 +267,6 @@ type MessageTypeTextFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeTextFieldParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r MessageTypeTextFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeTextFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -290,11 +284,6 @@ type MessageTypeTextFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeTextFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeTextFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeTextFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -309,8 +298,7 @@ type MessageTypeVariant struct {
 	Key string `json:"key,required"`
 	// A name for the variant. Must be at maximum 255 characters in length.
 	Name string `json:"name,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Fields      resp.Field
 		Key         resp.Field
@@ -330,9 +318,9 @@ func (r *MessageTypeVariant) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// MessageTypeVariantParam.IsOverridden()
+// MessageTypeVariantParam.Overrides()
 func (r MessageTypeVariant) ToParam() MessageTypeVariantParam {
-	return param.OverrideObj[MessageTypeVariantParam](r.RawJSON())
+	return param.Override[MessageTypeVariantParam](r.RawJSON())
 }
 
 // MessageTypeVariantFieldUnion contains all possible properties and values from
@@ -538,8 +526,7 @@ type MessageTypeVariantFieldMessageTypeBooleanField struct {
 	Type string `json:"type,required"`
 	// Settings for the boolean field.
 	Settings MessageTypeVariantFieldMessageTypeBooleanFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -563,8 +550,7 @@ type MessageTypeVariantFieldMessageTypeBooleanFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -596,8 +582,7 @@ type MessageTypeVariantFieldMessageTypeButtonField struct {
 	Type string `json:"type,required"`
 	// Settings for the button field.
 	Settings MessageTypeVariantFieldMessageTypeButtonFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Action      resp.Field
 		Key         resp.Field
@@ -621,8 +606,7 @@ type MessageTypeVariantFieldMessageTypeButtonFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Description resp.Field
 		Required    resp.Field
@@ -655,8 +639,7 @@ type MessageTypeVariantFieldMessageTypeImageField struct {
 	URL MessageTypeVariantFieldMessageTypeImageFieldURL `json:"url,required"`
 	// Settings for the image field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Action      resp.Field
 		Alt         resp.Field
@@ -688,8 +671,7 @@ type MessageTypeVariantFieldMessageTypeImageFieldURL struct {
 	Type string `json:"type,required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldURLSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -713,8 +695,7 @@ type MessageTypeVariantFieldMessageTypeImageFieldURLSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -735,8 +716,7 @@ type MessageTypeVariantFieldMessageTypeImageFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Description resp.Field
 		Required    resp.Field
@@ -763,8 +743,7 @@ type MessageTypeVariantFieldMessageTypeMarkdownField struct {
 	Type string `json:"type,required"`
 	// Settings for the markdown field.
 	Settings MessageTypeVariantFieldMessageTypeMarkdownFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -788,8 +767,7 @@ type MessageTypeVariantFieldMessageTypeMarkdownFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -817,8 +795,7 @@ type MessageTypeVariantFieldMessageTypeMultiSelectField struct {
 	//
 	// Any of "multi_select".
 	Type string `json:"type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -844,8 +821,7 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings struct {
 	Options []MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption `json:"options"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -869,8 +845,7 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption struct {
 	Value string `json:"value,required"`
 	// The display label for the option.
 	Label string `json:"label"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Value       resp.Field
 		Label       resp.Field
@@ -899,8 +874,7 @@ type MessageTypeVariantFieldMessageTypeSelectField struct {
 	//
 	// Any of "select".
 	Type string `json:"type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -926,8 +900,7 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettings struct {
 	Options []MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption `json:"options"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -949,8 +922,7 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption struct {
 	Value string `json:"value,required"`
 	// The display label for the option.
 	Label string `json:"label"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Value       resp.Field
 		Label       resp.Field
@@ -979,8 +951,7 @@ type MessageTypeVariantFieldMessageTypeTextareaField struct {
 	Type string `json:"type,required"`
 	// Settings for the textarea field.
 	Settings MessageTypeVariantFieldMessageTypeTextareaFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -1006,8 +977,7 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldSettings struct {
 	MinLength   int64  `json:"min_length"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -1037,8 +1007,7 @@ type MessageTypeVariantFieldMessageTypeURLField struct {
 	Type string `json:"type,required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeURLFieldSettings `json:"settings"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Label       resp.Field
@@ -1062,8 +1031,7 @@ type MessageTypeVariantFieldMessageTypeURLFieldSettings struct {
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Default     resp.Field
 		Description resp.Field
@@ -1093,9 +1061,6 @@ type MessageTypeVariantParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r MessageTypeVariantParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1117,11 +1082,6 @@ type MessageTypeVariantFieldUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u MessageTypeVariantFieldUnionParam) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u MessageTypeVariantFieldUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[MessageTypeVariantFieldUnionParam](u.OfMessageTypeBooleanField,
 		u.OfMessageTypeButtonField,
@@ -1207,23 +1167,23 @@ func (u MessageTypeVariantFieldUnionParam) GetKey() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u MessageTypeVariantFieldUnionParam) GetLabel() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.IsPresent() {
+	if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeButtonField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeMarkdownField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeMarkdownField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeTextareaField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeTextareaField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.IsPresent() {
+	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	}
 	return nil
@@ -1472,11 +1432,6 @@ type MessageTypeVariantFieldMessageTypeBooleanFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeBooleanFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeBooleanFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeBooleanFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1498,11 +1453,6 @@ type MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1529,11 +1479,6 @@ type MessageTypeVariantFieldMessageTypeButtonFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeButtonFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeButtonFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeButtonFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1553,11 +1498,6 @@ type MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1586,11 +1526,6 @@ type MessageTypeVariantFieldMessageTypeImageFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeImageFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeImageFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1619,11 +1554,6 @@ type MessageTypeVariantFieldMessageTypeImageFieldURLParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeImageFieldURLParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeImageFieldURLParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldURLParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1645,11 +1575,6 @@ type MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1663,11 +1588,6 @@ type MessageTypeVariantFieldMessageTypeImageFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeImageFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeImageFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1690,11 +1610,6 @@ type MessageTypeVariantFieldMessageTypeMarkdownFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeMarkdownFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeMarkdownFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMarkdownFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1716,11 +1631,6 @@ type MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1743,11 +1653,6 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeMultiSelectFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeMultiSelectFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMultiSelectFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1771,11 +1676,6 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1790,11 +1690,6 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam struc
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1817,11 +1712,6 @@ type MessageTypeVariantFieldMessageTypeSelectFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeSelectFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeSelectFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeSelectFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1845,11 +1735,6 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1864,11 +1749,6 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1891,11 +1771,6 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeTextareaFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeTextareaFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeTextareaFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1919,11 +1794,6 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1946,11 +1816,6 @@ type MessageTypeVariantFieldMessageTypeURLFieldParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeURLFieldParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeURLFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeURLFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1972,11 +1837,6 @@ type MessageTypeVariantFieldMessageTypeURLFieldSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeVariantFieldMessageTypeURLFieldSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeVariantFieldMessageTypeURLFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeURLFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1987,8 +1847,7 @@ type MessageTypeUpsertResponse struct {
 	// A message type is a schema for a message that maps to a UI component or element
 	// within your application.
 	MessageType MessageType `json:"message_type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		MessageType resp.Field
 		ExtraFields map[string]resp.Field
@@ -2007,8 +1866,7 @@ type MessageTypeValidateResponse struct {
 	// A message type is a schema for a message that maps to a UI component or element
 	// within your application.
 	MessageType MessageType `json:"message_type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		MessageType resp.Field
 		ExtraFields map[string]resp.Field
@@ -2032,10 +1890,6 @@ type MessageTypeGetParams struct {
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeGetParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [MessageTypeGetParams]'s query parameters as `url.Values`.
 func (r MessageTypeGetParams) URLQuery() (v url.Values, err error) {
@@ -2062,10 +1916,6 @@ type MessageTypeListParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 // URLQuery serializes [MessageTypeListParams]'s query parameters as `url.Values`.
 func (r MessageTypeListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
@@ -2087,10 +1937,6 @@ type MessageTypeUpsertParams struct {
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeUpsertParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r MessageTypeUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeUpsertParams
@@ -2126,11 +1972,6 @@ type MessageTypeUpsertParamsMessageType struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeUpsertParamsMessageType) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeUpsertParamsMessageType) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeUpsertParamsMessageType
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2143,10 +1984,6 @@ type MessageTypeValidateParams struct {
 	MessageType MessageTypeValidateParamsMessageType `json:"message_type,omitzero,required"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeValidateParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r MessageTypeValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeValidateParams
@@ -2182,11 +2019,6 @@ type MessageTypeValidateParamsMessageType struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f MessageTypeValidateParamsMessageType) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r MessageTypeValidateParamsMessageType) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeValidateParamsMessageType
 	return param.MarshalObject(r, (*shadow)(&r))

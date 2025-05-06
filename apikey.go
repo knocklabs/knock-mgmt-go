@@ -11,7 +11,6 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
 	"github.com/stainless-sdks/knock-mapi-go/option"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
 	"github.com/stainless-sdks/knock-mapi-go/packages/resp"
 )
 
@@ -48,8 +47,7 @@ func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams,
 type APIKeyExchangeResponse struct {
 	// The secret API key exchanged from the service token.
 	APIKey string `json:"api_key,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		APIKey      resp.Field
 		ExtraFields map[string]resp.Field
@@ -68,10 +66,6 @@ type APIKeyExchangeParams struct {
 	Environment string `query:"environment,required" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f APIKeyExchangeParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [APIKeyExchangeParams]'s query parameters as `url.Values`.
 func (r APIKeyExchangeParams) URLQuery() (v url.Values, err error) {

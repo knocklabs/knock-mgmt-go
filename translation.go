@@ -124,8 +124,7 @@ type Translation struct {
 	Namespace string `json:"namespace,required"`
 	// The timestamp of when the translation was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Content     resp.Field
 		Format      resp.Field
@@ -157,8 +156,7 @@ const (
 type TranslationGetResponse struct {
 	// A translation object.
 	Translation Translation `json:"translation,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Translation resp.Field
 		ExtraFields map[string]resp.Field
@@ -176,8 +174,7 @@ func (r *TranslationGetResponse) UnmarshalJSON(data []byte) error {
 type TranslationUpsertResponse struct {
 	// A translation object.
 	Translation Translation `json:"translation,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Translation resp.Field
 		ExtraFields map[string]resp.Field
@@ -195,8 +192,7 @@ func (r *TranslationUpsertResponse) UnmarshalJSON(data []byte) error {
 type TranslationValidateResponse struct {
 	// A translation object.
 	Translation Translation `json:"translation,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Translation resp.Field
 		ExtraFields map[string]resp.Field
@@ -227,10 +223,6 @@ type TranslationGetParams struct {
 	Format TranslationGetParamsFormat `query:"format,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f TranslationGetParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [TranslationGetParams]'s query parameters as `url.Values`.
 func (r TranslationGetParams) URLQuery() (v url.Values, err error) {
@@ -275,10 +267,6 @@ type TranslationListParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f TranslationListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 // URLQuery serializes [TranslationListParams]'s query parameters as `url.Values`.
 func (r TranslationListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
@@ -318,10 +306,6 @@ type TranslationUpsertParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f TranslationUpsertParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 func (r TranslationUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow TranslationUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -352,11 +336,6 @@ type TranslationUpsertParamsTranslation struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f TranslationUpsertParamsTranslation) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r TranslationUpsertParamsTranslation) MarshalJSON() (data []byte, err error) {
 	type shadow TranslationUpsertParamsTranslation
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -385,10 +364,6 @@ type TranslationValidateParams struct {
 	Translation TranslationValidateParamsTranslation `json:"translation,omitzero,required"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f TranslationValidateParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r TranslationValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow TranslationValidateParams
@@ -420,11 +395,6 @@ type TranslationValidateParamsTranslation struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f TranslationValidateParamsTranslation) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r TranslationValidateParamsTranslation) MarshalJSON() (data []byte, err error) {
 	type shadow TranslationValidateParamsTranslation
 	return param.MarshalObject(r, (*shadow)(&r))

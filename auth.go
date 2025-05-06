@@ -44,8 +44,7 @@ type AuthVerifyResponse struct {
 	AccountName      string `json:"account_name,required"`
 	AccountSlug      string `json:"account_slug,required"`
 	ServiceTokenName string `json:"service_token_name,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		AccountName      resp.Field
 		AccountSlug      resp.Field

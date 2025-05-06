@@ -157,8 +157,7 @@ type Condition struct {
 	// lists, objects, numbers, and booleans. Dynamic values should be path
 	// expressions.
 	Argument string `json:"argument,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Operator    resp.Field
 		Variable    resp.Field
@@ -178,9 +177,9 @@ func (r *Condition) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// ConditionParam.IsOverridden()
+// ConditionParam.Overrides()
 func (r Condition) ToParam() ConditionParam {
-	return param.OverrideObj[ConditionParam](r.RawJSON())
+	return param.Override[ConditionParam](r.RawJSON())
 }
 
 // The operator to use in the evaluation of the condition.
@@ -226,9 +225,6 @@ type ConditionParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ConditionParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r ConditionParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -271,17 +267,16 @@ func (r *ConditionGroupUnion) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// ConditionGroupUnionParam.IsOverridden()
+// ConditionGroupUnionParam.Overrides()
 func (r ConditionGroupUnion) ToParam() ConditionGroupUnionParam {
-	return param.OverrideObj[ConditionGroupUnionParam](r.RawJSON())
+	return param.Override[ConditionGroupUnionParam](r.RawJSON())
 }
 
 // A group of conditions that must all be met.
 type ConditionGroupConditionGroupAllMatch struct {
 	// A list of conditions.
 	All []Condition `json:"all"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		All         resp.Field
 		ExtraFields map[string]resp.Field
@@ -299,8 +294,7 @@ func (r *ConditionGroupConditionGroupAllMatch) UnmarshalJSON(data []byte) error 
 type ConditionGroupConditionGroupAnyMatch struct {
 	// An array of conditions or nested condition groups to evaluate.
 	Any []ConditionGroupConditionGroupAnyMatchAnyUnion `json:"any"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Any         resp.Field
 		ExtraFields map[string]resp.Field
@@ -359,8 +353,7 @@ func (r *ConditionGroupConditionGroupAnyMatchAnyUnion) UnmarshalJSON(data []byte
 type ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch struct {
 	// A list of conditions.
 	All []Condition `json:"all"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		All         resp.Field
 		ExtraFields map[string]resp.Field
@@ -385,9 +378,6 @@ type ConditionGroupUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u ConditionGroupUnionParam) IsPresent() bool { return !param.IsOmitted(u) && !u.IsNull() }
 func (u ConditionGroupUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[ConditionGroupUnionParam](u.OfConditionGroupAllMatch, u.OfConditionGroupAnyMatch)
 }
@@ -408,11 +398,6 @@ type ConditionGroupConditionGroupAllMatchParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ConditionGroupConditionGroupAllMatchParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r ConditionGroupConditionGroupAllMatchParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionGroupConditionGroupAllMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -425,11 +410,6 @@ type ConditionGroupConditionGroupAnyMatchParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ConditionGroupConditionGroupAnyMatchParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r ConditionGroupConditionGroupAnyMatchParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionGroupConditionGroupAnyMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -444,11 +424,6 @@ type ConditionGroupConditionGroupAnyMatchAnyUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[ConditionGroupConditionGroupAnyMatchAnyUnionParam](u.OfCondition, u.OfConditionGroupAllMatch)
 }
@@ -469,11 +444,6 @@ type ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -487,8 +457,7 @@ type Duration struct {
 	Unit DurationUnit `json:"unit,required"`
 	// The value of the duration.
 	Value int64 `json:"value,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Unit        resp.Field
 		Value       resp.Field
@@ -507,9 +476,9 @@ func (r *Duration) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// DurationParam.IsOverridden()
+// DurationParam.Overrides()
 func (r Duration) ToParam() DurationParam {
-	return param.OverrideObj[DurationParam](r.RawJSON())
+	return param.Override[DurationParam](r.RawJSON())
 }
 
 // The unit of time.
@@ -536,9 +505,6 @@ type DurationParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f DurationParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r DurationParam) MarshalJSON() (data []byte, err error) {
 	type shadow DurationParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -559,8 +525,7 @@ type SendWindow struct {
 	From string `json:"from,nullable" format:"time"`
 	// The end time of the send window.
 	Until string `json:"until,nullable" format:"time"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Day         resp.Field
 		Type        resp.Field
@@ -581,9 +546,9 @@ func (r *SendWindow) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// SendWindowParam.IsOverridden()
+// SendWindowParam.Overrides()
 func (r SendWindow) ToParam() SendWindowParam {
-	return param.OverrideObj[SendWindowParam](r.RawJSON())
+	return param.Override[SendWindowParam](r.RawJSON())
 }
 
 // The day of the week.
@@ -627,9 +592,6 @@ type SendWindowParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f SendWindowParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r SendWindowParam) MarshalJSON() (data []byte, err error) {
 	type shadow SendWindowParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -682,8 +644,7 @@ type Workflow struct {
 	//
 	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
 	TriggerFrequency WorkflowTriggerFrequency `json:"trigger_frequency"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Active                resp.Field
 		CreatedAt             resp.Field
@@ -720,8 +681,7 @@ type WorkflowSettings struct {
 	// true, will send for every channel in the workflow even if the recipient has
 	// opted out of a certain kind. Defaults to false.
 	OverridePreferences bool `json:"override_preferences"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		IsCommercial        resp.Field
 		OverridePreferences resp.Field
@@ -764,8 +724,7 @@ type WorkflowBatchStep struct {
 	//
 	// Any of "batch".
 	Type WorkflowBatchStepType `json:"type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Description resp.Field
 		Name        resp.Field
@@ -787,9 +746,9 @@ func (r *WorkflowBatchStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowBatchStepParam.IsOverridden()
+// WorkflowBatchStepParam.Overrides()
 func (r WorkflowBatchStep) ToParam() WorkflowBatchStepParam {
-	return param.OverrideObj[WorkflowBatchStepParam](r.RawJSON())
+	return param.Override[WorkflowBatchStepParam](r.RawJSON())
 }
 
 // The settings for the batch step.
@@ -825,8 +784,7 @@ type WorkflowBatchStepSettings struct {
 	//
 	// Any of "fixed", "sliding".
 	BatchWindowType string `json:"batch_window_type,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		BatchExecutionMode        resp.Field
 		BatchItemsMaxLimit        resp.Field
@@ -876,9 +834,6 @@ type WorkflowBatchStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowBatchStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowBatchStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBatchStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -920,9 +875,6 @@ type WorkflowBatchStepSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowBatchStepSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowBatchStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBatchStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -956,8 +908,7 @@ type WorkflowBranchStep struct {
 	//
 	// Any of "branch".
 	Type WorkflowBranchStepType `json:"type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Branches    resp.Field
 		Description resp.Field
@@ -979,9 +930,9 @@ func (r *WorkflowBranchStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowBranchStepParam.IsOverridden()
+// WorkflowBranchStepParam.Overrides()
 func (r WorkflowBranchStep) ToParam() WorkflowBranchStepParam {
-	return param.OverrideObj[WorkflowBranchStepParam](r.RawJSON())
+	return param.Override[WorkflowBranchStepParam](r.RawJSON())
 }
 
 // A branch in a branch step.
@@ -994,8 +945,7 @@ type WorkflowBranchStepBranch struct {
 	Steps []WorkflowStepUnion `json:"steps"`
 	// If the workflow should halt at the end of the branch.
 	Terminates bool `json:"terminates"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Conditions  resp.Field
 		Name        resp.Field
@@ -1040,9 +990,6 @@ type WorkflowBranchStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowBranchStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowBranchStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBranchStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1061,9 +1008,6 @@ type WorkflowBranchStepBranchParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowBranchStepBranchParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowBranchStepBranchParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBranchStepBranchParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1102,8 +1046,7 @@ type WorkflowChannelStep struct {
 	// A list of send window objects. Must include one send window object per day of
 	// the week.
 	SendWindows []SendWindow `json:"send_windows,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Name             resp.Field
 		Ref              resp.Field
@@ -1130,9 +1073,9 @@ func (r *WorkflowChannelStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowChannelStepParam.IsOverridden()
+// WorkflowChannelStepParam.Overrides()
 func (r WorkflowChannelStep) ToParam() WorkflowChannelStepParam {
-	return param.OverrideObj[WorkflowChannelStepParam](r.RawJSON())
+	return param.Override[WorkflowChannelStepParam](r.RawJSON())
 }
 
 // WorkflowChannelStepTemplateUnion contains all possible properties and values
@@ -1383,9 +1326,6 @@ type WorkflowChannelStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowChannelStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowChannelStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowChannelStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1404,11 +1344,6 @@ type WorkflowChannelStepTemplateUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowChannelStepTemplateUnionParam) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u WorkflowChannelStepTemplateUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowChannelStepTemplateUnionParam](u.OfEmailTemplate,
 		u.OfInAppFeedTemplate,
@@ -1445,7 +1380,7 @@ func (u WorkflowChannelStepTemplateUnionParam) GetSubject() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepTemplateUnionParam) GetHTMLBody() *string {
-	if vt := u.OfEmailTemplate; vt != nil && vt.HTMLBody.IsPresent() {
+	if vt := u.OfEmailTemplate; vt != nil && vt.HTMLBody.Valid() {
 		return &vt.HTMLBody.Value
 	}
 	return nil
@@ -1469,7 +1404,7 @@ func (u WorkflowChannelStepTemplateUnionParam) GetActionButtons() []InAppFeedTem
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepTemplateUnionParam) GetActionURL() *string {
-	if vt := u.OfInAppFeedTemplate; vt != nil && vt.ActionURL.IsPresent() {
+	if vt := u.OfInAppFeedTemplate; vt != nil && vt.ActionURL.Valid() {
 		return &vt.ActionURL.Value
 	}
 	return nil
@@ -1485,7 +1420,7 @@ func (u WorkflowChannelStepTemplateUnionParam) GetTitle() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepTemplateUnionParam) GetJsonBody() *string {
-	if vt := u.OfChatTemplate; vt != nil && vt.JsonBody.IsPresent() {
+	if vt := u.OfChatTemplate; vt != nil && vt.JsonBody.Valid() {
 		return &vt.JsonBody.Value
 	}
 	return nil
@@ -1493,7 +1428,7 @@ func (u WorkflowChannelStepTemplateUnionParam) GetJsonBody() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepTemplateUnionParam) GetSummary() *string {
-	if vt := u.OfChatTemplate; vt != nil && vt.Summary.IsPresent() {
+	if vt := u.OfChatTemplate; vt != nil && vt.Summary.Valid() {
 		return &vt.Summary.Value
 	}
 	return nil
@@ -1517,7 +1452,7 @@ func (u WorkflowChannelStepTemplateUnionParam) GetURL() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepTemplateUnionParam) GetBody() *string {
-	if vt := u.OfWebhookTemplate; vt != nil && vt.Body.IsPresent() {
+	if vt := u.OfWebhookTemplate; vt != nil && vt.Body.Valid() {
 		return &vt.Body.Value
 	}
 	return nil
@@ -1541,7 +1476,7 @@ func (u WorkflowChannelStepTemplateUnionParam) GetQueryParams() []WebhookTemplat
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepTemplateUnionParam) GetTextBody() *string {
-	if vt := u.OfEmailTemplate; vt != nil && vt.TextBody.IsPresent() {
+	if vt := u.OfEmailTemplate; vt != nil && vt.TextBody.Valid() {
 		return &vt.TextBody.Value
 	} else if vt := u.OfSMSTemplate; vt != nil {
 		return (*string)(&vt.TextBody)
@@ -1658,11 +1593,6 @@ type WorkflowChannelStepChannelOverridesUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowChannelStepChannelOverridesUnionParam) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u WorkflowChannelStepChannelOverridesUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowChannelStepChannelOverridesUnionParam](u.OfEmailChannelSettings,
 		u.OfInAppFeedChannelSettings,
@@ -1688,7 +1618,7 @@ func (u *WorkflowChannelStepChannelOverridesUnionParam) asAny() any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetBccAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.BccAddress.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.BccAddress.Valid() {
 		return &vt.BccAddress.Value
 	}
 	return nil
@@ -1696,7 +1626,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetBccAddress() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetCcAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.CcAddress.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.CcAddress.Valid() {
 		return &vt.CcAddress.Value
 	}
 	return nil
@@ -1704,7 +1634,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetCcAddress() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetFromAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.FromAddress.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.FromAddress.Valid() {
 		return &vt.FromAddress.Value
 	}
 	return nil
@@ -1712,7 +1642,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetFromAddress() *string 
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetFromName() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.FromName.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.FromName.Valid() {
 		return &vt.FromName.Value
 	}
 	return nil
@@ -1720,7 +1650,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetFromName() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetJsonOverrides() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.JsonOverrides.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.JsonOverrides.Valid() {
 		return &vt.JsonOverrides.Value
 	}
 	return nil
@@ -1728,7 +1658,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetJsonOverrides() *strin
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetOpenTracking() *bool {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.OpenTracking.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.OpenTracking.Valid() {
 		return &vt.OpenTracking.Value
 	}
 	return nil
@@ -1736,7 +1666,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetOpenTracking() *bool {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetReplyToAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.ReplyToAddress.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.ReplyToAddress.Valid() {
 		return &vt.ReplyToAddress.Value
 	}
 	return nil
@@ -1744,7 +1674,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetReplyToAddress() *stri
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetToAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.ToAddress.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.ToAddress.Valid() {
 		return &vt.ToAddress.Value
 	}
 	return nil
@@ -1752,7 +1682,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetToAddress() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetTokenDeregistration() *bool {
-	if vt := u.OfPushChannelSettings; vt != nil && vt.TokenDeregistration.IsPresent() {
+	if vt := u.OfPushChannelSettings; vt != nil && vt.TokenDeregistration.Valid() {
 		return &vt.TokenDeregistration.Value
 	}
 	return nil
@@ -1760,7 +1690,7 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetTokenDeregistration() 
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetEmailBasedUserIDResolution() *bool {
-	if vt := u.OfChatChannelSettings; vt != nil && vt.EmailBasedUserIDResolution.IsPresent() {
+	if vt := u.OfChatChannelSettings; vt != nil && vt.EmailBasedUserIDResolution.Valid() {
 		return &vt.EmailBasedUserIDResolution.Value
 	}
 	return nil
@@ -1768,13 +1698,13 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) GetEmailBasedUserIDResolu
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowChannelStepChannelOverridesUnionParam) GetLinkTracking() *bool {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.LinkTracking.IsPresent() {
+	if vt := u.OfEmailChannelSettings; vt != nil && vt.LinkTracking.Valid() {
 		return &vt.LinkTracking.Value
-	} else if vt := u.OfInAppFeedChannelSettings; vt != nil && vt.LinkTracking.IsPresent() {
+	} else if vt := u.OfInAppFeedChannelSettings; vt != nil && vt.LinkTracking.Valid() {
 		return &vt.LinkTracking.Value
-	} else if vt := u.OfSMSChannelSettings; vt != nil && vt.LinkTracking.IsPresent() {
+	} else if vt := u.OfSMSChannelSettings; vt != nil && vt.LinkTracking.Valid() {
 		return &vt.LinkTracking.Value
-	} else if vt := u.OfChatChannelSettings; vt != nil && vt.LinkTracking.IsPresent() {
+	} else if vt := u.OfChatChannelSettings; vt != nil && vt.LinkTracking.Valid() {
 		return &vt.LinkTracking.Value
 	}
 	return nil
@@ -1799,8 +1729,7 @@ type WorkflowDelayStep struct {
 	//
 	// Any of "delay".
 	Type WorkflowDelayStepType `json:"type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Conditions  resp.Field
 		Description resp.Field
@@ -1823,9 +1752,9 @@ func (r *WorkflowDelayStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowDelayStepParam.IsOverridden()
+// WorkflowDelayStepParam.Overrides()
 func (r WorkflowDelayStep) ToParam() WorkflowDelayStepParam {
-	return param.OverrideObj[WorkflowDelayStepParam](r.RawJSON())
+	return param.Override[WorkflowDelayStepParam](r.RawJSON())
 }
 
 // The settings for the delay step. Both fields can be set to compute a delay where
@@ -1836,8 +1765,7 @@ type WorkflowDelayStepSettings struct {
 	// When set will use the path to resolve the delay into a timestamp from the
 	// property referenced
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		DelayFor            resp.Field
 		DelayUntilFieldPath resp.Field
@@ -1883,9 +1811,6 @@ type WorkflowDelayStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowDelayStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowDelayStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowDelayStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1902,9 +1827,6 @@ type WorkflowDelayStepSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowDelayStepSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowDelayStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowDelayStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1928,8 +1850,7 @@ type WorkflowFetchStep struct {
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
 	Description string `json:"description,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Name        resp.Field
 		Ref         resp.Field
@@ -1952,9 +1873,9 @@ func (r *WorkflowFetchStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowFetchStepParam.IsOverridden()
+// WorkflowFetchStepParam.Overrides()
 func (r WorkflowFetchStep) ToParam() WorkflowFetchStepParam {
-	return param.OverrideObj[WorkflowFetchStepParam](r.RawJSON())
+	return param.Override[WorkflowFetchStepParam](r.RawJSON())
 }
 
 // The type of the workflow step.
@@ -1987,9 +1908,6 @@ type WorkflowFetchStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowFetchStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowFetchStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowFetchStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2181,9 +2099,9 @@ func (r *WorkflowStepUnionSettings) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowStepUnionParam.IsOverridden()
+// WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
-	return param.OverrideObj[WorkflowStepUnionParam](r.RawJSON())
+	return param.Override[WorkflowStepUnionParam](r.RawJSON())
 }
 
 // Only one field can be non-zero.
@@ -2200,9 +2118,6 @@ type WorkflowStepUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowStepUnionParam) IsPresent() bool { return !param.IsOmitted(u) && !u.IsNull() }
 func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowStepUnionParam](u.OfWorkflowChannelStep,
 		u.OfWorkflowDelayStep,
@@ -2242,7 +2157,7 @@ func (u WorkflowStepUnionParam) GetTemplate() *WorkflowChannelStepTemplateUnionP
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetChannelGroupKey() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil && vt.ChannelGroupKey.IsPresent() {
+	if vt := u.OfWorkflowChannelStep; vt != nil && vt.ChannelGroupKey.Valid() {
 		return &vt.ChannelGroupKey.Value
 	}
 	return nil
@@ -2250,7 +2165,7 @@ func (u WorkflowStepUnionParam) GetChannelGroupKey() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetChannelKey() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil && vt.ChannelKey.IsPresent() {
+	if vt := u.OfWorkflowChannelStep; vt != nil && vt.ChannelKey.Valid() {
 		return &vt.ChannelKey.Value
 	}
 	return nil
@@ -2342,19 +2257,19 @@ func (u WorkflowStepUnionParam) GetType() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetDescription() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil && vt.Description.IsPresent() {
+	if vt := u.OfWorkflowChannelStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
-	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Description.IsPresent() {
+	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
-	} else if vt := u.OfWorkflowBatchStep; vt != nil && vt.Description.IsPresent() {
+	} else if vt := u.OfWorkflowBatchStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
-	} else if vt := u.OfWorkflowFetchStep; vt != nil && vt.Description.IsPresent() {
+	} else if vt := u.OfWorkflowFetchStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
-	} else if vt := u.OfWorkflowThrottleStep; vt != nil && vt.Description.IsPresent() {
+	} else if vt := u.OfWorkflowThrottleStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowBranchStep; vt != nil {
 		return (*string)(&vt.Description)
-	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil && vt.Description.IsPresent() {
+	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	}
 	return nil
@@ -2431,8 +2346,7 @@ type WorkflowThrottleStep struct {
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
 	Description string `json:"description,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Name        resp.Field
 		Ref         resp.Field
@@ -2455,9 +2369,9 @@ func (r *WorkflowThrottleStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowThrottleStepParam.IsOverridden()
+// WorkflowThrottleStepParam.Overrides()
 func (r WorkflowThrottleStep) ToParam() WorkflowThrottleStepParam {
-	return param.OverrideObj[WorkflowThrottleStepParam](r.RawJSON())
+	return param.Override[WorkflowThrottleStepParam](r.RawJSON())
 }
 
 // The settings for the throttle step.
@@ -2473,8 +2387,7 @@ type WorkflowThrottleStepSettings struct {
 	// an ISO-8601 timestamp. See more in the
 	// [docs](https://docs.knock.app/designing-workflows/throttle-function#set-a-dynamic-throttle-window).
 	ThrottleWindowFieldPath string `json:"throttle_window_field_path,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ThrottleKey             resp.Field
 		ThrottleLimit           resp.Field
@@ -2521,9 +2434,6 @@ type WorkflowThrottleStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowThrottleStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowThrottleStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowThrottleStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2545,11 +2455,6 @@ type WorkflowThrottleStepSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowThrottleStepSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r WorkflowThrottleStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowThrottleStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2572,8 +2477,7 @@ type WorkflowTriggerWorkflowStep struct {
 	Conditions ConditionGroupUnion `json:"conditions,nullable"`
 	// A description for the workflow step.
 	Description string `json:"description"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Name        resp.Field
 		Ref         resp.Field
@@ -2597,9 +2501,9 @@ func (r *WorkflowTriggerWorkflowStep) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WorkflowTriggerWorkflowStepParam.IsOverridden()
+// WorkflowTriggerWorkflowStepParam.Overrides()
 func (r WorkflowTriggerWorkflowStep) ToParam() WorkflowTriggerWorkflowStepParam {
-	return param.OverrideObj[WorkflowTriggerWorkflowStepParam](r.RawJSON())
+	return param.Override[WorkflowTriggerWorkflowStepParam](r.RawJSON())
 }
 
 // The settings for the workflow trigger workflow step.
@@ -2616,8 +2520,7 @@ type WorkflowTriggerWorkflowStepSettings struct {
 	Tenant string `json:"tenant"`
 	// The key of the workflow to trigger. Supports liquid.
 	WorkflowKey string `json:"workflow_key"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Actor           resp.Field
 		CancellationKey resp.Field
@@ -2665,9 +2568,6 @@ type WorkflowTriggerWorkflowStepParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowTriggerWorkflowStepParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowTriggerWorkflowStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowTriggerWorkflowStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2690,11 +2590,6 @@ type WorkflowTriggerWorkflowStepSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowTriggerWorkflowStepSettingsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r WorkflowTriggerWorkflowStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowTriggerWorkflowStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2704,8 +2599,7 @@ func (r WorkflowTriggerWorkflowStepSettingsParam) MarshalJSON() (data []byte, er
 type WorkflowActivateResponse struct {
 	// A workflow object.
 	Workflow Workflow `json:"workflow,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Workflow    resp.Field
 		ExtraFields map[string]resp.Field
@@ -2723,8 +2617,7 @@ func (r *WorkflowActivateResponse) UnmarshalJSON(data []byte) error {
 type WorkflowRunResponse struct {
 	// The ID of the workflow run.
 	WorkflowRunID string `json:"workflow_run_id,required" format:"uuid"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		WorkflowRunID resp.Field
 		ExtraFields   map[string]resp.Field
@@ -2742,8 +2635,7 @@ func (r *WorkflowRunResponse) UnmarshalJSON(data []byte) error {
 type WorkflowUpsertResponse struct {
 	// A workflow object.
 	Workflow Workflow `json:"workflow,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Workflow    resp.Field
 		ExtraFields map[string]resp.Field
@@ -2761,8 +2653,7 @@ func (r *WorkflowUpsertResponse) UnmarshalJSON(data []byte) error {
 type WorkflowValidateResponse struct {
 	// A workflow object.
 	Workflow Workflow `json:"workflow,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Workflow    resp.Field
 		ExtraFields map[string]resp.Field
@@ -2786,10 +2677,6 @@ type WorkflowGetParams struct {
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowGetParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [WorkflowGetParams]'s query parameters as `url.Values`.
 func (r WorkflowGetParams) URLQuery() (v url.Values, err error) {
@@ -2816,10 +2703,6 @@ type WorkflowListParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 // URLQuery serializes [WorkflowListParams]'s query parameters as `url.Values`.
 func (r WorkflowListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
@@ -2836,10 +2719,6 @@ type WorkflowActivateParams struct {
 	Status bool `json:"status,required"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowActivateParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r WorkflowActivateParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowActivateParams
@@ -2871,10 +2750,6 @@ type WorkflowRunParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowRunParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 func (r WorkflowRunParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowRunParams
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2897,9 +2772,6 @@ type WorkflowRunParamsRecipientUnion struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowRunParamsRecipientUnion) IsPresent() bool { return !param.IsOmitted(u) && !u.IsNull() }
 func (u WorkflowRunParamsRecipientUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowRunParamsRecipientUnion](u.OfString, u.OfWorkflowRunsRecipientObject)
 }
@@ -2922,9 +2794,6 @@ type WorkflowRunParamsRecipientObject struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowRunParamsRecipientObject) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowRunParamsRecipientObject) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowRunParamsRecipientObject
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2939,9 +2808,6 @@ type WorkflowRunParamsActorUnion struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowRunParamsActorUnion) IsPresent() bool { return !param.IsOmitted(u) && !u.IsNull() }
 func (u WorkflowRunParamsActorUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowRunParamsActorUnion](u.OfString, u.OfWorkflowRunsActorObject)
 }
@@ -2964,9 +2830,6 @@ type WorkflowRunParamsActorObject struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowRunParamsActorObject) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowRunParamsActorObject) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowRunParamsActorObject
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2985,10 +2848,6 @@ type WorkflowUpsertParams struct {
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowUpsertParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r WorkflowUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowUpsertParams
@@ -3036,9 +2895,6 @@ type WorkflowUpsertParamsWorkflow struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowUpsertParamsWorkflow) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowUpsertParamsWorkflow) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowUpsertParamsWorkflow
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -3061,11 +2917,6 @@ type WorkflowUpsertParamsWorkflowSettings struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowUpsertParamsWorkflowSettings) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r WorkflowUpsertParamsWorkflowSettings) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowUpsertParamsWorkflowSettings
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -3078,10 +2929,6 @@ type WorkflowValidateParams struct {
 	Workflow WorkflowValidateParamsWorkflow `json:"workflow,omitzero,required"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowValidateParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r WorkflowValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowValidateParams
@@ -3129,9 +2976,6 @@ type WorkflowValidateParamsWorkflow struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowValidateParamsWorkflow) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WorkflowValidateParamsWorkflow) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowValidateParamsWorkflow
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -3154,11 +2998,6 @@ type WorkflowValidateParamsWorkflowSettings struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowValidateParamsWorkflowSettings) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r WorkflowValidateParamsWorkflowSettings) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowValidateParamsWorkflowSettings
 	return param.MarshalObject(r, (*shadow)(&r))
