@@ -120,8 +120,7 @@ type Commit struct {
 	Resource CommitResource `json:"resource,required"`
 	// The timestamp of when the commit was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID            resp.Field
 		CommitAuthor  resp.Field
@@ -147,8 +146,7 @@ type CommitCommitAuthor struct {
 	Email string `json:"email,required"`
 	// The name of the commit author.
 	Name string `json:"name,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Email       resp.Field
 		Name        resp.Field
@@ -171,8 +169,7 @@ type CommitResource struct {
 	//
 	// Any of "email_layout", "workflow", "translation", "partial", "message_type".
 	Type string `json:"type,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Identifier  resp.Field
 		Type        resp.Field
@@ -191,8 +188,7 @@ func (r *CommitResource) UnmarshalJSON(data []byte) error {
 type CommitCommitAllResponse struct {
 	// The result of the commit operation.
 	Result string `json:"result,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Result      resp.Field
 		ExtraFields map[string]resp.Field
@@ -210,8 +206,7 @@ func (r *CommitCommitAllResponse) UnmarshalJSON(data []byte) error {
 type CommitPromoteAllResponse struct {
 	// The result of the promote operation.
 	Result string `json:"result,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Result      resp.Field
 		ExtraFields map[string]resp.Field
@@ -229,8 +224,7 @@ func (r *CommitPromoteAllResponse) UnmarshalJSON(data []byte) error {
 type CommitPromoteOneResponse struct {
 	// A commit is a change to a resource within an environment, made by an author.
 	Commit Commit `json:"commit,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Commit      resp.Field
 		ExtraFields map[string]resp.Field
@@ -259,10 +253,6 @@ type CommitListParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f CommitListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 // URLQuery serializes [CommitListParams]'s query parameters as `url.Values`.
 func (r CommitListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
@@ -278,10 +268,6 @@ type CommitCommitAllParams struct {
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f CommitCommitAllParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [CommitCommitAllParams]'s query parameters as `url.Values`.
 func (r CommitCommitAllParams) URLQuery() (v url.Values, err error) {
@@ -303,10 +289,6 @@ type CommitPromoteAllParams struct {
 	ToEnvironment string `query:"to_environment,required" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f CommitPromoteAllParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [CommitPromoteAllParams]'s query parameters as `url.Values`.
 func (r CommitPromoteAllParams) URLQuery() (v url.Values, err error) {

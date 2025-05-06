@@ -88,8 +88,7 @@ type ChannelGroup struct {
 	Source ChannelGroupSource `json:"source,required"`
 	// The timestamp of when the channel group was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ChannelRules resp.Field
 		ChannelType  resp.Field
@@ -169,8 +168,7 @@ type ChannelGroupRule struct {
 	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
 	// For conditional rules, the variable to evaluate.
 	Variable string `json:"variable,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Channel     resp.Field
 		CreatedAt   resp.Field
@@ -229,10 +227,6 @@ type ChannelGroupListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ChannelGroupListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [ChannelGroupListParams]'s query parameters as `url.Values`.
 func (r ChannelGroupListParams) URLQuery() (v url.Values, err error) {

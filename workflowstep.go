@@ -65,8 +65,7 @@ type WorkflowStepPreviewTemplateResponse struct {
 	Result WorkflowStepPreviewTemplateResponseResult `json:"result,required"`
 	// The rendered template, ready to be previewed.
 	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ContentType resp.Field
 		Result      resp.Field
@@ -248,12 +247,6 @@ type WorkflowStepPreviewTemplateParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowStepPreviewTemplateParams) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
-
 func (r WorkflowStepPreviewTemplateParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowStepPreviewTemplateParams
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -277,11 +270,6 @@ type WorkflowStepPreviewTemplateParamsRecipientUnion struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowStepPreviewTemplateParamsRecipientUnion) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u WorkflowStepPreviewTemplateParamsRecipientUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsRecipientUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesRecipientObject)
 }
@@ -304,11 +292,6 @@ type WorkflowStepPreviewTemplateParamsRecipientObject struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowStepPreviewTemplateParamsRecipientObject) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r WorkflowStepPreviewTemplateParamsRecipientObject) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowStepPreviewTemplateParamsRecipientObject
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -323,11 +306,6 @@ type WorkflowStepPreviewTemplateParamsActorUnion struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u WorkflowStepPreviewTemplateParamsActorUnion) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u WorkflowStepPreviewTemplateParamsActorUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsActorUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesActorObject)
 }
@@ -350,11 +328,6 @@ type WorkflowStepPreviewTemplateParamsActorObject struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WorkflowStepPreviewTemplateParamsActorObject) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r WorkflowStepPreviewTemplateParamsActorObject) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowStepPreviewTemplateParamsActorObject
 	return param.MarshalObject(r, (*shadow)(&r))

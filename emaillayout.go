@@ -121,8 +121,7 @@ type EmailLayout struct {
 	FooterLinks []EmailLayoutFooterLink `json:"footer_links"`
 	// The timestamp of when the email layout was last updated.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		CreatedAt   resp.Field
 		HTMLLayout  resp.Field
@@ -149,8 +148,7 @@ type EmailLayoutFooterLink struct {
 	Text string `json:"text,required"`
 	// The URL to link to.
 	URL string `json:"url,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Text        resp.Field
 		URL         resp.Field
@@ -169,8 +167,7 @@ func (r *EmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
 type EmailLayoutUpsertResponse struct {
 	// A versioned email layout used within an environment.
 	EmailLayout EmailLayout `json:"email_layout,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		EmailLayout resp.Field
 		ExtraFields map[string]resp.Field
@@ -188,8 +185,7 @@ func (r *EmailLayoutUpsertResponse) UnmarshalJSON(data []byte) error {
 type EmailLayoutValidateResponse struct {
 	// A versioned email layout used within an environment.
 	EmailLayout EmailLayout `json:"email_layout,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		EmailLayout resp.Field
 		ExtraFields map[string]resp.Field
@@ -213,10 +209,6 @@ type EmailLayoutGetParams struct {
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutGetParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [EmailLayoutGetParams]'s query parameters as `url.Values`.
 func (r EmailLayoutGetParams) URLQuery() (v url.Values, err error) {
@@ -243,10 +235,6 @@ type EmailLayoutListParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 // URLQuery serializes [EmailLayoutListParams]'s query parameters as `url.Values`.
 func (r EmailLayoutListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
@@ -268,10 +256,6 @@ type EmailLayoutUpsertParams struct {
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutUpsertParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r EmailLayoutUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutUpsertParams
@@ -302,11 +286,6 @@ type EmailLayoutUpsertParamsEmailLayout struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutUpsertParamsEmailLayout) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailLayoutUpsertParamsEmailLayout) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutUpsertParamsEmailLayout
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -321,11 +300,6 @@ type EmailLayoutUpsertParamsEmailLayoutFooterLink struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutUpsertParamsEmailLayoutFooterLink) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailLayoutUpsertParamsEmailLayoutFooterLink) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutUpsertParamsEmailLayoutFooterLink
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -338,10 +312,6 @@ type EmailLayoutValidateParams struct {
 	EmailLayout EmailLayoutValidateParamsEmailLayout `json:"email_layout,omitzero,required"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutValidateParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r EmailLayoutValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutValidateParams
@@ -372,11 +342,6 @@ type EmailLayoutValidateParamsEmailLayout struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutValidateParamsEmailLayout) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailLayoutValidateParamsEmailLayout) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutValidateParamsEmailLayout
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -391,11 +356,6 @@ type EmailLayoutValidateParamsEmailLayoutFooterLink struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailLayoutValidateParamsEmailLayoutFooterLink) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailLayoutValidateParamsEmailLayoutFooterLink) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutValidateParamsEmailLayoutFooterLink
 	return param.MarshalObject(r, (*shadow)(&r))

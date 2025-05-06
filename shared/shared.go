@@ -24,8 +24,7 @@ type PageInfo struct {
 	// The cursor to fetch entries before. Will only be present if there are more
 	// entries to fetch before the current page.
 	Before string `json:"before,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		PageSize    resp.Field
 		After       resp.Field

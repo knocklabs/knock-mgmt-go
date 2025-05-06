@@ -40,8 +40,7 @@ type ChatTemplate struct {
 	// The summary of the chat template. Used by some chat apps in their push
 	// notifications.
 	Summary string `json:"summary"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		MarkdownBody resp.Field
 		JsonBody     resp.Field
@@ -61,9 +60,9 @@ func (r *ChatTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// ChatTemplateParam.IsOverridden()
+// ChatTemplateParam.Overrides()
 func (r ChatTemplate) ToParam() ChatTemplateParam {
-	return param.OverrideObj[ChatTemplateParam](r.RawJSON())
+	return param.Override[ChatTemplateParam](r.RawJSON())
 }
 
 // A chat template.
@@ -81,9 +80,6 @@ type ChatTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ChatTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r ChatTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow ChatTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -105,8 +101,7 @@ type EmailTemplate struct {
 	// The visual blocks of the email. Either `html_body` or `visual_blocks` must be
 	// provided.
 	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Subject      resp.Field
 		HTMLBody     resp.Field
@@ -128,9 +123,9 @@ func (r *EmailTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// EmailTemplateParam.IsOverridden()
+// EmailTemplateParam.Overrides()
 func (r EmailTemplate) ToParam() EmailTemplateParam {
-	return param.OverrideObj[EmailTemplateParam](r.RawJSON())
+	return param.Override[EmailTemplateParam](r.RawJSON())
 }
 
 // The [settings](https://docs.knock.app/integrations/email/settings) for the email
@@ -144,8 +139,7 @@ type EmailTemplateSettings struct {
 	// A liquid template that will be injected into the layout above the message
 	// template content.
 	PreContent string `json:"pre_content,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		AttachmentKey resp.Field
 		LayoutKey     resp.Field
@@ -298,8 +292,7 @@ type EmailTemplateVisualBlockEmailButtonSetBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs `json:"layout_attrs"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID          resp.Field
 		Buttons     resp.Field
@@ -329,8 +322,7 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButton struct {
 	SizeAttrs EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrs `json:"size_attrs"`
 	// The style attributes of the button.
 	StyleAttrs EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrs `json:"style_attrs"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Action      resp.Field
 		Label       resp.Field
@@ -356,8 +348,7 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrs struct {
 	//
 	// Any of "sm", "md", "lg".
 	Size string `json:"size"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		IsFullwidth resp.Field
 		Size        resp.Field
@@ -386,8 +377,7 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrs struct {
 	BorderWidth int64 `json:"border_width"`
 	// The text color of the button.
 	TextColor string `json:"text_color"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		BackgroundColor resp.Field
 		BorderColor     resp.Field
@@ -423,8 +413,7 @@ type EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ColumnGap       resp.Field
 		HorizontalAlign resp.Field
@@ -453,8 +442,7 @@ type EmailTemplateVisualBlockEmailDividerBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailDividerBlockLayoutAttrs `json:"layout_attrs"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID          resp.Field
 		Type        resp.Field
@@ -481,8 +469,7 @@ type EmailTemplateVisualBlockEmailDividerBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		PaddingBottom resp.Field
 		PaddingLeft   resp.Field
@@ -509,8 +496,7 @@ type EmailTemplateVisualBlockEmailHTMLBlock struct {
 	Type string `json:"type,required"`
 	// The version of the block.
 	Version int64 `json:"version,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID          resp.Field
 		Content     resp.Field
@@ -545,8 +531,7 @@ type EmailTemplateVisualBlockEmailImageBlock struct {
 	LayoutAttrs EmailTemplateVisualBlockEmailImageBlockLayoutAttrs `json:"layout_attrs"`
 	// The style attributes of the image.
 	StyleAttrs EmailTemplateVisualBlockEmailImageBlockStyleAttrs `json:"style_attrs"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID          resp.Field
 		Type        resp.Field
@@ -581,8 +566,7 @@ type EmailTemplateVisualBlockEmailImageBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		HorizontalAlign resp.Field
 		PaddingBottom   resp.Field
@@ -604,8 +588,7 @@ func (r *EmailTemplateVisualBlockEmailImageBlockLayoutAttrs) UnmarshalJSON(data 
 type EmailTemplateVisualBlockEmailImageBlockStyleAttrs struct {
 	// The width of the image.
 	Width string `json:"width"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Width       resp.Field
 		ExtraFields map[string]resp.Field
@@ -633,8 +616,7 @@ type EmailTemplateVisualBlockEmailMarkdownBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs `json:"layout_attrs"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID          resp.Field
 		Content     resp.Field
@@ -663,8 +645,7 @@ type EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		PaddingBottom resp.Field
 		PaddingLeft   resp.Field
@@ -698,8 +679,7 @@ type EmailTemplateVisualBlockEmailPartialBlock struct {
 	Version int64 `json:"version,required"`
 	// The layout attributes of the block.
 	LayoutAttrs EmailTemplateVisualBlockEmailPartialBlockLayoutAttrs `json:"layout_attrs"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		ID          resp.Field
 		Attrs       resp.Field
@@ -729,8 +709,7 @@ type EmailTemplateVisualBlockEmailPartialBlockLayoutAttrs struct {
 	PaddingRight int64 `json:"padding_right,required"`
 	// The padding_top layout attribute of the block.
 	PaddingTop int64 `json:"padding_top,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		PaddingBottom resp.Field
 		PaddingLeft   resp.Field
@@ -768,9 +747,6 @@ type EmailTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r EmailTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -790,9 +766,6 @@ type EmailTemplateSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r EmailTemplateSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -811,11 +784,6 @@ type EmailTemplateVisualBlockUnionParam struct {
 	paramUnion
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (u EmailTemplateVisualBlockUnionParam) IsPresent() bool {
-	return !param.IsOmitted(u) && !u.IsNull()
-}
 func (u EmailTemplateVisualBlockUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[EmailTemplateVisualBlockUnionParam](u.OfEmailButtonSetBlock,
 		u.OfEmailDividerBlock,
@@ -860,7 +828,7 @@ func (u EmailTemplateVisualBlockUnionParam) GetURL() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u EmailTemplateVisualBlockUnionParam) GetAction() *string {
-	if vt := u.OfEmailImageBlock; vt != nil && vt.Action.IsPresent() {
+	if vt := u.OfEmailImageBlock; vt != nil && vt.Action.Valid() {
 		return &vt.Action.Value
 	}
 	return nil
@@ -868,7 +836,7 @@ func (u EmailTemplateVisualBlockUnionParam) GetAction() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u EmailTemplateVisualBlockUnionParam) GetAlt() *string {
-	if vt := u.OfEmailImageBlock; vt != nil && vt.Alt.IsPresent() {
+	if vt := u.OfEmailImageBlock; vt != nil && vt.Alt.Valid() {
 		return &vt.Alt.Value
 	}
 	return nil
@@ -1122,11 +1090,6 @@ type EmailTemplateVisualBlockEmailButtonSetBlockParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailButtonSetBlockParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailButtonSetBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1149,11 +1112,6 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailButtonSetBlockButtonParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailButtonSetBlockButtonParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockButtonParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1170,11 +1128,6 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1201,11 +1154,6 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1233,11 +1181,6 @@ type EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1264,11 +1207,6 @@ type EmailTemplateVisualBlockEmailDividerBlockParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailDividerBlockParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailDividerBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailDividerBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1290,11 +1228,6 @@ type EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1315,11 +1248,6 @@ type EmailTemplateVisualBlockEmailHTMLBlockParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailHTMLBlockParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailHTMLBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailHTMLBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1348,11 +1276,6 @@ type EmailTemplateVisualBlockEmailImageBlockParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailImageBlockParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailImageBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailImageBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1378,11 +1301,6 @@ type EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1401,11 +1319,6 @@ type EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1430,11 +1343,6 @@ type EmailTemplateVisualBlockEmailMarkdownBlockParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailMarkdownBlockParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailMarkdownBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailMarkdownBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1456,11 +1364,6 @@ type EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1488,11 +1391,6 @@ type EmailTemplateVisualBlockEmailPartialBlockParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailPartialBlockParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailPartialBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailPartialBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1514,11 +1412,6 @@ type EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1533,8 +1426,7 @@ type InAppFeedTemplate struct {
 	// The URL to navigate to when the in-app feed is tapped. Can be omitted for
 	// multi-action templates, where the action buttons will be used instead.
 	ActionURL string `json:"action_url,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		MarkdownBody  resp.Field
 		ActionButtons resp.Field
@@ -1554,9 +1446,9 @@ func (r *InAppFeedTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// InAppFeedTemplateParam.IsOverridden()
+// InAppFeedTemplateParam.Overrides()
 func (r InAppFeedTemplate) ToParam() InAppFeedTemplateParam {
-	return param.OverrideObj[InAppFeedTemplateParam](r.RawJSON())
+	return param.Override[InAppFeedTemplateParam](r.RawJSON())
 }
 
 // A single-action button to be rendered in an in-app feed cell.
@@ -1565,8 +1457,7 @@ type InAppFeedTemplateActionButton struct {
 	Action string `json:"action,required"`
 	// The label of the action button.
 	Label string `json:"label,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Action      resp.Field
 		Label       resp.Field
@@ -1595,9 +1486,6 @@ type InAppFeedTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f InAppFeedTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r InAppFeedTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow InAppFeedTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1614,11 +1502,6 @@ type InAppFeedTemplateActionButtonParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f InAppFeedTemplateActionButtonParam) IsPresent() bool {
-	return !param.IsOmitted(f) && !f.IsNull()
-}
 func (r InAppFeedTemplateActionButtonParam) MarshalJSON() (data []byte, err error) {
 	type shadow InAppFeedTemplateActionButtonParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1633,8 +1516,7 @@ type PushTemplate struct {
 	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
 	// for the push template. Can be omitted.
 	Settings PushTemplateSettings `json:"settings,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		TextBody    resp.Field
 		Title       resp.Field
@@ -1654,9 +1536,9 @@ func (r *PushTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// PushTemplateParam.IsOverridden()
+// PushTemplateParam.Overrides()
 func (r PushTemplate) ToParam() PushTemplateParam {
-	return param.OverrideObj[PushTemplateParam](r.RawJSON())
+	return param.Override[PushTemplateParam](r.RawJSON())
 }
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
@@ -1669,8 +1551,7 @@ type PushTemplateSettings struct {
 	DeliveryType string `json:"delivery_type"`
 	// A JSON object that overrides the payload sent to the push provider.
 	PayloadOverrides string `json:"payload_overrides"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		DeliveryType     resp.Field
 		PayloadOverrides resp.Field
@@ -1699,9 +1580,6 @@ type PushTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PushTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r PushTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow PushTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1720,9 +1598,6 @@ type PushTemplateSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PushTemplateSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r PushTemplateSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow PushTemplateSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1750,8 +1625,7 @@ type RequestTemplate struct {
 	// A list of key-value pairs for the request query params. Each object should
 	// contain key and value fields with string values.
 	QueryParams []RequestTemplateQueryParam `json:"query_params"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Method      resp.Field
 		URL         resp.Field
@@ -1773,9 +1647,9 @@ func (r *RequestTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// RequestTemplateParam.IsOverridden()
+// RequestTemplateParam.Overrides()
 func (r RequestTemplate) ToParam() RequestTemplateParam {
-	return param.OverrideObj[RequestTemplateParam](r.RawJSON())
+	return param.Override[RequestTemplateParam](r.RawJSON())
 }
 
 // The HTTP method of the request.
@@ -1794,8 +1668,7 @@ type RequestTemplateHeader struct {
 	Key string `json:"key,required"`
 	// The value of the header.
 	Value string `json:"value,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Value       resp.Field
@@ -1815,8 +1688,7 @@ type RequestTemplateQueryParam struct {
 	Key string `json:"key,required"`
 	// The value of the query param.
 	Value string `json:"value,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Value       resp.Field
@@ -1852,9 +1724,6 @@ type RequestTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f RequestTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r RequestTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow RequestTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1869,9 +1738,6 @@ type RequestTemplateHeaderParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f RequestTemplateHeaderParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r RequestTemplateHeaderParam) MarshalJSON() (data []byte, err error) {
 	type shadow RequestTemplateHeaderParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1886,9 +1752,6 @@ type RequestTemplateQueryParamParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f RequestTemplateQueryParamParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r RequestTemplateQueryParamParam) MarshalJSON() (data []byte, err error) {
 	type shadow RequestTemplateQueryParamParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1901,8 +1764,7 @@ type SMSTemplate struct {
 	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
 	// for the SMS template.
 	Settings SMSTemplateSettings `json:"settings,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		TextBody    resp.Field
 		Settings    resp.Field
@@ -1921,9 +1783,9 @@ func (r *SMSTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// SMSTemplateParam.IsOverridden()
+// SMSTemplateParam.Overrides()
 func (r SMSTemplate) ToParam() SMSTemplateParam {
-	return param.OverrideObj[SMSTemplateParam](r.RawJSON())
+	return param.Override[SMSTemplateParam](r.RawJSON())
 }
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
@@ -1934,8 +1796,7 @@ type SMSTemplateSettings struct {
 	// An override for the phone number to send the SMS to. When not set, defaults to
 	// `recipient.phone_number`.
 	ToNumber string `json:"to_number,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		PayloadOverrides resp.Field
 		ToNumber         resp.Field
@@ -1962,9 +1823,6 @@ type SMSTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f SMSTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r SMSTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow SMSTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -1981,9 +1839,6 @@ type SMSTemplateSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f SMSTemplateSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r SMSTemplateSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow SMSTemplateSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2007,8 +1862,7 @@ type WebhookTemplate struct {
 	// A list of key-value pairs for the request query params. Each object should
 	// contain key and value fields with string values.
 	QueryParams []WebhookTemplateQueryParam `json:"query_params"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Method      resp.Field
 		URL         resp.Field
@@ -2030,9 +1884,9 @@ func (r *WebhookTemplate) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// WebhookTemplateParam.IsOverridden()
+// WebhookTemplateParam.Overrides()
 func (r WebhookTemplate) ToParam() WebhookTemplateParam {
-	return param.OverrideObj[WebhookTemplateParam](r.RawJSON())
+	return param.Override[WebhookTemplateParam](r.RawJSON())
 }
 
 // The HTTP method of the webhook.
@@ -2051,8 +1905,7 @@ type WebhookTemplateHeader struct {
 	Key string `json:"key,required"`
 	// The value of the header.
 	Value string `json:"value,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Value       resp.Field
@@ -2072,8 +1925,7 @@ type WebhookTemplateQueryParam struct {
 	Key string `json:"key,required"`
 	// The value of the query param.
 	Value string `json:"value,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Key         resp.Field
 		Value       resp.Field
@@ -2111,9 +1963,6 @@ type WebhookTemplateParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WebhookTemplateParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WebhookTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow WebhookTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2128,9 +1977,6 @@ type WebhookTemplateHeaderParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WebhookTemplateHeaderParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WebhookTemplateHeaderParam) MarshalJSON() (data []byte, err error) {
 	type shadow WebhookTemplateHeaderParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -2145,9 +1991,6 @@ type WebhookTemplateQueryParamParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f WebhookTemplateQueryParamParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r WebhookTemplateQueryParamParam) MarshalJSON() (data []byte, err error) {
 	type shadow WebhookTemplateQueryParamParam
 	return param.MarshalObject(r, (*shadow)(&r))

@@ -101,8 +101,7 @@ type Environment struct {
 	LabelColor string `json:"label_color,nullable"`
 	// The timestamp of the most-recent commit in the environment.
 	LastCommitAt time.Time `json:"last_commit_at,nullable" format:"date-time"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		CreatedAt    resp.Field
 		Name         resp.Field
@@ -142,10 +141,6 @@ type EnvironmentListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EnvironmentListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [EnvironmentListParams]'s query parameters as `url.Values`.
 func (r EnvironmentListParams) URLQuery() (v url.Values, err error) {

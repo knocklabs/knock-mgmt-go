@@ -20,8 +20,7 @@ type paramObj = param.APIObject
 
 type EntriesCursorPageInfo struct {
 	After string `json:"after"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		After       resp.Field
 		ExtraFields map[string]resp.Field
@@ -38,8 +37,7 @@ func (r *EntriesCursorPageInfo) UnmarshalJSON(data []byte) error {
 type EntriesCursor[T any] struct {
 	Entries  []T                   `json:"entries"`
 	PageInfo EntriesCursorPageInfo `json:"page_info"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Entries     resp.Field
 		PageInfo    resp.Field

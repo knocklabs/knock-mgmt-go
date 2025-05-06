@@ -87,8 +87,7 @@ type Channel struct {
 	CustomIconURL string `json:"custom_icon_url,nullable"`
 	// Optional description of the channel's purpose or usage.
 	Description string `json:"description,nullable"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		CreatedAt     resp.Field
 		Key           resp.Field
@@ -132,8 +131,7 @@ type ChatChannelSettings struct {
 	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
 	// Whether to track link clicks on chat notifications.
 	LinkTracking bool `json:"link_tracking"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		EmailBasedUserIDResolution resp.Field
 		LinkTracking               resp.Field
@@ -152,9 +150,9 @@ func (r *ChatChannelSettings) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// ChatChannelSettingsParam.IsOverridden()
+// ChatChannelSettingsParam.Overrides()
 func (r ChatChannelSettings) ToParam() ChatChannelSettingsParam {
-	return param.OverrideObj[ChatChannelSettingsParam](r.RawJSON())
+	return param.Override[ChatChannelSettingsParam](r.RawJSON())
 }
 
 // Chat channel settings. Only used as configuration as part of a workflow channel
@@ -168,9 +166,6 @@ type ChatChannelSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ChatChannelSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r ChatChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow ChatChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -199,8 +194,7 @@ type EmailChannelSettings struct {
 	// The email address to which this channel will send. Defaults to
 	// `recipient.email`. Supports liquid.
 	ToAddress string `json:"to_address"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		BccAddress     resp.Field
 		CcAddress      resp.Field
@@ -226,9 +220,9 @@ func (r *EmailChannelSettings) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// EmailChannelSettingsParam.IsOverridden()
+// EmailChannelSettingsParam.Overrides()
 func (r EmailChannelSettings) ToParam() EmailChannelSettingsParam {
-	return param.OverrideObj[EmailChannelSettingsParam](r.RawJSON())
+	return param.Override[EmailChannelSettingsParam](r.RawJSON())
 }
 
 // Email channel settings. Only used as configuration as part of a workflow channel
@@ -257,9 +251,6 @@ type EmailChannelSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f EmailChannelSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r EmailChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -270,8 +261,7 @@ func (r EmailChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 type InAppFeedChannelSettings struct {
 	// Whether to track link clicks on in-app feed notifications.
 	LinkTracking bool `json:"link_tracking"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		LinkTracking resp.Field
 		ExtraFields  map[string]resp.Field
@@ -290,9 +280,9 @@ func (r *InAppFeedChannelSettings) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// InAppFeedChannelSettingsParam.IsOverridden()
+// InAppFeedChannelSettingsParam.Overrides()
 func (r InAppFeedChannelSettings) ToParam() InAppFeedChannelSettingsParam {
-	return param.OverrideObj[InAppFeedChannelSettingsParam](r.RawJSON())
+	return param.Override[InAppFeedChannelSettingsParam](r.RawJSON())
 }
 
 // In-app feed channel settings. Only used as configuration as part of a workflow
@@ -303,9 +293,6 @@ type InAppFeedChannelSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f InAppFeedChannelSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r InAppFeedChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow InAppFeedChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -317,8 +304,7 @@ type PushChannelSettings struct {
 	// Whether to deregister a push-token when a push send hard bounces. This is to
 	// prevent the same token from being used for future pushes.
 	TokenDeregistration bool `json:"token_deregistration"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		TokenDeregistration resp.Field
 		ExtraFields         map[string]resp.Field
@@ -336,9 +322,9 @@ func (r *PushChannelSettings) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// PushChannelSettingsParam.IsOverridden()
+// PushChannelSettingsParam.Overrides()
 func (r PushChannelSettings) ToParam() PushChannelSettingsParam {
-	return param.OverrideObj[PushChannelSettingsParam](r.RawJSON())
+	return param.Override[PushChannelSettingsParam](r.RawJSON())
 }
 
 // Push channel settings. Only used as configuration as part of a workflow channel
@@ -350,9 +336,6 @@ type PushChannelSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PushChannelSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r PushChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow PushChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -363,8 +346,7 @@ func (r PushChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 type SMSChannelSettings struct {
 	// Whether to track link clicks on SMS notifications.
 	LinkTracking bool `json:"link_tracking"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		LinkTracking resp.Field
 		ExtraFields  map[string]resp.Field
@@ -382,9 +364,9 @@ func (r *SMSChannelSettings) UnmarshalJSON(data []byte) error {
 //
 // Warning: the fields of the param type will not be present. ToParam should only
 // be used at the last possible moment before sending a request. Test for this with
-// SMSChannelSettingsParam.IsOverridden()
+// SMSChannelSettingsParam.Overrides()
 func (r SMSChannelSettings) ToParam() SMSChannelSettingsParam {
-	return param.OverrideObj[SMSChannelSettingsParam](r.RawJSON())
+	return param.Override[SMSChannelSettingsParam](r.RawJSON())
 }
 
 // SMS channel settings. Only used as configuration as part of a workflow channel
@@ -395,9 +377,6 @@ type SMSChannelSettingsParam struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f SMSChannelSettingsParam) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r SMSChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow SMSChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -412,10 +391,6 @@ type ChannelListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f ChannelListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [ChannelListParams]'s query parameters as `url.Values`.
 func (r ChannelListParams) URLQuery() (v url.Values, err error) {

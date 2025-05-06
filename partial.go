@@ -130,8 +130,7 @@ type Partial struct {
 	// Indicates whether the partial can be used in the visual editor. Only applies to
 	// HTML partials.
 	VisualBlockEnabled bool `json:"visual_block_enabled"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Content            resp.Field
 		InsertedAt         resp.Field
@@ -169,8 +168,7 @@ const (
 type PartialUpsertResponse struct {
 	// A partial is a reusable piece of content that can be used in a template.
 	Partial Partial `json:"partial,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Partial     resp.Field
 		ExtraFields map[string]resp.Field
@@ -188,8 +186,7 @@ func (r *PartialUpsertResponse) UnmarshalJSON(data []byte) error {
 type PartialValidateResponse struct {
 	// A partial is a reusable piece of content that can be used in a template.
 	Partial Partial `json:"partial,required"`
-	// Metadata for the response, check the presence of optional fields with the
-	// [resp.Field.IsPresent] method.
+	// JSON contains metadata for fields, check presence with [resp.Field.Valid].
 	JSON struct {
 		Partial     resp.Field
 		ExtraFields map[string]resp.Field
@@ -213,10 +210,6 @@ type PartialGetParams struct {
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PartialGetParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 // URLQuery serializes [PartialGetParams]'s query parameters as `url.Values`.
 func (r PartialGetParams) URLQuery() (v url.Values, err error) {
@@ -243,10 +236,6 @@ type PartialListParams struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PartialListParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
-
 // URLQuery serializes [PartialListParams]'s query parameters as `url.Values`.
 func (r PartialListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
@@ -268,10 +257,6 @@ type PartialUpsertParams struct {
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PartialUpsertParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r PartialUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow PartialUpsertParams
@@ -309,9 +294,6 @@ type PartialUpsertParamsPartial struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PartialUpsertParamsPartial) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r PartialUpsertParamsPartial) MarshalJSON() (data []byte, err error) {
 	type shadow PartialUpsertParamsPartial
 	return param.MarshalObject(r, (*shadow)(&r))
@@ -330,10 +312,6 @@ type PartialValidateParams struct {
 	Partial PartialValidateParamsPartial `json:"partial,omitzero,required"`
 	paramObj
 }
-
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PartialValidateParams) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 
 func (r PartialValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow PartialValidateParams
@@ -371,9 +349,6 @@ type PartialValidateParamsPartial struct {
 	paramObj
 }
 
-// IsPresent returns true if the field's value is not omitted and not the JSON
-// "null". To check if this field is omitted, use [param.IsOmitted].
-func (f PartialValidateParamsPartial) IsPresent() bool { return !param.IsOmitted(f) && !f.IsNull() }
 func (r PartialValidateParamsPartial) MarshalJSON() (data []byte, err error) {
 	type shadow PartialValidateParamsPartial
 	return param.MarshalObject(r, (*shadow)(&r))
