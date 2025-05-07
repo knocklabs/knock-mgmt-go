@@ -262,6 +262,9 @@ func (r PartialUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow PartialUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *PartialUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [PartialUpsertParams]'s query parameters as `url.Values`.
 func (r PartialUpsertParams) URLQuery() (v url.Values, err error) {
@@ -298,10 +301,13 @@ func (r PartialUpsertParamsPartial) MarshalJSON() (data []byte, err error) {
 	type shadow PartialUpsertParamsPartial
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *PartialUpsertParamsPartial) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[PartialUpsertParamsPartial](
-		"Type", false, "html", "text", "json", "markdown",
+		"type", "html", "text", "json", "markdown",
 	)
 }
 
@@ -316,6 +322,9 @@ type PartialValidateParams struct {
 func (r PartialValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow PartialValidateParams
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PartialValidateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [PartialValidateParams]'s query parameters as `url.Values`.
@@ -353,9 +362,12 @@ func (r PartialValidateParamsPartial) MarshalJSON() (data []byte, err error) {
 	type shadow PartialValidateParamsPartial
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *PartialValidateParamsPartial) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[PartialValidateParamsPartial](
-		"Type", false, "html", "text", "json", "markdown",
+		"type", "html", "text", "json", "markdown",
 	)
 }

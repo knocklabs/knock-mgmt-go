@@ -84,6 +84,9 @@ func (r ChatTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow ChatTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *ChatTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // An email message template.
 type EmailTemplate struct {
@@ -751,6 +754,9 @@ func (r EmailTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The [settings](https://docs.knock.app/integrations/email/settings) for the email
 // template.
@@ -769,6 +775,9 @@ type EmailTemplateSettingsParam struct {
 func (r EmailTemplateSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailTemplateSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
@@ -791,6 +800,9 @@ func (u EmailTemplateVisualBlockUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfEmailImageBlock,
 		u.OfEmailMarkdownBlock,
 		u.OfEmailPartialBlock)
+}
+func (u *EmailTemplateVisualBlockUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *EmailTemplateVisualBlockUnionParam) asAny() any {
@@ -1094,6 +1106,9 @@ func (r EmailTemplateVisualBlockEmailButtonSetBlockParam) MarshalJSON() (data []
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailButtonSetBlockParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A button in a button set block.
 //
@@ -1116,6 +1131,9 @@ func (r EmailTemplateVisualBlockEmailButtonSetBlockButtonParam) MarshalJSON() (d
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockButtonParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailButtonSetBlockButtonParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The size attributes of the button.
 type EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam struct {
@@ -1132,10 +1150,13 @@ func (r EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam) Marshal
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[EmailTemplateVisualBlockEmailButtonSetBlockButtonSizeAttrsParam](
-		"Size", false, "sm", "md", "lg",
+		"size", "sm", "md", "lg",
 	)
 }
 
@@ -1157,6 +1178,9 @@ type EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam struct {
 func (r EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailTemplateVisualBlockEmailButtonSetBlockButtonStyleAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // The layout attributes of the block.
@@ -1185,10 +1209,13 @@ func (r EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam) MarshalJSON
 	type shadow EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[EmailTemplateVisualBlockEmailButtonSetBlockLayoutAttrsParam](
-		"HorizontalAlign", false, "left", "center", "right",
+		"horizontal_align", "left", "center", "right",
 	)
 }
 
@@ -1211,6 +1238,9 @@ func (r EmailTemplateVisualBlockEmailDividerBlockParam) MarshalJSON() (data []by
 	type shadow EmailTemplateVisualBlockEmailDividerBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailDividerBlockParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The layout attributes of the block.
 //
@@ -1232,6 +1262,9 @@ func (r EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam) MarshalJSON()
 	type shadow EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailDividerBlockLayoutAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // An HTML block in an email template.
 //
@@ -1251,6 +1284,9 @@ type EmailTemplateVisualBlockEmailHTMLBlockParam struct {
 func (r EmailTemplateVisualBlockEmailHTMLBlockParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailHTMLBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailTemplateVisualBlockEmailHTMLBlockParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // An image block in an email template.
@@ -1280,6 +1316,9 @@ func (r EmailTemplateVisualBlockEmailImageBlockParam) MarshalJSON() (data []byte
 	type shadow EmailTemplateVisualBlockEmailImageBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailImageBlockParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The layout attributes of the block.
 //
@@ -1305,10 +1344,13 @@ func (r EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam) MarshalJSON() (
 	type shadow EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[EmailTemplateVisualBlockEmailImageBlockLayoutAttrsParam](
-		"HorizontalAlign", false, "left", "center", "right",
+		"horizontal_align", "left", "center", "right",
 	)
 }
 
@@ -1322,6 +1364,9 @@ type EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam struct {
 func (r EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailTemplateVisualBlockEmailImageBlockStyleAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A markdown block in an email template.
@@ -1347,6 +1392,9 @@ func (r EmailTemplateVisualBlockEmailMarkdownBlockParam) MarshalJSON() (data []b
 	type shadow EmailTemplateVisualBlockEmailMarkdownBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailMarkdownBlockParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The layout attributes of the block.
 //
@@ -1367,6 +1415,9 @@ type EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam struct {
 func (r EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailTemplateVisualBlockEmailMarkdownBlockLayoutAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A partial block in an email template, used to render a reusable partial
@@ -1395,6 +1446,9 @@ func (r EmailTemplateVisualBlockEmailPartialBlockParam) MarshalJSON() (data []by
 	type shadow EmailTemplateVisualBlockEmailPartialBlockParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailTemplateVisualBlockEmailPartialBlockParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The layout attributes of the block.
 //
@@ -1415,6 +1469,9 @@ type EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam struct {
 func (r EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailTemplateVisualBlockEmailPartialBlockLayoutAttrsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // An in-app feed template.
@@ -1490,6 +1547,9 @@ func (r InAppFeedTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow InAppFeedTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *InAppFeedTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A single-action button to be rendered in an in-app feed cell.
 //
@@ -1505,6 +1565,9 @@ type InAppFeedTemplateActionButtonParam struct {
 func (r InAppFeedTemplateActionButtonParam) MarshalJSON() (data []byte, err error) {
 	type shadow InAppFeedTemplateActionButtonParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InAppFeedTemplateActionButtonParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A push notification template.
@@ -1584,6 +1647,9 @@ func (r PushTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow PushTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *PushTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
 // for the push template. Can be omitted.
@@ -1602,10 +1668,13 @@ func (r PushTemplateSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow PushTemplateSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *PushTemplateSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[PushTemplateSettingsParam](
-		"DeliveryType", false, "silent", "content",
+		"delivery_type", "silent", "content",
 	)
 }
 
@@ -1728,6 +1797,9 @@ func (r RequestTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow RequestTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *RequestTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The properties Key, Value are required.
 type RequestTemplateHeaderParam struct {
@@ -1742,6 +1814,9 @@ func (r RequestTemplateHeaderParam) MarshalJSON() (data []byte, err error) {
 	type shadow RequestTemplateHeaderParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *RequestTemplateHeaderParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The properties Key, Value are required.
 type RequestTemplateQueryParamParam struct {
@@ -1755,6 +1830,9 @@ type RequestTemplateQueryParamParam struct {
 func (r RequestTemplateQueryParamParam) MarshalJSON() (data []byte, err error) {
 	type shadow RequestTemplateQueryParamParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RequestTemplateQueryParamParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // An SMS template.
@@ -1827,6 +1905,9 @@ func (r SMSTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow SMSTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *SMSTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
 // for the SMS template.
@@ -1842,6 +1923,9 @@ type SMSTemplateSettingsParam struct {
 func (r SMSTemplateSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow SMSTemplateSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SMSTemplateSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A webhook template. By default, a webhook step will use the request settings you
@@ -1967,6 +2051,9 @@ func (r WebhookTemplateParam) MarshalJSON() (data []byte, err error) {
 	type shadow WebhookTemplateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WebhookTemplateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The properties Key, Value are required.
 type WebhookTemplateHeaderParam struct {
@@ -1981,6 +2068,9 @@ func (r WebhookTemplateHeaderParam) MarshalJSON() (data []byte, err error) {
 	type shadow WebhookTemplateHeaderParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WebhookTemplateHeaderParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The properties Key, Value are required.
 type WebhookTemplateQueryParamParam struct {
@@ -1994,4 +2084,7 @@ type WebhookTemplateQueryParamParam struct {
 func (r WebhookTemplateQueryParamParam) MarshalJSON() (data []byte, err error) {
 	type shadow WebhookTemplateQueryParamParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WebhookTemplateQueryParamParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

@@ -310,6 +310,9 @@ func (r TranslationUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow TranslationUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *TranslationUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [TranslationUpsertParams]'s query parameters as
 // `url.Values`.
@@ -340,10 +343,13 @@ func (r TranslationUpsertParamsTranslation) MarshalJSON() (data []byte, err erro
 	type shadow TranslationUpsertParamsTranslation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *TranslationUpsertParamsTranslation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[TranslationUpsertParamsTranslation](
-		"Format", false, "json", "po",
+		"format", "json", "po",
 	)
 }
 
@@ -368,6 +374,9 @@ type TranslationValidateParams struct {
 func (r TranslationValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow TranslationValidateParams
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TranslationValidateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [TranslationValidateParams]'s query parameters as
@@ -399,9 +408,12 @@ func (r TranslationValidateParamsTranslation) MarshalJSON() (data []byte, err er
 	type shadow TranslationValidateParamsTranslation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *TranslationValidateParamsTranslation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[TranslationValidateParamsTranslation](
-		"Format", false, "json", "po",
+		"format", "json", "po",
 	)
 }
