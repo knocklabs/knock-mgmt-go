@@ -170,6 +170,9 @@ func (r ChatChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow ChatChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *ChatChannelSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Email channel settings. Only used as configuration as part of a workflow channel
 // step.
@@ -255,6 +258,9 @@ func (r EmailChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow EmailChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailChannelSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // In-app feed channel settings. Only used as configuration as part of a workflow
 // channel step.
@@ -296,6 +302,9 @@ type InAppFeedChannelSettingsParam struct {
 func (r InAppFeedChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow InAppFeedChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InAppFeedChannelSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Push channel settings. Only used as configuration as part of a workflow channel
@@ -340,6 +349,9 @@ func (r PushChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow PushChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *PushChannelSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // SMS channel settings. Only used as configuration as part of a workflow channel
 // step.
@@ -380,6 +392,9 @@ type SMSChannelSettingsParam struct {
 func (r SMSChannelSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow SMSChannelSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SMSChannelSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type ChannelListParams struct {

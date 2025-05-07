@@ -261,6 +261,9 @@ func (r EmailLayoutUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailLayoutUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [EmailLayoutUpsertParams]'s query parameters as
 // `url.Values`.
@@ -290,6 +293,9 @@ func (r EmailLayoutUpsertParamsEmailLayout) MarshalJSON() (data []byte, err erro
 	type shadow EmailLayoutUpsertParamsEmailLayout
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailLayoutUpsertParamsEmailLayout) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The properties Text, URL are required.
 type EmailLayoutUpsertParamsEmailLayoutFooterLink struct {
@@ -304,6 +310,9 @@ func (r EmailLayoutUpsertParamsEmailLayoutFooterLink) MarshalJSON() (data []byte
 	type shadow EmailLayoutUpsertParamsEmailLayoutFooterLink
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailLayoutUpsertParamsEmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type EmailLayoutValidateParams struct {
 	// The environment slug.
@@ -316,6 +325,9 @@ type EmailLayoutValidateParams struct {
 func (r EmailLayoutValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutValidateParams
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutValidateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [EmailLayoutValidateParams]'s query parameters as
@@ -346,6 +358,9 @@ func (r EmailLayoutValidateParamsEmailLayout) MarshalJSON() (data []byte, err er
 	type shadow EmailLayoutValidateParamsEmailLayout
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *EmailLayoutValidateParamsEmailLayout) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The properties Text, URL are required.
 type EmailLayoutValidateParamsEmailLayoutFooterLink struct {
@@ -359,4 +374,7 @@ type EmailLayoutValidateParamsEmailLayoutFooterLink struct {
 func (r EmailLayoutValidateParamsEmailLayoutFooterLink) MarshalJSON() (data []byte, err error) {
 	type shadow EmailLayoutValidateParamsEmailLayoutFooterLink
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutValidateParamsEmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

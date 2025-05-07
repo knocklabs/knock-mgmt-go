@@ -251,6 +251,9 @@ func (r WorkflowStepPreviewTemplateParams) MarshalJSON() (data []byte, err error
 	type shadow WorkflowStepPreviewTemplateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowStepPreviewTemplateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [WorkflowStepPreviewTemplateParams]'s query parameters as
 // `url.Values`.
@@ -272,6 +275,9 @@ type WorkflowStepPreviewTemplateParamsRecipientUnion struct {
 
 func (u WorkflowStepPreviewTemplateParamsRecipientUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsRecipientUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesRecipientObject)
+}
+func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
@@ -296,6 +302,9 @@ func (r WorkflowStepPreviewTemplateParamsRecipientObject) MarshalJSON() (data []
 	type shadow WorkflowStepPreviewTemplateParamsRecipientObject
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowStepPreviewTemplateParamsRecipientObject) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Only one field can be non-zero.
 //
@@ -308,6 +317,9 @@ type WorkflowStepPreviewTemplateParamsActorUnion struct {
 
 func (u WorkflowStepPreviewTemplateParamsActorUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsActorUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesActorObject)
+}
+func (u *WorkflowStepPreviewTemplateParamsActorUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
@@ -331,4 +343,7 @@ type WorkflowStepPreviewTemplateParamsActorObject struct {
 func (r WorkflowStepPreviewTemplateParamsActorObject) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowStepPreviewTemplateParamsActorObject
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepPreviewTemplateParamsActorObject) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

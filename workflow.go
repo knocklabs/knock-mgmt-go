@@ -229,6 +229,9 @@ func (r ConditionParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *ConditionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // ConditionGroupUnion contains all possible properties and values from
 // [ConditionGroupConditionGroupAllMatch], [ConditionGroupConditionGroupAnyMatch].
@@ -381,6 +384,9 @@ type ConditionGroupUnionParam struct {
 func (u ConditionGroupUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[ConditionGroupUnionParam](u.OfConditionGroupAllMatch, u.OfConditionGroupAnyMatch)
 }
+func (u *ConditionGroupUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
 
 func (u *ConditionGroupUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfConditionGroupAllMatch) {
@@ -402,6 +408,9 @@ func (r ConditionGroupConditionGroupAllMatchParam) MarshalJSON() (data []byte, e
 	type shadow ConditionGroupConditionGroupAllMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *ConditionGroupConditionGroupAllMatchParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A group of conditions that any must be met. Can contain nested alls.
 type ConditionGroupConditionGroupAnyMatchParam struct {
@@ -413,6 +422,9 @@ type ConditionGroupConditionGroupAnyMatchParam struct {
 func (r ConditionGroupConditionGroupAnyMatchParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionGroupConditionGroupAnyMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConditionGroupConditionGroupAnyMatchParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
@@ -426,6 +438,9 @@ type ConditionGroupConditionGroupAnyMatchAnyUnionParam struct {
 
 func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[ConditionGroupConditionGroupAnyMatchAnyUnionParam](u.OfCondition, u.OfConditionGroupAllMatch)
+}
+func (u *ConditionGroupConditionGroupAnyMatchAnyUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *ConditionGroupConditionGroupAnyMatchAnyUnionParam) asAny() any {
@@ -447,6 +462,9 @@ type ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam struct {
 func (r ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam) MarshalJSON() (data []byte, err error) {
 	type shadow ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A duration of time, represented as a unit and a value.
@@ -508,6 +526,9 @@ type DurationParam struct {
 func (r DurationParam) MarshalJSON() (data []byte, err error) {
 	type shadow DurationParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *DurationParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A send window time for a notification. Describes a single day.
@@ -595,6 +616,9 @@ type SendWindowParam struct {
 func (r SendWindowParam) MarshalJSON() (data []byte, err error) {
 	type shadow SendWindowParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SendWindowParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A workflow object.
@@ -838,6 +862,9 @@ func (r WorkflowBatchStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBatchStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowBatchStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The settings for the batch step.
 type WorkflowBatchStepSettingsParam struct {
@@ -879,16 +906,19 @@ func (r WorkflowBatchStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBatchStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowBatchStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[WorkflowBatchStepSettingsParam](
-		"BatchExecutionMode", true, "accumulate", "flush_leading",
+		"batch_execution_mode", "accumulate", "flush_leading",
 	)
 	apijson.RegisterFieldValidator[WorkflowBatchStepSettingsParam](
-		"BatchOrder", true, "asc", "desc",
+		"batch_order", "asc", "desc",
 	)
 	apijson.RegisterFieldValidator[WorkflowBatchStepSettingsParam](
-		"BatchWindowType", true, "fixed", "sliding",
+		"batch_window_type", "fixed", "sliding",
 	)
 }
 
@@ -994,6 +1024,9 @@ func (r WorkflowBranchStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBranchStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowBranchStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A branch in a branch step.
 type WorkflowBranchStepBranchParam struct {
@@ -1011,6 +1044,9 @@ type WorkflowBranchStepBranchParam struct {
 func (r WorkflowBranchStepBranchParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowBranchStepBranchParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowBranchStepBranchParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A channel step within a workflow. Read more in the
@@ -1330,6 +1366,9 @@ func (r WorkflowChannelStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowChannelStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowChannelStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Only one field can be non-zero.
 //
@@ -1351,6 +1390,9 @@ func (u WorkflowChannelStepTemplateUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfPushTemplate,
 		u.OfChatTemplate,
 		u.OfWebhookTemplate)
+}
+func (u *WorkflowChannelStepTemplateUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *WorkflowChannelStepTemplateUnionParam) asAny() any {
@@ -1600,6 +1642,9 @@ func (u WorkflowChannelStepChannelOverridesUnionParam) MarshalJSON() ([]byte, er
 		u.OfPushChannelSettings,
 		u.OfChatChannelSettings)
 }
+func (u *WorkflowChannelStepChannelOverridesUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
 
 func (u *WorkflowChannelStepChannelOverridesUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfEmailChannelSettings) {
@@ -1815,6 +1860,9 @@ func (r WorkflowDelayStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowDelayStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowDelayStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The settings for the delay step. Both fields can be set to compute a delay where
 // `delay_for` is an offset from the `delay_until_field_path`.
@@ -1830,6 +1878,9 @@ type WorkflowDelayStepSettingsParam struct {
 func (r WorkflowDelayStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowDelayStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowDelayStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A fetch function step. Read more in the
@@ -1911,6 +1962,9 @@ type WorkflowFetchStepParam struct {
 func (r WorkflowFetchStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowFetchStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowFetchStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // WorkflowStepUnion contains all possible properties and values from
@@ -2126,6 +2180,9 @@ func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfWorkflowThrottleStep,
 		u.OfWorkflowBranchStep,
 		u.OfWorkflowTriggerWorkflowStep)
+}
+func (u *WorkflowStepUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *WorkflowStepUnionParam) asAny() any {
@@ -2438,6 +2495,9 @@ func (r WorkflowThrottleStepParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowThrottleStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowThrottleStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The settings for the throttle step.
 type WorkflowThrottleStepSettingsParam struct {
@@ -2458,6 +2518,9 @@ type WorkflowThrottleStepSettingsParam struct {
 func (r WorkflowThrottleStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowThrottleStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowThrottleStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A workflow trigger function step. Read more in the
@@ -2572,6 +2635,9 @@ func (r WorkflowTriggerWorkflowStepParam) MarshalJSON() (data []byte, err error)
 	type shadow WorkflowTriggerWorkflowStepParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowTriggerWorkflowStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The settings for the workflow trigger workflow step.
 type WorkflowTriggerWorkflowStepSettingsParam struct {
@@ -2593,6 +2659,9 @@ type WorkflowTriggerWorkflowStepSettingsParam struct {
 func (r WorkflowTriggerWorkflowStepSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowTriggerWorkflowStepSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowTriggerWorkflowStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Wraps the Workflow response under the `workflow` key.
@@ -2724,6 +2793,9 @@ func (r WorkflowActivateParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowActivateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowActivateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [WorkflowActivateParams]'s query parameters as `url.Values`.
 func (r WorkflowActivateParams) URLQuery() (v url.Values, err error) {
@@ -2754,6 +2826,9 @@ func (r WorkflowRunParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowRunParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowRunParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [WorkflowRunParams]'s query parameters as `url.Values`.
 func (r WorkflowRunParams) URLQuery() (v url.Values, err error) {
@@ -2774,6 +2849,9 @@ type WorkflowRunParamsRecipientUnion struct {
 
 func (u WorkflowRunParamsRecipientUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowRunParamsRecipientUnion](u.OfString, u.OfWorkflowRunsRecipientObject)
+}
+func (u *WorkflowRunParamsRecipientUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *WorkflowRunParamsRecipientUnion) asAny() any {
@@ -2798,6 +2876,9 @@ func (r WorkflowRunParamsRecipientObject) MarshalJSON() (data []byte, err error)
 	type shadow WorkflowRunParamsRecipientObject
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowRunParamsRecipientObject) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Only one field can be non-zero.
 //
@@ -2810,6 +2891,9 @@ type WorkflowRunParamsActorUnion struct {
 
 func (u WorkflowRunParamsActorUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion[WorkflowRunParamsActorUnion](u.OfString, u.OfWorkflowRunsActorObject)
+}
+func (u *WorkflowRunParamsActorUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *WorkflowRunParamsActorUnion) asAny() any {
@@ -2834,6 +2918,9 @@ func (r WorkflowRunParamsActorObject) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowRunParamsActorObject
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowRunParamsActorObject) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type WorkflowUpsertParams struct {
 	// The environment slug.
@@ -2852,6 +2939,9 @@ type WorkflowUpsertParams struct {
 func (r WorkflowUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [WorkflowUpsertParams]'s query parameters as `url.Values`.
@@ -2899,10 +2989,13 @@ func (r WorkflowUpsertParamsWorkflow) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowUpsertParamsWorkflow
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowUpsertParamsWorkflow) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[WorkflowUpsertParamsWorkflow](
-		"TriggerFrequency", false, "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
+		"trigger_frequency", "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
 	)
 }
 
@@ -2921,6 +3014,9 @@ func (r WorkflowUpsertParamsWorkflowSettings) MarshalJSON() (data []byte, err er
 	type shadow WorkflowUpsertParamsWorkflowSettings
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowUpsertParamsWorkflowSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type WorkflowValidateParams struct {
 	// The environment slug.
@@ -2933,6 +3029,9 @@ type WorkflowValidateParams struct {
 func (r WorkflowValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowValidateParams
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowValidateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [WorkflowValidateParams]'s query parameters as `url.Values`.
@@ -2980,10 +3079,13 @@ func (r WorkflowValidateParamsWorkflow) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowValidateParamsWorkflow
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *WorkflowValidateParamsWorkflow) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[WorkflowValidateParamsWorkflow](
-		"TriggerFrequency", false, "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
+		"trigger_frequency", "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
 	)
 }
 
@@ -3001,4 +3103,7 @@ type WorkflowValidateParamsWorkflowSettings struct {
 func (r WorkflowValidateParamsWorkflowSettings) MarshalJSON() (data []byte, err error) {
 	type shadow WorkflowValidateParamsWorkflowSettings
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowValidateParamsWorkflowSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

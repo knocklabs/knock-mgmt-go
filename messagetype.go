@@ -271,6 +271,9 @@ func (r MessageTypeTextFieldParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeTextFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeTextFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Settings for the text field.
 type MessageTypeTextFieldSettingsParam struct {
@@ -287,6 +290,9 @@ type MessageTypeTextFieldSettingsParam struct {
 func (r MessageTypeTextFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeTextFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeTextFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A variant of a message type.
@@ -1065,6 +1071,9 @@ func (r MessageTypeVariantParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Only one field can be non-zero.
 //
@@ -1092,6 +1101,9 @@ func (u MessageTypeVariantFieldUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfMessageTypeTextField,
 		u.OfMessageTypeTextareaField,
 		u.OfMessageTypeURLField)
+}
+func (u *MessageTypeVariantFieldUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *MessageTypeVariantFieldUnionParam) asAny() any {
@@ -1436,10 +1448,13 @@ func (r MessageTypeVariantFieldMessageTypeBooleanFieldParam) MarshalJSON() (data
 	type shadow MessageTypeVariantFieldMessageTypeBooleanFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeBooleanFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeBooleanFieldParam](
-		"Type", false, "boolean",
+		"type", "boolean",
 	)
 }
 
@@ -1456,6 +1471,9 @@ type MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam struct {
 func (r MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A button field used in a message type.
@@ -1483,10 +1501,13 @@ func (r MessageTypeVariantFieldMessageTypeButtonFieldParam) MarshalJSON() (data 
 	type shadow MessageTypeVariantFieldMessageTypeButtonFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeButtonFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeButtonFieldParam](
-		"Type", false, "button",
+		"type", "button",
 	)
 }
 
@@ -1501,6 +1522,9 @@ type MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam struct {
 func (r MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // An image field used in a message type.
@@ -1530,10 +1554,13 @@ func (r MessageTypeVariantFieldMessageTypeImageFieldParam) MarshalJSON() (data [
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeImageFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeImageFieldParam](
-		"Type", false, "image",
+		"type", "image",
 	)
 }
 
@@ -1558,10 +1585,13 @@ func (r MessageTypeVariantFieldMessageTypeImageFieldURLParam) MarshalJSON() (dat
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldURLParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeImageFieldURLParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeImageFieldURLParam](
-		"Type", false, "url",
+		"type", "url",
 	)
 }
 
@@ -1579,6 +1609,9 @@ func (r MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam) MarshalJSO
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Settings for the image field.
 type MessageTypeVariantFieldMessageTypeImageFieldSettingsParam struct {
@@ -1591,6 +1624,9 @@ type MessageTypeVariantFieldMessageTypeImageFieldSettingsParam struct {
 func (r MessageTypeVariantFieldMessageTypeImageFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeImageFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeImageFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A markdown field used in a message type.
@@ -1614,10 +1650,13 @@ func (r MessageTypeVariantFieldMessageTypeMarkdownFieldParam) MarshalJSON() (dat
 	type shadow MessageTypeVariantFieldMessageTypeMarkdownFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeMarkdownFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeMarkdownFieldParam](
-		"Type", false, "markdown",
+		"type", "markdown",
 	)
 }
 
@@ -1634,6 +1673,9 @@ type MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam struct {
 func (r MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A multi-select field used in a message type.
@@ -1657,10 +1699,13 @@ func (r MessageTypeVariantFieldMessageTypeMultiSelectFieldParam) MarshalJSON() (
 	type shadow MessageTypeVariantFieldMessageTypeMultiSelectFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeMultiSelectFieldParam](
-		"Type", false, "multi_select",
+		"type", "multi_select",
 	)
 }
 
@@ -1680,6 +1725,9 @@ func (r MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam) Marshal
 	type shadow MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The property Value is required.
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam struct {
@@ -1693,6 +1741,9 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam struc
 func (r MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A select field used in a message type.
@@ -1716,10 +1767,13 @@ func (r MessageTypeVariantFieldMessageTypeSelectFieldParam) MarshalJSON() (data 
 	type shadow MessageTypeVariantFieldMessageTypeSelectFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeSelectFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeSelectFieldParam](
-		"Type", false, "select",
+		"type", "select",
 	)
 }
 
@@ -1739,6 +1793,9 @@ func (r MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam) MarshalJSON(
 	type shadow MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // The property Value is required.
 type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam struct {
@@ -1752,6 +1809,9 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam struct {
 func (r MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A textarea field used in a message type.
@@ -1775,10 +1835,13 @@ func (r MessageTypeVariantFieldMessageTypeTextareaFieldParam) MarshalJSON() (dat
 	type shadow MessageTypeVariantFieldMessageTypeTextareaFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeTextareaFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeTextareaFieldParam](
-		"Type", false, "textarea",
+		"type", "textarea",
 	)
 }
 
@@ -1797,6 +1860,9 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam struct {
 func (r MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A URL field used in a message type.
@@ -1820,10 +1886,13 @@ func (r MessageTypeVariantFieldMessageTypeURLFieldParam) MarshalJSON() (data []b
 	type shadow MessageTypeVariantFieldMessageTypeURLFieldParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeVariantFieldMessageTypeURLFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 func init() {
 	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeURLFieldParam](
-		"Type", false, "url",
+		"type", "url",
 	)
 }
 
@@ -1840,6 +1909,9 @@ type MessageTypeVariantFieldMessageTypeURLFieldSettingsParam struct {
 func (r MessageTypeVariantFieldMessageTypeURLFieldSettingsParam) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeVariantFieldMessageTypeURLFieldSettingsParam
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Wraps the MessageType response under the `message_type` key.
@@ -1942,6 +2014,9 @@ func (r MessageTypeUpsertParams) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeUpsertParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // URLQuery serializes [MessageTypeUpsertParams]'s query parameters as
 // `url.Values`.
@@ -1976,6 +2051,9 @@ func (r MessageTypeUpsertParamsMessageType) MarshalJSON() (data []byte, err erro
 	type shadow MessageTypeUpsertParamsMessageType
 	return param.MarshalObject(r, (*shadow)(&r))
 }
+func (r *MessageTypeUpsertParamsMessageType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type MessageTypeValidateParams struct {
 	// The environment slug.
@@ -1988,6 +2066,9 @@ type MessageTypeValidateParams struct {
 func (r MessageTypeValidateParams) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeValidateParams
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeValidateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [MessageTypeValidateParams]'s query parameters as
@@ -2022,4 +2103,7 @@ type MessageTypeValidateParamsMessageType struct {
 func (r MessageTypeValidateParamsMessageType) MarshalJSON() (data []byte, err error) {
 	type shadow MessageTypeValidateParamsMessageType
 	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeValidateParamsMessageType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
