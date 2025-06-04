@@ -4,6 +4,7 @@ package knockmapi
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"time"
@@ -152,7 +153,7 @@ func (r *ChatChannelSettings) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // ChatChannelSettingsParam.Overrides()
 func (r ChatChannelSettings) ToParam() ChatChannelSettingsParam {
-	return param.Override[ChatChannelSettingsParam](r.RawJSON())
+	return param.Override[ChatChannelSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
 // Chat channel settings. Only used as configuration as part of a workflow channel
@@ -225,7 +226,7 @@ func (r *EmailChannelSettings) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // EmailChannelSettingsParam.Overrides()
 func (r EmailChannelSettings) ToParam() EmailChannelSettingsParam {
-	return param.Override[EmailChannelSettingsParam](r.RawJSON())
+	return param.Override[EmailChannelSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
 // Email channel settings. Only used as configuration as part of a workflow channel
@@ -288,7 +289,7 @@ func (r *InAppFeedChannelSettings) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // InAppFeedChannelSettingsParam.Overrides()
 func (r InAppFeedChannelSettings) ToParam() InAppFeedChannelSettingsParam {
-	return param.Override[InAppFeedChannelSettingsParam](r.RawJSON())
+	return param.Override[InAppFeedChannelSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
 // In-app feed channel settings. Only used as configuration as part of a workflow
@@ -333,7 +334,7 @@ func (r *PushChannelSettings) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // PushChannelSettingsParam.Overrides()
 func (r PushChannelSettings) ToParam() PushChannelSettingsParam {
-	return param.Override[PushChannelSettingsParam](r.RawJSON())
+	return param.Override[PushChannelSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
 // Push channel settings. Only used as configuration as part of a workflow channel
@@ -378,7 +379,7 @@ func (r *SMSChannelSettings) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // SMSChannelSettingsParam.Overrides()
 func (r SMSChannelSettings) ToParam() SMSChannelSettingsParam {
-	return param.Override[SMSChannelSettingsParam](r.RawJSON())
+	return param.Override[SMSChannelSettingsParam](json.RawMessage(r.RawJSON()))
 }
 
 // SMS channel settings. Only used as configuration as part of a workflow channel

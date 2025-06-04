@@ -213,7 +213,7 @@ func (r *MessageTypeTextField) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // MessageTypeTextFieldParam.Overrides()
 func (r MessageTypeTextField) ToParam() MessageTypeTextFieldParam {
-	return param.Override[MessageTypeTextFieldParam](r.RawJSON())
+	return param.Override[MessageTypeTextFieldParam](json.RawMessage(r.RawJSON()))
 }
 
 // The type of the field.
@@ -326,7 +326,7 @@ func (r *MessageTypeVariant) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // MessageTypeVariantParam.Overrides()
 func (r MessageTypeVariant) ToParam() MessageTypeVariantParam {
-	return param.Override[MessageTypeVariantParam](r.RawJSON())
+	return param.Override[MessageTypeVariantParam](json.RawMessage(r.RawJSON()))
 }
 
 // MessageTypeVariantFieldUnion contains all possible properties and values from
