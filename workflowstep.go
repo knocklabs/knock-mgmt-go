@@ -274,7 +274,7 @@ type WorkflowStepPreviewTemplateParamsRecipientUnion struct {
 }
 
 func (u WorkflowStepPreviewTemplateParamsRecipientUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsRecipientUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesRecipientObject)
+	return param.MarshalUnion(u, u.OfString, u.OfWorkflowStepPreviewTemplatesRecipientObject)
 }
 func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -316,7 +316,7 @@ type WorkflowStepPreviewTemplateParamsActorUnion struct {
 }
 
 func (u WorkflowStepPreviewTemplateParamsActorUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowStepPreviewTemplateParamsActorUnion](u.OfString, u.OfWorkflowStepPreviewTemplatesActorObject)
+	return param.MarshalUnion(u, u.OfString, u.OfWorkflowStepPreviewTemplatesActorObject)
 }
 func (u *WorkflowStepPreviewTemplateParamsActorUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
