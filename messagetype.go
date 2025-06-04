@@ -1092,7 +1092,7 @@ type MessageTypeVariantFieldUnionParam struct {
 }
 
 func (u MessageTypeVariantFieldUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[MessageTypeVariantFieldUnionParam](u.OfMessageTypeBooleanField,
+	return param.MarshalUnion(u, u.OfMessageTypeBooleanField,
 		u.OfMessageTypeButtonField,
 		u.OfMessageTypeImageField,
 		u.OfMessageTypeMarkdownField,

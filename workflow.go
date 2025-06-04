@@ -382,7 +382,7 @@ type ConditionGroupUnionParam struct {
 }
 
 func (u ConditionGroupUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[ConditionGroupUnionParam](u.OfConditionGroupAllMatch, u.OfConditionGroupAnyMatch)
+	return param.MarshalUnion(u, u.OfConditionGroupAllMatch, u.OfConditionGroupAnyMatch)
 }
 func (u *ConditionGroupUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -437,7 +437,7 @@ type ConditionGroupConditionGroupAnyMatchAnyUnionParam struct {
 }
 
 func (u ConditionGroupConditionGroupAnyMatchAnyUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[ConditionGroupConditionGroupAnyMatchAnyUnionParam](u.OfCondition, u.OfConditionGroupAllMatch)
+	return param.MarshalUnion(u, u.OfCondition, u.OfConditionGroupAllMatch)
 }
 func (u *ConditionGroupConditionGroupAnyMatchAnyUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -1384,7 +1384,7 @@ type WorkflowChannelStepTemplateUnionParam struct {
 }
 
 func (u WorkflowChannelStepTemplateUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowChannelStepTemplateUnionParam](u.OfEmailTemplate,
+	return param.MarshalUnion(u, u.OfEmailTemplate,
 		u.OfInAppFeedTemplate,
 		u.OfSMSTemplate,
 		u.OfPushTemplate,
@@ -1636,7 +1636,7 @@ type WorkflowChannelStepChannelOverridesUnionParam struct {
 }
 
 func (u WorkflowChannelStepChannelOverridesUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowChannelStepChannelOverridesUnionParam](u.OfEmailChannelSettings,
+	return param.MarshalUnion(u, u.OfEmailChannelSettings,
 		u.OfInAppFeedChannelSettings,
 		u.OfSMSChannelSettings,
 		u.OfPushChannelSettings,
@@ -2173,7 +2173,7 @@ type WorkflowStepUnionParam struct {
 }
 
 func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowStepUnionParam](u.OfWorkflowChannelStep,
+	return param.MarshalUnion(u, u.OfWorkflowChannelStep,
 		u.OfWorkflowDelayStep,
 		u.OfWorkflowBatchStep,
 		u.OfWorkflowFetchStep,
@@ -2848,7 +2848,7 @@ type WorkflowRunParamsRecipientUnion struct {
 }
 
 func (u WorkflowRunParamsRecipientUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowRunParamsRecipientUnion](u.OfString, u.OfWorkflowRunsRecipientObject)
+	return param.MarshalUnion(u, u.OfString, u.OfWorkflowRunsRecipientObject)
 }
 func (u *WorkflowRunParamsRecipientUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -2890,7 +2890,7 @@ type WorkflowRunParamsActorUnion struct {
 }
 
 func (u WorkflowRunParamsActorUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[WorkflowRunParamsActorUnion](u.OfString, u.OfWorkflowRunsActorObject)
+	return param.MarshalUnion(u, u.OfString, u.OfWorkflowRunsActorObject)
 }
 func (u *WorkflowRunParamsActorUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)

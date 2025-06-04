@@ -794,7 +794,7 @@ type EmailTemplateVisualBlockUnionParam struct {
 }
 
 func (u EmailTemplateVisualBlockUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion[EmailTemplateVisualBlockUnionParam](u.OfEmailButtonSetBlock,
+	return param.MarshalUnion(u, u.OfEmailButtonSetBlock,
 		u.OfEmailDividerBlock,
 		u.OfEmailHTMLBlock,
 		u.OfEmailImageBlock,
