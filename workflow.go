@@ -179,7 +179,7 @@ func (r *Condition) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // ConditionParam.Overrides()
 func (r Condition) ToParam() ConditionParam {
-	return param.Override[ConditionParam](r.RawJSON())
+	return param.Override[ConditionParam](json.RawMessage(r.RawJSON()))
 }
 
 // The operator to use in the evaluation of the condition.
@@ -272,7 +272,7 @@ func (r *ConditionGroupUnion) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // ConditionGroupUnionParam.Overrides()
 func (r ConditionGroupUnion) ToParam() ConditionGroupUnionParam {
-	return param.Override[ConditionGroupUnionParam](r.RawJSON())
+	return param.Override[ConditionGroupUnionParam](json.RawMessage(r.RawJSON()))
 }
 
 // A group of conditions that must all be met.
@@ -496,7 +496,7 @@ func (r *Duration) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // DurationParam.Overrides()
 func (r Duration) ToParam() DurationParam {
-	return param.Override[DurationParam](r.RawJSON())
+	return param.Override[DurationParam](json.RawMessage(r.RawJSON()))
 }
 
 // The unit of time.
@@ -569,7 +569,7 @@ func (r *SendWindow) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // SendWindowParam.Overrides()
 func (r SendWindow) ToParam() SendWindowParam {
-	return param.Override[SendWindowParam](r.RawJSON())
+	return param.Override[SendWindowParam](json.RawMessage(r.RawJSON()))
 }
 
 // The day of the week.
@@ -772,7 +772,7 @@ func (r *WorkflowBatchStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowBatchStepParam.Overrides()
 func (r WorkflowBatchStep) ToParam() WorkflowBatchStepParam {
-	return param.Override[WorkflowBatchStepParam](r.RawJSON())
+	return param.Override[WorkflowBatchStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // The settings for the batch step.
@@ -962,7 +962,7 @@ func (r *WorkflowBranchStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowBranchStepParam.Overrides()
 func (r WorkflowBranchStep) ToParam() WorkflowBranchStepParam {
-	return param.Override[WorkflowBranchStepParam](r.RawJSON())
+	return param.Override[WorkflowBranchStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // A branch in a branch step.
@@ -1111,7 +1111,7 @@ func (r *WorkflowChannelStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowChannelStepParam.Overrides()
 func (r WorkflowChannelStep) ToParam() WorkflowChannelStepParam {
-	return param.Override[WorkflowChannelStepParam](r.RawJSON())
+	return param.Override[WorkflowChannelStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // WorkflowChannelStepTemplateUnion contains all possible properties and values
@@ -1799,7 +1799,7 @@ func (r *WorkflowDelayStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowDelayStepParam.Overrides()
 func (r WorkflowDelayStep) ToParam() WorkflowDelayStepParam {
-	return param.Override[WorkflowDelayStepParam](r.RawJSON())
+	return param.Override[WorkflowDelayStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // The settings for the delay step. Both fields can be set to compute a delay where
@@ -1926,7 +1926,7 @@ func (r *WorkflowFetchStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowFetchStepParam.Overrides()
 func (r WorkflowFetchStep) ToParam() WorkflowFetchStepParam {
-	return param.Override[WorkflowFetchStepParam](r.RawJSON())
+	return param.Override[WorkflowFetchStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // The type of the workflow step.
@@ -2155,7 +2155,7 @@ func (r *WorkflowStepUnionSettings) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
-	return param.Override[WorkflowStepUnionParam](r.RawJSON())
+	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
 }
 
 // Only one field can be non-zero.
@@ -2428,7 +2428,7 @@ func (r *WorkflowThrottleStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowThrottleStepParam.Overrides()
 func (r WorkflowThrottleStep) ToParam() WorkflowThrottleStepParam {
-	return param.Override[WorkflowThrottleStepParam](r.RawJSON())
+	return param.Override[WorkflowThrottleStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // The settings for the throttle step.
@@ -2566,7 +2566,7 @@ func (r *WorkflowTriggerWorkflowStep) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WorkflowTriggerWorkflowStepParam.Overrides()
 func (r WorkflowTriggerWorkflowStep) ToParam() WorkflowTriggerWorkflowStepParam {
-	return param.Override[WorkflowTriggerWorkflowStepParam](r.RawJSON())
+	return param.Override[WorkflowTriggerWorkflowStepParam](json.RawMessage(r.RawJSON()))
 }
 
 // The settings for the workflow trigger workflow step.

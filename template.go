@@ -62,7 +62,7 @@ func (r *ChatTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // ChatTemplateParam.Overrides()
 func (r ChatTemplate) ToParam() ChatTemplateParam {
-	return param.Override[ChatTemplateParam](r.RawJSON())
+	return param.Override[ChatTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // A chat template.
@@ -128,7 +128,7 @@ func (r *EmailTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // EmailTemplateParam.Overrides()
 func (r EmailTemplate) ToParam() EmailTemplateParam {
-	return param.Override[EmailTemplateParam](r.RawJSON())
+	return param.Override[EmailTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // The [settings](https://docs.knock.app/integrations/email/settings) for the email
@@ -1505,7 +1505,7 @@ func (r *InAppFeedTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // InAppFeedTemplateParam.Overrides()
 func (r InAppFeedTemplate) ToParam() InAppFeedTemplateParam {
-	return param.Override[InAppFeedTemplateParam](r.RawJSON())
+	return param.Override[InAppFeedTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // A single-action button to be rendered in an in-app feed cell.
@@ -1601,7 +1601,7 @@ func (r *PushTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // PushTemplateParam.Overrides()
 func (r PushTemplate) ToParam() PushTemplateParam {
-	return param.Override[PushTemplateParam](r.RawJSON())
+	return param.Override[PushTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
@@ -1718,7 +1718,7 @@ func (r *RequestTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // RequestTemplateParam.Overrides()
 func (r RequestTemplate) ToParam() RequestTemplateParam {
-	return param.Override[RequestTemplateParam](r.RawJSON())
+	return param.Override[RequestTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // The HTTP method of the request.
@@ -1863,7 +1863,7 @@ func (r *SMSTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // SMSTemplateParam.Overrides()
 func (r SMSTemplate) ToParam() SMSTemplateParam {
-	return param.Override[SMSTemplateParam](r.RawJSON())
+	return param.Override[SMSTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
@@ -1970,7 +1970,7 @@ func (r *WebhookTemplate) UnmarshalJSON(data []byte) error {
 // be used at the last possible moment before sending a request. Test for this with
 // WebhookTemplateParam.Overrides()
 func (r WebhookTemplate) ToParam() WebhookTemplateParam {
-	return param.Override[WebhookTemplateParam](r.RawJSON())
+	return param.Override[WebhookTemplateParam](json.RawMessage(r.RawJSON()))
 }
 
 // The HTTP method of the webhook.
