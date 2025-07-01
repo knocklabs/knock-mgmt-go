@@ -58,6 +58,9 @@ func (r *EntriesCursor[T]) UnmarshalJSON(data []byte) error {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EntriesCursor[T]) GetNextPage() (res *EntriesCursor[T], err error) {
+	if len(r.Entries) == 0 {
+		return nil, nil
+	}
 	next := r.PageInfo.After
 	if len(next) == 0 {
 		return nil, nil
