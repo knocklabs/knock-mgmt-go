@@ -29,6 +29,7 @@ type Client struct {
 	Channels      ChannelService
 	Environments  EnvironmentService
 	Variables     VariableService
+	Guides        GuideService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -66,6 +67,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Channels = NewChannelService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Variables = NewVariableService(opts...)
+	r.Guides = NewGuideService(opts...)
 
 	return
 }
