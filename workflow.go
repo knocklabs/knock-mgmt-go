@@ -2842,13 +2842,13 @@ func (r WorkflowRunParams) URLQuery() (v url.Values, err error) {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowRunParamsRecipientUnion struct {
-	OfString                      param.Opt[string]                 `json:",omitzero,inline"`
-	OfWorkflowRunsRecipientObject *WorkflowRunParamsRecipientObject `json:",omitzero,inline"`
+	OfString                   param.Opt[string]                                   `json:",omitzero,inline"`
+	OfObjectRecipientReference *WorkflowRunParamsRecipientObjectRecipientReference `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u WorkflowRunParamsRecipientUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfWorkflowRunsRecipientObject)
+	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
 }
 func (u *WorkflowRunParamsRecipientUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -2857,8 +2857,8 @@ func (u *WorkflowRunParamsRecipientUnion) UnmarshalJSON(data []byte) error {
 func (u *WorkflowRunParamsRecipientUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfWorkflowRunsRecipientObject) {
-		return u.OfWorkflowRunsRecipientObject
+	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
+		return u.OfObjectRecipientReference
 	}
 	return nil
 }
@@ -2866,17 +2866,17 @@ func (u *WorkflowRunParamsRecipientUnion) asAny() any {
 // An object reference.
 //
 // The properties ID, Collection are required.
-type WorkflowRunParamsRecipientObject struct {
+type WorkflowRunParamsRecipientObjectRecipientReference struct {
 	ID         string `json:"id,required"`
 	Collection string `json:"collection,required"`
 	paramObj
 }
 
-func (r WorkflowRunParamsRecipientObject) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowRunParamsRecipientObject
+func (r WorkflowRunParamsRecipientObjectRecipientReference) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRunParamsRecipientObjectRecipientReference
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *WorkflowRunParamsRecipientObject) UnmarshalJSON(data []byte) error {
+func (r *WorkflowRunParamsRecipientObjectRecipientReference) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2884,13 +2884,13 @@ func (r *WorkflowRunParamsRecipientObject) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowRunParamsActorUnion struct {
-	OfString                  param.Opt[string]             `json:",omitzero,inline"`
-	OfWorkflowRunsActorObject *WorkflowRunParamsActorObject `json:",omitzero,inline"`
+	OfString                   param.Opt[string]                               `json:",omitzero,inline"`
+	OfObjectRecipientReference *WorkflowRunParamsActorObjectRecipientReference `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u WorkflowRunParamsActorUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfWorkflowRunsActorObject)
+	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
 }
 func (u *WorkflowRunParamsActorUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -2899,8 +2899,8 @@ func (u *WorkflowRunParamsActorUnion) UnmarshalJSON(data []byte) error {
 func (u *WorkflowRunParamsActorUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfWorkflowRunsActorObject) {
-		return u.OfWorkflowRunsActorObject
+	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
+		return u.OfObjectRecipientReference
 	}
 	return nil
 }
@@ -2908,17 +2908,17 @@ func (u *WorkflowRunParamsActorUnion) asAny() any {
 // An object reference.
 //
 // The properties ID, Collection are required.
-type WorkflowRunParamsActorObject struct {
+type WorkflowRunParamsActorObjectRecipientReference struct {
 	ID         string `json:"id,required"`
 	Collection string `json:"collection,required"`
 	paramObj
 }
 
-func (r WorkflowRunParamsActorObject) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowRunParamsActorObject
+func (r WorkflowRunParamsActorObjectRecipientReference) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRunParamsActorObjectRecipientReference
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *WorkflowRunParamsActorObject) UnmarshalJSON(data []byte) error {
+func (r *WorkflowRunParamsActorObjectRecipientReference) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

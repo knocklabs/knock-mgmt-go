@@ -127,7 +127,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 				OfString: knockmapi.String("dnedry"),
 			}},
 			Actor: knockmapi.WorkflowRunParamsActorUnion{
-				OfWorkflowRunsActorObject: &knockmapi.WorkflowRunParamsActorObject{
+				OfObjectRecipientReference: &knockmapi.WorkflowRunParamsActorObjectRecipientReference{
 					ID:         "project_1",
 					Collection: "projects",
 				},
