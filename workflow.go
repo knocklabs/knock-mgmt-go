@@ -43,7 +43,7 @@ func NewWorkflowService(opts ...option.RequestOption) (r WorkflowService) {
 }
 
 // Retrieve a workflow by its key in a given environment.
-func (r *WorkflowService) Get(ctx context.Context, workflowKey string, query WorkflowGetParams, opts ...option.RequestOption) (res *Workflow, err error) {
+func (r *WorkflowService) Get(ctx context.Context, workflowKey string, query WorkflowGetParams, opts ...option.RequestOption) (res *WorkflowGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
@@ -144,7 +144,7 @@ type Condition struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "empty", "not_empty", "is_audience_member",
+	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
@@ -195,6 +195,7 @@ const (
 	ConditionOperatorContains             ConditionOperator = "contains"
 	ConditionOperatorNotContains          ConditionOperator = "not_contains"
 	ConditionOperatorContainsAll          ConditionOperator = "contains_all"
+	ConditionOperatorNotContainsAll       ConditionOperator = "not_contains_all"
 	ConditionOperatorEmpty                ConditionOperator = "empty"
 	ConditionOperatorNotEmpty             ConditionOperator = "not_empty"
 	ConditionOperatorIsAudienceMember     ConditionOperator = "is_audience_member"
@@ -209,7 +210,7 @@ type ConditionParam struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "empty", "not_empty", "is_audience_member",
+	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,omitzero,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
@@ -1049,712 +1050,6 @@ func (r *WorkflowBranchStepBranchParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A channel step within a workflow. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-type WorkflowChannelStep struct {
-	// A name for the workflow step.
-	Name string `json:"name,required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref,required"`
-	// The message template for the channel step. The shape of the template depends on
-	// the type of the channel you'll be sending to. See below for definitions of each
-	// channel type template: email, in-app, SMS, push, chat, and webhook.
-	Template WorkflowChannelStepTemplateUnion `json:"template,required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type WorkflowChannelStepType `json:"type,required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
-	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
-	ChannelKey string `json:"channel_key,nullable"`
-	// A map of channel overrides for the channel step.
-	ChannelOverrides WorkflowChannelStepChannelOverridesUnion `json:"channel_overrides,nullable"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions,nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description,nullable"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindow `json:"send_windows,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name             respjson.Field
-		Ref              respjson.Field
-		Template         respjson.Field
-		Type             respjson.Field
-		ChannelGroupKey  respjson.Field
-		ChannelKey       respjson.Field
-		ChannelOverrides respjson.Field
-		Conditions       respjson.Field
-		Description      respjson.Field
-		SendWindows      respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowChannelStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowChannelStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this WorkflowChannelStep to a WorkflowChannelStepParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// WorkflowChannelStepParam.Overrides()
-func (r WorkflowChannelStep) ToParam() WorkflowChannelStepParam {
-	return param.Override[WorkflowChannelStepParam](json.RawMessage(r.RawJSON()))
-}
-
-// WorkflowChannelStepTemplateUnion contains all possible properties and values
-// from [EmailTemplate], [InAppFeedTemplate], [SMSTemplate], [PushTemplate],
-// [ChatTemplate], [WebhookTemplate].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type WorkflowChannelStepTemplateUnion struct {
-	// This field is from variant [EmailTemplate].
-	Subject string `json:"subject"`
-	// This field is from variant [EmailTemplate].
-	HTMLBody string `json:"html_body"`
-	// This field is a union of [EmailTemplateSettings], [SMSTemplateSettings],
-	// [PushTemplateSettings]
-	Settings WorkflowChannelStepTemplateUnionSettings `json:"settings"`
-	TextBody string                                   `json:"text_body"`
-	// This field is from variant [EmailTemplate].
-	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
-	MarkdownBody string                          `json:"markdown_body"`
-	// This field is from variant [InAppFeedTemplate].
-	ActionButtons []InAppFeedTemplateActionButton `json:"action_buttons"`
-	// This field is from variant [InAppFeedTemplate].
-	ActionURL string `json:"action_url"`
-	// This field is from variant [PushTemplate].
-	Title string `json:"title"`
-	// This field is from variant [ChatTemplate].
-	JsonBody string `json:"json_body"`
-	// This field is from variant [ChatTemplate].
-	Summary string `json:"summary"`
-	// This field is from variant [WebhookTemplate].
-	Method WebhookTemplateMethod `json:"method"`
-	// This field is from variant [WebhookTemplate].
-	URL string `json:"url"`
-	// This field is from variant [WebhookTemplate].
-	Body string `json:"body"`
-	// This field is from variant [WebhookTemplate].
-	Headers []WebhookTemplateHeader `json:"headers"`
-	// This field is from variant [WebhookTemplate].
-	QueryParams []WebhookTemplateQueryParam `json:"query_params"`
-	JSON        struct {
-		Subject       respjson.Field
-		HTMLBody      respjson.Field
-		Settings      respjson.Field
-		TextBody      respjson.Field
-		VisualBlocks  respjson.Field
-		MarkdownBody  respjson.Field
-		ActionButtons respjson.Field
-		ActionURL     respjson.Field
-		Title         respjson.Field
-		JsonBody      respjson.Field
-		Summary       respjson.Field
-		Method        respjson.Field
-		URL           respjson.Field
-		Body          respjson.Field
-		Headers       respjson.Field
-		QueryParams   respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-func (u WorkflowChannelStepTemplateUnion) AsEmailTemplate() (v EmailTemplate) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepTemplateUnion) AsInAppFeedTemplate() (v InAppFeedTemplate) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepTemplateUnion) AsSMSTemplate() (v SMSTemplate) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepTemplateUnion) AsPushTemplate() (v PushTemplate) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepTemplateUnion) AsChatTemplate() (v ChatTemplate) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepTemplateUnion) AsWebhookTemplate() (v WebhookTemplate) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u WorkflowChannelStepTemplateUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *WorkflowChannelStepTemplateUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// WorkflowChannelStepTemplateUnionSettings is an implicit subunion of
-// [WorkflowChannelStepTemplateUnion]. WorkflowChannelStepTemplateUnionSettings
-// provides convenient access to the sub-properties of the union.
-//
-// For type safety it is recommended to directly use a variant of the
-// [WorkflowChannelStepTemplateUnion].
-type WorkflowChannelStepTemplateUnionSettings struct {
-	// This field is from variant [EmailTemplateSettings].
-	AttachmentKey string `json:"attachment_key"`
-	// This field is from variant [EmailTemplateSettings].
-	LayoutKey string `json:"layout_key"`
-	// This field is from variant [EmailTemplateSettings].
-	PreContent       string `json:"pre_content"`
-	PayloadOverrides string `json:"payload_overrides"`
-	// This field is from variant [SMSTemplateSettings].
-	ToNumber string `json:"to_number"`
-	// This field is from variant [PushTemplateSettings].
-	DeliveryType string `json:"delivery_type"`
-	JSON         struct {
-		AttachmentKey    respjson.Field
-		LayoutKey        respjson.Field
-		PreContent       respjson.Field
-		PayloadOverrides respjson.Field
-		ToNumber         respjson.Field
-		DeliveryType     respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-func (r *WorkflowChannelStepTemplateUnionSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The type of the workflow step.
-type WorkflowChannelStepType string
-
-const (
-	WorkflowChannelStepTypeChannel WorkflowChannelStepType = "channel"
-)
-
-// WorkflowChannelStepChannelOverridesUnion contains all possible properties and
-// values from [EmailChannelSettings], [InAppFeedChannelSettings],
-// [SMSChannelSettings], [PushChannelSettings], [ChatChannelSettings].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type WorkflowChannelStepChannelOverridesUnion struct {
-	// This field is from variant [EmailChannelSettings].
-	BccAddress string `json:"bcc_address"`
-	// This field is from variant [EmailChannelSettings].
-	CcAddress string `json:"cc_address"`
-	// This field is from variant [EmailChannelSettings].
-	FromAddress string `json:"from_address"`
-	// This field is from variant [EmailChannelSettings].
-	FromName string `json:"from_name"`
-	// This field is from variant [EmailChannelSettings].
-	JsonOverrides string `json:"json_overrides"`
-	LinkTracking  bool   `json:"link_tracking"`
-	// This field is from variant [EmailChannelSettings].
-	OpenTracking bool `json:"open_tracking"`
-	// This field is from variant [EmailChannelSettings].
-	ReplyToAddress string `json:"reply_to_address"`
-	// This field is from variant [EmailChannelSettings].
-	ToAddress string `json:"to_address"`
-	// This field is from variant [PushChannelSettings].
-	TokenDeregistration bool `json:"token_deregistration"`
-	// This field is from variant [ChatChannelSettings].
-	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
-	JSON                       struct {
-		BccAddress                 respjson.Field
-		CcAddress                  respjson.Field
-		FromAddress                respjson.Field
-		FromName                   respjson.Field
-		JsonOverrides              respjson.Field
-		LinkTracking               respjson.Field
-		OpenTracking               respjson.Field
-		ReplyToAddress             respjson.Field
-		ToAddress                  respjson.Field
-		TokenDeregistration        respjson.Field
-		EmailBasedUserIDResolution respjson.Field
-		raw                        string
-	} `json:"-"`
-}
-
-func (u WorkflowChannelStepChannelOverridesUnion) AsEmailChannelSettings() (v EmailChannelSettings) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepChannelOverridesUnion) AsInAppFeedChannelSettings() (v InAppFeedChannelSettings) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepChannelOverridesUnion) AsSMSChannelSettings() (v SMSChannelSettings) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepChannelOverridesUnion) AsPushChannelSettings() (v PushChannelSettings) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u WorkflowChannelStepChannelOverridesUnion) AsChatChannelSettings() (v ChatChannelSettings) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u WorkflowChannelStepChannelOverridesUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *WorkflowChannelStepChannelOverridesUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A channel step within a workflow. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-//
-// The properties Name, Ref, Template, Type are required.
-type WorkflowChannelStepParam struct {
-	// A name for the workflow step.
-	Name string `json:"name,required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref,required"`
-	// The message template for the channel step. The shape of the template depends on
-	// the type of the channel you'll be sending to. See below for definitions of each
-	// channel type template: email, in-app, SMS, push, chat, and webhook.
-	Template WorkflowChannelStepTemplateUnionParam `json:"template,omitzero,required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type WorkflowChannelStepType `json:"type,omitzero,required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
-	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
-	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A map of channel overrides for the channel step.
-	ChannelOverrides WorkflowChannelStepChannelOverridesUnionParam `json:"channel_overrides,omitzero"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowChannelStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowChannelStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowChannelStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type WorkflowChannelStepTemplateUnionParam struct {
-	OfEmailTemplate     *EmailTemplateParam     `json:",omitzero,inline"`
-	OfInAppFeedTemplate *InAppFeedTemplateParam `json:",omitzero,inline"`
-	OfSMSTemplate       *SMSTemplateParam       `json:",omitzero,inline"`
-	OfPushTemplate      *PushTemplateParam      `json:",omitzero,inline"`
-	OfChatTemplate      *ChatTemplateParam      `json:",omitzero,inline"`
-	OfWebhookTemplate   *WebhookTemplateParam   `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u WorkflowChannelStepTemplateUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfEmailTemplate,
-		u.OfInAppFeedTemplate,
-		u.OfSMSTemplate,
-		u.OfPushTemplate,
-		u.OfChatTemplate,
-		u.OfWebhookTemplate)
-}
-func (u *WorkflowChannelStepTemplateUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *WorkflowChannelStepTemplateUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfEmailTemplate) {
-		return u.OfEmailTemplate
-	} else if !param.IsOmitted(u.OfInAppFeedTemplate) {
-		return u.OfInAppFeedTemplate
-	} else if !param.IsOmitted(u.OfSMSTemplate) {
-		return u.OfSMSTemplate
-	} else if !param.IsOmitted(u.OfPushTemplate) {
-		return u.OfPushTemplate
-	} else if !param.IsOmitted(u.OfChatTemplate) {
-		return u.OfChatTemplate
-	} else if !param.IsOmitted(u.OfWebhookTemplate) {
-		return u.OfWebhookTemplate
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetSubject() *string {
-	if vt := u.OfEmailTemplate; vt != nil {
-		return &vt.Subject
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetHTMLBody() *string {
-	if vt := u.OfEmailTemplate; vt != nil && vt.HTMLBody.Valid() {
-		return &vt.HTMLBody.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetVisualBlocks() []EmailTemplateVisualBlockUnionParam {
-	if vt := u.OfEmailTemplate; vt != nil {
-		return vt.VisualBlocks
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetActionButtons() []InAppFeedTemplateActionButtonParam {
-	if vt := u.OfInAppFeedTemplate; vt != nil {
-		return vt.ActionButtons
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetActionURL() *string {
-	if vt := u.OfInAppFeedTemplate; vt != nil && vt.ActionURL.Valid() {
-		return &vt.ActionURL.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetTitle() *string {
-	if vt := u.OfPushTemplate; vt != nil {
-		return &vt.Title
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetJsonBody() *string {
-	if vt := u.OfChatTemplate; vt != nil && vt.JsonBody.Valid() {
-		return &vt.JsonBody.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetSummary() *string {
-	if vt := u.OfChatTemplate; vt != nil && vt.Summary.Valid() {
-		return &vt.Summary.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetMethod() *string {
-	if vt := u.OfWebhookTemplate; vt != nil {
-		return (*string)(&vt.Method)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetURL() *string {
-	if vt := u.OfWebhookTemplate; vt != nil {
-		return &vt.URL
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetBody() *string {
-	if vt := u.OfWebhookTemplate; vt != nil && vt.Body.Valid() {
-		return &vt.Body.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetHeaders() []WebhookTemplateHeaderParam {
-	if vt := u.OfWebhookTemplate; vt != nil {
-		return vt.Headers
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetQueryParams() []WebhookTemplateQueryParamParam {
-	if vt := u.OfWebhookTemplate; vt != nil {
-		return vt.QueryParams
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetTextBody() *string {
-	if vt := u.OfEmailTemplate; vt != nil && vt.TextBody.Valid() {
-		return &vt.TextBody.Value
-	} else if vt := u.OfSMSTemplate; vt != nil {
-		return (*string)(&vt.TextBody)
-	} else if vt := u.OfPushTemplate; vt != nil {
-		return (*string)(&vt.TextBody)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepTemplateUnionParam) GetMarkdownBody() *string {
-	if vt := u.OfInAppFeedTemplate; vt != nil {
-		return (*string)(&vt.MarkdownBody)
-	} else if vt := u.OfChatTemplate; vt != nil {
-		return (*string)(&vt.MarkdownBody)
-	}
-	return nil
-}
-
-// Returns a subunion which exports methods to access subproperties
-//
-// Or use AsAny() to get the underlying value
-func (u WorkflowChannelStepTemplateUnionParam) GetSettings() (res workflowChannelStepTemplateUnionParamSettings) {
-	if vt := u.OfEmailTemplate; vt != nil {
-		res.any = &vt.Settings
-	} else if vt := u.OfSMSTemplate; vt != nil {
-		res.any = &vt.Settings
-	} else if vt := u.OfPushTemplate; vt != nil {
-		res.any = &vt.Settings
-	}
-	return
-}
-
-// Can have the runtime types [*EmailTemplateSettingsParam],
-// [*SMSTemplateSettingsParam], [*PushTemplateSettingsParam]
-type workflowChannelStepTemplateUnionParamSettings struct{ any }
-
-// Use the following switch statement to get the type of the union:
-//
-//	switch u.AsAny().(type) {
-//	case *knockmapi.EmailTemplateSettingsParam:
-//	case *knockmapi.SMSTemplateSettingsParam:
-//	case *knockmapi.PushTemplateSettingsParam:
-//	default:
-//	    fmt.Errorf("not present")
-//	}
-func (u workflowChannelStepTemplateUnionParamSettings) AsAny() any { return u.any }
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowChannelStepTemplateUnionParamSettings) GetAttachmentKey() *string {
-	switch vt := u.any.(type) {
-	case *EmailTemplateSettingsParam:
-		return paramutil.AddrIfPresent(vt.AttachmentKey)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowChannelStepTemplateUnionParamSettings) GetLayoutKey() *string {
-	switch vt := u.any.(type) {
-	case *EmailTemplateSettingsParam:
-		return paramutil.AddrIfPresent(vt.LayoutKey)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowChannelStepTemplateUnionParamSettings) GetPreContent() *string {
-	switch vt := u.any.(type) {
-	case *EmailTemplateSettingsParam:
-		return paramutil.AddrIfPresent(vt.PreContent)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowChannelStepTemplateUnionParamSettings) GetToNumber() *string {
-	switch vt := u.any.(type) {
-	case *SMSTemplateSettingsParam:
-		return paramutil.AddrIfPresent(vt.ToNumber)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowChannelStepTemplateUnionParamSettings) GetDeliveryType() *string {
-	switch vt := u.any.(type) {
-	case *PushTemplateSettingsParam:
-		return &vt.DeliveryType
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowChannelStepTemplateUnionParamSettings) GetPayloadOverrides() *string {
-	switch vt := u.any.(type) {
-	case *SMSTemplateSettingsParam:
-		return paramutil.AddrIfPresent(vt.PayloadOverrides)
-	case *PushTemplateSettingsParam:
-		return paramutil.AddrIfPresent(vt.PayloadOverrides)
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type WorkflowChannelStepChannelOverridesUnionParam struct {
-	OfEmailChannelSettings     *EmailChannelSettingsParam     `json:",omitzero,inline"`
-	OfInAppFeedChannelSettings *InAppFeedChannelSettingsParam `json:",omitzero,inline"`
-	OfSMSChannelSettings       *SMSChannelSettingsParam       `json:",omitzero,inline"`
-	OfPushChannelSettings      *PushChannelSettingsParam      `json:",omitzero,inline"`
-	OfChatChannelSettings      *ChatChannelSettingsParam      `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u WorkflowChannelStepChannelOverridesUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfEmailChannelSettings,
-		u.OfInAppFeedChannelSettings,
-		u.OfSMSChannelSettings,
-		u.OfPushChannelSettings,
-		u.OfChatChannelSettings)
-}
-func (u *WorkflowChannelStepChannelOverridesUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *WorkflowChannelStepChannelOverridesUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfEmailChannelSettings) {
-		return u.OfEmailChannelSettings
-	} else if !param.IsOmitted(u.OfInAppFeedChannelSettings) {
-		return u.OfInAppFeedChannelSettings
-	} else if !param.IsOmitted(u.OfSMSChannelSettings) {
-		return u.OfSMSChannelSettings
-	} else if !param.IsOmitted(u.OfPushChannelSettings) {
-		return u.OfPushChannelSettings
-	} else if !param.IsOmitted(u.OfChatChannelSettings) {
-		return u.OfChatChannelSettings
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetBccAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.BccAddress.Valid() {
-		return &vt.BccAddress.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetCcAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.CcAddress.Valid() {
-		return &vt.CcAddress.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetFromAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.FromAddress.Valid() {
-		return &vt.FromAddress.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetFromName() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.FromName.Valid() {
-		return &vt.FromName.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetJsonOverrides() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.JsonOverrides.Valid() {
-		return &vt.JsonOverrides.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetOpenTracking() *bool {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.OpenTracking.Valid() {
-		return &vt.OpenTracking.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetReplyToAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.ReplyToAddress.Valid() {
-		return &vt.ReplyToAddress.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetToAddress() *string {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.ToAddress.Valid() {
-		return &vt.ToAddress.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetTokenDeregistration() *bool {
-	if vt := u.OfPushChannelSettings; vt != nil && vt.TokenDeregistration.Valid() {
-		return &vt.TokenDeregistration.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetEmailBasedUserIDResolution() *bool {
-	if vt := u.OfChatChannelSettings; vt != nil && vt.EmailBasedUserIDResolution.Valid() {
-		return &vt.EmailBasedUserIDResolution.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowChannelStepChannelOverridesUnionParam) GetLinkTracking() *bool {
-	if vt := u.OfEmailChannelSettings; vt != nil && vt.LinkTracking.Valid() {
-		return &vt.LinkTracking.Value
-	} else if vt := u.OfInAppFeedChannelSettings; vt != nil && vt.LinkTracking.Valid() {
-		return &vt.LinkTracking.Value
-	} else if vt := u.OfSMSChannelSettings; vt != nil && vt.LinkTracking.Valid() {
-		return &vt.LinkTracking.Value
-	} else if vt := u.OfChatChannelSettings; vt != nil && vt.LinkTracking.Valid() {
-		return &vt.LinkTracking.Value
-	}
-	return nil
-}
-
 // A delay function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/delay-function).
 type WorkflowDelayStep struct {
@@ -1968,28 +1263,29 @@ func (r *WorkflowFetchStepParam) UnmarshalJSON(data []byte) error {
 }
 
 // WorkflowStepUnion contains all possible properties and values from
-// [WorkflowChannelStep], [WorkflowDelayStep], [WorkflowBatchStep],
-// [WorkflowFetchStep], [WorkflowThrottleStep], [WorkflowBranchStep],
-// [WorkflowTriggerWorkflowStep].
+// [WorkflowStepWorkflowWebhookStep], [WorkflowStepWorkflowInAppFeedStep],
+// [WorkflowStepWorkflowChatStep], [WorkflowStepWorkflowSMSStep],
+// [WorkflowStepWorkflowPushStep], [WorkflowStepWorkflowEmailStep],
+// [WorkflowDelayStep], [WorkflowBatchStep], [WorkflowFetchStep],
+// [WorkflowThrottleStep], [WorkflowBranchStep], [WorkflowTriggerWorkflowStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepUnion struct {
 	Name string `json:"name"`
 	Ref  string `json:"ref"`
-	// This field is from variant [WorkflowChannelStep].
-	Template WorkflowChannelStepTemplateUnion `json:"template"`
-	Type     string                           `json:"type"`
-	// This field is from variant [WorkflowChannelStep].
-	ChannelGroupKey string `json:"channel_group_key"`
-	// This field is from variant [WorkflowChannelStep].
-	ChannelKey string `json:"channel_key"`
-	// This field is from variant [WorkflowChannelStep].
-	ChannelOverrides WorkflowChannelStepChannelOverridesUnion `json:"channel_overrides"`
-	// This field is from variant [WorkflowChannelStep].
+	// This field is a union of [WebhookTemplate], [InAppFeedTemplate], [ChatTemplate],
+	// [SMSTemplate], [PushTemplate], [EmailTemplate]
+	Template        WorkflowStepUnionTemplate `json:"template"`
+	Type            string                    `json:"type"`
+	ChannelGroupKey string                    `json:"channel_group_key"`
+	ChannelKey      string                    `json:"channel_key"`
+	// This field is from variant [WorkflowStepWorkflowWebhookStep].
 	Conditions  ConditionGroupUnion `json:"conditions"`
 	Description string              `json:"description"`
-	// This field is from variant [WorkflowChannelStep].
-	SendWindows []SendWindow `json:"send_windows"`
+	SendWindows []SendWindow        `json:"send_windows"`
+	// This field is a union of [InAppFeedChannelSettings], [ChatChannelSettings],
+	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
+	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
 	// This field is a union of [WorkflowDelayStepSettings],
 	// [WorkflowBatchStepSettings], [RequestTemplate], [WorkflowThrottleStepSettings],
 	// [WorkflowTriggerWorkflowStepSettings]
@@ -2003,17 +1299,42 @@ type WorkflowStepUnion struct {
 		Type             respjson.Field
 		ChannelGroupKey  respjson.Field
 		ChannelKey       respjson.Field
-		ChannelOverrides respjson.Field
 		Conditions       respjson.Field
 		Description      respjson.Field
 		SendWindows      respjson.Field
+		ChannelOverrides respjson.Field
 		Settings         respjson.Field
 		Branches         respjson.Field
 		raw              string
 	} `json:"-"`
 }
 
-func (u WorkflowStepUnion) AsWorkflowChannelStep() (v WorkflowChannelStep) {
+func (u WorkflowStepUnion) AsWorkflowWebhookStep() (v WorkflowStepWorkflowWebhookStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowInAppFeedStep() (v WorkflowStepWorkflowInAppFeedStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowChatStep() (v WorkflowStepWorkflowChatStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowSMSStep() (v WorkflowStepWorkflowSMSStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowPushStep() (v WorkflowStepWorkflowPushStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowEmailStep() (v WorkflowStepWorkflowEmailStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2055,6 +1376,150 @@ func (r *WorkflowStepUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// WorkflowStepUnionTemplate is an implicit subunion of [WorkflowStepUnion].
+// WorkflowStepUnionTemplate provides convenient access to the sub-properties of
+// the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepUnion].
+type WorkflowStepUnionTemplate struct {
+	// This field is from variant [WebhookTemplate].
+	Method WebhookTemplateMethod `json:"method"`
+	// This field is from variant [WebhookTemplate].
+	URL string `json:"url"`
+	// This field is from variant [WebhookTemplate].
+	Body string `json:"body"`
+	// This field is from variant [WebhookTemplate].
+	Headers []WebhookTemplateHeader `json:"headers"`
+	// This field is from variant [WebhookTemplate].
+	QueryParams  []WebhookTemplateQueryParam `json:"query_params"`
+	MarkdownBody string                      `json:"markdown_body"`
+	// This field is from variant [InAppFeedTemplate].
+	ActionButtons []InAppFeedTemplateActionButton `json:"action_buttons"`
+	// This field is from variant [InAppFeedTemplate].
+	ActionURL string `json:"action_url"`
+	// This field is from variant [ChatTemplate].
+	JsonBody string `json:"json_body"`
+	// This field is from variant [ChatTemplate].
+	Summary  string `json:"summary"`
+	TextBody string `json:"text_body"`
+	// This field is a union of [SMSTemplateSettings], [PushTemplateSettings],
+	// [EmailTemplateSettings]
+	Settings WorkflowStepUnionTemplateSettings `json:"settings"`
+	// This field is from variant [PushTemplate].
+	Title string `json:"title"`
+	// This field is from variant [EmailTemplate].
+	Subject string `json:"subject"`
+	// This field is from variant [EmailTemplate].
+	HTMLBody string `json:"html_body"`
+	// This field is from variant [EmailTemplate].
+	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
+	JSON         struct {
+		Method        respjson.Field
+		URL           respjson.Field
+		Body          respjson.Field
+		Headers       respjson.Field
+		QueryParams   respjson.Field
+		MarkdownBody  respjson.Field
+		ActionButtons respjson.Field
+		ActionURL     respjson.Field
+		JsonBody      respjson.Field
+		Summary       respjson.Field
+		TextBody      respjson.Field
+		Settings      respjson.Field
+		Title         respjson.Field
+		Subject       respjson.Field
+		HTMLBody      respjson.Field
+		VisualBlocks  respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepUnionTemplate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// WorkflowStepUnionTemplateSettings is an implicit subunion of
+// [WorkflowStepUnion]. WorkflowStepUnionTemplateSettings provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepUnion].
+type WorkflowStepUnionTemplateSettings struct {
+	PayloadOverrides string `json:"payload_overrides"`
+	// This field is from variant [SMSTemplateSettings].
+	ToNumber string `json:"to_number"`
+	// This field is from variant [PushTemplateSettings].
+	DeliveryType string `json:"delivery_type"`
+	// This field is from variant [EmailTemplateSettings].
+	AttachmentKey string `json:"attachment_key"`
+	// This field is from variant [EmailTemplateSettings].
+	LayoutKey string `json:"layout_key"`
+	// This field is from variant [EmailTemplateSettings].
+	PreContent string `json:"pre_content"`
+	JSON       struct {
+		PayloadOverrides respjson.Field
+		ToNumber         respjson.Field
+		DeliveryType     respjson.Field
+		AttachmentKey    respjson.Field
+		LayoutKey        respjson.Field
+		PreContent       respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepUnionTemplateSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// WorkflowStepUnionChannelOverrides is an implicit subunion of
+// [WorkflowStepUnion]. WorkflowStepUnionChannelOverrides provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepUnion].
+type WorkflowStepUnionChannelOverrides struct {
+	LinkTracking bool `json:"link_tracking"`
+	// This field is from variant [ChatChannelSettings].
+	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
+	// This field is from variant [PushChannelSettings].
+	TokenDeregistration bool `json:"token_deregistration"`
+	// This field is from variant [EmailChannelSettings].
+	BccAddress string `json:"bcc_address"`
+	// This field is from variant [EmailChannelSettings].
+	CcAddress string `json:"cc_address"`
+	// This field is from variant [EmailChannelSettings].
+	FromAddress string `json:"from_address"`
+	// This field is from variant [EmailChannelSettings].
+	FromName string `json:"from_name"`
+	// This field is from variant [EmailChannelSettings].
+	JsonOverrides string `json:"json_overrides"`
+	// This field is from variant [EmailChannelSettings].
+	OpenTracking bool `json:"open_tracking"`
+	// This field is from variant [EmailChannelSettings].
+	ReplyToAddress string `json:"reply_to_address"`
+	// This field is from variant [EmailChannelSettings].
+	ToAddress string `json:"to_address"`
+	JSON      struct {
+		LinkTracking               respjson.Field
+		EmailBasedUserIDResolution respjson.Field
+		TokenDeregistration        respjson.Field
+		BccAddress                 respjson.Field
+		CcAddress                  respjson.Field
+		FromAddress                respjson.Field
+		FromName                   respjson.Field
+		JsonOverrides              respjson.Field
+		OpenTracking               respjson.Field
+		ReplyToAddress             respjson.Field
+		ToAddress                  respjson.Field
+		raw                        string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepUnionChannelOverrides) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // WorkflowStepUnionSettings is an implicit subunion of [WorkflowStepUnion].
 // WorkflowStepUnionSettings provides convenient access to the sub-properties of
 // the union.
@@ -2091,9 +1556,9 @@ type WorkflowStepUnionSettings struct {
 	// This field is from variant [RequestTemplate].
 	Body string `json:"body"`
 	// This field is from variant [RequestTemplate].
-	Headers []RequestTemplateHeader `json:"headers"`
+	Headers RequestTemplateHeadersUnion `json:"headers"`
 	// This field is from variant [RequestTemplate].
-	QueryParams []RequestTemplateQueryParam `json:"query_params"`
+	QueryParams RequestTemplateQueryParamsUnion `json:"query_params"`
 	// This field is from variant [WorkflowThrottleStepSettings].
 	ThrottleKey string `json:"throttle_key"`
 	// This field is from variant [WorkflowThrottleStepSettings].
@@ -2158,22 +1623,360 @@ func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
 }
 
+// A webhook step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowWebhookStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// A webhook template. By default, a webhook step will use the request settings you
+	// configured in your webhook channel. You can override this as you see fit on a
+	// per-step basis.
+	Template WebhookTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name            respjson.Field
+		Ref             respjson.Field
+		Template        respjson.Field
+		Type            respjson.Field
+		ChannelGroupKey respjson.Field
+		ChannelKey      respjson.Field
+		Conditions      respjson.Field
+		Description     respjson.Field
+		SendWindows     respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWebhookStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWebhookStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An in-app feed step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowInAppFeedStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An in-app feed template.
+	Template InAppFeedTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// In-app feed channel settings. Only used as configuration as part of a workflow
+	// channel step.
+	ChannelOverrides InAppFeedChannelSettings `json:"channel_overrides,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowInAppFeedStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowInAppFeedStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A chat step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowChatStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// A chat template.
+	Template ChatTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// Chat channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides ChatChannelSettings `json:"channel_overrides,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowChatStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowChatStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A SMS step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowSMSStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An SMS template.
+	Template SMSTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// SMS channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides SMSChannelSettings `json:"channel_overrides,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowSMSStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowSMSStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A push step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowPushStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// A push notification template.
+	Template PushTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// Push channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides PushChannelSettings `json:"channel_overrides,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowPushStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowPushStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An email step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowEmailStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An email message template.
+	Template EmailTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// Email channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides EmailChannelSettings `json:"channel_overrides,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowEmailStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowEmailStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowChannelStep         *WorkflowChannelStepParam         `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowStepWorkflowWebhookStepParam   `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowStepWorkflowInAppFeedStepParam `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowStepWorkflowChatStepParam      `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowStepWorkflowSMSStepParam       `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowStepWorkflowPushStepParam      `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowStepWorkflowEmailStepParam     `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam                 `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam                 `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam                 `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam              `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam                `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam       `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfWorkflowChannelStep,
+	return param.MarshalUnion(u, u.OfWorkflowWebhookStep,
+		u.OfWorkflowInAppFeedStep,
+		u.OfWorkflowChatStep,
+		u.OfWorkflowSMSStep,
+		u.OfWorkflowPushStep,
+		u.OfWorkflowEmailStep,
 		u.OfWorkflowDelayStep,
 		u.OfWorkflowBatchStep,
 		u.OfWorkflowFetchStep,
@@ -2186,8 +1989,18 @@ func (u *WorkflowStepUnionParam) UnmarshalJSON(data []byte) error {
 }
 
 func (u *WorkflowStepUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfWorkflowChannelStep) {
-		return u.OfWorkflowChannelStep
+	if !param.IsOmitted(u.OfWorkflowWebhookStep) {
+		return u.OfWorkflowWebhookStep
+	} else if !param.IsOmitted(u.OfWorkflowInAppFeedStep) {
+		return u.OfWorkflowInAppFeedStep
+	} else if !param.IsOmitted(u.OfWorkflowChatStep) {
+		return u.OfWorkflowChatStep
+	} else if !param.IsOmitted(u.OfWorkflowSMSStep) {
+		return u.OfWorkflowSMSStep
+	} else if !param.IsOmitted(u.OfWorkflowPushStep) {
+		return u.OfWorkflowPushStep
+	} else if !param.IsOmitted(u.OfWorkflowEmailStep) {
+		return u.OfWorkflowEmailStep
 	} else if !param.IsOmitted(u.OfWorkflowDelayStep) {
 		return u.OfWorkflowDelayStep
 	} else if !param.IsOmitted(u.OfWorkflowBatchStep) {
@@ -2205,46 +2018,6 @@ func (u *WorkflowStepUnionParam) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepUnionParam) GetTemplate() *WorkflowChannelStepTemplateUnionParam {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
-		return &vt.Template
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepUnionParam) GetChannelGroupKey() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil && vt.ChannelGroupKey.Valid() {
-		return &vt.ChannelGroupKey.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepUnionParam) GetChannelKey() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil && vt.ChannelKey.Valid() {
-		return &vt.ChannelKey.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepUnionParam) GetChannelOverrides() *WorkflowChannelStepChannelOverridesUnionParam {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
-		return &vt.ChannelOverrides
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepUnionParam) GetSendWindows() []SendWindowParam {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
-		return vt.SendWindows
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetBranches() []WorkflowBranchStepBranchParam {
 	if vt := u.OfWorkflowBranchStep; vt != nil {
 		return vt.Branches
@@ -2254,7 +2027,17 @@ func (u WorkflowStepUnionParam) GetBranches() []WorkflowBranchStepBranchParam {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetName() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
+	if vt := u.OfWorkflowWebhookStep; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
 		return (*string)(&vt.Name)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Name)
@@ -2274,7 +2057,17 @@ func (u WorkflowStepUnionParam) GetName() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetRef() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
+	if vt := u.OfWorkflowWebhookStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Ref)
@@ -2294,7 +2087,17 @@ func (u WorkflowStepUnionParam) GetRef() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetType() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
+	if vt := u.OfWorkflowWebhookStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Type)
@@ -2313,8 +2116,54 @@ func (u WorkflowStepUnionParam) GetType() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepUnionParam) GetChannelGroupKey() *string {
+	if vt := u.OfWorkflowWebhookStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
+	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
+	} else if vt := u.OfWorkflowSMSStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
+	} else if vt := u.OfWorkflowPushStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
+	} else if vt := u.OfWorkflowEmailStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepUnionParam) GetChannelKey() *string {
+	if vt := u.OfWorkflowWebhookStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	} else if vt := u.OfWorkflowSMSStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	} else if vt := u.OfWorkflowPushStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	} else if vt := u.OfWorkflowEmailStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetDescription() *string {
-	if vt := u.OfWorkflowChannelStep; vt != nil && vt.Description.Valid() {
+	if vt := u.OfWorkflowWebhookStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
+	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
+	} else if vt := u.OfWorkflowSMSStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
+	} else if vt := u.OfWorkflowPushStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
+	} else if vt := u.OfWorkflowEmailStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
@@ -2332,9 +2181,285 @@ func (u WorkflowStepUnionParam) GetDescription() *string {
 	return nil
 }
 
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u WorkflowStepUnionParam) GetTemplate() (res workflowStepUnionParamTemplate) {
+	if vt := u.OfWorkflowWebhookStep; vt != nil {
+		res.any = &vt.Template
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		res.any = &vt.Template
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		res.any = &vt.Template
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		res.any = &vt.Template
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		res.any = &vt.Template
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
+		res.any = &vt.Template
+	}
+	return
+}
+
+// Can have the runtime types [*WebhookTemplateParam], [*InAppFeedTemplateParam],
+// [*ChatTemplateParam], [*SMSTemplateParam], [*PushTemplateParam],
+// [*EmailTemplateParam]
+type workflowStepUnionParamTemplate struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *knockmapi.WebhookTemplateParam:
+//	case *knockmapi.InAppFeedTemplateParam:
+//	case *knockmapi.ChatTemplateParam:
+//	case *knockmapi.SMSTemplateParam:
+//	case *knockmapi.PushTemplateParam:
+//	case *knockmapi.EmailTemplateParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepUnionParamTemplate) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetMethod() *string {
+	switch vt := u.any.(type) {
+	case *WebhookTemplateParam:
+		return (*string)(&vt.Method)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetURL() *string {
+	switch vt := u.any.(type) {
+	case *WebhookTemplateParam:
+		return &vt.URL
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetBody() *string {
+	switch vt := u.any.(type) {
+	case *WebhookTemplateParam:
+		return paramutil.AddrIfPresent(vt.Body)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetHeaders() []WebhookTemplateHeaderParam {
+	switch vt := u.any.(type) {
+	case *WebhookTemplateParam:
+		return vt.Headers
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetQueryParams() []WebhookTemplateQueryParamParam {
+	switch vt := u.any.(type) {
+	case *WebhookTemplateParam:
+		return vt.QueryParams
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetActionButtons() []InAppFeedTemplateActionButtonParam {
+	switch vt := u.any.(type) {
+	case *InAppFeedTemplateParam:
+		return vt.ActionButtons
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetActionURL() *string {
+	switch vt := u.any.(type) {
+	case *InAppFeedTemplateParam:
+		return paramutil.AddrIfPresent(vt.ActionURL)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetJsonBody() *string {
+	switch vt := u.any.(type) {
+	case *ChatTemplateParam:
+		return paramutil.AddrIfPresent(vt.JsonBody)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetSummary() *string {
+	switch vt := u.any.(type) {
+	case *ChatTemplateParam:
+		return paramutil.AddrIfPresent(vt.Summary)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetTitle() *string {
+	switch vt := u.any.(type) {
+	case *PushTemplateParam:
+		return &vt.Title
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetSubject() *string {
+	switch vt := u.any.(type) {
+	case *EmailTemplateParam:
+		return &vt.Subject
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetHTMLBody() *string {
+	switch vt := u.any.(type) {
+	case *EmailTemplateParam:
+		return paramutil.AddrIfPresent(vt.HTMLBody)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetVisualBlocks() []EmailTemplateVisualBlockUnionParam {
+	switch vt := u.any.(type) {
+	case *EmailTemplateParam:
+		return vt.VisualBlocks
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetMarkdownBody() *string {
+	switch vt := u.any.(type) {
+	case *InAppFeedTemplateParam:
+		return (*string)(&vt.MarkdownBody)
+	case *ChatTemplateParam:
+		return (*string)(&vt.MarkdownBody)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplate) GetTextBody() *string {
+	switch vt := u.any.(type) {
+	case *SMSTemplateParam:
+		return (*string)(&vt.TextBody)
+	case *PushTemplateParam:
+		return (*string)(&vt.TextBody)
+	case *EmailTemplateParam:
+		return paramutil.AddrIfPresent(vt.TextBody)
+	}
+	return nil
+}
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u workflowStepUnionParamTemplate) GetSettings() (res workflowStepUnionParamTemplateSettings) {
+	switch vt := u.any.(type) {
+	case *SMSTemplateParam:
+		res.any = &vt.Settings
+	case *PushTemplateParam:
+		res.any = &vt.Settings
+	case *EmailTemplateParam:
+		res.any = &vt.Settings
+	}
+	return res
+}
+
+// Can have the runtime types [*SMSTemplateSettingsParam],
+// [*PushTemplateSettingsParam], [*EmailTemplateSettingsParam]
+type workflowStepUnionParamTemplateSettings struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *knockmapi.SMSTemplateSettingsParam:
+//	case *knockmapi.PushTemplateSettingsParam:
+//	case *knockmapi.EmailTemplateSettingsParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepUnionParamTemplateSettings) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplateSettings) GetToNumber() *string {
+	switch vt := u.any.(type) {
+	case *SMSTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.ToNumber)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplateSettings) GetDeliveryType() *string {
+	switch vt := u.any.(type) {
+	case *PushTemplateSettingsParam:
+		return &vt.DeliveryType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplateSettings) GetAttachmentKey() *string {
+	switch vt := u.any.(type) {
+	case *EmailTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.AttachmentKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplateSettings) GetLayoutKey() *string {
+	switch vt := u.any.(type) {
+	case *EmailTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.LayoutKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplateSettings) GetPreContent() *string {
+	switch vt := u.any.(type) {
+	case *EmailTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.PreContent)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamTemplateSettings) GetPayloadOverrides() *string {
+	switch vt := u.any.(type) {
+	case *SMSTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.PayloadOverrides)
+	case *PushTemplateSettingsParam:
+		return paramutil.AddrIfPresent(vt.PayloadOverrides)
+	}
+	return nil
+}
+
 // Returns a pointer to the underlying variant's Conditions property, if present.
 func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
-	if vt := u.OfWorkflowChannelStep; vt != nil {
+	if vt := u.OfWorkflowWebhookStep; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		return &vt.Conditions
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return &vt.Conditions
@@ -2344,6 +2469,165 @@ func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil {
 		return &vt.Conditions
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's SendWindows property, if present.
+func (u WorkflowStepUnionParam) GetSendWindows() []SendWindowParam {
+	if vt := u.OfWorkflowWebhookStep; vt != nil {
+		return vt.SendWindows
+	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return vt.SendWindows
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		return vt.SendWindows
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		return vt.SendWindows
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		return vt.SendWindows
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
+		return vt.SendWindows
+	}
+	return nil
+}
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u WorkflowStepUnionParam) GetChannelOverrides() (res workflowStepUnionParamChannelOverrides) {
+	if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		res.any = &vt.ChannelOverrides
+	} else if vt := u.OfWorkflowChatStep; vt != nil {
+		res.any = &vt.ChannelOverrides
+	} else if vt := u.OfWorkflowSMSStep; vt != nil {
+		res.any = &vt.ChannelOverrides
+	} else if vt := u.OfWorkflowPushStep; vt != nil {
+		res.any = &vt.ChannelOverrides
+	} else if vt := u.OfWorkflowEmailStep; vt != nil {
+		res.any = &vt.ChannelOverrides
+	}
+	return
+}
+
+// Can have the runtime types [*InAppFeedChannelSettingsParam],
+// [*ChatChannelSettingsParam], [*SMSChannelSettingsParam],
+// [*PushChannelSettingsParam], [*EmailChannelSettingsParam]
+type workflowStepUnionParamChannelOverrides struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *knockmapi.InAppFeedChannelSettingsParam:
+//	case *knockmapi.ChatChannelSettingsParam:
+//	case *knockmapi.SMSChannelSettingsParam:
+//	case *knockmapi.PushChannelSettingsParam:
+//	case *knockmapi.EmailChannelSettingsParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepUnionParamChannelOverrides) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetEmailBasedUserIDResolution() *bool {
+	switch vt := u.any.(type) {
+	case *ChatChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.EmailBasedUserIDResolution)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetTokenDeregistration() *bool {
+	switch vt := u.any.(type) {
+	case *PushChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.TokenDeregistration)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetBccAddress() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.BccAddress)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetCcAddress() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.CcAddress)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetFromAddress() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.FromAddress)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetFromName() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.FromName)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetJsonOverrides() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.JsonOverrides)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetOpenTracking() *bool {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.OpenTracking)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetReplyToAddress() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.ReplyToAddress)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetToAddress() *string {
+	switch vt := u.any.(type) {
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.ToAddress)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetLinkTracking() *bool {
+	switch vt := u.any.(type) {
+	case *InAppFeedChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.LinkTracking)
+	case *ChatChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.LinkTracking)
+	case *SMSChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.LinkTracking)
+	case *EmailChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.LinkTracking)
 	}
 	return nil
 }
@@ -2384,6 +2668,311 @@ type workflowStepUnionParamSettings struct{ any }
 //	    fmt.Errorf("not present")
 //	}
 func (u workflowStepUnionParamSettings) AsAny() any { return u.any }
+
+// A webhook step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowStepWorkflowWebhookStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// A webhook template. By default, a webhook step will use the request settings you
+	// configured in your webhook channel. You can override this as you see fit on a
+	// per-step basis.
+	Template WebhookTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWebhookStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWebhookStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWebhookStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWebhookStepParam](
+		"type", "channel",
+	)
+}
+
+// An in-app feed step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowStepWorkflowInAppFeedStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An in-app feed template.
+	Template InAppFeedTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// In-app feed channel settings. Only used as configuration as part of a workflow
+	// channel step.
+	ChannelOverrides InAppFeedChannelSettingsParam `json:"channel_overrides,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowInAppFeedStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowInAppFeedStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowInAppFeedStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowInAppFeedStepParam](
+		"type", "channel",
+	)
+}
+
+// A chat step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowStepWorkflowChatStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// A chat template.
+	Template ChatTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// Chat channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides ChatChannelSettingsParam `json:"channel_overrides,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowChatStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowChatStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowChatStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowChatStepParam](
+		"type", "channel",
+	)
+}
+
+// A SMS step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowStepWorkflowSMSStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An SMS template.
+	Template SMSTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// SMS channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides SMSChannelSettingsParam `json:"channel_overrides,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowSMSStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowSMSStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowSMSStepParam](
+		"type", "channel",
+	)
+}
+
+// A push step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowStepWorkflowPushStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// A push notification template.
+	Template PushTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// Push channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides PushChannelSettingsParam `json:"channel_overrides,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowPushStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowPushStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowPushStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowPushStepParam](
+		"type", "channel",
+	)
+}
+
+// An email step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowStepWorkflowEmailStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An email message template.
+	Template EmailTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// Email channel settings. Only used as configuration as part of a workflow channel
+	// step.
+	ChannelOverrides EmailChannelSettingsParam `json:"channel_overrides,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowEmailStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowEmailStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowEmailStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowEmailStepParam](
+		"type", "channel",
+	)
+}
 
 // A throttle function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/throttle-function).
@@ -2664,6 +3253,171 @@ func (r *WorkflowTriggerWorkflowStepSettingsParam) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A workflow object.
+type WorkflowGetResponse struct {
+	// Whether the workflow is
+	// [active](https://docs.knock.app/concepts/workflows#workflow-status) in the
+	// current environment. (read-only).
+	Active bool `json:"active,required"`
+	// The timestamp of when the workflow was created. (read-only).
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// The slug of the environment in which the workflow exists. (read-only).
+	Environment string `json:"environment,required"`
+	// The unique key string for the workflow object. Must be at minimum 3 characters
+	// and at maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
+	Key string `json:"key,required"`
+	// A name for the workflow. Must be at maximum 255 characters in length.
+	Name string `json:"name,required"`
+	// The SHA hash of the workflow data. (read-only).
+	Sha string `json:"sha,required"`
+	// A list of workflow step objects in the workflow.
+	Steps []WorkflowStepUnion `json:"steps,required"`
+	// The timestamp of when the workflow was last updated. (read-only).
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// Whether the workflow and its steps are in a valid state. (read-only).
+	Valid bool `json:"valid,required"`
+	// A list of
+	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
+	// the workflow belongs to.
+	Categories []string `json:"categories"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// User information.
+	CreatedBy WorkflowGetResponseCreatedBy `json:"created_by,nullable"`
+	// The timestamp of when the workflow was deleted. (read-only).
+	DeletedAt time.Time `json:"deleted_at" format:"date-time"`
+	// An arbitrary string attached to a workflow object. Useful for adding notes about
+	// the workflow for internal purposes. Maximum of 280 characters allowed.
+	Description string `json:"description"`
+	// A map of workflow settings.
+	Settings WorkflowGetResponseSettings `json:"settings"`
+	// A JSON schema for the expected structure of the workflow trigger's data payload.
+	// Used to validate trigger requests. Read more in the
+	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
+	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema"`
+	// The frequency at which the workflow should be triggered. One of:
+	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
+	// to `every_trigger`. Read more in
+	// [docs](https://docs.knock.app/send-notifications/triggering-workflows/overview#controlling-workflow-trigger-frequency).
+	//
+	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
+	TriggerFrequency WorkflowGetResponseTriggerFrequency `json:"trigger_frequency"`
+	// User information.
+	UpdatedBy WorkflowGetResponseUpdatedBy `json:"updated_by,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Active                respjson.Field
+		CreatedAt             respjson.Field
+		Environment           respjson.Field
+		Key                   respjson.Field
+		Name                  respjson.Field
+		Sha                   respjson.Field
+		Steps                 respjson.Field
+		UpdatedAt             respjson.Field
+		Valid                 respjson.Field
+		Categories            respjson.Field
+		Conditions            respjson.Field
+		CreatedBy             respjson.Field
+		DeletedAt             respjson.Field
+		Description           respjson.Field
+		Settings              respjson.Field
+		TriggerDataJsonSchema respjson.Field
+		TriggerFrequency      respjson.Field
+		UpdatedBy             respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// User information.
+type WorkflowGetResponseCreatedBy struct {
+	// The user's unique identifier.
+	ID string `json:"id,required"`
+	// The user's email address.
+	Email string `json:"email,required" format:"email"`
+	// The user's name.
+	Name string `json:"name,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Email       respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowGetResponseCreatedBy) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowGetResponseCreatedBy) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A map of workflow settings.
+type WorkflowGetResponseSettings struct {
+	// Whether the workflow is commercial. Defaults to false.
+	IsCommercial bool `json:"is_commercial"`
+	// Whether to ignore recipient preferences for a given type of notification. If
+	// true, will send for every channel in the workflow even if the recipient has
+	// opted out of a certain kind. Defaults to false.
+	OverridePreferences bool `json:"override_preferences"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		IsCommercial        respjson.Field
+		OverridePreferences respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowGetResponseSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowGetResponseSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The frequency at which the workflow should be triggered. One of:
+// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
+// to `every_trigger`. Read more in
+// [docs](https://docs.knock.app/send-notifications/triggering-workflows/overview#controlling-workflow-trigger-frequency).
+type WorkflowGetResponseTriggerFrequency string
+
+const (
+	WorkflowGetResponseTriggerFrequencyEveryTrigger              WorkflowGetResponseTriggerFrequency = "every_trigger"
+	WorkflowGetResponseTriggerFrequencyOncePerRecipient          WorkflowGetResponseTriggerFrequency = "once_per_recipient"
+	WorkflowGetResponseTriggerFrequencyOncePerRecipientPerTenant WorkflowGetResponseTriggerFrequency = "once_per_recipient_per_tenant"
+)
+
+// User information.
+type WorkflowGetResponseUpdatedBy struct {
+	// The user's unique identifier.
+	ID string `json:"id,required"`
+	// The user's email address.
+	Email string `json:"email,required" format:"email"`
+	// The user's name.
+	Name string `json:"name,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Email       respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowGetResponseUpdatedBy) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowGetResponseUpdatedBy) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Wraps the Workflow response under the `workflow` key.
 type WorkflowActivateResponse struct {
 	// A workflow object.
@@ -2812,7 +3566,7 @@ type WorkflowRunParams struct {
 	Recipients []WorkflowRunParamsRecipientUnion `json:"recipients,omitzero,required"`
 	// A key to cancel the workflow run.
 	CancellationKey param.Opt[string] `json:"cancellation_key,omitzero"`
-	// The tenant to associate the workflow run with.
+	// The tenant to associate the workflow run with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
@@ -2867,7 +3621,9 @@ func (u *WorkflowRunParamsRecipientUnion) asAny() any {
 //
 // The properties ID, Collection are required.
 type WorkflowRunParamsRecipientObjectRecipientReference struct {
-	ID         string `json:"id,required"`
+	// The ID of the object.
+	ID string `json:"id,required"`
+	// The collection of the object.
 	Collection string `json:"collection,required"`
 	paramObj
 }
@@ -2909,7 +3665,9 @@ func (u *WorkflowRunParamsActorUnion) asAny() any {
 //
 // The properties ID, Collection are required.
 type WorkflowRunParamsActorObjectRecipientReference struct {
-	ID         string `json:"id,required"`
+	// The ID of the object.
+	ID string `json:"id,required"`
+	// The collection of the object.
 	Collection string `json:"collection,required"`
 	paramObj
 }

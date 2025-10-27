@@ -55,6 +55,10 @@ func TestCommitListWithOptionalParams(t *testing.T) {
 		Before:      knockmapi.String("before"),
 		Limit:       knockmapi.Int(0),
 		Promoted:    knockmapi.Bool(true),
+		ResourceID:  knockmapi.String("resource_id"),
+		ResourceType: knockmapi.CommitListParamsResourceTypeUnion{
+			OfCommitListsResourceTypeString: knockmapi.String("audience"),
+		},
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -81,6 +85,10 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 	_, err := client.Commits.CommitAll(context.TODO(), knockmapi.CommitCommitAllParams{
 		Environment:   "development",
 		CommitMessage: knockmapi.String("commit_message"),
+		ResourceID:    knockmapi.String("resource_id"),
+		ResourceType: knockmapi.CommitCommitAllParamsResourceTypeUnion{
+			OfCommitCommitAllsResourceTypeString: knockmapi.String("audience"),
+		},
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -91,7 +99,7 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestCommitPromoteAll(t *testing.T) {
+func TestCommitPromoteAllWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -106,6 +114,10 @@ func TestCommitPromoteAll(t *testing.T) {
 	)
 	_, err := client.Commits.PromoteAll(context.TODO(), knockmapi.CommitPromoteAllParams{
 		ToEnvironment: "to_environment",
+		ResourceID:    knockmapi.String("resource_id"),
+		ResourceType: knockmapi.CommitPromoteAllParamsResourceTypeUnion{
+			OfCommitPromoteAllsResourceTypeString: knockmapi.String("audience"),
+		},
 	})
 	if err != nil {
 		var apierr *knockmapi.Error

@@ -64,6 +64,8 @@ func (r *ChannelService) ListAutoPaging(ctx context.Context, query ChannelListPa
 
 // A configured channel, which is a way to route messages to a provider.
 type Channel struct {
+	// The unique identifier for the channel.
+	ID string `json:"id,required"`
 	// The timestamp of when the channel was created.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// Unique identifier for the channel within a project (immutable once created).
@@ -90,6 +92,7 @@ type Channel struct {
 	Description string `json:"description,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ID            respjson.Field
 		CreatedAt     respjson.Field
 		Key           respjson.Field
 		Name          respjson.Field
@@ -399,6 +402,8 @@ func (r *SMSChannelSettingsParam) UnmarshalJSON(data []byte) error {
 }
 
 type ChannelListParams struct {
+	// A channel id to filter the results by.
+	ID param.Opt[string] `query:"id,omitzero" format:"uuid" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.

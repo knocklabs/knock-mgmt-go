@@ -94,7 +94,7 @@ func TestGuideActivateWithOptionalParams(t *testing.T) {
 		"guide_key",
 		knockmapi.GuideActivateParams{
 			Environment: "development",
-			OfObject: &knockmapi.GuideActivateParamsBodyObject{
+			OfGuideScheduledActivations: &knockmapi.GuideActivateParamsBodyGuideScheduledActivationParams{
 				From:  knockmapi.Time(time.Now()),
 				Until: knockmapi.Time(time.Now()),
 			},
@@ -136,18 +136,17 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 					SchemaSemver:     "1.0.0",
 					SchemaVariantKey: "default",
 					Name:             knockmapi.String("Welcome to the App"),
-					Values: map[string]interface{}{
-						"text_field": "value",
+					Values: map[string]any{
+						"text_field": "bar",
 					},
 				}},
-				ActivationLocationRules: []knockmapi.GuideUpsertParamsGuideActivationLocationRule{{
+				ActivationURLPatterns: []knockmapi.GuideUpsertParamsGuideActivationURLPattern{{
 					Directive: "allow",
 					Pathname:  "/dashboard/*",
 				}},
 				ArchivedAt:       knockmapi.Time(time.Now()),
 				DeletedAt:        knockmapi.Time(time.Now()),
 				Description:      knockmapi.String("A guide to help users get started with the application"),
-				Semver:           knockmapi.String("semver"),
 				TargetAudienceID: param.Null[string](),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
@@ -158,7 +157,6 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 						}},
 					},
 				},
-				Type: knockmapi.String("type"),
 			},
 			Annotate:      knockmapi.Bool(true),
 			Commit:        knockmapi.Bool(true),
@@ -201,18 +199,17 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 					SchemaSemver:     "1.0.0",
 					SchemaVariantKey: "default",
 					Name:             knockmapi.String("Welcome to the App"),
-					Values: map[string]interface{}{
-						"text_field": "value",
+					Values: map[string]any{
+						"text_field": "bar",
 					},
 				}},
-				ActivationLocationRules: []knockmapi.GuideValidateParamsGuideActivationLocationRule{{
+				ActivationURLPatterns: []knockmapi.GuideValidateParamsGuideActivationURLPattern{{
 					Directive: "allow",
 					Pathname:  "/dashboard/*",
 				}},
 				ArchivedAt:       knockmapi.Time(time.Now()),
 				DeletedAt:        knockmapi.Time(time.Now()),
 				Description:      knockmapi.String("A guide to help users get started with the application"),
-				Semver:           knockmapi.String("semver"),
 				TargetAudienceID: param.Null[string](),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
@@ -223,7 +220,6 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 						}},
 					},
 				},
-				Type: knockmapi.String("type"),
 			},
 		},
 	)

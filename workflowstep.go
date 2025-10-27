@@ -135,9 +135,9 @@ type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
 	// This field is from variant [RequestTemplate].
 	Body string `json:"body"`
 	// This field is from variant [RequestTemplate].
-	Headers []RequestTemplateHeader `json:"headers"`
+	Headers RequestTemplateHeadersUnion `json:"headers"`
 	// This field is from variant [RequestTemplate].
-	QueryParams []RequestTemplateQueryParam `json:"query_params"`
+	QueryParams RequestTemplateQueryParamsUnion `json:"query_params"`
 	JSON        struct {
 		Subject       respjson.Field
 		HTMLBody      respjson.Field
@@ -237,7 +237,7 @@ type WorkflowStepPreviewTemplateParams struct {
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
 	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero,required"`
-	// The tenant to associate the workflow with.
+	// The tenant to associate the workflow with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
@@ -293,7 +293,9 @@ func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
 //
 // The properties ID, Collection are required.
 type WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference struct {
-	ID         string `json:"id,required"`
+	// The ID of the object.
+	ID string `json:"id,required"`
+	// The collection of the object.
 	Collection string `json:"collection,required"`
 	paramObj
 }
@@ -335,7 +337,9 @@ func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
 //
 // The properties ID, Collection are required.
 type WorkflowStepPreviewTemplateParamsActorObjectRecipientReference struct {
-	ID         string `json:"id,required"`
+	// The ID of the object.
+	ID string `json:"id,required"`
+	// The collection of the object.
 	Collection string `json:"collection,required"`
 	paramObj
 }

@@ -136,9 +136,8 @@ type Guide struct {
 	Sha string `json:"sha,required"`
 	// The timestamp of when the guide was last updated.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// A list of activation location rules that describe when the guide should be
-	// shown.
-	ActivationLocationRules []GuideActivationLocationRule `json:"activation_location_rules"`
+	// A list of activation url patterns that describe when the guide should be shown.
+	ActivationURLPatterns []GuideActivationURLPattern `json:"activation_url_patterns"`
 	// The timestamp of when the guide was archived.
 	ArchivedAt time.Time `json:"archived_at,nullable" format:"date-time"`
 	// The key of the channel in which the guide exists.
@@ -152,11 +151,12 @@ type Guide struct {
 	Semver string `json:"semver"`
 	// A list of guide step objects in the guide.
 	Steps []GuideStep `json:"steps"`
-	// The ID of the target audience for the guide.
+	// The ID of the target audience for the guide. When not set, will default to
+	// targeting all users.
 	TargetAudienceID string `json:"target_audience_id,nullable"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnion `json:"target_property_conditions,nullable"`
-	// The type of the guide.
+	// The type of the guide. This is derived from the message type of the guide steps.
 	Type string `json:"type"`
 	// Whether the guide is valid.
 	Valid bool `json:"valid"`
@@ -169,7 +169,7 @@ type Guide struct {
 		Name                     respjson.Field
 		Sha                      respjson.Field
 		UpdatedAt                respjson.Field
-		ActivationLocationRules  respjson.Field
+		ActivationURLPatterns    respjson.Field
 		ArchivedAt               respjson.Field
 		ChannelKey               respjson.Field
 		DeletedAt                respjson.Field
@@ -193,7 +193,7 @@ func (r *Guide) UnmarshalJSON(data []byte) error {
 
 // A rule that controls when a guide should be shown based on the user's location
 // in the application.
-type GuideActivationLocationRule struct {
+type GuideActivationURLPattern struct {
 	// Whether to allow or block the guide at the specified pathname.
 	//
 	// Any of "allow", "block".
@@ -210,8 +210,8 @@ type GuideActivationLocationRule struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r GuideActivationLocationRule) RawJSON() string { return r.JSON.raw }
-func (r *GuideActivationLocationRule) UnmarshalJSON(data []byte) error {
+func (r GuideActivationURLPattern) RawJSON() string { return r.JSON.raw }
+func (r *GuideActivationURLPattern) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -230,7 +230,7 @@ type GuideStep struct {
 	Name string `json:"name"`
 	// A map of values that make up the step's content. Each value must conform to its
 	// respective template schema field settings.
-	Values any `json:"values"`
+	Values map[string]any `json:"values"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Ref              respjson.Field
@@ -276,7 +276,7 @@ type GuideStepParam struct {
 	Name param.Opt[string] `json:"name,omitzero"`
 	// A map of values that make up the step's content. Each value must conform to its
 	// respective template schema field settings.
-	Values any `json:"values,omitzero"`
+	Values map[string]any `json:"values,omitzero"`
 	paramObj
 }
 
@@ -397,17 +397,19 @@ type GuideActivateParams struct {
 	// Request body variants
 	//
 
-	// This field is a request body variant, only one variant field can be set.
-	OfStatus *GuideActivateParamsBodyStatus `json:",inline"`
-	// This field is a request body variant, only one variant field can be set. At
-	// least one of from or until must be provided
-	OfObject *GuideActivateParamsBodyObject `json:",inline"`
+	// This field is a request body variant, only one variant field can be set. A
+	// request to activate or deactivate a guide.
+	OfGuideBooleanActivations *GuideActivateParamsBodyGuideBooleanActivationParams `json:",inline"`
+	// This field is a request body variant, only one variant field can be set. A
+	// request to schedule the activation of a guide. At least one of from or until
+	// must be provided.
+	OfGuideScheduledActivations *GuideActivateParamsBodyGuideScheduledActivationParams `json:",inline"`
 
 	paramObj
 }
 
 func (u GuideActivateParams) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfStatus, u.OfObject)
+	return param.MarshalUnion(u, u.OfGuideBooleanActivations, u.OfGuideScheduledActivations)
 }
 func (r *GuideActivateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
@@ -421,23 +423,26 @@ func (r GuideActivateParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+// A request to activate or deactivate a guide.
+//
 // The property Status is required.
-type GuideActivateParamsBodyStatus struct {
+type GuideActivateParamsBodyGuideBooleanActivationParams struct {
 	// Whether to activate or deactivate the guide.
 	Status bool `json:"status,required"`
 	paramObj
 }
 
-func (r GuideActivateParamsBodyStatus) MarshalJSON() (data []byte, err error) {
-	type shadow GuideActivateParamsBodyStatus
+func (r GuideActivateParamsBodyGuideBooleanActivationParams) MarshalJSON() (data []byte, err error) {
+	type shadow GuideActivateParamsBodyGuideBooleanActivationParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *GuideActivateParamsBodyStatus) UnmarshalJSON(data []byte) error {
+func (r *GuideActivateParamsBodyGuideBooleanActivationParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// At least one of from or until must be provided
-type GuideActivateParamsBodyObject struct {
+// A request to schedule the activation of a guide. At least one of from or until
+// must be provided.
+type GuideActivateParamsBodyGuideScheduledActivationParams struct {
 	// When to activate the guide. If provided, the guide will be scheduled to activate
 	// at this time. Must be in ISO 8601 UTC format.
 	From param.Opt[time.Time] `json:"from,omitzero" format:"date-time"`
@@ -447,11 +452,11 @@ type GuideActivateParamsBodyObject struct {
 	paramObj
 }
 
-func (r GuideActivateParamsBodyObject) MarshalJSON() (data []byte, err error) {
-	type shadow GuideActivateParamsBodyObject
+func (r GuideActivateParamsBodyGuideScheduledActivationParams) MarshalJSON() (data []byte, err error) {
+	type shadow GuideActivateParamsBodyGuideScheduledActivationParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *GuideActivateParamsBodyObject) UnmarshalJSON(data []byte) error {
+func (r *GuideActivateParamsBodyGuideScheduledActivationParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -502,15 +507,11 @@ type GuideUpsertParamsGuide struct {
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The ID of the target audience for the guide.
+	// The ID of the target audience for the guide. When not set, will default to
+	// targeting all users.
 	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
-	// The semver of the guide.
-	Semver param.Opt[string] `json:"semver,omitzero"`
-	// The type of the guide.
-	Type param.Opt[string] `json:"type,omitzero"`
-	// A list of activation location rules that describe when the guide should be
-	// shown.
-	ActivationLocationRules []GuideUpsertParamsGuideActivationLocationRule `json:"activation_location_rules,omitzero"`
+	// A list of activation url patterns that describe when the guide should be shown.
+	ActivationURLPatterns []GuideUpsertParamsGuideActivationURLPattern `json:"activation_url_patterns,omitzero"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
 	paramObj
@@ -528,7 +529,7 @@ func (r *GuideUpsertParamsGuide) UnmarshalJSON(data []byte) error {
 // in the application.
 //
 // The properties Directive, Pathname are required.
-type GuideUpsertParamsGuideActivationLocationRule struct {
+type GuideUpsertParamsGuideActivationURLPattern struct {
 	// Whether to allow or block the guide at the specified pathname.
 	//
 	// Any of "allow", "block".
@@ -538,16 +539,16 @@ type GuideUpsertParamsGuideActivationLocationRule struct {
 	paramObj
 }
 
-func (r GuideUpsertParamsGuideActivationLocationRule) MarshalJSON() (data []byte, err error) {
-	type shadow GuideUpsertParamsGuideActivationLocationRule
+func (r GuideUpsertParamsGuideActivationURLPattern) MarshalJSON() (data []byte, err error) {
+	type shadow GuideUpsertParamsGuideActivationURLPattern
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *GuideUpsertParamsGuideActivationLocationRule) UnmarshalJSON(data []byte) error {
+func (r *GuideUpsertParamsGuideActivationURLPattern) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[GuideUpsertParamsGuideActivationLocationRule](
+	apijson.RegisterFieldValidator[GuideUpsertParamsGuideActivationURLPattern](
 		"directive", "allow", "block",
 	)
 }
@@ -593,15 +594,11 @@ type GuideValidateParamsGuide struct {
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The ID of the target audience for the guide.
+	// The ID of the target audience for the guide. When not set, will default to
+	// targeting all users.
 	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
-	// The semver of the guide.
-	Semver param.Opt[string] `json:"semver,omitzero"`
-	// The type of the guide.
-	Type param.Opt[string] `json:"type,omitzero"`
-	// A list of activation location rules that describe when the guide should be
-	// shown.
-	ActivationLocationRules []GuideValidateParamsGuideActivationLocationRule `json:"activation_location_rules,omitzero"`
+	// A list of activation url patterns that describe when the guide should be shown.
+	ActivationURLPatterns []GuideValidateParamsGuideActivationURLPattern `json:"activation_url_patterns,omitzero"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
 	paramObj
@@ -619,7 +616,7 @@ func (r *GuideValidateParamsGuide) UnmarshalJSON(data []byte) error {
 // in the application.
 //
 // The properties Directive, Pathname are required.
-type GuideValidateParamsGuideActivationLocationRule struct {
+type GuideValidateParamsGuideActivationURLPattern struct {
 	// Whether to allow or block the guide at the specified pathname.
 	//
 	// Any of "allow", "block".
@@ -629,16 +626,16 @@ type GuideValidateParamsGuideActivationLocationRule struct {
 	paramObj
 }
 
-func (r GuideValidateParamsGuideActivationLocationRule) MarshalJSON() (data []byte, err error) {
-	type shadow GuideValidateParamsGuideActivationLocationRule
+func (r GuideValidateParamsGuideActivationURLPattern) MarshalJSON() (data []byte, err error) {
+	type shadow GuideValidateParamsGuideActivationURLPattern
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *GuideValidateParamsGuideActivationLocationRule) UnmarshalJSON(data []byte) error {
+func (r *GuideValidateParamsGuideActivationURLPattern) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[GuideValidateParamsGuideActivationLocationRule](
+	apijson.RegisterFieldValidator[GuideValidateParamsGuideActivationURLPattern](
 		"directive", "allow", "block",
 	)
 }
