@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewCommitService(opts ...option.RequestOption) (r CommitService) {
 
 // Retrieve a single commit by its ID.
 func (r *CommitService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Commit, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -54,7 +55,7 @@ func (r *CommitService) Get(ctx context.Context, id string, opts ...option.Reque
 // ordered from most recent first.
 func (r *CommitService) List(ctx context.Context, query CommitListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Commit], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/commits"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -77,7 +78,7 @@ func (r *CommitService) ListAutoPaging(ctx context.Context, query CommitListPara
 
 // Commit all changes across all resources in the development environment.
 func (r *CommitService) CommitAll(ctx context.Context, body CommitCommitAllParams, opts ...option.RequestOption) (res *CommitCommitAllResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return
@@ -86,7 +87,7 @@ func (r *CommitService) CommitAll(ctx context.Context, body CommitCommitAllParam
 // Promote all changes across all resources to the target environment from its
 // preceding environment.
 func (r *CommitService) PromoteAll(ctx context.Context, body CommitPromoteAllParams, opts ...option.RequestOption) (res *CommitPromoteAllResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits/promote"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return
@@ -94,7 +95,7 @@ func (r *CommitService) PromoteAll(ctx context.Context, body CommitPromoteAllPar
 
 // Promotes one change to the subsequent environment.
 func (r *CommitService) PromoteOne(ctx context.Context, id string, opts ...option.RequestOption) (res *CommitPromoteOneResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return

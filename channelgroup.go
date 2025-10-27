@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewChannelGroupService(opts ...option.RequestOption) (r ChannelGroupService
 // across the entire account, not scoped to an environment.
 func (r *ChannelGroupService) List(ctx context.Context, query ChannelGroupListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[ChannelGroup], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/channel_groups"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

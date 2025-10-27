@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewChannelService(opts ...option.RequestOption) (r ChannelService) {
 // entire account, not scoped to an environment.
 func (r *ChannelService) List(ctx context.Context, query ChannelListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Channel], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/channels"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

@@ -1,6 +1,10 @@
 # Knock Mgmt Go API Library
 
+<!-- x-release-please-start-version -->
+
 <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/knock-mapi-go.svg" alt="Go Reference"></a>
+
+<!-- x-release-please-end -->
 
 The Knock Mgmt Go library provides convenient access to the [Knock Mgmt REST API](https://docs.knock.app/mapi)
 from applications written in Go.
@@ -23,7 +27,7 @@ go get -u 'github.com/stainless-sdks/knock-mapi-go@v0.0.1-alpha.0'
 
 ## Requirements
 
-This library requires Go 1.18+.
+This library requires Go 1.22+.
 
 ## Usage
 

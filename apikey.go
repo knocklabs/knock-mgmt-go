@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
@@ -37,7 +38,7 @@ func NewAPIKeyService(opts ...option.RequestOption) (r APIKeyService) {
 // service token for a secret API key that can be used to make requests to the
 // public API.
 func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams, opts ...option.RequestOption) (res *APIKeyExchangeResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/api_keys/exchange"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewEnvironmentService(opts ...option.RequestOption) (r EnvironmentService) 
 
 // Returns a single environment by the `environment_slug`.
 func (r *EnvironmentService) Get(ctx context.Context, environmentSlug string, opts ...option.RequestOption) (res *Environment, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if environmentSlug == "" {
 		err = errors.New("missing required environment_slug parameter")
 		return
@@ -54,7 +55,7 @@ func (r *EnvironmentService) Get(ctx context.Context, environmentSlug string, op
 // order of their index, with the `development` environment first.
 func (r *EnvironmentService) List(ctx context.Context, query EnvironmentListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Environment], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/environments"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

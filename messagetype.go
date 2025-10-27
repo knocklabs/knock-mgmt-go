@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -42,7 +43,7 @@ func NewMessageTypeService(opts ...option.RequestOption) (r MessageTypeService) 
 
 // Retrieve a message type by its key, in a given environment.
 func (r *MessageTypeService) Get(ctx context.Context, messageTypeKey string, query MessageTypeGetParams, opts ...option.RequestOption) (res *MessageType, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
 		err = errors.New("missing required message_type_key parameter")
 		return
@@ -55,7 +56,7 @@ func (r *MessageTypeService) Get(ctx context.Context, messageTypeKey string, que
 // Returns a paginated list of message types available in a given environment.
 func (r *MessageTypeService) List(ctx context.Context, query MessageTypeListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[MessageType], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/message_types"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -79,7 +80,7 @@ func (r *MessageTypeService) ListAutoPaging(ctx context.Context, query MessageTy
 //
 // Note: this endpoint only operates in the `development` environment.
 func (r *MessageTypeService) Upsert(ctx context.Context, messageTypeKey string, params MessageTypeUpsertParams, opts ...option.RequestOption) (res *MessageTypeUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
 		err = errors.New("missing required message_type_key parameter")
 		return
@@ -94,7 +95,7 @@ func (r *MessageTypeService) Upsert(ctx context.Context, messageTypeKey string, 
 // Note: this endpoint only operates on message types in the `development`
 // environment.
 func (r *MessageTypeService) Validate(ctx context.Context, messageTypeKey string, params MessageTypeValidateParams, opts ...option.RequestOption) (res *MessageTypeValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
 		err = errors.New("missing required message_type_key parameter")
 		return

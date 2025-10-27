@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewTranslationService(opts ...option.RequestOption) (r TranslationService) 
 
 // Retrieve a translation by its locale and namespace, in a given environment.
 func (r *TranslationService) Get(ctx context.Context, localeCode string, query TranslationGetParams, opts ...option.RequestOption) (res *TranslationGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
 		err = errors.New("missing required locale_code parameter")
 		return
@@ -54,7 +55,7 @@ func (r *TranslationService) Get(ctx context.Context, localeCode string, query T
 // translations are returned in alphabetical order by locale code.
 func (r *TranslationService) List(ctx context.Context, query TranslationListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Translation], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/translations"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -81,7 +82,7 @@ func (r *TranslationService) ListAutoPaging(ctx context.Context, query Translati
 // Note: this endpoint only operates on translations in the "development"
 // environment.
 func (r *TranslationService) Upsert(ctx context.Context, localeCode string, params TranslationUpsertParams, opts ...option.RequestOption) (res *TranslationUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
 		err = errors.New("missing required locale_code parameter")
 		return
@@ -96,7 +97,7 @@ func (r *TranslationService) Upsert(ctx context.Context, localeCode string, para
 // Note: this endpoint only operates on translations in the "development"
 // environment.
 func (r *TranslationService) Validate(ctx context.Context, localeCode string, params TranslationValidateParams, opts ...option.RequestOption) (res *TranslationValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
 		err = errors.New("missing required locale_code parameter")
 		return
