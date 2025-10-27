@@ -163,7 +163,7 @@ type ChannelGroupRule struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "empty", "not_empty", "is_audience_member",
+	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
 	// For conditional rules, the variable to evaluate.
@@ -212,6 +212,7 @@ const (
 	ChannelGroupRuleOperatorContains             ChannelGroupRuleOperator = "contains"
 	ChannelGroupRuleOperatorNotContains          ChannelGroupRuleOperator = "not_contains"
 	ChannelGroupRuleOperatorContainsAll          ChannelGroupRuleOperator = "contains_all"
+	ChannelGroupRuleOperatorNotContainsAll       ChannelGroupRuleOperator = "not_contains_all"
 	ChannelGroupRuleOperatorEmpty                ChannelGroupRuleOperator = "empty"
 	ChannelGroupRuleOperatorNotEmpty             ChannelGroupRuleOperator = "not_empty"
 	ChannelGroupRuleOperatorIsAudienceMember     ChannelGroupRuleOperator = "is_audience_member"

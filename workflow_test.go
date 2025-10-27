@@ -11,7 +11,6 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go"
 	"github.com/stainless-sdks/knock-mapi-go/internal/testutil"
 	"github.com/stainless-sdks/knock-mapi-go/option"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
 )
 
 func TestWorkflowGetWithOptionalParams(t *testing.T) {
@@ -169,35 +168,13 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 			Workflow: knockmapi.WorkflowUpsertParamsWorkflow{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
-					OfWorkflowChannelStep: &knockmapi.WorkflowChannelStepParam{
-						Name: "Channel 1",
-						Ref:  "channel_1",
-						Template: knockmapi.WorkflowChannelStepTemplateUnionParam{
-							OfInAppFeedTemplate: &knockmapi.InAppFeedTemplateParam{
-								MarkdownBody: "Hello **{{ recipient.name }}**",
-								ActionButtons: []knockmapi.InAppFeedTemplateActionButtonParam{{
-									Action: "https://example.com",
-									Label:  "Button 1",
-								}},
-								ActionURL: knockmapi.String("{{ vars.app_url }}"),
-							},
-						},
-						Type:            knockmapi.WorkflowChannelStepTypeChannel,
+					OfWorkflowWebhookStep: &knockmapi.WorkflowStepWorkflowWebhookStepParam{
+						Name:            "Channel 1",
+						Ref:             "channel_1",
+						Template:        knockmapi.WebhookTemplateParam{},
+						Type:            "channel",
 						ChannelGroupKey: knockmapi.String("email"),
 						ChannelKey:      knockmapi.String("in-app-feed"),
-						ChannelOverrides: knockmapi.WorkflowChannelStepChannelOverridesUnionParam{
-							OfEmailChannelSettings: &knockmapi.EmailChannelSettingsParam{
-								BccAddress:     param.Null[string](),
-								CcAddress:      param.Null[string](),
-								FromAddress:    knockmapi.String("hello@example.com"),
-								FromName:       knockmapi.String("John Doe"),
-								JsonOverrides:  knockmapi.String(`{"some_override": true}`),
-								LinkTracking:   knockmapi.Bool(true),
-								OpenTracking:   knockmapi.Bool(true),
-								ReplyToAddress: param.Null[string](),
-								ToAddress:      knockmapi.String("hello@example.com"),
-							},
-						},
 						Conditions: knockmapi.ConditionGroupUnionParam{
 							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
@@ -207,7 +184,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 								}},
 							},
 						},
-						Description: knockmapi.String("Delay for 10 seconds"),
+						Description: knockmapi.String("Send a message to the channel"),
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
@@ -271,35 +248,13 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 			Workflow: knockmapi.WorkflowValidateParamsWorkflow{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
-					OfWorkflowChannelStep: &knockmapi.WorkflowChannelStepParam{
-						Name: "Channel 1",
-						Ref:  "channel_1",
-						Template: knockmapi.WorkflowChannelStepTemplateUnionParam{
-							OfInAppFeedTemplate: &knockmapi.InAppFeedTemplateParam{
-								MarkdownBody: "Hello **{{ recipient.name }}**",
-								ActionButtons: []knockmapi.InAppFeedTemplateActionButtonParam{{
-									Action: "https://example.com",
-									Label:  "Button 1",
-								}},
-								ActionURL: knockmapi.String("{{ vars.app_url }}"),
-							},
-						},
-						Type:            knockmapi.WorkflowChannelStepTypeChannel,
+					OfWorkflowWebhookStep: &knockmapi.WorkflowStepWorkflowWebhookStepParam{
+						Name:            "Channel 1",
+						Ref:             "channel_1",
+						Template:        knockmapi.WebhookTemplateParam{},
+						Type:            "channel",
 						ChannelGroupKey: knockmapi.String("email"),
 						ChannelKey:      knockmapi.String("in-app-feed"),
-						ChannelOverrides: knockmapi.WorkflowChannelStepChannelOverridesUnionParam{
-							OfEmailChannelSettings: &knockmapi.EmailChannelSettingsParam{
-								BccAddress:     param.Null[string](),
-								CcAddress:      param.Null[string](),
-								FromAddress:    knockmapi.String("hello@example.com"),
-								FromName:       knockmapi.String("John Doe"),
-								JsonOverrides:  knockmapi.String(`{"some_override": true}`),
-								LinkTracking:   knockmapi.Bool(true),
-								OpenTracking:   knockmapi.Bool(true),
-								ReplyToAddress: param.Null[string](),
-								ToAddress:      knockmapi.String("hello@example.com"),
-							},
-						},
 						Conditions: knockmapi.ConditionGroupUnionParam{
 							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
@@ -309,7 +264,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 								}},
 							},
 						},
-						Description: knockmapi.String("Delay for 10 seconds"),
+						Description: knockmapi.String("Send a message to the channel"),
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,

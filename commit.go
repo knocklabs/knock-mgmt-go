@@ -109,26 +109,23 @@ type Commit struct {
 	// The unique identifier for the commit.
 	ID string `json:"id,required" format:"uuid"`
 	// The author of the commit.
-	CommitAuthor CommitCommitAuthor `json:"commit_author,required"`
-	// The optional message about the commit.
-	CommitMessage string `json:"commit_message,required"`
+	Author CommitAuthor `json:"author,required"`
 	// The timestamp of when the commit was created.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The environment of the commit.
 	Environment string `json:"environment,required"`
 	// The resource object associated with the commit.
 	Resource CommitResource `json:"resource,required"`
-	// The timestamp of when the commit was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// The optional message about the commit.
+	CommitMessage string `json:"commit_message"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
-		CommitAuthor  respjson.Field
-		CommitMessage respjson.Field
+		Author        respjson.Field
 		CreatedAt     respjson.Field
 		Environment   respjson.Field
 		Resource      respjson.Field
-		UpdatedAt     respjson.Field
+		CommitMessage respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -141,7 +138,7 @@ func (r *Commit) UnmarshalJSON(data []byte) error {
 }
 
 // The author of the commit.
-type CommitCommitAuthor struct {
+type CommitAuthor struct {
 	// The email address of the commit author.
 	Email string `json:"email,required"`
 	// The name of the commit author.
@@ -156,8 +153,8 @@ type CommitCommitAuthor struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CommitCommitAuthor) RawJSON() string { return r.JSON.raw }
-func (r *CommitCommitAuthor) UnmarshalJSON(data []byte) error {
+func (r CommitAuthor) RawJSON() string { return r.JSON.raw }
+func (r *CommitAuthor) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -167,7 +164,8 @@ type CommitResource struct {
 	Identifier string `json:"identifier,required"`
 	// The type of the resource object.
 	//
-	// Any of "email_layout", "workflow", "translation", "partial", "message_type".
+	// Any of "audience", "email_layout", "guide", "message_type", "partial",
+	// "translation", "workflow".
 	Type string `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -250,6 +248,14 @@ type CommitListParams struct {
 	// Whether to show commits in the given environment that have not been promoted to
 	// the subsequent environment (false) or commits which have been promoted (true).
 	Promoted param.Opt[bool] `query:"promoted,omitzero" json:"-"`
+	// Filter commits by resource identifier. Must be used together with resource_type.
+	// For most resources, this will be the resource key. In the case of translations,
+	// this will be the locale code and namespace, separated by a `/`. For example,
+	// `en/courses` or `en`.
+	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`
+	// Filter commits by resource type(s). Accepts a single type or array of types. Can
+	// be combined with resource_id to filter for specific resources.
+	ResourceType CommitListParamsResourceTypeUnion `query:"resource_type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -261,11 +267,49 @@ func (r CommitListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type CommitListParamsResourceTypeUnion struct {
+	// Check if union is this variant with
+	// !param.IsOmitted(union.OfCommitListsResourceTypeString)
+	OfCommitListsResourceTypeString         param.Opt[string] `query:",omitzero,inline"`
+	OfCommitListsResourceTypeArrayItemArray []string          `query:",omitzero,inline"`
+	paramUnion
+}
+
+func (u *CommitListParamsResourceTypeUnion) asAny() any {
+	if !param.IsOmitted(u.OfCommitListsResourceTypeString) {
+		return &u.OfCommitListsResourceTypeString
+	} else if !param.IsOmitted(u.OfCommitListsResourceTypeArrayItemArray) {
+		return &u.OfCommitListsResourceTypeArrayItemArray
+	}
+	return nil
+}
+
+type CommitListParamsResourceTypeString string
+
+const (
+	CommitListParamsResourceTypeStringAudience    CommitListParamsResourceTypeString = "audience"
+	CommitListParamsResourceTypeStringEmailLayout CommitListParamsResourceTypeString = "email_layout"
+	CommitListParamsResourceTypeStringGuide       CommitListParamsResourceTypeString = "guide"
+	CommitListParamsResourceTypeStringMessageType CommitListParamsResourceTypeString = "message_type"
+	CommitListParamsResourceTypeStringPartial     CommitListParamsResourceTypeString = "partial"
+	CommitListParamsResourceTypeStringTranslation CommitListParamsResourceTypeString = "translation"
+	CommitListParamsResourceTypeStringWorkflow    CommitListParamsResourceTypeString = "workflow"
+)
+
 type CommitCommitAllParams struct {
 	// The environment slug.
 	Environment string `query:"environment,required" json:"-"`
 	// An optional message to include in a commit.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// Filter changes to commit by resource identifier. Must be used together with
+	// resource_type.
+	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`
+	// Filter changes to commit by resource type(s). Accepts a single type or array of
+	// types. Can be combined with resource_id to filter for specific resources.
+	ResourceType CommitCommitAllParamsResourceTypeUnion `query:"resource_type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -277,6 +321,38 @@ func (r CommitCommitAllParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type CommitCommitAllParamsResourceTypeUnion struct {
+	// Check if union is this variant with
+	// !param.IsOmitted(union.OfCommitCommitAllsResourceTypeString)
+	OfCommitCommitAllsResourceTypeString         param.Opt[string] `query:",omitzero,inline"`
+	OfCommitCommitAllsResourceTypeArrayItemArray []string          `query:",omitzero,inline"`
+	paramUnion
+}
+
+func (u *CommitCommitAllParamsResourceTypeUnion) asAny() any {
+	if !param.IsOmitted(u.OfCommitCommitAllsResourceTypeString) {
+		return &u.OfCommitCommitAllsResourceTypeString
+	} else if !param.IsOmitted(u.OfCommitCommitAllsResourceTypeArrayItemArray) {
+		return &u.OfCommitCommitAllsResourceTypeArrayItemArray
+	}
+	return nil
+}
+
+type CommitCommitAllParamsResourceTypeString string
+
+const (
+	CommitCommitAllParamsResourceTypeStringAudience    CommitCommitAllParamsResourceTypeString = "audience"
+	CommitCommitAllParamsResourceTypeStringEmailLayout CommitCommitAllParamsResourceTypeString = "email_layout"
+	CommitCommitAllParamsResourceTypeStringGuide       CommitCommitAllParamsResourceTypeString = "guide"
+	CommitCommitAllParamsResourceTypeStringMessageType CommitCommitAllParamsResourceTypeString = "message_type"
+	CommitCommitAllParamsResourceTypeStringPartial     CommitCommitAllParamsResourceTypeString = "partial"
+	CommitCommitAllParamsResourceTypeStringTranslation CommitCommitAllParamsResourceTypeString = "translation"
+	CommitCommitAllParamsResourceTypeStringWorkflow    CommitCommitAllParamsResourceTypeString = "workflow"
+)
+
 type CommitPromoteAllParams struct {
 	// A slug of the target environment to which you want to promote all changes from
 	// its directly preceding environment.
@@ -287,6 +363,12 @@ type CommitPromoteAllParams struct {
 	//
 	// Note: This must be a non-development environment.
 	ToEnvironment string `query:"to_environment,required" json:"-"`
+	// Filter commits to promote by resource identifier. Must be used together with
+	// resource_type.
+	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`
+	// Filter commits to promote by resource type(s). Accepts a single type or array of
+	// types. Can be combined with resource_id to filter for specific resources.
+	ResourceType CommitPromoteAllParamsResourceTypeUnion `query:"resource_type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -297,3 +379,35 @@ func (r CommitPromoteAllParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type CommitPromoteAllParamsResourceTypeUnion struct {
+	// Check if union is this variant with
+	// !param.IsOmitted(union.OfCommitPromoteAllsResourceTypeString)
+	OfCommitPromoteAllsResourceTypeString         param.Opt[string] `query:",omitzero,inline"`
+	OfCommitPromoteAllsResourceTypeArrayItemArray []string          `query:",omitzero,inline"`
+	paramUnion
+}
+
+func (u *CommitPromoteAllParamsResourceTypeUnion) asAny() any {
+	if !param.IsOmitted(u.OfCommitPromoteAllsResourceTypeString) {
+		return &u.OfCommitPromoteAllsResourceTypeString
+	} else if !param.IsOmitted(u.OfCommitPromoteAllsResourceTypeArrayItemArray) {
+		return &u.OfCommitPromoteAllsResourceTypeArrayItemArray
+	}
+	return nil
+}
+
+type CommitPromoteAllParamsResourceTypeString string
+
+const (
+	CommitPromoteAllParamsResourceTypeStringAudience    CommitPromoteAllParamsResourceTypeString = "audience"
+	CommitPromoteAllParamsResourceTypeStringEmailLayout CommitPromoteAllParamsResourceTypeString = "email_layout"
+	CommitPromoteAllParamsResourceTypeStringGuide       CommitPromoteAllParamsResourceTypeString = "guide"
+	CommitPromoteAllParamsResourceTypeStringMessageType CommitPromoteAllParamsResourceTypeString = "message_type"
+	CommitPromoteAllParamsResourceTypeStringPartial     CommitPromoteAllParamsResourceTypeString = "partial"
+	CommitPromoteAllParamsResourceTypeStringTranslation CommitPromoteAllParamsResourceTypeString = "translation"
+	CommitPromoteAllParamsResourceTypeStringWorkflow    CommitPromoteAllParamsResourceTypeString = "workflow"
+)

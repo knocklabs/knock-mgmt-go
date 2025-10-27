@@ -27,6 +27,7 @@ func TestChannelListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Channels.List(context.TODO(), knockmapi.ChannelListParams{
+		ID:     knockmapi.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		After:  knockmapi.String("after"),
 		Before: knockmapi.String("before"),
 		Limit:  knockmapi.Int(0),
