@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewPartialService(opts ...option.RequestOption) (r PartialService) {
 
 // Get a partial by its key.
 func (r *PartialService) Get(ctx context.Context, partialKey string, query PartialGetParams, opts ...option.RequestOption) (res *Partial, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if partialKey == "" {
 		err = errors.New("missing required partial_key parameter")
 		return
@@ -53,7 +54,7 @@ func (r *PartialService) Get(ctx context.Context, partialKey string, query Parti
 // List all partials for a given environment.
 func (r *PartialService) List(ctx context.Context, query PartialListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Partial], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/partials"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -77,7 +78,7 @@ func (r *PartialService) ListAutoPaging(ctx context.Context, query PartialListPa
 //
 // Note: this endpoint only operates on partials in the “development” environment.
 func (r *PartialService) Upsert(ctx context.Context, partialKey string, params PartialUpsertParams, opts ...option.RequestOption) (res *PartialUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if partialKey == "" {
 		err = errors.New("missing required partial_key parameter")
 		return
@@ -91,7 +92,7 @@ func (r *PartialService) Upsert(ctx context.Context, partialKey string, params P
 //
 // Note: this endpoint only operates on partials in the “development” environment.
 func (r *PartialService) Validate(ctx context.Context, partialKey string, params PartialValidateParams, opts ...option.RequestOption) (res *PartialValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if partialKey == "" {
 		err = errors.New("missing required partial_key parameter")
 		return

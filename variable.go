@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -39,7 +40,7 @@ func NewVariableService(opts ...option.RequestOption) (r VariableService) {
 // Returns a paginated list of variables for a given environment.
 func (r *VariableService) List(ctx context.Context, query VariableListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Variable], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/variables"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewGuideService(opts ...option.RequestOption) (r GuideService) {
 
 // Get a guide by its key.
 func (r *GuideService) Get(ctx context.Context, guideKey string, query GuideGetParams, opts ...option.RequestOption) (res *Guide, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
 		return
@@ -54,7 +55,7 @@ func (r *GuideService) Get(ctx context.Context, guideKey string, query GuideGetP
 // Returns a paginated list of guides available in a given environment.
 func (r *GuideService) List(ctx context.Context, query GuideListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Guide], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/guides"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -80,7 +81,7 @@ func (r *GuideService) ListAutoPaging(ctx context.Context, query GuideListParams
 // Note: This immediately enables or disables a guide in a given environment
 // without needing to go through environment promotion.
 func (r *GuideService) Activate(ctx context.Context, guideKey string, params GuideActivateParams, opts ...option.RequestOption) (res *GuideActivateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
 		return
@@ -94,7 +95,7 @@ func (r *GuideService) Activate(ctx context.Context, guideKey string, params Gui
 //
 // Note: this endpoint only operates on guides in the "development" environment.
 func (r *GuideService) Upsert(ctx context.Context, guideKey string, params GuideUpsertParams, opts ...option.RequestOption) (res *GuideUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
 		return
@@ -108,7 +109,7 @@ func (r *GuideService) Upsert(ctx context.Context, guideKey string, params Guide
 //
 // Note: Validating a guide is only done in the development environment context.
 func (r *GuideService) Validate(ctx context.Context, guideKey string, params GuideValidateParams, opts ...option.RequestOption) (res *GuideValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
 		return

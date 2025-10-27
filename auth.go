@@ -5,6 +5,7 @@ package knockmapi
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/internal/requestconfig"
@@ -34,7 +35,7 @@ func NewAuthService(opts ...option.RequestOption) (r AuthService) {
 // Return information about the current calling scope. Will either be a service
 // token or from an OAuth context.
 func (r *AuthService) Verify(ctx context.Context, opts ...option.RequestOption) (res *AuthVerifyResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/whoami"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return

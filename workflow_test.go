@@ -11,10 +11,11 @@ import (
 	"github.com/stainless-sdks/knock-mapi-go"
 	"github.com/stainless-sdks/knock-mapi-go/internal/testutil"
 	"github.com/stainless-sdks/knock-mapi-go/option"
+	"github.com/stainless-sdks/knock-mapi-go/packages/param"
 )
 
 func TestWorkflowGetWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -45,7 +46,7 @@ func TestWorkflowGetWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowListWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -75,7 +76,7 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowActivate(t *testing.T) {
-	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -105,7 +106,7 @@ func TestWorkflowActivate(t *testing.T) {
 }
 
 func TestWorkflowRunWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -148,7 +149,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -168,13 +169,23 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 			Workflow: knockmapi.WorkflowUpsertParamsWorkflow{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
-					OfWorkflowWebhookStep: &knockmapi.WorkflowStepWorkflowWebhookStepParam{
-						Name:            "Channel 1",
-						Ref:             "channel_1",
-						Template:        knockmapi.WebhookTemplateParam{},
+					OfWorkflowInAppFeedStep: &knockmapi.WorkflowStepWorkflowInAppFeedStepParam{
+						Name: "Channel 1",
+						Ref:  "channel_1",
+						Template: knockmapi.InAppFeedTemplateParam{
+							MarkdownBody: "Hello **{{ recipient.name }}**",
+							ActionButtons: []knockmapi.InAppFeedTemplateActionButtonParam{{
+								Action: "https://example.com",
+								Label:  "Button 1",
+							}},
+							ActionURL: knockmapi.String("{{ vars.app_url }}"),
+						},
 						Type:            "channel",
-						ChannelGroupKey: knockmapi.String("email"),
+						ChannelGroupKey: param.Null[string](),
 						ChannelKey:      knockmapi.String("in-app-feed"),
+						ChannelOverrides: knockmapi.InAppFeedChannelSettingsParam{
+							LinkTracking: knockmapi.Bool(true),
+						},
 						Conditions: knockmapi.ConditionGroupUnionParam{
 							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
@@ -184,12 +195,12 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 								}},
 							},
 						},
-						Description: knockmapi.String("Send a message to the channel"),
+						Description: knockmapi.String("This is a description of the channel step"),
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
-							From:  knockmapi.Time("from"),
-							Until: knockmapi.Time("until"),
+							From:  knockmapi.Time("18:11:19.117Z"),
+							Until: knockmapi.Time("18:11:19.117Z"),
 						}},
 					},
 				}},
@@ -228,7 +239,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowValidateWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: currently no good way to test endpoints defining callbacks, Prism mock server will fail trying to reach the provided callback url")
+	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -248,13 +259,23 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 			Workflow: knockmapi.WorkflowValidateParamsWorkflow{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
-					OfWorkflowWebhookStep: &knockmapi.WorkflowStepWorkflowWebhookStepParam{
-						Name:            "Channel 1",
-						Ref:             "channel_1",
-						Template:        knockmapi.WebhookTemplateParam{},
+					OfWorkflowInAppFeedStep: &knockmapi.WorkflowStepWorkflowInAppFeedStepParam{
+						Name: "Channel 1",
+						Ref:  "channel_1",
+						Template: knockmapi.InAppFeedTemplateParam{
+							MarkdownBody: "Hello **{{ recipient.name }}**",
+							ActionButtons: []knockmapi.InAppFeedTemplateActionButtonParam{{
+								Action: "https://example.com",
+								Label:  "Button 1",
+							}},
+							ActionURL: knockmapi.String("{{ vars.app_url }}"),
+						},
 						Type:            "channel",
-						ChannelGroupKey: knockmapi.String("email"),
+						ChannelGroupKey: param.Null[string](),
 						ChannelKey:      knockmapi.String("in-app-feed"),
+						ChannelOverrides: knockmapi.InAppFeedChannelSettingsParam{
+							LinkTracking: knockmapi.Bool(true),
+						},
 						Conditions: knockmapi.ConditionGroupUnionParam{
 							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
@@ -264,12 +285,12 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 								}},
 							},
 						},
-						Description: knockmapi.String("Send a message to the channel"),
+						Description: knockmapi.String("This is a description of the channel step"),
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
-							From:  knockmapi.Time("from"),
-							Until: knockmapi.Time("until"),
+							From:  knockmapi.Time("18:11:19.117Z"),
+							Until: knockmapi.Time("18:11:19.117Z"),
 						}},
 					},
 				}},

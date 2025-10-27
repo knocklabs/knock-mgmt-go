@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewEmailLayoutService(opts ...option.RequestOption) (r EmailLayoutService) 
 
 // Retrieve an email layout by its key, in a given environment.
 func (r *EmailLayoutService) Get(ctx context.Context, emailLayoutKey string, query EmailLayoutGetParams, opts ...option.RequestOption) (res *EmailLayout, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
 		err = errors.New("missing required email_layout_key parameter")
 		return
@@ -53,7 +54,7 @@ func (r *EmailLayoutService) Get(ctx context.Context, emailLayoutKey string, que
 // Returns a paginated list of email layouts available in a given environment.
 func (r *EmailLayoutService) List(ctx context.Context, query EmailLayoutListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[EmailLayout], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/email_layouts"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -77,7 +78,7 @@ func (r *EmailLayoutService) ListAutoPaging(ctx context.Context, query EmailLayo
 //
 // Note: this endpoint only operates in the "development" environment.
 func (r *EmailLayoutService) Upsert(ctx context.Context, emailLayoutKey string, params EmailLayoutUpsertParams, opts ...option.RequestOption) (res *EmailLayoutUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
 		err = errors.New("missing required email_layout_key parameter")
 		return
@@ -91,7 +92,7 @@ func (r *EmailLayoutService) Upsert(ctx context.Context, emailLayoutKey string, 
 //
 // Note: this endpoint only operates in the "development" environment.
 func (r *EmailLayoutService) Validate(ctx context.Context, emailLayoutKey string, params EmailLayoutValidateParams, opts ...option.RequestOption) (res *EmailLayoutValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
 		err = errors.New("missing required email_layout_key parameter")
 		return

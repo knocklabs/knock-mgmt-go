@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
 	"github.com/stainless-sdks/knock-mapi-go/internal/apiquery"
@@ -39,7 +40,7 @@ func NewWorkflowStepService(opts ...option.RequestOption) (r WorkflowStepService
 
 // Generates a rendered template for a given channel step in a workflow.
 func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, stepRef string, params WorkflowStepPreviewTemplateParams, opts ...option.RequestOption) (res *WorkflowStepPreviewTemplateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if params.WorkflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return

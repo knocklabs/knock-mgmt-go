@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
@@ -44,7 +45,7 @@ func NewWorkflowService(opts ...option.RequestOption) (r WorkflowService) {
 
 // Retrieve a workflow by its key in a given environment.
 func (r *WorkflowService) Get(ctx context.Context, workflowKey string, query WorkflowGetParams, opts ...option.RequestOption) (res *WorkflowGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return
@@ -58,7 +59,7 @@ func (r *WorkflowService) Get(ctx context.Context, workflowKey string, query Wor
 // workflows are returned alphabetically by `key`.
 func (r *WorkflowService) List(ctx context.Context, query WorkflowListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Workflow], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/workflows"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -85,7 +86,7 @@ func (r *WorkflowService) ListAutoPaging(ctx context.Context, query WorkflowList
 // Note: This immediately enables or disables a workflow in a given environment
 // without needing to go through environment promotion.
 func (r *WorkflowService) Activate(ctx context.Context, workflowKey string, params WorkflowActivateParams, opts ...option.RequestOption) (res *WorkflowActivateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return
@@ -98,7 +99,7 @@ func (r *WorkflowService) Activate(ctx context.Context, workflowKey string, para
 // Runs the latest version of a committed workflow in a given environment using the
 // params provided.
 func (r *WorkflowService) Run(ctx context.Context, workflowKey string, params WorkflowRunParams, opts ...option.RequestOption) (res *WorkflowRunResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return
@@ -113,7 +114,7 @@ func (r *WorkflowService) Run(ctx context.Context, workflowKey string, params Wo
 //
 // Note: this endpoint only operates on workflows in the `development` environment.
 func (r *WorkflowService) Upsert(ctx context.Context, workflowKey string, params WorkflowUpsertParams, opts ...option.RequestOption) (res *WorkflowUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return
@@ -128,7 +129,7 @@ func (r *WorkflowService) Upsert(ctx context.Context, workflowKey string, params
 //
 // Note: Validating a workflow is only done in the development environment context.
 func (r *WorkflowService) Validate(ctx context.Context, workflowKey string, params WorkflowValidateParams, opts ...option.RequestOption) (res *WorkflowValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
 		return
