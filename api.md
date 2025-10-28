@@ -101,6 +101,7 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowDelayStepParam">WorkflowDelayStepParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowEmailStepParam">WorkflowEmailStepParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowFetchStepParam">WorkflowFetchStepParam</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowInAppFeedStepParam">WorkflowInAppFeedStepParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowPushStepParam">WorkflowPushStepParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowSMSStepParam">WorkflowSMSStepParam</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowStepUnionParam">WorkflowStepUnionParam</a>
@@ -121,6 +122,7 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowDelayStep">WorkflowDelayStep</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowEmailStep">WorkflowEmailStep</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowFetchStep">WorkflowFetchStep</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowInAppFeedStep">WorkflowInAppFeedStep</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowPushStep">WorkflowPushStep</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowSMSStep">WorkflowSMSStep</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/knock-mapi-go#WorkflowStepUnion">WorkflowStepUnion</a>
