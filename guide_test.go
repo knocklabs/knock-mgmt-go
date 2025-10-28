@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/knock-mapi-go"
-	"github.com/stainless-sdks/knock-mapi-go/internal/testutil"
-	"github.com/stainless-sdks/knock-mapi-go/option"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go"
+	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
+	"github.com/knocklabs/knock-mgmt-go/option"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 )
 
 func TestGuideGetWithOptionalParams(t *testing.T) {

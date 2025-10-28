@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/knock-mapi-go"
-	"github.com/stainless-sdks/knock-mapi-go/internal"
-	"github.com/stainless-sdks/knock-mapi-go/option"
+	"github.com/knocklabs/knock-mgmt-go"
+	"github.com/knocklabs/knock-mgmt-go/internal"
+	"github.com/knocklabs/knock-mgmt-go/option"
 )
 
 type closureTransport struct {

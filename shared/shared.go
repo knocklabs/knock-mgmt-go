@@ -3,9 +3,9 @@
 package shared
 
 import (
-	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/internal/apijson"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding

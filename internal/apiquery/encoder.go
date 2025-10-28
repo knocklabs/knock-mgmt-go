@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 )
 
 var encoders sync.Map // map[reflect.Type]encoderFunc

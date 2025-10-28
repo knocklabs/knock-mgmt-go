@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/knock-mapi-go"
-	"github.com/stainless-sdks/knock-mapi-go/internal/testutil"
-	"github.com/stainless-sdks/knock-mapi-go/option"
+	"github.com/knocklabs/knock-mgmt-go"
+	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
+	"github.com/knocklabs/knock-mgmt-go/option"
 )
 
 func TestEmailLayoutGetWithOptionalParams(t *testing.T) {
