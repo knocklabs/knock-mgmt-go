@@ -91,6 +91,18 @@ func (r *GuideService) Activate(ctx context.Context, guideKey string, params Gui
 	return
 }
 
+// Archives a given guide across all environments.
+func (r *GuideService) Archive(ctx context.Context, guideKey string, opts ...option.RequestOption) (res *GuideArchiveResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if guideKey == "" {
+		err = errors.New("missing required guide_key parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/guides/%s", guideKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	return
+}
+
 // Updates a guide of a given key, or creates a new one if it does not yet exist.
 //
 // Note: this endpoint only operates on guides in the "development" environment.
@@ -198,7 +210,7 @@ type GuideActivationURLPattern struct {
 	// Whether to allow or block the guide at the specified pathname.
 	//
 	// Any of "allow", "block".
-	Directive string `json:"directive,required"`
+	Directive GuideActivationURLPatternDirective `json:"directive,required"`
 	// The URL pathname pattern to match against. Must be a valid URI path.
 	Pathname string `json:"pathname,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -213,6 +225,46 @@ type GuideActivationURLPattern struct {
 // Returns the unmodified JSON received from the API
 func (r GuideActivationURLPattern) RawJSON() string { return r.JSON.raw }
 func (r *GuideActivationURLPattern) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this GuideActivationURLPattern to a
+// GuideActivationURLPatternParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// GuideActivationURLPatternParam.Overrides()
+func (r GuideActivationURLPattern) ToParam() GuideActivationURLPatternParam {
+	return param.Override[GuideActivationURLPatternParam](json.RawMessage(r.RawJSON()))
+}
+
+// Whether to allow or block the guide at the specified pathname.
+type GuideActivationURLPatternDirective string
+
+const (
+	GuideActivationURLPatternDirectiveAllow GuideActivationURLPatternDirective = "allow"
+	GuideActivationURLPatternDirectiveBlock GuideActivationURLPatternDirective = "block"
+)
+
+// A rule that controls when a guide should be shown based on the user's location
+// in the application.
+//
+// The properties Directive, Pathname are required.
+type GuideActivationURLPatternParam struct {
+	// Whether to allow or block the guide at the specified pathname.
+	//
+	// Any of "allow", "block".
+	Directive GuideActivationURLPatternDirective `json:"directive,omitzero,required"`
+	// The URL pathname pattern to match against. Must be a valid URI path.
+	Pathname string `json:"pathname,required"`
+	paramObj
+}
+
+func (r GuideActivationURLPatternParam) MarshalJSON() (data []byte, err error) {
+	type shadow GuideActivationURLPatternParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *GuideActivationURLPatternParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -305,6 +357,24 @@ type GuideActivateResponse struct {
 // Returns the unmodified JSON received from the API
 func (r GuideActivateResponse) RawJSON() string { return r.JSON.raw }
 func (r *GuideActivateResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The response from archiving a guide.
+type GuideArchiveResponse struct {
+	// The result of the promote operation.
+	Result string `json:"result,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Result      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r GuideArchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *GuideArchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -512,7 +582,7 @@ type GuideUpsertParamsGuide struct {
 	// targeting all users.
 	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
-	ActivationURLPatterns []GuideUpsertParamsGuideActivationURLPattern `json:"activation_url_patterns,omitzero"`
+	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
 	paramObj
@@ -524,34 +594,6 @@ func (r GuideUpsertParamsGuide) MarshalJSON() (data []byte, err error) {
 }
 func (r *GuideUpsertParamsGuide) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// A rule that controls when a guide should be shown based on the user's location
-// in the application.
-//
-// The properties Directive, Pathname are required.
-type GuideUpsertParamsGuideActivationURLPattern struct {
-	// Whether to allow or block the guide at the specified pathname.
-	//
-	// Any of "allow", "block".
-	Directive string `json:"directive,omitzero,required"`
-	// The URL pathname pattern to match against. Must be a valid URI path.
-	Pathname string `json:"pathname,required"`
-	paramObj
-}
-
-func (r GuideUpsertParamsGuideActivationURLPattern) MarshalJSON() (data []byte, err error) {
-	type shadow GuideUpsertParamsGuideActivationURLPattern
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GuideUpsertParamsGuideActivationURLPattern) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[GuideUpsertParamsGuideActivationURLPattern](
-		"directive", "allow", "block",
-	)
 }
 
 type GuideValidateParams struct {
@@ -599,7 +641,7 @@ type GuideValidateParamsGuide struct {
 	// targeting all users.
 	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
-	ActivationURLPatterns []GuideValidateParamsGuideActivationURLPattern `json:"activation_url_patterns,omitzero"`
+	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
 	paramObj
@@ -611,32 +653,4 @@ func (r GuideValidateParamsGuide) MarshalJSON() (data []byte, err error) {
 }
 func (r *GuideValidateParamsGuide) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// A rule that controls when a guide should be shown based on the user's location
-// in the application.
-//
-// The properties Directive, Pathname are required.
-type GuideValidateParamsGuideActivationURLPattern struct {
-	// Whether to allow or block the guide at the specified pathname.
-	//
-	// Any of "allow", "block".
-	Directive string `json:"directive,omitzero,required"`
-	// The URL pathname pattern to match against. Must be a valid URI path.
-	Pathname string `json:"pathname,required"`
-	paramObj
-}
-
-func (r GuideValidateParamsGuideActivationURLPattern) MarshalJSON() (data []byte, err error) {
-	type shadow GuideValidateParamsGuideActivationURLPattern
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GuideValidateParamsGuideActivationURLPattern) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[GuideValidateParamsGuideActivationURLPattern](
-		"directive", "allow", "block",
-	)
 }

@@ -170,7 +170,8 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
 					OfWorkflowInAppFeedStep: &knockmapi.WorkflowStepWorkflowInAppFeedStepParam{
-						Ref: "channel_1",
+						Name: "Channel 1",
+						Ref:  "channel_1",
 						Template: knockmapi.InAppFeedTemplateParam{
 							MarkdownBody: "Hello **{{ recipient.name }}**",
 							ActionButtons: []knockmapi.InAppFeedTemplateActionButtonParam{{
@@ -185,7 +186,6 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 						ChannelOverrides: knockmapi.InAppFeedChannelSettingsParam{
 							LinkTracking: knockmapi.Bool(true),
 						},
-						ChannelType: "in_app_feed",
 						Conditions: knockmapi.ConditionGroupUnionParam{
 							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
@@ -196,7 +196,6 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 							},
 						},
 						Description: knockmapi.String("This is a description of the channel step"),
-						Name:        knockmapi.String("Channel 1"),
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
@@ -261,7 +260,8 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
 					OfWorkflowInAppFeedStep: &knockmapi.WorkflowStepWorkflowInAppFeedStepParam{
-						Ref: "channel_1",
+						Name: "Channel 1",
+						Ref:  "channel_1",
 						Template: knockmapi.InAppFeedTemplateParam{
 							MarkdownBody: "Hello **{{ recipient.name }}**",
 							ActionButtons: []knockmapi.InAppFeedTemplateActionButtonParam{{
@@ -276,7 +276,6 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 						ChannelOverrides: knockmapi.InAppFeedChannelSettingsParam{
 							LinkTracking: knockmapi.Bool(true),
 						},
-						ChannelType: "in_app_feed",
 						Conditions: knockmapi.ConditionGroupUnionParam{
 							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
@@ -287,7 +286,6 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 							},
 						},
 						Description: knockmapi.String("This is a description of the channel step"),
-						Name:        knockmapi.String("Channel 1"),
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
