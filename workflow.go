@@ -1495,6 +1495,122 @@ func (r *WorkflowFetchStepParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// An in-app feed step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowInAppFeedStep struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An in-app feed template.
+	Template InAppFeedTemplate `json:"template,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type WorkflowInAppFeedStepType `json:"type,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey string `json:"channel_group_key,nullable"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey string `json:"channel_key,nullable"`
+	// In-app feed channel settings. Only used as configuration as part of a workflow
+	// channel step.
+	ChannelOverrides InAppFeedChannelSettings `json:"channel_overrides,nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name             respjson.Field
+		Ref              respjson.Field
+		Template         respjson.Field
+		Type             respjson.Field
+		ChannelGroupKey  respjson.Field
+		ChannelKey       respjson.Field
+		ChannelOverrides respjson.Field
+		Conditions       respjson.Field
+		Description      respjson.Field
+		SendWindows      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowInAppFeedStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowInAppFeedStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowInAppFeedStep to a WorkflowInAppFeedStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowInAppFeedStepParam.Overrides()
+func (r WorkflowInAppFeedStep) ToParam() WorkflowInAppFeedStepParam {
+	return param.Override[WorkflowInAppFeedStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of the workflow step.
+type WorkflowInAppFeedStepType string
+
+const (
+	WorkflowInAppFeedStepTypeChannel WorkflowInAppFeedStepType = "channel"
+)
+
+// An in-app feed step within a workflow. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties Name, Ref, Template, Type are required.
+type WorkflowInAppFeedStepParam struct {
+	// A name for the workflow step.
+	Name string `json:"name,required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// An in-app feed template.
+	Template InAppFeedTemplateParam `json:"template,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type WorkflowInAppFeedStepType `json:"type,omitzero,required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. A channel step can have either a channel key or a channel group
+	// key, but not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of the channel to which the channel step will be sending a notification.
+	// A channel step can have either a channel key or a channel group key, but not
+	// both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// In-app feed channel settings. Only used as configuration as part of a workflow
+	// channel step.
+	ChannelOverrides InAppFeedChannelSettingsParam `json:"channel_overrides,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowInAppFeedStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowInAppFeedStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowInAppFeedStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A push step within a workflow. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
 type WorkflowPushStep struct {
@@ -1728,7 +1844,7 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 }
 
 // WorkflowStepUnion contains all possible properties and values from
-// [WorkflowWebhookStep], [WorkflowStepWorkflowInAppFeedStep], [WorkflowChatStep],
+// [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
 // [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep], [WorkflowDelayStep],
 // [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowThrottleStep],
 // [WorkflowBranchStep], [WorkflowTriggerWorkflowStep].
@@ -1778,7 +1894,7 @@ func (u WorkflowStepUnion) AsWorkflowWebhookStep() (v WorkflowWebhookStep) {
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowInAppFeedStep() (v WorkflowStepWorkflowInAppFeedStep) {
+func (u WorkflowStepUnion) AsWorkflowInAppFeedStep() (v WorkflowInAppFeedStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2087,77 +2203,22 @@ func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-// An in-app feed step within a workflow. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-type WorkflowStepWorkflowInAppFeedStep struct {
-	// A name for the workflow step.
-	Name string `json:"name,required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref,required"`
-	// An in-app feed template.
-	Template InAppFeedTemplate `json:"template,required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type string `json:"type,required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
-	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
-	ChannelKey string `json:"channel_key,nullable"`
-	// In-app feed channel settings. Only used as configuration as part of a workflow
-	// channel step.
-	ChannelOverrides InAppFeedChannelSettings `json:"channel_overrides,nullable"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions,nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description,nullable"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindow `json:"send_windows,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name             respjson.Field
-		Ref              respjson.Field
-		Template         respjson.Field
-		Type             respjson.Field
-		ChannelGroupKey  respjson.Field
-		ChannelKey       respjson.Field
-		ChannelOverrides respjson.Field
-		Conditions       respjson.Field
-		Description      respjson.Field
-		SendWindows      respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowInAppFeedStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowInAppFeedStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowWebhookStep         *WorkflowWebhookStepParam               `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep       *WorkflowStepWorkflowInAppFeedStepParam `json:",omitzero,inline"`
-	OfWorkflowChatStep            *WorkflowChatStepParam                  `json:",omitzero,inline"`
-	OfWorkflowSMSStep             *WorkflowSMSStepParam                   `json:",omitzero,inline"`
-	OfWorkflowPushStep            *WorkflowPushStepParam                  `json:",omitzero,inline"`
-	OfWorkflowEmailStep           *WorkflowEmailStepParam                 `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam                 `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam                 `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam                 `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam              `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam                `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam       `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowWebhookStepParam         `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam       `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowChatStepParam            `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowSMSStepParam             `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowPushStepParam            `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowEmailStepParam           `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -2859,57 +2920,6 @@ type workflowStepUnionParamSettings struct{ any }
 //	    fmt.Errorf("not present")
 //	}
 func (u workflowStepUnionParamSettings) AsAny() any { return u.any }
-
-// An in-app feed step within a workflow. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-//
-// The properties Name, Ref, Template, Type are required.
-type WorkflowStepWorkflowInAppFeedStepParam struct {
-	// A name for the workflow step.
-	Name string `json:"name,required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref,required"`
-	// An in-app feed template.
-	Template InAppFeedTemplateParam `json:"template,omitzero,required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type string `json:"type,omitzero,required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
-	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
-	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
-	// In-app feed channel settings. Only used as configuration as part of a workflow
-	// channel step.
-	ChannelOverrides InAppFeedChannelSettingsParam `json:"channel_overrides,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowInAppFeedStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowInAppFeedStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowInAppFeedStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowInAppFeedStepParam](
-		"type", "channel",
-	)
-}
 
 // A throttle function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/throttle-function).

@@ -169,7 +169,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 			Workflow: knockmapi.WorkflowUpsertParamsWorkflow{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
-					OfWorkflowInAppFeedStep: &knockmapi.WorkflowStepWorkflowInAppFeedStepParam{
+					OfWorkflowInAppFeedStep: &knockmapi.WorkflowInAppFeedStepParam{
 						Name: "Channel 1",
 						Ref:  "channel_1",
 						Template: knockmapi.InAppFeedTemplateParam{
@@ -180,7 +180,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 							}},
 							ActionURL: knockmapi.String("{{ vars.app_url }}"),
 						},
-						Type:            "channel",
+						Type:            knockmapi.WorkflowInAppFeedStepTypeChannel,
 						ChannelGroupKey: param.Null[string](),
 						ChannelKey:      knockmapi.String("in-app-feed"),
 						ChannelOverrides: knockmapi.InAppFeedChannelSettingsParam{
@@ -259,7 +259,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 			Workflow: knockmapi.WorkflowValidateParamsWorkflow{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
-					OfWorkflowInAppFeedStep: &knockmapi.WorkflowStepWorkflowInAppFeedStepParam{
+					OfWorkflowInAppFeedStep: &knockmapi.WorkflowInAppFeedStepParam{
 						Name: "Channel 1",
 						Ref:  "channel_1",
 						Template: knockmapi.InAppFeedTemplateParam{
@@ -270,7 +270,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 							}},
 							ActionURL: knockmapi.String("{{ vars.app_url }}"),
 						},
-						Type:            "channel",
+						Type:            knockmapi.WorkflowInAppFeedStepTypeChannel,
 						ChannelGroupKey: param.Null[string](),
 						ChannelKey:      knockmapi.String("in-app-feed"),
 						ChannelOverrides: knockmapi.InAppFeedChannelSettingsParam{
