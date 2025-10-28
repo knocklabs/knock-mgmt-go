@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/knock-mapi-go
+module github.com/knocklabs/knock-mgmt-go
 
 go 1.22
 

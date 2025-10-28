@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/stainless-sdks/knock-mapi-go/internal/encoding/json/shims"
+	"github.com/knocklabs/knock-mgmt-go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )

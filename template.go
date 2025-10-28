@@ -5,10 +5,10 @@ package knockmapi
 import (
 	"encoding/json"
 
-	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
-	"github.com/stainless-sdks/knock-mapi-go/option"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/internal/apijson"
+	"github.com/knocklabs/knock-mgmt-go/option"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
 // TemplateService contains methods and other services that help with interacting

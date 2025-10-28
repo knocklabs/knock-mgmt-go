@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 	"reflect"
 )
 

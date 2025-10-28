@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 )
 
 type Struct struct {

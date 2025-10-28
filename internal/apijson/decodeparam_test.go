@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/internal/apijson"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"reflect"
 	"testing"
 )

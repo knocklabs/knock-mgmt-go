@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/knock-mapi-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/internal/encoding/json/sentinel"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	shimjson "github.com/stainless-sdks/knock-mapi-go/internal/encoding/json"
+	shimjson "github.com/knocklabs/knock-mgmt-go/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )

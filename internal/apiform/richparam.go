@@ -1,7 +1,7 @@
 package apiform
 
 import (
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"mime/multipart"
 	"reflect"
 )

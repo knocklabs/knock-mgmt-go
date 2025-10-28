@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
-	rj "github.com/stainless-sdks/knock-mapi-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/internal/apijson"
+	rj "github.com/knocklabs/knock-mgmt-go/packages/respjson"
 	"reflect"
 	"testing"
 )

@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/knock-mapi-go/internal/encoding/json/sentinel"
+	"github.com/knocklabs/knock-mgmt-go/internal/encoding/json/sentinel"
 	"reflect"
 )
 

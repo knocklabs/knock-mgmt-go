@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/stainless-sdks/knock-mapi-go/packages/param"
-	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

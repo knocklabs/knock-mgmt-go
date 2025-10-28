@@ -41,7 +41,7 @@ To use a local version of this library from source in another project, edit the 
 directive. This can be done through the CLI with the following:
 
 ```sh
-$ go mod edit -replace github.com/stainless-sdks/knock-mapi-go=/path/to/knock-mapi-go
+$ go mod edit -replace github.com/knocklabs/knock-mgmt-go=/path/to/knock-mgmt-go
 ```
 
 ## Running tests

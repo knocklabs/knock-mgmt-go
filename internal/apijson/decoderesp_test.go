@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/knock-mapi-go/internal/apijson"
-	"github.com/stainless-sdks/knock-mapi-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/internal/apijson"
+	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 	"testing"
 )
 
