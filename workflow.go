@@ -3767,6 +3767,9 @@ type WorkflowGetParams struct {
 	Environment string `query:"environment,required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -3790,6 +3793,9 @@ type WorkflowListParams struct {
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -3812,6 +3818,9 @@ type WorkflowActivateParams struct {
 	// Whether to activate or deactivate the workflow. Set to `true` by default, which
 	// will activate the workflow.
 	Status bool `json:"status,required"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	paramObj
 }
 
@@ -3838,6 +3847,9 @@ type WorkflowRunParams struct {
 	Recipients []WorkflowRunParamsRecipientUnion `json:"recipients,omitzero,required"`
 	// A key to cancel the workflow run.
 	CancellationKey param.Opt[string] `json:"cancellation_key,omitzero"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The tenant to associate the workflow run with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
@@ -3959,6 +3971,9 @@ type WorkflowUpsertParams struct {
 	Workflow WorkflowUpsertParamsWorkflow `json:"workflow,omitzero,required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to commit the resource at the same time as modifying it.
 	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
 	// The message to commit the resource with, only used if `commit` is `true`.
@@ -4053,6 +4068,9 @@ type WorkflowValidateParams struct {
 	Environment string `query:"environment,required" json:"-"`
 	// A workflow request for upserting a workflow.
 	Workflow WorkflowValidateParamsWorkflow `json:"workflow,omitzero,required"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	paramObj
 }
 

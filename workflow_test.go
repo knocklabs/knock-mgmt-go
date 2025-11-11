@@ -33,6 +33,7 @@ func TestWorkflowGetWithOptionalParams(t *testing.T) {
 		knockmapi.WorkflowGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -63,6 +64,7 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -75,7 +77,7 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestWorkflowActivate(t *testing.T) {
+func TestWorkflowActivateWithOptionalParams(t *testing.T) {
 	t.Skip("Prism doesn't support callbacks yet")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -94,6 +96,7 @@ func TestWorkflowActivate(t *testing.T) {
 		knockmapi.WorkflowActivateParams{
 			Environment: "development",
 			Status:      true,
+			Branch:      knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {
@@ -126,6 +129,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 			Recipients: []knockmapi.WorkflowRunParamsRecipientUnion{{
 				OfString: knockmapi.String("dnedry"),
 			}},
+			Branch: knockmapi.String("feature-branch"),
 			Actor: knockmapi.WorkflowRunParamsActorUnion{
 				OfObjectRecipientReference: &knockmapi.WorkflowRunParamsActorObjectRecipientReference{
 					ID:         "project_1",
@@ -226,6 +230,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 				TriggerFrequency: "every_trigger",
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
 		},
@@ -316,6 +321,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 				},
 				TriggerFrequency: "every_trigger",
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {
