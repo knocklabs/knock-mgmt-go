@@ -32,6 +32,7 @@ func TestPartialGetWithOptionalParams(t *testing.T) {
 		knockmapi.PartialGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -62,6 +63,7 @@ func TestPartialListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -101,6 +103,7 @@ func TestPartialUpsertWithOptionalParams(t *testing.T) {
 				VisualBlockEnabled: knockmapi.Bool(false),
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
 		},
@@ -140,6 +143,7 @@ func TestPartialValidateWithOptionalParams(t *testing.T) {
 				IconName:           knockmapi.String("icon_name"),
 				VisualBlockEnabled: knockmapi.Bool(false),
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

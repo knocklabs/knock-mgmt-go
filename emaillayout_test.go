@@ -32,6 +32,7 @@ func TestEmailLayoutGetWithOptionalParams(t *testing.T) {
 		knockmapi.EmailLayoutGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -62,6 +63,7 @@ func TestEmailLayoutListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -102,6 +104,7 @@ func TestEmailLayoutUpsertWithOptionalParams(t *testing.T) {
 				}},
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
 		},
@@ -142,6 +145,7 @@ func TestEmailLayoutValidateWithOptionalParams(t *testing.T) {
 					URL:  "http://example.com",
 				}},
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

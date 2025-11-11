@@ -53,6 +53,7 @@ func TestCommitListWithOptionalParams(t *testing.T) {
 		Environment: "development",
 		After:       knockmapi.String("after"),
 		Before:      knockmapi.String("before"),
+		Branch:      knockmapi.String("feature-branch"),
 		Limit:       knockmapi.Int(0),
 		Promoted:    knockmapi.Bool(true),
 		ResourceID:  knockmapi.String("resource_id"),
@@ -84,6 +85,7 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Commits.CommitAll(context.TODO(), knockmapi.CommitCommitAllParams{
 		Environment:   "development",
+		Branch:        knockmapi.String("feature-branch"),
 		CommitMessage: knockmapi.String("commit_message"),
 		ResourceID:    knockmapi.String("resource_id"),
 		ResourceType: knockmapi.CommitCommitAllParamsResourceTypeUnion{

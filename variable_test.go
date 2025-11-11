@@ -30,6 +30,7 @@ func TestVariableListWithOptionalParams(t *testing.T) {
 		Environment: "development",
 		After:       knockmapi.String("after"),
 		Before:      knockmapi.String("before"),
+		Branch:      knockmapi.String("feature-branch"),
 		Limit:       knockmapi.Int(0),
 	})
 	if err != nil {

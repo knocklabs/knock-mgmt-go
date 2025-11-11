@@ -34,6 +34,7 @@ func TestGuideGetWithOptionalParams(t *testing.T) {
 		knockmapi.GuideGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -64,6 +65,7 @@ func TestGuideListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -94,6 +96,7 @@ func TestGuideActivateWithOptionalParams(t *testing.T) {
 		"guide_key",
 		knockmapi.GuideActivateParams{
 			Environment: "development",
+			Branch:      knockmapi.String("feature-branch"),
 			OfGuideScheduledActivations: &knockmapi.GuideActivateParamsBodyGuideScheduledActivationParams{
 				From:  knockmapi.Time(time.Now()),
 				Until: knockmapi.Time(time.Now()),
@@ -182,6 +185,7 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				},
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
 		},
@@ -244,6 +248,7 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

@@ -240,6 +240,9 @@ type WorkflowStepPreviewTemplateParams struct {
 	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero,required"`
 	// The tenant to associate the workflow with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
 	Actor WorkflowStepPreviewTemplateParamsActorUnion `json:"actor,omitzero"`
