@@ -116,6 +116,7 @@ func TestCommitPromoteAllWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Commits.PromoteAll(context.TODO(), knockmapi.CommitPromoteAllParams{
 		ToEnvironment: "to_environment",
+		Branch:        knockmapi.String("branch"),
 		ResourceID:    knockmapi.String("resource_id"),
 		ResourceType: knockmapi.CommitPromoteAllParamsResourceTypeUnion{
 			OfCommitPromoteAllsResourceTypeString: knockmapi.String("audience"),
