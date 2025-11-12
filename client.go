@@ -32,6 +32,7 @@ type Client struct {
 	Variables     VariableService
 	Guides        GuideService
 	Branches      BranchService
+	Broadcasts    BroadcastService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -71,6 +72,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Variables = NewVariableService(opts...)
 	r.Guides = NewGuideService(opts...)
 	r.Branches = NewBranchService(opts...)
+	r.Broadcasts = NewBroadcastService(opts...)
 
 	return
 }
