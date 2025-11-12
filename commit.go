@@ -368,8 +368,11 @@ type CommitPromoteAllParams struct {
 	// “production” (in that order), setting this param to “production” will promote
 	// all commits not currently in production from staging.
 	//
-	// Note: This must be a non-development environment.
+	// When this param is set to `"development"`, the `"branch"` param must be
+	// provided.
 	ToEnvironment string `query:"to_environment,required" json:"-"`
+	// The slug of the branch to promote all changes from.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Filter commits to promote by resource identifier. Must be used together with
 	// resource_type.
 	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`
