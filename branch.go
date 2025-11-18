@@ -91,7 +91,7 @@ func (r *BranchService) ListAutoPaging(ctx context.Context, query BranchListPara
 // Deletes a branch by the `branch_slug`.
 func (r *BranchService) Delete(ctx context.Context, branchSlug string, body BranchDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if branchSlug == "" {
 		err = errors.New("missing required branch_slug parameter")
 		return
