@@ -95,6 +95,8 @@ type AuthVerifyResponseAccountFeatures struct {
 	DsyncAllowed bool `json:"dsync_allowed"`
 	// Monthly limit for guide notification recipients, null for unlimited.
 	GuidesMonthlyNotifiedRecipientsLimit int64 `json:"guides_monthly_notified_recipients_limit,nullable"`
+	// Whether per-tenant scope for guide messages is allowed.
+	GuidesPerTenantScopeAllowed bool `json:"guides_per_tenant_scope_allowed"`
 	// Whether Heap integration extension is available.
 	HeapExtensionAllowed bool `json:"heap_extension_allowed"`
 	// Whether Knock branding is required to be displayed.
@@ -124,6 +126,7 @@ type AuthVerifyResponseAccountFeatures struct {
 		DatadogExtensionAllowed              respjson.Field
 		DsyncAllowed                         respjson.Field
 		GuidesMonthlyNotifiedRecipientsLimit respjson.Field
+		GuidesPerTenantScopeAllowed          respjson.Field
 		HeapExtensionAllowed                 respjson.Field
 		KnockBrandingRequired                respjson.Field
 		LitmusEmailPreviewAllowed            respjson.Field
