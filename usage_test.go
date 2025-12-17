@@ -24,6 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
+	t.Skip("Prism doesn't support callbacks yet")
 	page, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
 		Environment: "development",
 	})
