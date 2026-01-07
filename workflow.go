@@ -975,7 +975,8 @@ type WorkflowBranchStepBranch struct {
 	Name string `json:"name"`
 	// A list of steps that will be executed if the branch is chosen.
 	Steps []WorkflowStepUnion `json:"steps"`
-	// If the workflow should halt at the end of the branch.
+	// If the workflow should halt at the end of the branch. Defaults to false if not
+	// provided.
 	Terminates bool `json:"terminates"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1034,7 +1035,8 @@ func (r *WorkflowBranchStepParam) UnmarshalJSON(data []byte) error {
 type WorkflowBranchStepBranchParam struct {
 	// The name of the branch.
 	Name param.Opt[string] `json:"name,omitzero"`
-	// If the workflow should halt at the end of the branch.
+	// If the workflow should halt at the end of the branch. Defaults to false if not
+	// provided.
 	Terminates param.Opt[bool] `json:"terminates,omitzero"`
 	// A group of conditions to be evaluated.
 	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
