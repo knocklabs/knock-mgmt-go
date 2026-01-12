@@ -1572,18 +1572,18 @@ func (r *InAppFeedTemplateActionButtonParam) UnmarshalJSON(data []byte) error {
 
 // A push notification template.
 type PushTemplate struct {
+	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
+	// for the push template.
+	Settings PushTemplateSettings `json:"settings,required"`
 	// The body of the push notification.
 	TextBody string `json:"text_body,required"`
 	// The title of the push notification.
 	Title string `json:"title,required"`
-	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
-	// for the push template. Can be omitted.
-	Settings PushTemplateSettings `json:"settings,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Settings    respjson.Field
 		TextBody    respjson.Field
 		Title       respjson.Field
-		Settings    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -1605,13 +1605,13 @@ func (r PushTemplate) ToParam() PushTemplateParam {
 }
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
-// for the push template. Can be omitted.
+// for the push template.
 type PushTemplateSettings struct {
-	// The delivery type of the push notification. Defaults to `content`. Set as silent
-	// to send a data-only notification. When set to `data`, no body will be sent.
+	// The delivery type of the push notification. Set as silent to send a data-only
+	// notification. When set to `silent`, no body will be sent.
 	//
 	// Any of "silent", "content".
-	DeliveryType string `json:"delivery_type"`
+	DeliveryType string `json:"delivery_type,required"`
 	// A JSON object that overrides the payload sent to the push provider.
 	PayloadOverrides string `json:"payload_overrides"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1631,15 +1631,15 @@ func (r *PushTemplateSettings) UnmarshalJSON(data []byte) error {
 
 // A push notification template.
 //
-// The properties TextBody, Title are required.
+// The properties Settings, TextBody, Title are required.
 type PushTemplateParam struct {
+	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
+	// for the push template.
+	Settings PushTemplateSettingsParam `json:"settings,omitzero,required"`
 	// The body of the push notification.
 	TextBody string `json:"text_body,required"`
 	// The title of the push notification.
 	Title string `json:"title,required"`
-	// The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
-	// for the push template. Can be omitted.
-	Settings PushTemplateSettingsParam `json:"settings,omitzero"`
 	paramObj
 }
 
@@ -1652,15 +1652,17 @@ func (r *PushTemplateParam) UnmarshalJSON(data []byte) error {
 }
 
 // The [settings](https://docs.knock.app/integrations/sms/settings-and-overrides)
-// for the push template. Can be omitted.
+// for the push template.
+//
+// The property DeliveryType is required.
 type PushTemplateSettingsParam struct {
-	// A JSON object that overrides the payload sent to the push provider.
-	PayloadOverrides param.Opt[string] `json:"payload_overrides,omitzero"`
-	// The delivery type of the push notification. Defaults to `content`. Set as silent
-	// to send a data-only notification. When set to `data`, no body will be sent.
+	// The delivery type of the push notification. Set as silent to send a data-only
+	// notification. When set to `silent`, no body will be sent.
 	//
 	// Any of "silent", "content".
-	DeliveryType string `json:"delivery_type,omitzero"`
+	DeliveryType string `json:"delivery_type,omitzero,required"`
+	// A JSON object that overrides the payload sent to the push provider.
+	PayloadOverrides param.Opt[string] `json:"payload_overrides,omitzero"`
 	paramObj
 }
 
