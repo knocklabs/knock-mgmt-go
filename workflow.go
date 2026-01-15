@@ -145,7 +145,9 @@ type Condition struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
+	// "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_after",
+	// "is_timestamp_before_date", "is_timestamp_after_date", "is_timestamp_between",
+	// "empty", "not_empty", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
@@ -187,20 +189,26 @@ func (r Condition) ToParam() ConditionParam {
 type ConditionOperator string
 
 const (
-	ConditionOperatorEqualTo              ConditionOperator = "equal_to"
-	ConditionOperatorNotEqualTo           ConditionOperator = "not_equal_to"
-	ConditionOperatorGreaterThan          ConditionOperator = "greater_than"
-	ConditionOperatorLessThan             ConditionOperator = "less_than"
-	ConditionOperatorGreaterThanOrEqualTo ConditionOperator = "greater_than_or_equal_to"
-	ConditionOperatorLessThanOrEqualTo    ConditionOperator = "less_than_or_equal_to"
-	ConditionOperatorContains             ConditionOperator = "contains"
-	ConditionOperatorNotContains          ConditionOperator = "not_contains"
-	ConditionOperatorContainsAll          ConditionOperator = "contains_all"
-	ConditionOperatorNotContainsAll       ConditionOperator = "not_contains_all"
-	ConditionOperatorEmpty                ConditionOperator = "empty"
-	ConditionOperatorNotEmpty             ConditionOperator = "not_empty"
-	ConditionOperatorIsAudienceMember     ConditionOperator = "is_audience_member"
-	ConditionOperatorIsNotAudienceMember  ConditionOperator = "is_not_audience_member"
+	ConditionOperatorEqualTo               ConditionOperator = "equal_to"
+	ConditionOperatorNotEqualTo            ConditionOperator = "not_equal_to"
+	ConditionOperatorGreaterThan           ConditionOperator = "greater_than"
+	ConditionOperatorLessThan              ConditionOperator = "less_than"
+	ConditionOperatorGreaterThanOrEqualTo  ConditionOperator = "greater_than_or_equal_to"
+	ConditionOperatorLessThanOrEqualTo     ConditionOperator = "less_than_or_equal_to"
+	ConditionOperatorContains              ConditionOperator = "contains"
+	ConditionOperatorNotContains           ConditionOperator = "not_contains"
+	ConditionOperatorContainsAll           ConditionOperator = "contains_all"
+	ConditionOperatorNotContainsAll        ConditionOperator = "not_contains_all"
+	ConditionOperatorIsTimestampBefore     ConditionOperator = "is_timestamp_before"
+	ConditionOperatorIsTimestampAfter      ConditionOperator = "is_timestamp_after"
+	ConditionOperatorIsTimestampBeforeDate ConditionOperator = "is_timestamp_before_date"
+	ConditionOperatorIsTimestampAfterDate  ConditionOperator = "is_timestamp_after_date"
+	ConditionOperatorIsTimestampBetween    ConditionOperator = "is_timestamp_between"
+	ConditionOperatorEmpty                 ConditionOperator = "empty"
+	ConditionOperatorNotEmpty              ConditionOperator = "not_empty"
+	ConditionOperatorIsTimestamp           ConditionOperator = "is_timestamp"
+	ConditionOperatorIsAudienceMember      ConditionOperator = "is_audience_member"
+	ConditionOperatorIsNotAudienceMember   ConditionOperator = "is_not_audience_member"
 )
 
 // A condition to be evaluated.
@@ -211,7 +219,9 @@ type ConditionParam struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
+	// "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_after",
+	// "is_timestamp_before_date", "is_timestamp_after_date", "is_timestamp_between",
+	// "empty", "not_empty", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,omitzero,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic

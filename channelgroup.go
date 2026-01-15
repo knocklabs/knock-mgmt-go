@@ -164,7 +164,9 @@ type ChannelGroupRule struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
+	// "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_after",
+	// "is_timestamp_before_date", "is_timestamp_after_date", "is_timestamp_between",
+	// "empty", "not_empty", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
 	// For conditional rules, the variable to evaluate.
@@ -204,20 +206,26 @@ const (
 type ChannelGroupRuleOperator string
 
 const (
-	ChannelGroupRuleOperatorEqualTo              ChannelGroupRuleOperator = "equal_to"
-	ChannelGroupRuleOperatorNotEqualTo           ChannelGroupRuleOperator = "not_equal_to"
-	ChannelGroupRuleOperatorGreaterThan          ChannelGroupRuleOperator = "greater_than"
-	ChannelGroupRuleOperatorLessThan             ChannelGroupRuleOperator = "less_than"
-	ChannelGroupRuleOperatorGreaterThanOrEqualTo ChannelGroupRuleOperator = "greater_than_or_equal_to"
-	ChannelGroupRuleOperatorLessThanOrEqualTo    ChannelGroupRuleOperator = "less_than_or_equal_to"
-	ChannelGroupRuleOperatorContains             ChannelGroupRuleOperator = "contains"
-	ChannelGroupRuleOperatorNotContains          ChannelGroupRuleOperator = "not_contains"
-	ChannelGroupRuleOperatorContainsAll          ChannelGroupRuleOperator = "contains_all"
-	ChannelGroupRuleOperatorNotContainsAll       ChannelGroupRuleOperator = "not_contains_all"
-	ChannelGroupRuleOperatorEmpty                ChannelGroupRuleOperator = "empty"
-	ChannelGroupRuleOperatorNotEmpty             ChannelGroupRuleOperator = "not_empty"
-	ChannelGroupRuleOperatorIsAudienceMember     ChannelGroupRuleOperator = "is_audience_member"
-	ChannelGroupRuleOperatorIsNotAudienceMember  ChannelGroupRuleOperator = "is_not_audience_member"
+	ChannelGroupRuleOperatorEqualTo               ChannelGroupRuleOperator = "equal_to"
+	ChannelGroupRuleOperatorNotEqualTo            ChannelGroupRuleOperator = "not_equal_to"
+	ChannelGroupRuleOperatorGreaterThan           ChannelGroupRuleOperator = "greater_than"
+	ChannelGroupRuleOperatorLessThan              ChannelGroupRuleOperator = "less_than"
+	ChannelGroupRuleOperatorGreaterThanOrEqualTo  ChannelGroupRuleOperator = "greater_than_or_equal_to"
+	ChannelGroupRuleOperatorLessThanOrEqualTo     ChannelGroupRuleOperator = "less_than_or_equal_to"
+	ChannelGroupRuleOperatorContains              ChannelGroupRuleOperator = "contains"
+	ChannelGroupRuleOperatorNotContains           ChannelGroupRuleOperator = "not_contains"
+	ChannelGroupRuleOperatorContainsAll           ChannelGroupRuleOperator = "contains_all"
+	ChannelGroupRuleOperatorNotContainsAll        ChannelGroupRuleOperator = "not_contains_all"
+	ChannelGroupRuleOperatorIsTimestampBefore     ChannelGroupRuleOperator = "is_timestamp_before"
+	ChannelGroupRuleOperatorIsTimestampAfter      ChannelGroupRuleOperator = "is_timestamp_after"
+	ChannelGroupRuleOperatorIsTimestampBeforeDate ChannelGroupRuleOperator = "is_timestamp_before_date"
+	ChannelGroupRuleOperatorIsTimestampAfterDate  ChannelGroupRuleOperator = "is_timestamp_after_date"
+	ChannelGroupRuleOperatorIsTimestampBetween    ChannelGroupRuleOperator = "is_timestamp_between"
+	ChannelGroupRuleOperatorEmpty                 ChannelGroupRuleOperator = "empty"
+	ChannelGroupRuleOperatorNotEmpty              ChannelGroupRuleOperator = "not_empty"
+	ChannelGroupRuleOperatorIsTimestamp           ChannelGroupRuleOperator = "is_timestamp"
+	ChannelGroupRuleOperatorIsAudienceMember      ChannelGroupRuleOperator = "is_audience_member"
+	ChannelGroupRuleOperatorIsNotAudienceMember   ChannelGroupRuleOperator = "is_not_audience_member"
 )
 
 type ChannelGroupListParams struct {
