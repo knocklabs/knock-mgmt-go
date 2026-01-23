@@ -4,6 +4,7 @@ package knockmapi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -128,6 +129,8 @@ type Partial struct {
 	Environment string `json:"environment"`
 	// The name of the icon to be used in the visual editor.
 	IconName string `json:"icon_name"`
+	// The field types available for the partial.
+	InputSchema []PartialInputSchemaUnion `json:"input_schema"`
 	// Indicates whether the partial can be used in the visual editor. Only applies to
 	// HTML partials.
 	VisualBlockEnabled bool `json:"visual_block_enabled"`
@@ -143,6 +146,7 @@ type Partial struct {
 		Description        respjson.Field
 		Environment        respjson.Field
 		IconName           respjson.Field
+		InputSchema        respjson.Field
 		VisualBlockEnabled respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
@@ -164,6 +168,723 @@ const (
 	PartialTypeJson     PartialType = "json"
 	PartialTypeMarkdown PartialType = "markdown"
 )
+
+// PartialInputSchemaUnion contains all possible properties and values from
+// [PartialInputSchemaMessageTypeBooleanField],
+// [PartialInputSchemaMessageTypeButtonField],
+// [PartialInputSchemaMessageTypeImageField],
+// [PartialInputSchemaMessageTypeMarkdownField],
+// [PartialInputSchemaMessageTypeMultiSelectField],
+// [PartialInputSchemaMessageTypeSelectField], [MessageTypeTextField],
+// [PartialInputSchemaMessageTypeTextareaField],
+// [PartialInputSchemaMessageTypeURLField].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type PartialInputSchemaUnion struct {
+	Key   string `json:"key"`
+	Label string `json:"label"`
+	Type  string `json:"type"`
+	// This field is a union of [PartialInputSchemaMessageTypeBooleanFieldSettings],
+	// [PartialInputSchemaMessageTypeButtonFieldSettings],
+	// [PartialInputSchemaMessageTypeImageFieldSettings],
+	// [PartialInputSchemaMessageTypeMarkdownFieldSettings],
+	// [PartialInputSchemaMessageTypeMultiSelectFieldSettings],
+	// [PartialInputSchemaMessageTypeSelectFieldSettings],
+	// [MessageTypeTextFieldSettings],
+	// [PartialInputSchemaMessageTypeTextareaFieldSettings],
+	// [PartialInputSchemaMessageTypeURLFieldSettings]
+	Settings PartialInputSchemaUnionSettings `json:"settings"`
+	// This field is from variant [PartialInputSchemaMessageTypeButtonField].
+	Action MessageTypeTextField `json:"action"`
+	// This field is from variant [PartialInputSchemaMessageTypeButtonField].
+	Text MessageTypeTextField `json:"text"`
+	// This field is from variant [PartialInputSchemaMessageTypeImageField].
+	Alt MessageTypeTextField `json:"alt"`
+	// This field is from variant [PartialInputSchemaMessageTypeImageField].
+	URL  PartialInputSchemaMessageTypeImageFieldURL `json:"url"`
+	JSON struct {
+		Key      respjson.Field
+		Label    respjson.Field
+		Type     respjson.Field
+		Settings respjson.Field
+		Action   respjson.Field
+		Text     respjson.Field
+		Alt      respjson.Field
+		URL      respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeBooleanField() (v PartialInputSchemaMessageTypeBooleanField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeButtonField() (v PartialInputSchemaMessageTypeButtonField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeImageField() (v PartialInputSchemaMessageTypeImageField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeMarkdownField() (v PartialInputSchemaMessageTypeMarkdownField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeMultiSelectField() (v PartialInputSchemaMessageTypeMultiSelectField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeSelectField() (v PartialInputSchemaMessageTypeSelectField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeTextareaField() (v PartialInputSchemaMessageTypeTextareaField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeURLField() (v PartialInputSchemaMessageTypeURLField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u PartialInputSchemaUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *PartialInputSchemaUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// PartialInputSchemaUnionSettings is an implicit subunion of
+// [PartialInputSchemaUnion]. PartialInputSchemaUnionSettings provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [PartialInputSchemaUnion].
+type PartialInputSchemaUnionSettings struct {
+	// This field is a union of [bool], [string], [[]string], [string], [string],
+	// [string], [string]
+	Default     PartialInputSchemaUnionSettingsDefault `json:"default"`
+	Description string                                 `json:"description"`
+	Required    bool                                   `json:"required"`
+	// This field is a union of
+	// [[]PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption],
+	// [[]PartialInputSchemaMessageTypeSelectFieldSettingsOption]
+	Options   PartialInputSchemaUnionSettingsOptions `json:"options"`
+	MaxLength int64                                  `json:"max_length"`
+	MinLength int64                                  `json:"min_length"`
+	JSON      struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		Options     respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+func (r *PartialInputSchemaUnionSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// PartialInputSchemaUnionSettingsDefault is an implicit subunion of
+// [PartialInputSchemaUnion]. PartialInputSchemaUnionSettingsDefault provides
+// convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [PartialInputSchemaUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfBool OfString OfStringArray]
+type PartialInputSchemaUnionSettingsDefault struct {
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [[]string] instead of an object.
+	OfStringArray []string `json:",inline"`
+	JSON          struct {
+		OfBool        respjson.Field
+		OfString      respjson.Field
+		OfStringArray respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (r *PartialInputSchemaUnionSettingsDefault) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// PartialInputSchemaUnionSettingsOptions is an implicit subunion of
+// [PartialInputSchemaUnion]. PartialInputSchemaUnionSettingsOptions provides
+// convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [PartialInputSchemaUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfPartialInputSchemaMessageTypeMultiSelectFieldSettingsOptions
+// OfPartialInputSchemaMessageTypeSelectFieldSettingsOptions]
+type PartialInputSchemaUnionSettingsOptions struct {
+	// This field will be present if the value is a
+	// [[]PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption] instead of an
+	// object.
+	OfPartialInputSchemaMessageTypeMultiSelectFieldSettingsOptions []PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption `json:",inline"`
+	// This field will be present if the value is a
+	// [[]PartialInputSchemaMessageTypeSelectFieldSettingsOption] instead of an object.
+	OfPartialInputSchemaMessageTypeSelectFieldSettingsOptions []PartialInputSchemaMessageTypeSelectFieldSettingsOption `json:",inline"`
+	JSON                                                      struct {
+		OfPartialInputSchemaMessageTypeMultiSelectFieldSettingsOptions respjson.Field
+		OfPartialInputSchemaMessageTypeSelectFieldSettingsOptions      respjson.Field
+		raw                                                            string
+	} `json:"-"`
+}
+
+func (r *PartialInputSchemaUnionSettingsOptions) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A boolean field used in a message type.
+type PartialInputSchemaMessageTypeBooleanField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "boolean".
+	Type string `json:"type,required"`
+	// Settings for the boolean field.
+	Settings PartialInputSchemaMessageTypeBooleanFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeBooleanField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeBooleanField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the boolean field.
+type PartialInputSchemaMessageTypeBooleanFieldSettings struct {
+	// The default value of the boolean field.
+	Default     bool   `json:"default"`
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeBooleanFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeBooleanFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A button field used in a message type.
+type PartialInputSchemaMessageTypeButtonField struct {
+	// A text field used in a message type.
+	Action MessageTypeTextField `json:"action,required"`
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// A text field used in a message type.
+	Text MessageTypeTextField `json:"text,required"`
+	// The type of the field.
+	//
+	// Any of "button".
+	Type string `json:"type,required"`
+	// Settings for the button field.
+	Settings PartialInputSchemaMessageTypeButtonFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Action      respjson.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Text        respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeButtonField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeButtonField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the button field.
+type PartialInputSchemaMessageTypeButtonFieldSettings struct {
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeButtonFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeButtonFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An image field used in a message type.
+type PartialInputSchemaMessageTypeImageField struct {
+	// A text field used in a message type.
+	Action MessageTypeTextField `json:"action,required"`
+	// A text field used in a message type.
+	Alt MessageTypeTextField `json:"alt,required"`
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "image".
+	Type string `json:"type,required"`
+	// A URL field used in a message type.
+	URL PartialInputSchemaMessageTypeImageFieldURL `json:"url,required"`
+	// Settings for the image field.
+	Settings PartialInputSchemaMessageTypeImageFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Action      respjson.Field
+		Alt         respjson.Field
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		URL         respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeImageField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeImageField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A URL field used in a message type.
+type PartialInputSchemaMessageTypeImageFieldURL struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "url".
+	Type string `json:"type,required"`
+	// Settings for the url field.
+	Settings PartialInputSchemaMessageTypeImageFieldURLSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeImageFieldURL) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeImageFieldURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the url field.
+type PartialInputSchemaMessageTypeImageFieldURLSettings struct {
+	// The default value of the URL field.
+	Default     string `json:"default,nullable"`
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeImageFieldURLSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeImageFieldURLSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the image field.
+type PartialInputSchemaMessageTypeImageFieldSettings struct {
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeImageFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeImageFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A markdown field used in a message type.
+type PartialInputSchemaMessageTypeMarkdownField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "markdown".
+	Type string `json:"type,required"`
+	// Settings for the markdown field.
+	Settings PartialInputSchemaMessageTypeMarkdownFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeMarkdownField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeMarkdownField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the markdown field.
+type PartialInputSchemaMessageTypeMarkdownFieldSettings struct {
+	// The default value of the markdown field.
+	Default     string `json:"default"`
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeMarkdownFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeMarkdownFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A multi-select field used in a message type.
+type PartialInputSchemaMessageTypeMultiSelectField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// Settings for the multi_select field.
+	Settings PartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings,required"`
+	// The type of the field.
+	//
+	// Any of "multi_select".
+	Type string `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeMultiSelectField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeMultiSelectField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the multi_select field.
+type PartialInputSchemaMessageTypeMultiSelectFieldSettings struct {
+	// The default values for the multi-select field.
+	Default     []string `json:"default,nullable"`
+	Description string   `json:"description"`
+	// The available options for the multi-select field.
+	Options []PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption `json:"options"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Options     respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeMultiSelectFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeMultiSelectFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption struct {
+	// The value for the option.
+	Value string `json:"value,required"`
+	// The display label for the option.
+	Label string `json:"label"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Value       respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A select field used in a message type.
+type PartialInputSchemaMessageTypeSelectField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// Settings for the select field.
+	Settings PartialInputSchemaMessageTypeSelectFieldSettings `json:"settings,required"`
+	// The type of the field.
+	//
+	// Any of "select".
+	Type string `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeSelectField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeSelectField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the select field.
+type PartialInputSchemaMessageTypeSelectFieldSettings struct {
+	// The default value for the select field.
+	Default     string `json:"default,nullable"`
+	Description string `json:"description"`
+	// The available options for the select field.
+	Options []PartialInputSchemaMessageTypeSelectFieldSettingsOption `json:"options"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Options     respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeSelectFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeSelectFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PartialInputSchemaMessageTypeSelectFieldSettingsOption struct {
+	// The value for the option.
+	Value string `json:"value,required"`
+	// The display label for the option.
+	Label string `json:"label"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Value       respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeSelectFieldSettingsOption) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeSelectFieldSettingsOption) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A textarea field used in a message type.
+type PartialInputSchemaMessageTypeTextareaField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "textarea".
+	Type string `json:"type,required"`
+	// Settings for the textarea field.
+	Settings PartialInputSchemaMessageTypeTextareaFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeTextareaField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeTextareaField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the textarea field.
+type PartialInputSchemaMessageTypeTextareaFieldSettings struct {
+	// The default value of the textarea field.
+	Default     string `json:"default,nullable"`
+	Description string `json:"description"`
+	MaxLength   int64  `json:"max_length"`
+	MinLength   int64  `json:"min_length"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeTextareaFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeTextareaFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A URL field used in a message type.
+type PartialInputSchemaMessageTypeURLField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "url".
+	Type string `json:"type,required"`
+	// Settings for the url field.
+	Settings PartialInputSchemaMessageTypeURLFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeURLField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeURLField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the url field.
+type PartialInputSchemaMessageTypeURLFieldSettings struct {
+	// The default value of the URL field.
+	Default     string `json:"default,nullable"`
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeURLFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeURLFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Wraps the Partial response under the `partial` key.
 type PartialUpsertResponse struct {
