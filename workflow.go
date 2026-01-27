@@ -633,7 +633,8 @@ func (r *SendWindowParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A workflow object.
+// A workflow object. Read more in the
+// [docs](https://docs.knock.app/concepts/workflows).
 type Workflow struct {
 	// Whether the workflow is
 	// [active](https://docs.knock.app/concepts/workflows#workflow-status) in the
@@ -669,8 +670,9 @@ type Workflow struct {
 	Description string `json:"description"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
-	// A JSON schema for the expected structure of the workflow trigger's data payload.
-	// Used to validate trigger requests. Read more in the
+	// A JSON schema for the expected structure of the workflow trigger's `data`
+	// payload (available in templates as `{{ data.field_name }}`). Used to validate
+	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema"`
 	// The frequency at which the workflow should be triggered. One of:
@@ -1075,12 +1077,12 @@ type WorkflowChatStep struct {
 	// Any of "channel".
 	Type WorkflowChatStepType `json:"type,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey string `json:"channel_key,nullable"`
 	// Chat channel settings. Only used as configuration as part of a workflow channel
 	// step.
@@ -1160,12 +1162,12 @@ type WorkflowChatStepParam struct {
 	// Any of "channel".
 	Type WorkflowChatStepType `json:"type,omitzero,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
@@ -1335,17 +1337,19 @@ type WorkflowEmailStep struct {
 	// Any of "channel".
 	Type WorkflowEmailStepType `json:"type,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey string `json:"channel_key,nullable"`
 	// Email channel settings. Only used as configuration as part of a workflow channel
 	// step.
 	ChannelOverrides EmailChannelSettings `json:"channel_overrides,nullable"`
-	// The type of the channel step. Always `email` for email steps.
+	// The category of channel for this step. Always `email` for email steps. This
+	// identifies the type of notification (email, sms, push, etc.) while `channel_key`
+	// specifies which configured provider instance to use.
 	//
 	// Any of "email".
 	ChannelType WorkflowEmailStepChannelType `json:"channel_type"`
@@ -1399,7 +1403,9 @@ const (
 	WorkflowEmailStepTypeChannel WorkflowEmailStepType = "channel"
 )
 
-// The type of the channel step. Always `email` for email steps.
+// The category of channel for this step. Always `email` for email steps. This
+// identifies the type of notification (email, sms, push, etc.) while `channel_key`
+// specifies which configured provider instance to use.
 type WorkflowEmailStepChannelType string
 
 const (
@@ -1420,12 +1426,12 @@ type WorkflowEmailStepParam struct {
 	// Any of "channel".
 	Type WorkflowEmailStepType `json:"type,omitzero,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
@@ -1438,7 +1444,9 @@ type WorkflowEmailStepParam struct {
 	// Email channel settings. Only used as configuration as part of a workflow channel
 	// step.
 	ChannelOverrides EmailChannelSettingsParam `json:"channel_overrides,omitzero"`
-	// The type of the channel step. Always `email` for email steps.
+	// The category of channel for this step. Always `email` for email steps. This
+	// identifies the type of notification (email, sms, push, etc.) while `channel_key`
+	// specifies which configured provider instance to use.
 	//
 	// Any of "email".
 	ChannelType WorkflowEmailStepChannelType `json:"channel_type,omitzero"`
@@ -1455,7 +1463,8 @@ func (r *WorkflowEmailStepParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A fetch function step. Read more in the
+// A fetch function step. Retrieves data from an external source and merges it into
+// the workflow's `data` scope for use in later steps. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/fetch-function).
 type WorkflowFetchStep struct {
 	// The reference key of the workflow step. Must be unique per workflow.
@@ -1508,7 +1517,8 @@ const (
 	WorkflowFetchStepTypeHTTPFetch WorkflowFetchStepType = "http_fetch"
 )
 
-// A fetch function step. Read more in the
+// A fetch function step. Retrieves data from an external source and merges it into
+// the workflow's `data` scope for use in later steps. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/fetch-function).
 //
 // The properties Ref, Settings, Type are required.
@@ -1551,12 +1561,12 @@ type WorkflowInAppFeedStep struct {
 	// Any of "channel".
 	Type WorkflowInAppFeedStepType `json:"type,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey string `json:"channel_key,nullable"`
 	// In-app feed channel settings. Only used as configuration as part of a workflow
 	// channel step.
@@ -1636,12 +1646,12 @@ type WorkflowInAppFeedStepParam struct {
 	// Any of "channel".
 	Type WorkflowInAppFeedStepType `json:"type,omitzero,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
@@ -1683,12 +1693,12 @@ type WorkflowPushStep struct {
 	// Any of "channel".
 	Type WorkflowPushStepType `json:"type,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey string `json:"channel_key,nullable"`
 	// Push channel settings. Only used as configuration as part of a workflow channel
 	// step.
@@ -1768,12 +1778,12 @@ type WorkflowPushStepParam struct {
 	// Any of "channel".
 	Type WorkflowPushStepType `json:"type,omitzero,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
@@ -1815,12 +1825,12 @@ type WorkflowSMSStep struct {
 	// Any of "channel".
 	Type WorkflowSMSStepType `json:"type,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey string `json:"channel_key,nullable"`
 	// SMS channel settings. Only used as configuration as part of a workflow channel
 	// step.
@@ -1900,12 +1910,12 @@ type WorkflowSMSStepParam struct {
 	// Any of "channel".
 	Type WorkflowSMSStepType `json:"type,omitzero,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
@@ -3408,7 +3418,8 @@ func (r *WorkflowTriggerWorkflowStepSettingsParam) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A webhook step within a workflow. Read more in the
+// A webhook step within a workflow to send an HTTP request to a generic channel.
+// Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
 type WorkflowWebhookStep struct {
 	// The reference key of the workflow step. Must be unique per workflow.
@@ -3422,12 +3433,12 @@ type WorkflowWebhookStep struct {
 	// Any of "channel".
 	Type WorkflowWebhookStepType `json:"type,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey string `json:"channel_group_key,nullable"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey string `json:"channel_key,nullable"`
 	// The type of the channel step. Always `http` for webhook steps.
 	//
@@ -3489,7 +3500,8 @@ const (
 	WorkflowWebhookStepChannelTypeHTTP WorkflowWebhookStepChannelType = "http"
 )
 
-// A webhook step within a workflow. Read more in the
+// A webhook step within a workflow to send an HTTP request to a generic channel.
+// Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
 //
 // The properties Ref, Template, Type are required.
@@ -3505,12 +3517,12 @@ type WorkflowWebhookStepParam struct {
 	// Any of "channel".
 	Type WorkflowWebhookStepType `json:"type,omitzero,required"`
 	// The key of the channel group to which the channel step will be sending a
-	// notification. A channel step can have either a channel key or a channel group
-	// key, but not both.
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
 	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of the channel to which the channel step will be sending a notification.
-	// A channel step can have either a channel key or a channel group key, but not
-	// both.
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
 	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
 	// An arbitrary string attached to a workflow step. Useful for adding notes about
 	// the workflow for internal purposes.
@@ -3566,7 +3578,8 @@ type WorkflowGetResponse struct {
 	Categories []string `json:"categories"`
 	// A group of conditions to be evaluated.
 	Conditions ConditionGroupUnion `json:"conditions,nullable"`
-	// User information.
+	// Information about a user within the Knock dashboard. Not to be confused with an
+	// external user (recipient) of a workflow.
 	CreatedBy WorkflowGetResponseCreatedBy `json:"created_by,nullable"`
 	// The timestamp of when the workflow was deleted. (read-only).
 	DeletedAt time.Time `json:"deleted_at" format:"date-time"`
@@ -3575,8 +3588,9 @@ type WorkflowGetResponse struct {
 	Description string `json:"description"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`
-	// A JSON schema for the expected structure of the workflow trigger's data payload.
-	// Used to validate trigger requests. Read more in the
+	// A JSON schema for the expected structure of the workflow trigger's `data`
+	// payload (available in templates as `{{ data.field_name }}`). Used to validate
+	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema"`
 	// The frequency at which the workflow should be triggered. One of:
@@ -3586,7 +3600,8 @@ type WorkflowGetResponse struct {
 	//
 	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
 	TriggerFrequency WorkflowGetResponseTriggerFrequency `json:"trigger_frequency"`
-	// User information.
+	// Information about a user within the Knock dashboard. Not to be confused with an
+	// external user (recipient) of a workflow.
 	UpdatedBy WorkflowGetResponseUpdatedBy `json:"updated_by,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3619,7 +3634,8 @@ func (r *WorkflowGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// User information.
+// Information about a user within the Knock dashboard. Not to be confused with an
+// external user (recipient) of a workflow.
 type WorkflowGetResponseCreatedBy struct {
 	// The user's unique identifier.
 	ID string `json:"id,required"`
@@ -3678,7 +3694,8 @@ const (
 	WorkflowGetResponseTriggerFrequencyOncePerRecipientPerTenant WorkflowGetResponseTriggerFrequency = "once_per_recipient_per_tenant"
 )
 
-// User information.
+// Information about a user within the Knock dashboard. Not to be confused with an
+// external user (recipient) of a workflow.
 type WorkflowGetResponseUpdatedBy struct {
 	// The user's unique identifier.
 	ID string `json:"id,required"`
@@ -3704,7 +3721,8 @@ func (r *WorkflowGetResponseUpdatedBy) UnmarshalJSON(data []byte) error {
 
 // Wraps the Workflow response under the `workflow` key.
 type WorkflowActivateResponse struct {
-	// A workflow object.
+	// A workflow object. Read more in the
+	// [docs](https://docs.knock.app/concepts/workflows).
 	Workflow Workflow `json:"workflow,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3740,7 +3758,8 @@ func (r *WorkflowRunResponse) UnmarshalJSON(data []byte) error {
 
 // Wraps the Workflow response under the `workflow` key.
 type WorkflowUpsertResponse struct {
-	// A workflow object.
+	// A workflow object. Read more in the
+	// [docs](https://docs.knock.app/concepts/workflows).
 	Workflow Workflow `json:"workflow,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3758,7 +3777,8 @@ func (r *WorkflowUpsertResponse) UnmarshalJSON(data []byte) error {
 
 // Wraps the Workflow response under the `workflow` key.
 type WorkflowValidateResponse struct {
-	// A workflow object.
+	// A workflow object. Read more in the
+	// [docs](https://docs.knock.app/concepts/workflows).
 	Workflow Workflow `json:"workflow,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3867,7 +3887,10 @@ type WorkflowRunParams struct {
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
 	Actor WorkflowRunParamsActorUnion `json:"actor,omitzero"`
-	// A map of data to be used in the workflow run.
+	// A map of data to be used in the workflow run. The structure should conform to
+	// the workflow's `trigger_data_json_schema` if one is defined. Available in
+	// templates as `{{ data.field_name }}`. See
+	// [trigger data validation docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	Data map[string]any `json:"data,omitzero"`
 	paramObj
 }
@@ -4028,8 +4051,9 @@ type WorkflowUpsertParamsWorkflow struct {
 	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
 	// A map of workflow settings.
 	Settings WorkflowUpsertParamsWorkflowSettings `json:"settings,omitzero"`
-	// A JSON schema for the expected structure of the workflow trigger's data payload.
-	// Used to validate trigger requests. Read more in the
+	// A JSON schema for the expected structure of the workflow trigger's `data`
+	// payload (available in templates as `{{ data.field_name }}`). Used to validate
+	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
 	// The frequency at which the workflow should be triggered. One of:
@@ -4121,8 +4145,9 @@ type WorkflowValidateParamsWorkflow struct {
 	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
 	// A map of workflow settings.
 	Settings WorkflowValidateParamsWorkflowSettings `json:"settings,omitzero"`
-	// A JSON schema for the expected structure of the workflow trigger's data payload.
-	// Used to validate trigger requests. Read more in the
+	// A JSON schema for the expected structure of the workflow trigger's `data`
+	// payload (available in templates as `{{ data.field_name }}`). Used to validate
+	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
 	// The frequency at which the workflow should be triggered. One of:
