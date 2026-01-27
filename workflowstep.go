@@ -108,14 +108,14 @@ const (
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
+	// This field is a union of [EmailTemplateSettings], [PushTemplateSettings],
+	// [SMSTemplateSettings]
+	Settings WorkflowStepPreviewTemplateResponseTemplateUnionSettings `json:"settings"`
 	// This field is from variant [EmailTemplate].
 	Subject string `json:"subject"`
 	// This field is from variant [EmailTemplate].
 	HTMLBody string `json:"html_body"`
-	// This field is a union of [EmailTemplateSettings], [PushTemplateSettings],
-	// [SMSTemplateSettings]
-	Settings WorkflowStepPreviewTemplateResponseTemplateUnionSettings `json:"settings"`
-	TextBody string                                                   `json:"text_body"`
+	TextBody string `json:"text_body"`
 	// This field is from variant [EmailTemplate].
 	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
 	MarkdownBody string                          `json:"markdown_body"`
@@ -140,9 +140,9 @@ type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
 	// This field is from variant [RequestTemplate].
 	QueryParams RequestTemplateQueryParamsUnion `json:"query_params"`
 	JSON        struct {
+		Settings      respjson.Field
 		Subject       respjson.Field
 		HTMLBody      respjson.Field
-		Settings      respjson.Field
 		TextBody      respjson.Field
 		VisualBlocks  respjson.Field
 		MarkdownBody  respjson.Field
