@@ -205,18 +205,22 @@ func (r *Guide) UnmarshalJSON(data []byte) error {
 }
 
 // A rule that controls when a guide should be shown based on the user's location
-// in the application.
+// in the application. At least one of `pathname` or `search` must be provided.
 type GuideActivationURLPattern struct {
-	// Whether to allow or block the guide at the specified pathname.
+	// Whether to allow or block the guide at the specified location.
 	//
 	// Any of "allow", "block".
 	Directive GuideActivationURLPatternDirective `json:"directive,required"`
 	// The URL pathname pattern to match against. Must be a valid URI path.
-	Pathname string `json:"pathname,required"`
+	Pathname string `json:"pathname"`
+	// The URL query string pattern to match against (without the leading '?').
+	// Supports URLPattern API syntax.
+	Search string `json:"search"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Directive   respjson.Field
 		Pathname    respjson.Field
+		Search      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -238,7 +242,7 @@ func (r GuideActivationURLPattern) ToParam() GuideActivationURLPatternParam {
 	return param.Override[GuideActivationURLPatternParam](json.RawMessage(r.RawJSON()))
 }
 
-// Whether to allow or block the guide at the specified pathname.
+// Whether to allow or block the guide at the specified location.
 type GuideActivationURLPatternDirective string
 
 const (
@@ -247,16 +251,19 @@ const (
 )
 
 // A rule that controls when a guide should be shown based on the user's location
-// in the application.
+// in the application. At least one of `pathname` or `search` must be provided.
 //
-// The properties Directive, Pathname are required.
+// The property Directive is required.
 type GuideActivationURLPatternParam struct {
-	// Whether to allow or block the guide at the specified pathname.
+	// Whether to allow or block the guide at the specified location.
 	//
 	// Any of "allow", "block".
 	Directive GuideActivationURLPatternDirective `json:"directive,omitzero,required"`
 	// The URL pathname pattern to match against. Must be a valid URI path.
-	Pathname string `json:"pathname,required"`
+	Pathname param.Opt[string] `json:"pathname,omitzero"`
+	// The URL query string pattern to match against (without the leading '?').
+	// Supports URLPattern API syntax.
+	Search param.Opt[string] `json:"search,omitzero"`
 	paramObj
 }
 
