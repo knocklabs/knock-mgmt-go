@@ -168,7 +168,8 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				}},
 				ActivationURLPatterns: []knockmapi.GuideActivationURLPatternParam{{
 					Directive: knockmapi.GuideActivationURLPatternDirectiveAllow,
-					Pathname:  "/dashboard/*",
+					Pathname:  knockmapi.String("/dashboard/*"),
+					Search:    knockmapi.String("tab=settings"),
 				}},
 				ArchivedAt:       knockmapi.Time(time.Now()),
 				DeletedAt:        knockmapi.Time(time.Now()),
@@ -232,7 +233,8 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 				}},
 				ActivationURLPatterns: []knockmapi.GuideActivationURLPatternParam{{
 					Directive: knockmapi.GuideActivationURLPatternDirectiveAllow,
-					Pathname:  "/dashboard/*",
+					Pathname:  knockmapi.String("/dashboard/*"),
+					Search:    knockmapi.String("tab=settings"),
 				}},
 				ArchivedAt:       knockmapi.Time(time.Now()),
 				DeletedAt:        knockmapi.Time(time.Now()),
