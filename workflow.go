@@ -145,9 +145,9 @@ type Condition struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_after",
-	// "is_timestamp_between", "empty", "not_empty", "is_timestamp",
-	// "is_audience_member", "is_not_audience_member".
+	// "contains_all", "not_contains_all", "is_timestamp_before",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
+	// "is_timestamp", "is_audience_member", "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
 	// properties. Static values will always be JSON decoded so will support strings,
@@ -199,7 +199,7 @@ const (
 	ConditionOperatorContainsAll          ConditionOperator = "contains_all"
 	ConditionOperatorNotContainsAll       ConditionOperator = "not_contains_all"
 	ConditionOperatorIsTimestampBefore    ConditionOperator = "is_timestamp_before"
-	ConditionOperatorIsTimestampAfter     ConditionOperator = "is_timestamp_after"
+	ConditionOperatorIsTimestampOnOrAfter ConditionOperator = "is_timestamp_on_or_after"
 	ConditionOperatorIsTimestampBetween   ConditionOperator = "is_timestamp_between"
 	ConditionOperatorEmpty                ConditionOperator = "empty"
 	ConditionOperatorNotEmpty             ConditionOperator = "not_empty"
@@ -216,9 +216,9 @@ type ConditionParam struct {
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_after",
-	// "is_timestamp_between", "empty", "not_empty", "is_timestamp",
-	// "is_audience_member", "is_not_audience_member".
+	// "contains_all", "not_contains_all", "is_timestamp_before",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
+	// "is_timestamp", "is_audience_member", "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,omitzero,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
 	// properties. Static values will always be JSON decoded so will support strings,
