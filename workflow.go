@@ -1944,8 +1944,8 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnion contains all possible properties and values from
 // [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
 // [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep], [WorkflowDelayStep],
-// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowThrottleStep],
-// [WorkflowBranchStep], [WorkflowTriggerWorkflowStep].
+// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowStepWorkflowUpdateDataStep],
+// [WorkflowThrottleStep], [WorkflowBranchStep], [WorkflowTriggerWorkflowStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepUnion struct {
@@ -1966,7 +1966,8 @@ type WorkflowStepUnion struct {
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
 	// This field is a union of [WorkflowDelayStepSettings],
-	// [WorkflowBatchStepSettings], [RequestTemplate], [WorkflowThrottleStepSettings],
+	// [WorkflowBatchStepSettings], [RequestTemplate],
+	// [WorkflowStepWorkflowUpdateDataStepSettings], [WorkflowThrottleStepSettings],
 	// [WorkflowTriggerWorkflowStepSettings]
 	Settings WorkflowStepUnionSettings `json:"settings"`
 	// This field is from variant [WorkflowBranchStep].
@@ -2030,6 +2031,11 @@ func (u WorkflowStepUnion) AsWorkflowBatchStep() (v WorkflowBatchStep) {
 }
 
 func (u WorkflowStepUnion) AsWorkflowFetchStep() (v WorkflowFetchStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowUpdateDataStep() (v WorkflowStepWorkflowUpdateDataStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2239,6 +2245,7 @@ type WorkflowStepUnionSettings struct {
 	Headers RequestTemplateHeadersUnion `json:"headers"`
 	// This field is from variant [RequestTemplate].
 	QueryParams RequestTemplateQueryParamsUnion `json:"query_params"`
+	Data        string                          `json:"data"`
 	// This field is from variant [WorkflowThrottleStepSettings].
 	ThrottleKey string `json:"throttle_key"`
 	// This field is from variant [WorkflowThrottleStepSettings].
@@ -2251,8 +2258,6 @@ type WorkflowStepUnionSettings struct {
 	Actor string `json:"actor"`
 	// This field is from variant [WorkflowTriggerWorkflowStepSettings].
 	CancellationKey string `json:"cancellation_key"`
-	// This field is from variant [WorkflowTriggerWorkflowStepSettings].
-	Data string `json:"data"`
 	// This field is from variant [WorkflowTriggerWorkflowStepSettings].
 	Recipients string `json:"recipients"`
 	// This field is from variant [WorkflowTriggerWorkflowStepSettings].
@@ -2276,13 +2281,13 @@ type WorkflowStepUnionSettings struct {
 		Body                      respjson.Field
 		Headers                   respjson.Field
 		QueryParams               respjson.Field
+		Data                      respjson.Field
 		ThrottleKey               respjson.Field
 		ThrottleLimit             respjson.Field
 		ThrottleWindow            respjson.Field
 		ThrottleWindowFieldPath   respjson.Field
 		Actor                     respjson.Field
 		CancellationKey           respjson.Field
-		Data                      respjson.Field
 		Recipients                respjson.Field
 		Tenant                    respjson.Field
 		WorkflowKey               respjson.Field
@@ -2301,6 +2306,62 @@ func (r *WorkflowStepUnionSettings) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// An update data function step. Merges data into the workflow's `data` scope for
+// use in subsequent steps.
+type WorkflowStepWorkflowUpdateDataStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// The settings for the update data step.
+	Settings WorkflowStepWorkflowUpdateDataStepSettings `json:"settings,required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_data".
+	Type string `json:"type,required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions,nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description,nullable"`
+	// A name for the workflow step.
+	Name string `json:"name,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowUpdateDataStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowUpdateDataStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the update data step.
+type WorkflowStepWorkflowUpdateDataStepSettings struct {
+	// A JSON string or Liquid template that evaluates to the data to merge into the
+	// workflow's data scope.
+	Data string `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowUpdateDataStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowUpdateDataStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 func WorkflowStepParamOfWorkflowWebhookStep(ref string, template WebhookTemplateParam, type_ WorkflowWebhookStepType) WorkflowStepUnionParam {
@@ -2375,6 +2436,14 @@ func WorkflowStepParamOfWorkflowFetchStep(ref string, settings RequestTemplatePa
 	return WorkflowStepUnionParam{OfWorkflowFetchStep: &variant}
 }
 
+func WorkflowStepParamOfWorkflowUpdateDataStep(ref string, settings WorkflowStepWorkflowUpdateDataStepSettingsParam, type_ string) WorkflowStepUnionParam {
+	var variant WorkflowStepWorkflowUpdateDataStepParam
+	variant.Ref = ref
+	variant.Settings = settings
+	variant.Type = type_
+	return WorkflowStepUnionParam{OfWorkflowUpdateDataStep: &variant}
+}
+
 func WorkflowStepParamOfWorkflowThrottleStep(ref string, settings WorkflowThrottleStepSettingsParam, type_ WorkflowThrottleStepType) WorkflowStepUnionParam {
 	var variant WorkflowThrottleStepParam
 	variant.Ref = ref
@@ -2403,18 +2472,19 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowWebhookStep         *WorkflowWebhookStepParam         `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam       `json:",omitzero,inline"`
-	OfWorkflowChatStep            *WorkflowChatStepParam            `json:",omitzero,inline"`
-	OfWorkflowSMSStep             *WorkflowSMSStepParam             `json:",omitzero,inline"`
-	OfWorkflowPushStep            *WorkflowPushStepParam            `json:",omitzero,inline"`
-	OfWorkflowEmailStep           *WorkflowEmailStepParam           `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowWebhookStepParam                `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam              `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowChatStepParam                   `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowSMSStepParam                    `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowPushStepParam                   `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowEmailStepParam                  `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam                  `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam                  `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam                  `json:",omitzero,inline"`
+	OfWorkflowUpdateDataStep      *WorkflowStepWorkflowUpdateDataStepParam `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam               `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam                 `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam        `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -2428,6 +2498,7 @@ func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfWorkflowDelayStep,
 		u.OfWorkflowBatchStep,
 		u.OfWorkflowFetchStep,
+		u.OfWorkflowUpdateDataStep,
 		u.OfWorkflowThrottleStep,
 		u.OfWorkflowBranchStep,
 		u.OfWorkflowTriggerWorkflowStep)
@@ -2455,6 +2526,8 @@ func (u *WorkflowStepUnionParam) asAny() any {
 		return u.OfWorkflowBatchStep
 	} else if !param.IsOmitted(u.OfWorkflowFetchStep) {
 		return u.OfWorkflowFetchStep
+	} else if !param.IsOmitted(u.OfWorkflowUpdateDataStep) {
+		return u.OfWorkflowUpdateDataStep
 	} else if !param.IsOmitted(u.OfWorkflowThrottleStep) {
 		return u.OfWorkflowThrottleStep
 	} else if !param.IsOmitted(u.OfWorkflowBranchStep) {
@@ -2493,6 +2566,8 @@ func (u WorkflowStepUnionParam) GetRef() *string {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
 		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil {
+		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowBranchStep; vt != nil {
@@ -2522,6 +2597,8 @@ func (u WorkflowStepUnionParam) GetType() *string {
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
 		return (*string)(&vt.Type)
@@ -2607,6 +2684,8 @@ func (u WorkflowStepUnionParam) GetDescription() *string {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowFetchStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
+	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowBranchStep; vt != nil && vt.Description.Valid() {
@@ -2636,6 +2715,8 @@ func (u WorkflowStepUnionParam) GetName() *string {
 	} else if vt := u.OfWorkflowBatchStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowFetchStep; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
@@ -2931,6 +3012,8 @@ func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
 		return &vt.Conditions
+	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil {
+		return &vt.Conditions
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil {
@@ -3108,6 +3191,8 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
 		res.any = &vt.Settings
+	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil {
+		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil {
@@ -3118,6 +3203,7 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 
 // Can have the runtime types [*WorkflowDelayStepSettingsParam],
 // [*WorkflowBatchStepSettingsParam], [*RequestTemplateParam],
+// [*WorkflowStepWorkflowUpdateDataStepSettingsParam],
 // [*WorkflowThrottleStepSettingsParam],
 // [*WorkflowTriggerWorkflowStepSettingsParam]
 type workflowStepUnionParamSettings struct{ any }
@@ -3128,12 +3214,304 @@ type workflowStepUnionParamSettings struct{ any }
 //	case *knockmapi.WorkflowDelayStepSettingsParam:
 //	case *knockmapi.WorkflowBatchStepSettingsParam:
 //	case *knockmapi.RequestTemplateParam:
+//	case *knockmapi.WorkflowStepWorkflowUpdateDataStepSettingsParam:
 //	case *knockmapi.WorkflowThrottleStepSettingsParam:
 //	case *knockmapi.WorkflowTriggerWorkflowStepSettingsParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
 func (u workflowStepUnionParamSettings) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetDelayFor() *DurationParam {
+	switch vt := u.any.(type) {
+	case *WorkflowDelayStepSettingsParam:
+		return &vt.DelayFor
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetDelayUntilFieldPath() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowDelayStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.DelayUntilFieldPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchExecutionMode() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return &vt.BatchExecutionMode
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchItemsMaxLimit() *int64 {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.BatchItemsMaxLimit)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchItemsRenderLimit() *int64 {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.BatchItemsRenderLimit)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.BatchKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchOrder() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return &vt.BatchOrder
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchUntilFieldPath() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.BatchUntilFieldPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchWindow() *DurationParam {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return &vt.BatchWindow
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchWindowExtensionLimit() *DurationParam {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return &vt.BatchWindowExtensionLimit
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBatchWindowType() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return &vt.BatchWindowType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetMethod() *string {
+	switch vt := u.any.(type) {
+	case *RequestTemplateParam:
+		return (*string)(&vt.Method)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetURL() *string {
+	switch vt := u.any.(type) {
+	case *RequestTemplateParam:
+		return &vt.URL
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetBody() *string {
+	switch vt := u.any.(type) {
+	case *RequestTemplateParam:
+		return paramutil.AddrIfPresent(vt.Body)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetHeaders() *RequestTemplateHeadersUnionParam {
+	switch vt := u.any.(type) {
+	case *RequestTemplateParam:
+		return &vt.Headers
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetQueryParams() *RequestTemplateQueryParamsUnionParam {
+	switch vt := u.any.(type) {
+	case *RequestTemplateParam:
+		return &vt.QueryParams
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetThrottleKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowThrottleStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.ThrottleKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetThrottleLimit() *int64 {
+	switch vt := u.any.(type) {
+	case *WorkflowThrottleStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.ThrottleLimit)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetThrottleWindow() *DurationParam {
+	switch vt := u.any.(type) {
+	case *WorkflowThrottleStepSettingsParam:
+		return &vt.ThrottleWindow
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetThrottleWindowFieldPath() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowThrottleStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.ThrottleWindowFieldPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetActor() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowTriggerWorkflowStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.Actor)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetCancellationKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowTriggerWorkflowStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.CancellationKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetRecipients() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowTriggerWorkflowStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.Recipients)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetTenant() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowTriggerWorkflowStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.Tenant)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetWorkflowKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowTriggerWorkflowStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.WorkflowKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetData() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowUpdateDataStepSettingsParam:
+		return (*string)(&vt.Data)
+	case *WorkflowTriggerWorkflowStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.Data)
+	}
+	return nil
+}
+
+// An update data function step. Merges data into the workflow's `data` scope for
+// use in subsequent steps.
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowStepWorkflowUpdateDataStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref,required"`
+	// The settings for the update data step.
+	Settings WorkflowStepWorkflowUpdateDataStepSettingsParam `json:"settings,omitzero,required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_data".
+	Type string `json:"type,omitzero,required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowUpdateDataStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowUpdateDataStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowUpdateDataStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateDataStepParam](
+		"type", "update_data",
+	)
+}
+
+// The settings for the update data step.
+//
+// The property Data is required.
+type WorkflowStepWorkflowUpdateDataStepSettingsParam struct {
+	// A JSON string or Liquid template that evaluates to the data to merge into the
+	// workflow's data scope.
+	Data string `json:"data,required"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowUpdateDataStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowUpdateDataStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowUpdateDataStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A throttle function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/throttle-function).
