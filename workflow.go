@@ -147,7 +147,8 @@ type Condition struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "is_timestamp", "is_audience_member", "is_not_audience_member".
+	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
 	// properties. Static values will always be JSON decoded so will support strings,
@@ -203,6 +204,8 @@ const (
 	ConditionOperatorIsTimestampBetween   ConditionOperator = "is_timestamp_between"
 	ConditionOperatorEmpty                ConditionOperator = "empty"
 	ConditionOperatorNotEmpty             ConditionOperator = "not_empty"
+	ConditionOperatorExists               ConditionOperator = "exists"
+	ConditionOperatorNotExists            ConditionOperator = "not_exists"
 	ConditionOperatorIsTimestamp          ConditionOperator = "is_timestamp"
 	ConditionOperatorIsAudienceMember     ConditionOperator = "is_audience_member"
 	ConditionOperatorIsNotAudienceMember  ConditionOperator = "is_not_audience_member"
@@ -218,7 +221,8 @@ type ConditionParam struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "is_timestamp", "is_audience_member", "is_not_audience_member".
+	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,omitzero,required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
 	// properties. Static values will always be JSON decoded so will support strings,
