@@ -14,7 +14,7 @@ import (
 )
 
 func TestBranchNew(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -43,7 +43,7 @@ func TestBranchNew(t *testing.T) {
 }
 
 func TestBranchGet(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -72,7 +72,7 @@ func TestBranchGet(t *testing.T) {
 }
 
 func TestBranchListWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -100,7 +100,7 @@ func TestBranchListWithOptionalParams(t *testing.T) {
 }
 
 func TestBranchDelete(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

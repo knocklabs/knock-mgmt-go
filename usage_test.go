@@ -24,7 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	page, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
 		Environment: "development",
 	})

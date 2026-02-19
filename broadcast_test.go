@@ -16,7 +16,7 @@ import (
 )
 
 func TestBroadcastGetWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -48,7 +48,7 @@ func TestBroadcastGetWithOptionalParams(t *testing.T) {
 }
 
 func TestBroadcastListWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -79,7 +79,7 @@ func TestBroadcastListWithOptionalParams(t *testing.T) {
 }
 
 func TestBroadcastCancelWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -109,7 +109,7 @@ func TestBroadcastCancelWithOptionalParams(t *testing.T) {
 }
 
 func TestBroadcastSendWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -140,7 +140,7 @@ func TestBroadcastSendWithOptionalParams(t *testing.T) {
 }
 
 func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -219,7 +219,7 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestBroadcastValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
