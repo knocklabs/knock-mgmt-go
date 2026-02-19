@@ -166,7 +166,8 @@ type ChannelGroupRule struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "is_timestamp", "is_audience_member", "is_not_audience_member".
+	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_not_audience_member".
 	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
 	// For conditional rules, the variable to evaluate.
 	Variable string `json:"variable,nullable"`
@@ -220,6 +221,8 @@ const (
 	ChannelGroupRuleOperatorIsTimestampBetween   ChannelGroupRuleOperator = "is_timestamp_between"
 	ChannelGroupRuleOperatorEmpty                ChannelGroupRuleOperator = "empty"
 	ChannelGroupRuleOperatorNotEmpty             ChannelGroupRuleOperator = "not_empty"
+	ChannelGroupRuleOperatorExists               ChannelGroupRuleOperator = "exists"
+	ChannelGroupRuleOperatorNotExists            ChannelGroupRuleOperator = "not_exists"
 	ChannelGroupRuleOperatorIsTimestamp          ChannelGroupRuleOperator = "is_timestamp"
 	ChannelGroupRuleOperatorIsAudienceMember     ChannelGroupRuleOperator = "is_audience_member"
 	ChannelGroupRuleOperatorIsNotAudienceMember  ChannelGroupRuleOperator = "is_not_audience_member"
