@@ -27,7 +27,7 @@ func TestAutoPagination(t *testing.T) {
 	iter := client.Workflows.ListAutoPaging(context.TODO(), knockmapi.WorkflowListParams{
 		Environment: "development",
 	})
-	// Prism mock isn't going to give us real pagination
+	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
 		workflow := iter.Current()
 		t.Logf("%+v\n", workflow.Valid)

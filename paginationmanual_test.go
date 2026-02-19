@@ -33,7 +33,7 @@ func TestManualPagination(t *testing.T) {
 	for _, workflow := range page.Entries {
 		t.Logf("%+v\n", workflow.Valid)
 	}
-	// Prism mock isn't going to give us real pagination
+	// The mock server isn't going to give us real pagination
 	page, err = page.GetNextPage()
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
