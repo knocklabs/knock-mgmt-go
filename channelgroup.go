@@ -89,6 +89,8 @@ type ChannelGroup struct {
 	Source ChannelGroupSource `json:"source" api:"required"`
 	// The timestamp of when the channel group was last updated.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// The timestamp of when the channel group was archived (soft deleted).
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChannelRules respjson.Field
@@ -99,6 +101,7 @@ type ChannelGroup struct {
 		Operator     respjson.Field
 		Source       respjson.Field
 		UpdatedAt    respjson.Field
+		ArchivedAt   respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
