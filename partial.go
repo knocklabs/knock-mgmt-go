@@ -286,6 +286,7 @@ type PartialInputSchemaUnionSettings struct {
 	// [string], [string], [string]
 	Default     PartialInputSchemaUnionSettingsDefault `json:"default"`
 	Description string                                 `json:"description"`
+	Placeholder string                                 `json:"placeholder"`
 	Required    bool                                   `json:"required"`
 	// This field is from variant [PartialInputSchemaMessageTypeJsonFieldSettings].
 	Schema any `json:"schema"`
@@ -298,6 +299,7 @@ type PartialInputSchemaUnionSettings struct {
 	JSON      struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		Schema      respjson.Field
 		Options     respjson.Field
@@ -405,13 +407,15 @@ func (r *PartialInputSchemaMessageTypeBooleanField) UnmarshalJSON(data []byte) e
 type PartialInputSchemaMessageTypeBooleanFieldSettings struct {
 	// The default value of the boolean field.
 	Default     bool   `json:"default"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -461,12 +465,14 @@ func (r *PartialInputSchemaMessageTypeButtonField) UnmarshalJSON(data []byte) er
 
 // Settings for the button field.
 type PartialInputSchemaMessageTypeButtonFieldSettings struct {
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -550,13 +556,15 @@ func (r *PartialInputSchemaMessageTypeImageFieldURL) UnmarshalJSON(data []byte) 
 type PartialInputSchemaMessageTypeImageFieldURLSettings struct {
 	// The default value of the URL field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -571,12 +579,14 @@ func (r *PartialInputSchemaMessageTypeImageFieldURLSettings) UnmarshalJSON(data 
 
 // Settings for the image field.
 type PartialInputSchemaMessageTypeImageFieldSettings struct {
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -622,7 +632,8 @@ func (r *PartialInputSchemaMessageTypeJsonField) UnmarshalJSON(data []byte) erro
 type PartialInputSchemaMessageTypeJsonFieldSettings struct {
 	// The default value of the JSON field.
 	Default     any    `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// A JSON schema used to validate the structure of the JSON provided. Must be a
@@ -632,6 +643,7 @@ type PartialInputSchemaMessageTypeJsonFieldSettings struct {
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		Schema      respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -678,13 +690,15 @@ func (r *PartialInputSchemaMessageTypeMarkdownField) UnmarshalJSON(data []byte) 
 type PartialInputSchemaMessageTypeMarkdownFieldSettings struct {
 	// The default value of the markdown field.
 	Default     string `json:"default"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -730,9 +744,10 @@ func (r *PartialInputSchemaMessageTypeMultiSelectField) UnmarshalJSON(data []byt
 type PartialInputSchemaMessageTypeMultiSelectFieldSettings struct {
 	// The default values for the multi-select field.
 	Default     []string `json:"default" api:"nullable"`
-	Description string   `json:"description"`
+	Description string   `json:"description" api:"nullable"`
 	// The available options for the multi-select field.
-	Options []PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption `json:"options"`
+	Options     []PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption `json:"options"`
+	Placeholder string                                                        `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -740,6 +755,7 @@ type PartialInputSchemaMessageTypeMultiSelectFieldSettings struct {
 		Default     respjson.Field
 		Description respjson.Field
 		Options     respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -807,9 +823,10 @@ func (r *PartialInputSchemaMessageTypeSelectField) UnmarshalJSON(data []byte) er
 type PartialInputSchemaMessageTypeSelectFieldSettings struct {
 	// The default value for the select field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
 	// The available options for the select field.
-	Options []PartialInputSchemaMessageTypeSelectFieldSettingsOption `json:"options"`
+	Options     []PartialInputSchemaMessageTypeSelectFieldSettingsOption `json:"options"`
+	Placeholder string                                                   `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -817,6 +834,7 @@ type PartialInputSchemaMessageTypeSelectFieldSettings struct {
 		Default     respjson.Field
 		Description respjson.Field
 		Options     respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -882,9 +900,10 @@ func (r *PartialInputSchemaMessageTypeTextareaField) UnmarshalJSON(data []byte) 
 type PartialInputSchemaMessageTypeTextareaFieldSettings struct {
 	// The default value of the textarea field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
 	MaxLength   int64  `json:"max_length"`
 	MinLength   int64  `json:"min_length"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -893,6 +912,7 @@ type PartialInputSchemaMessageTypeTextareaFieldSettings struct {
 		Description respjson.Field
 		MaxLength   respjson.Field
 		MinLength   respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -938,13 +958,15 @@ func (r *PartialInputSchemaMessageTypeURLField) UnmarshalJSON(data []byte) error
 type PartialInputSchemaMessageTypeURLFieldSettings struct {
 	// The default value of the URL field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1371,6 +1393,33 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *st
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetPlaceholder() *string {
+	switch vt := u.any.(type) {
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeTextareaFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeURLFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetRequired() *bool {
 	switch vt := u.any.(type) {
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
@@ -1530,9 +1579,10 @@ func init() {
 
 // Settings for the boolean field.
 type PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings struct {
-	// The default value of the boolean field.
-	Default     param.Opt[bool]   `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// The default value of the boolean field.
+	Default param.Opt[bool] `json:"default,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1584,6 +1634,7 @@ func init() {
 // Settings for the button field.
 type PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1670,6 +1721,7 @@ type PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldURLSettings struc
 	// The default value of the URL field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1686,6 +1738,7 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldURLSettings) 
 // Settings for the image field.
 type PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1733,6 +1786,7 @@ func init() {
 // Settings for the json field.
 type PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The default value of the JSON field.
@@ -1784,9 +1838,10 @@ func init() {
 
 // Settings for the markdown field.
 type PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings struct {
-	// The default value of the markdown field.
-	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// The default value of the markdown field.
+	Default param.Opt[string] `json:"default,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1834,6 +1889,7 @@ func init() {
 // Settings for the multi_select field.
 type PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The default values for the multi-select field.
@@ -1904,6 +1960,7 @@ type PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings struct 
 	// The default value for the select field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The available options for the select field.
@@ -1972,6 +2029,7 @@ type PartialUpsertParamsPartialInputSchemaMessageTypeTextareaFieldSettings struc
 	// The default value of the textarea field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	MaxLength   param.Opt[int64]  `json:"max_length,omitzero"`
 	MinLength   param.Opt[int64]  `json:"min_length,omitzero"`
 	// Whether the field is required.
@@ -2023,6 +2081,7 @@ type PartialUpsertParamsPartialInputSchemaMessageTypeURLFieldSettings struct {
 	// The default value of the URL field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -2358,6 +2417,33 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u partialValidateParamsPartialInputSchemaUnionSettings) GetPlaceholder() *string {
+	switch vt := u.any.(type) {
+	case *PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeTextareaFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeURLFieldSettings:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetRequired() *bool {
 	switch vt := u.any.(type) {
 	case *PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
@@ -2517,9 +2603,10 @@ func init() {
 
 // Settings for the boolean field.
 type PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings struct {
-	// The default value of the boolean field.
-	Default     param.Opt[bool]   `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// The default value of the boolean field.
+	Default param.Opt[bool] `json:"default,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -2571,6 +2658,7 @@ func init() {
 // Settings for the button field.
 type PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -2657,6 +2745,7 @@ type PartialValidateParamsPartialInputSchemaMessageTypeImageFieldURLSettings str
 	// The default value of the URL field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -2673,6 +2762,7 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeImageFieldURLSettings
 // Settings for the image field.
 type PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -2720,6 +2810,7 @@ func init() {
 // Settings for the json field.
 type PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The default value of the JSON field.
@@ -2771,9 +2862,10 @@ func init() {
 
 // Settings for the markdown field.
 type PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings struct {
-	// The default value of the markdown field.
-	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// The default value of the markdown field.
+	Default param.Opt[string] `json:"default,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -2821,6 +2913,7 @@ func init() {
 // Settings for the multi_select field.
 type PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The default values for the multi-select field.
@@ -2891,6 +2984,7 @@ type PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings struc
 	// The default value for the select field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The available options for the select field.
@@ -2959,6 +3053,7 @@ type PartialValidateParamsPartialInputSchemaMessageTypeTextareaFieldSettings str
 	// The default value of the textarea field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	MaxLength   param.Opt[int64]  `json:"max_length,omitzero"`
 	MinLength   param.Opt[int64]  `json:"min_length,omitzero"`
 	// Whether the field is required.
@@ -3010,6 +3105,7 @@ type PartialValidateParamsPartialInputSchemaMessageTypeURLFieldSettings struct {
 	// The default value of the URL field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj

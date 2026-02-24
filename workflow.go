@@ -4545,15 +4545,24 @@ func (r *WorkflowGetResponse) UnmarshalJSON(data []byte) error {
 // external user (recipient) of a workflow.
 type WorkflowGetResponseCreatedBy struct {
 	// The user's unique identifier.
-	ID string `json:"id" api:"required"`
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The timestamp of when the user was created.
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The user's email address.
 	Email string `json:"email" api:"required" format:"email"`
-	// The user's name.
+	// The timestamp of when the user was last updated.
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// The URL of the user's avatar image.
+	AvatarURL string `json:"avatar_url" api:"nullable"`
+	// The user's display name.
 	Name string `json:"name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		CreatedAt   respjson.Field
 		Email       respjson.Field
+		UpdatedAt   respjson.Field
+		AvatarURL   respjson.Field
 		Name        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -4605,15 +4614,24 @@ const (
 // external user (recipient) of a workflow.
 type WorkflowGetResponseUpdatedBy struct {
 	// The user's unique identifier.
-	ID string `json:"id" api:"required"`
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The timestamp of when the user was created.
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The user's email address.
 	Email string `json:"email" api:"required" format:"email"`
-	// The user's name.
+	// The timestamp of when the user was last updated.
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// The URL of the user's avatar image.
+	AvatarURL string `json:"avatar_url" api:"nullable"`
+	// The user's display name.
 	Name string `json:"name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		CreatedAt   respjson.Field
 		Email       respjson.Field
+		UpdatedAt   respjson.Field
+		AvatarURL   respjson.Field
 		Name        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
