@@ -228,9 +228,10 @@ const (
 type MessageTypeTextFieldSettings struct {
 	// The default value of the text field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
 	MaxLength   int64  `json:"max_length"`
 	MinLength   int64  `json:"min_length"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -239,6 +240,7 @@ type MessageTypeTextFieldSettings struct {
 		Description respjson.Field
 		MaxLength   respjson.Field
 		MinLength   respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -281,6 +283,7 @@ type MessageTypeTextFieldSettingsParam struct {
 	// The default value of the text field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	MaxLength   param.Opt[int64]  `json:"max_length,omitzero"`
 	MinLength   param.Opt[int64]  `json:"min_length,omitzero"`
 	// Whether the field is required.
@@ -447,6 +450,7 @@ type MessageTypeVariantFieldUnionSettings struct {
 	// [string], [string], [string]
 	Default     MessageTypeVariantFieldUnionSettingsDefault `json:"default"`
 	Description string                                      `json:"description"`
+	Placeholder string                                      `json:"placeholder"`
 	Required    bool                                        `json:"required"`
 	// This field is from variant
 	// [MessageTypeVariantFieldMessageTypeJsonFieldSettings].
@@ -460,6 +464,7 @@ type MessageTypeVariantFieldUnionSettings struct {
 	JSON      struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		Schema      respjson.Field
 		Options     respjson.Field
@@ -570,13 +575,15 @@ func (r *MessageTypeVariantFieldMessageTypeBooleanField) UnmarshalJSON(data []by
 type MessageTypeVariantFieldMessageTypeBooleanFieldSettings struct {
 	// The default value of the boolean field.
 	Default     bool   `json:"default"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -626,12 +633,14 @@ func (r *MessageTypeVariantFieldMessageTypeButtonField) UnmarshalJSON(data []byt
 
 // Settings for the button field.
 type MessageTypeVariantFieldMessageTypeButtonFieldSettings struct {
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -715,13 +724,15 @@ func (r *MessageTypeVariantFieldMessageTypeImageFieldURL) UnmarshalJSON(data []b
 type MessageTypeVariantFieldMessageTypeImageFieldURLSettings struct {
 	// The default value of the URL field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -736,12 +747,14 @@ func (r *MessageTypeVariantFieldMessageTypeImageFieldURLSettings) UnmarshalJSON(
 
 // Settings for the image field.
 type MessageTypeVariantFieldMessageTypeImageFieldSettings struct {
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -787,7 +800,8 @@ func (r *MessageTypeVariantFieldMessageTypeJsonField) UnmarshalJSON(data []byte)
 type MessageTypeVariantFieldMessageTypeJsonFieldSettings struct {
 	// The default value of the JSON field.
 	Default     any    `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// A JSON schema used to validate the structure of the JSON provided. Must be a
@@ -797,6 +811,7 @@ type MessageTypeVariantFieldMessageTypeJsonFieldSettings struct {
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		Schema      respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -843,13 +858,15 @@ func (r *MessageTypeVariantFieldMessageTypeMarkdownField) UnmarshalJSON(data []b
 type MessageTypeVariantFieldMessageTypeMarkdownFieldSettings struct {
 	// The default value of the markdown field.
 	Default     string `json:"default"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -895,9 +912,10 @@ func (r *MessageTypeVariantFieldMessageTypeMultiSelectField) UnmarshalJSON(data 
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings struct {
 	// The default values for the multi-select field.
 	Default     []string `json:"default" api:"nullable"`
-	Description string   `json:"description"`
+	Description string   `json:"description" api:"nullable"`
 	// The available options for the multi-select field.
-	Options []MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption `json:"options"`
+	Options     []MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption `json:"options"`
+	Placeholder string                                                             `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -905,6 +923,7 @@ type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings struct {
 		Default     respjson.Field
 		Description respjson.Field
 		Options     respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -974,9 +993,10 @@ func (r *MessageTypeVariantFieldMessageTypeSelectField) UnmarshalJSON(data []byt
 type MessageTypeVariantFieldMessageTypeSelectFieldSettings struct {
 	// The default value for the select field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
 	// The available options for the select field.
-	Options []MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption `json:"options"`
+	Options     []MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption `json:"options"`
+	Placeholder string                                                        `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -984,6 +1004,7 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettings struct {
 		Default     respjson.Field
 		Description respjson.Field
 		Options     respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1051,9 +1072,10 @@ func (r *MessageTypeVariantFieldMessageTypeTextareaField) UnmarshalJSON(data []b
 type MessageTypeVariantFieldMessageTypeTextareaFieldSettings struct {
 	// The default value of the textarea field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
 	MaxLength   int64  `json:"max_length"`
 	MinLength   int64  `json:"min_length"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1062,6 +1084,7 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldSettings struct {
 		Description respjson.Field
 		MaxLength   respjson.Field
 		MinLength   respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1107,13 +1130,15 @@ func (r *MessageTypeVariantFieldMessageTypeURLField) UnmarshalJSON(data []byte) 
 type MessageTypeVariantFieldMessageTypeURLFieldSettings struct {
 	// The default value of the URL field.
 	Default     string `json:"default" api:"nullable"`
-	Description string `json:"description"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Placeholder respjson.Field
 		Required    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1404,6 +1429,33 @@ func (u messageTypeVariantFieldUnionParamSettings) GetDescription() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u messageTypeVariantFieldUnionParamSettings) GetPlaceholder() *string {
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeImageFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetRequired() *bool {
 	switch vt := u.any.(type) {
 	case *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam:
@@ -1563,9 +1615,10 @@ func init() {
 
 // Settings for the boolean field.
 type MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam struct {
-	// The default value of the boolean field.
-	Default     param.Opt[bool]   `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// The default value of the boolean field.
+	Default param.Opt[bool] `json:"default,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1617,6 +1670,7 @@ func init() {
 // Settings for the button field.
 type MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1703,6 +1757,7 @@ type MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam struct {
 	// The default value of the URL field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1719,6 +1774,7 @@ func (r *MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam) Unmarshal
 // Settings for the image field.
 type MessageTypeVariantFieldMessageTypeImageFieldSettingsParam struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1766,6 +1822,7 @@ func init() {
 // Settings for the json field.
 type MessageTypeVariantFieldMessageTypeJsonFieldSettingsParam struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The default value of the JSON field.
@@ -1817,9 +1874,10 @@ func init() {
 
 // Settings for the markdown field.
 type MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam struct {
-	// The default value of the markdown field.
-	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// The default value of the markdown field.
+	Default param.Opt[string] `json:"default,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
@@ -1867,6 +1925,7 @@ func init() {
 // Settings for the multi_select field.
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam struct {
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The default values for the multi-select field.
@@ -1937,6 +1996,7 @@ type MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam struct {
 	// The default value for the select field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	// The available options for the select field.
@@ -2005,6 +2065,7 @@ type MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam struct {
 	// The default value of the textarea field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	MaxLength   param.Opt[int64]  `json:"max_length,omitzero"`
 	MinLength   param.Opt[int64]  `json:"min_length,omitzero"`
 	// Whether the field is required.
@@ -2056,6 +2117,7 @@ type MessageTypeVariantFieldMessageTypeURLFieldSettingsParam struct {
 	// The default value of the URL field.
 	Default     param.Opt[string] `json:"default,omitzero"`
 	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
 	// Whether the field is required.
 	Required param.Opt[bool] `json:"required,omitzero"`
 	paramObj
