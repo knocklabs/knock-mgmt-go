@@ -65,30 +65,30 @@ func (r *ChannelGroupService) ListAutoPaging(ctx context.Context, query ChannelG
 // A group of channels with rules for when they are applicable.
 type ChannelGroup struct {
 	// Rules for determining which channels should be used.
-	ChannelRules []ChannelGroupRule `json:"channel_rules,required"`
+	ChannelRules []ChannelGroupRule `json:"channel_rules" api:"required"`
 	// The type of channels contained in this group.
 	//
 	// Any of "email", "in_app", "in_app_feed", "in_app_guide", "sms", "push", "chat",
 	// "http".
-	ChannelType ChannelGroupChannelType `json:"channel_type,required"`
+	ChannelType ChannelGroupChannelType `json:"channel_type" api:"required"`
 	// The timestamp of when the channel group was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Unique identifier for the channel group within a project.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The human-readable name of the channel group.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Determines how the channel rules are applied ('any' means any rule can match,
 	// 'all' means all rules must match).
 	//
 	// Any of "any", "all".
-	Operator ChannelGroupOperator `json:"operator,required"`
+	Operator ChannelGroupOperator `json:"operator" api:"required"`
 	// Whether this channel group was created by the system or a user. Only user
 	// created channel groups can be modified.
 	//
 	// Any of "system", "user".
-	Source ChannelGroupSource `json:"source,required"`
+	Source ChannelGroupSource `json:"source" api:"required"`
 	// The timestamp of when the channel group was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChannelRules respjson.Field
@@ -146,20 +146,20 @@ const (
 // group.
 type ChannelGroupRule struct {
 	// A configured channel, which is a way to route messages to a provider.
-	Channel Channel `json:"channel,required"`
+	Channel Channel `json:"channel" api:"required"`
 	// The timestamp of when the rule was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The order index of this rule within the channel group.
-	Index int64 `json:"index,required"`
+	Index int64 `json:"index" api:"required"`
 	// The type of rule (if = conditional, unless = negative conditional, always =
 	// always apply).
 	//
 	// Any of "if", "unless", "always".
-	RuleType ChannelGroupRuleRuleType `json:"rule_type,required"`
+	RuleType ChannelGroupRuleRuleType `json:"rule_type" api:"required"`
 	// The timestamp of when the rule was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// For conditional rules, the value to compare against.
-	Argument string `json:"argument,nullable"`
+	Argument string `json:"argument" api:"nullable"`
 	// For conditional rules, the operator to apply.
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
@@ -168,9 +168,9 @@ type ChannelGroupRule struct {
 	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
 	// "exists", "not_exists", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
-	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
+	Operator ChannelGroupRuleOperator `json:"operator" api:"nullable"`
 	// For conditional rules, the variable to evaluate.
-	Variable string `json:"variable,nullable"`
+	Variable string `json:"variable" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field

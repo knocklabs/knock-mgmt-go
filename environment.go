@@ -79,29 +79,29 @@ func (r *EnvironmentService) ListAutoPaging(ctx context.Context, query Environme
 // An environment object.
 type Environment struct {
 	// The timestamp of when the environment was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// A human-readable name for the environment. Cannot exceed 255 characters.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The order of the environment. The lowest number is the first environment, the
 	// highest number is the last environment. The order will not always be sequential.
-	Order int64 `json:"order,required"`
+	Order int64 `json:"order" api:"required"`
 	// The owner of the environment.
 	//
 	// Any of "system", "user".
-	Owner EnvironmentOwner `json:"owner,required"`
+	Owner EnvironmentOwner `json:"owner" api:"required"`
 	// A unique slug for the environment. Cannot exceed 255 characters.
-	Slug string `json:"slug,required"`
+	Slug string `json:"slug" api:"required"`
 	// The timestamp of when the environment was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The timestamp of when the environment was deleted.
-	DeletedAt time.Time `json:"deleted_at,nullable" format:"date-time"`
+	DeletedAt time.Time `json:"deleted_at" api:"nullable" format:"date-time"`
 	// Whether PII data is hidden from the environment. Read more in the
 	// [data obfuscation docs](https://docs.knock.app/manage-your-account/data-obfuscation).
 	HidePiiData bool `json:"hide_pii_data"`
 	// The color of the environment label to display in the dashboard.
-	LabelColor string `json:"label_color,nullable"`
+	LabelColor string `json:"label_color" api:"nullable"`
 	// The timestamp of the most-recent commit in the environment.
-	LastCommitAt time.Time `json:"last_commit_at,nullable" format:"date-time"`
+	LastCommitAt time.Time `json:"last_commit_at" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt    respjson.Field

@@ -59,13 +59,13 @@ type WorkflowStepPreviewTemplateResponse struct {
 	// The content type of the preview.
 	//
 	// Any of "email", "in_app_feed", "push", "chat", "sms", "http".
-	ContentType WorkflowStepPreviewTemplateResponseContentType `json:"content_type,required"`
+	ContentType WorkflowStepPreviewTemplateResponseContentType `json:"content_type" api:"required"`
 	// The result of the preview.
 	//
 	// Any of "success", "error".
-	Result WorkflowStepPreviewTemplateResponseResult `json:"result,required"`
+	Result WorkflowStepPreviewTemplateResponseResult `json:"result" api:"required"`
 	// The rendered template, ready to be previewed.
-	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template,required"`
+	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ContentType respjson.Field
@@ -232,12 +232,12 @@ func (r *WorkflowStepPreviewTemplateResponseTemplateUnionSettings) UnmarshalJSON
 }
 
 type WorkflowStepPreviewTemplateParams struct {
-	WorkflowKey string `path:"workflow_key,required" json:"-"`
+	WorkflowKey string `path:"workflow_key" api:"required" json:"-"`
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
-	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero,required"`
+	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero" api:"required"`
 	// The tenant to associate the workflow with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -298,9 +298,9 @@ func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
 // The properties ID, Collection are required.
 type WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference struct {
 	// The ID of the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The collection of the object.
-	Collection string `json:"collection,required"`
+	Collection string `json:"collection" api:"required"`
 	paramObj
 }
 
@@ -342,9 +342,9 @@ func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
 // The properties ID, Collection are required.
 type WorkflowStepPreviewTemplateParamsActorObjectRecipientReference struct {
 	// The ID of the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The collection of the object.
-	Collection string `json:"collection,required"`
+	Collection string `json:"collection" api:"required"`
 	paramObj
 }
 

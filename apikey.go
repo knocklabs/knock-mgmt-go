@@ -47,7 +47,7 @@ func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams,
 // Returns an API key that can be used to make requests to the public API.
 type APIKeyExchangeResponse struct {
 	// The secret API key exchanged from the service token.
-	APIKey string `json:"api_key,required"`
+	APIKey string `json:"api_key" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		APIKey      respjson.Field
@@ -64,7 +64,7 @@ func (r *APIKeyExchangeResponse) UnmarshalJSON(data []byte) error {
 
 type APIKeyExchangeParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	paramObj
 }
 

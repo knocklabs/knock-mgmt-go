@@ -105,17 +105,17 @@ func (r *EmailLayoutService) Validate(ctx context.Context, emailLayoutKey string
 // A versioned email layout used within an environment.
 type EmailLayout struct {
 	// The timestamp of when the email layout was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The complete HTML content of the email layout.
-	HTMLLayout string `json:"html_layout,required"`
+	HTMLLayout string `json:"html_layout" api:"required"`
 	// The unique key for this email layout.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The human-readable name of this email layout.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The SHA of the email layout.
-	Sha string `json:"sha,required"`
+	Sha string `json:"sha" api:"required"`
 	// The complete plaintext content of the email layout.
-	TextLayout string `json:"text_layout,required"`
+	TextLayout string `json:"text_layout" api:"required"`
 	// The environment of the email layout.
 	Environment string `json:"environment"`
 	// A list of one or more items to show in the footer of the email layout.
@@ -146,9 +146,9 @@ func (r *EmailLayout) UnmarshalJSON(data []byte) error {
 
 type EmailLayoutFooterLink struct {
 	// The text to display as the link.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The URL to link to.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Text        respjson.Field
@@ -167,7 +167,7 @@ func (r *EmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
 // Wraps the EmailLayout response under the `email_layout` key.
 type EmailLayoutUpsertResponse struct {
 	// A versioned email layout used within an environment.
-	EmailLayout EmailLayout `json:"email_layout,required"`
+	EmailLayout EmailLayout `json:"email_layout" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmailLayout respjson.Field
@@ -185,7 +185,7 @@ func (r *EmailLayoutUpsertResponse) UnmarshalJSON(data []byte) error {
 // Wraps the EmailLayout response under the `email_layout` key.
 type EmailLayoutValidateResponse struct {
 	// A versioned email layout used within an environment.
-	EmailLayout EmailLayout `json:"email_layout,required"`
+	EmailLayout EmailLayout `json:"email_layout" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmailLayout respjson.Field
@@ -202,7 +202,7 @@ func (r *EmailLayoutValidateResponse) UnmarshalJSON(data []byte) error {
 
 type EmailLayoutGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -224,7 +224,7 @@ func (r EmailLayoutGetParams) URLQuery() (v url.Values, err error) {
 
 type EmailLayoutListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
@@ -252,9 +252,9 @@ func (r EmailLayoutListParams) URLQuery() (v url.Values, err error) {
 
 type EmailLayoutUpsertParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
-	EmailLayout EmailLayoutUpsertParamsEmailLayout `json:"email_layout,omitzero,required"`
+	EmailLayout EmailLayoutUpsertParamsEmailLayout `json:"email_layout,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -289,11 +289,11 @@ func (r EmailLayoutUpsertParams) URLQuery() (v url.Values, err error) {
 // The properties HTMLLayout, Name, TextLayout are required.
 type EmailLayoutUpsertParamsEmailLayout struct {
 	// The complete HTML content of the email layout.
-	HTMLLayout string `json:"html_layout,required"`
+	HTMLLayout string `json:"html_layout" api:"required"`
 	// The friendly name of this email layout.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The complete plain text content of the email layout.
-	TextLayout string `json:"text_layout,required"`
+	TextLayout string `json:"text_layout" api:"required"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutUpsertParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
 	paramObj
@@ -310,9 +310,9 @@ func (r *EmailLayoutUpsertParamsEmailLayout) UnmarshalJSON(data []byte) error {
 // The properties Text, URL are required.
 type EmailLayoutUpsertParamsEmailLayoutFooterLink struct {
 	// The text to display as the link.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The URL to link to.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	paramObj
 }
 
@@ -326,9 +326,9 @@ func (r *EmailLayoutUpsertParamsEmailLayoutFooterLink) UnmarshalJSON(data []byte
 
 type EmailLayoutValidateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
-	EmailLayout EmailLayoutValidateParamsEmailLayout `json:"email_layout,omitzero,required"`
+	EmailLayout EmailLayoutValidateParamsEmailLayout `json:"email_layout,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -357,11 +357,11 @@ func (r EmailLayoutValidateParams) URLQuery() (v url.Values, err error) {
 // The properties HTMLLayout, Name, TextLayout are required.
 type EmailLayoutValidateParamsEmailLayout struct {
 	// The complete HTML content of the email layout.
-	HTMLLayout string `json:"html_layout,required"`
+	HTMLLayout string `json:"html_layout" api:"required"`
 	// The friendly name of this email layout.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The complete plain text content of the email layout.
-	TextLayout string `json:"text_layout,required"`
+	TextLayout string `json:"text_layout" api:"required"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutValidateParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
 	paramObj
@@ -378,9 +378,9 @@ func (r *EmailLayoutValidateParamsEmailLayout) UnmarshalJSON(data []byte) error 
 // The properties Text, URL are required.
 type EmailLayoutValidateParamsEmailLayoutFooterLink struct {
 	// The text to display as the link.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The URL to link to.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	paramObj
 }
 

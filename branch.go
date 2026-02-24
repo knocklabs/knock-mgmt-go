@@ -104,15 +104,15 @@ func (r *BranchService) Delete(ctx context.Context, branchSlug string, body Bran
 // A branch object.
 type Branch struct {
 	// The timestamp of when the branch was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// A unique slug for the branch. Cannot exceed 255 characters.
-	Slug string `json:"slug,required"`
+	Slug string `json:"slug" api:"required"`
 	// The timestamp of when the branch was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The timestamp of when the branch was deleted.
-	DeletedAt time.Time `json:"deleted_at,nullable" format:"date-time"`
+	DeletedAt time.Time `json:"deleted_at" api:"nullable" format:"date-time"`
 	// The timestamp of the most-recent commit in the branch.
-	LastCommitAt time.Time `json:"last_commit_at,nullable" format:"date-time"`
+	LastCommitAt time.Time `json:"last_commit_at" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt    respjson.Field
@@ -133,7 +133,7 @@ func (r *Branch) UnmarshalJSON(data []byte) error {
 
 type BranchNewParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	paramObj
 }
 
@@ -147,7 +147,7 @@ func (r BranchNewParams) URLQuery() (v url.Values, err error) {
 
 type BranchGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	paramObj
 }
 
@@ -161,7 +161,7 @@ func (r BranchGetParams) URLQuery() (v url.Values, err error) {
 
 type BranchListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.
@@ -181,7 +181,7 @@ func (r BranchListParams) URLQuery() (v url.Values, err error) {
 
 type BranchDeleteParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	paramObj
 }
 

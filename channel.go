@@ -66,31 +66,31 @@ func (r *ChannelService) ListAutoPaging(ctx context.Context, query ChannelListPa
 // A configured channel, which is a way to route messages to a provider.
 type Channel struct {
 	// The unique identifier for the channel.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The timestamp of when the channel was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Unique identifier for the channel within a project (immutable once created).
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The human-readable name of the channel.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The ID of the provider that this channel uses to deliver messages. Learn more
 	// about the providers available
 	// [in our documentation](https://docs.knock.app/integrations/overview).
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// The type of channel, determining what kind of messages it can send.
 	//
 	// Any of "email", "in_app", "in_app_feed", "in_app_guide", "sms", "push", "chat",
 	// "http".
-	Type ChannelType `json:"type,required"`
+	Type ChannelType `json:"type" api:"required"`
 	// The timestamp of when the channel was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The timestamp of when the channel was deleted.
-	ArchivedAt time.Time `json:"archived_at,nullable" format:"date-time"`
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
 	// Optional URL to a custom icon for the channel. Only used for display purposes in
 	// the dashboard.
-	CustomIconURL string `json:"custom_icon_url,nullable"`
+	CustomIconURL string `json:"custom_icon_url" api:"nullable"`
 	// Optional description of the channel's purpose or usage.
-	Description string `json:"description,nullable"`
+	Description string `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -183,22 +183,22 @@ func (r *ChatChannelSettingsParam) UnmarshalJSON(data []byte) error {
 // step.
 type EmailChannelSettings struct {
 	// The BCC address on email notifications. Supports liquid.
-	BccAddress string `json:"bcc_address,nullable"`
+	BccAddress string `json:"bcc_address" api:"nullable"`
 	// The CC address on email notifications. Supports liquid.
-	CcAddress string `json:"cc_address,nullable"`
+	CcAddress string `json:"cc_address" api:"nullable"`
 	// The email address from which this channel will send. Supports liquid.
-	FromAddress string `json:"from_address,nullable"`
+	FromAddress string `json:"from_address" api:"nullable"`
 	// The name from which this channel will send. Supports liquid.
-	FromName string `json:"from_name,nullable"`
+	FromName string `json:"from_name" api:"nullable"`
 	// A JSON template for any custom overrides to merge into the API payload that is
 	// sent to the email provider. Supports liquid.
-	JsonOverrides string `json:"json_overrides,nullable"`
+	JsonOverrides string `json:"json_overrides" api:"nullable"`
 	// Whether to track link clicks on email notifications.
 	LinkTracking bool `json:"link_tracking"`
 	// Whether to track opens on email notifications.
 	OpenTracking bool `json:"open_tracking"`
 	// The Reply-to address on email notifications. Supports liquid.
-	ReplyToAddress string `json:"reply_to_address,nullable"`
+	ReplyToAddress string `json:"reply_to_address" api:"nullable"`
 	// The email address to which this channel will send. Defaults to
 	// `recipient.email`. Supports liquid.
 	ToAddress string `json:"to_address"`
