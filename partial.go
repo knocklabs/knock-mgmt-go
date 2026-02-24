@@ -174,6 +174,7 @@ const (
 // [PartialInputSchemaMessageTypeBooleanField],
 // [PartialInputSchemaMessageTypeButtonField],
 // [PartialInputSchemaMessageTypeImageField],
+// [PartialInputSchemaMessageTypeJsonField],
 // [PartialInputSchemaMessageTypeMarkdownField],
 // [PartialInputSchemaMessageTypeMultiSelectField],
 // [PartialInputSchemaMessageTypeSelectField], [MessageTypeTextField],
@@ -188,6 +189,7 @@ type PartialInputSchemaUnion struct {
 	// This field is a union of [PartialInputSchemaMessageTypeBooleanFieldSettings],
 	// [PartialInputSchemaMessageTypeButtonFieldSettings],
 	// [PartialInputSchemaMessageTypeImageFieldSettings],
+	// [PartialInputSchemaMessageTypeJsonFieldSettings],
 	// [PartialInputSchemaMessageTypeMarkdownFieldSettings],
 	// [PartialInputSchemaMessageTypeMultiSelectFieldSettings],
 	// [PartialInputSchemaMessageTypeSelectFieldSettings],
@@ -227,6 +229,11 @@ func (u PartialInputSchemaUnion) AsMessageTypeButtonField() (v PartialInputSchem
 }
 
 func (u PartialInputSchemaUnion) AsMessageTypeImageField() (v PartialInputSchemaMessageTypeImageField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeJsonField() (v PartialInputSchemaMessageTypeJsonField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -275,11 +282,13 @@ func (r *PartialInputSchemaUnion) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [PartialInputSchemaUnion].
 type PartialInputSchemaUnionSettings struct {
-	// This field is a union of [bool], [string], [[]string], [string], [string],
-	// [string], [string]
+	// This field is a union of [bool], [any], [string], [[]string], [string],
+	// [string], [string], [string]
 	Default     PartialInputSchemaUnionSettingsDefault `json:"default"`
 	Description string                                 `json:"description"`
 	Required    bool                                   `json:"required"`
+	// This field is from variant [PartialInputSchemaMessageTypeJsonFieldSettings].
+	Schema any `json:"schema"`
 	// This field is a union of
 	// [[]PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption],
 	// [[]PartialInputSchemaMessageTypeSelectFieldSettingsOption]
@@ -290,6 +299,7 @@ type PartialInputSchemaUnionSettings struct {
 		Default     respjson.Field
 		Description respjson.Field
 		Required    respjson.Field
+		Schema      respjson.Field
 		Options     respjson.Field
 		MaxLength   respjson.Field
 		MinLength   respjson.Field
@@ -309,19 +319,23 @@ func (r *PartialInputSchemaUnionSettings) UnmarshalJSON(data []byte) error {
 // [PartialInputSchemaUnion].
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfString OfStringArray]
+// will be valid: OfBool OfPartialInputSchemaMessageTypeJsonFieldSettingsDefault
+// OfString OfStringArray]
 type PartialInputSchemaUnionSettingsDefault struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
+	// This field will be present if the value is a [any] instead of an object.
+	OfPartialInputSchemaMessageTypeJsonFieldSettingsDefault any `json:",inline"`
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field will be present if the value is a [[]string] instead of an object.
 	OfStringArray []string `json:",inline"`
 	JSON          struct {
-		OfBool        respjson.Field
-		OfString      respjson.Field
-		OfStringArray respjson.Field
-		raw           string
+		OfBool                                                  respjson.Field
+		OfPartialInputSchemaMessageTypeJsonFieldSettingsDefault respjson.Field
+		OfString                                                respjson.Field
+		OfStringArray                                           respjson.Field
+		raw                                                     string
 	} `json:"-"`
 }
 
@@ -572,6 +586,62 @@ type PartialInputSchemaMessageTypeImageFieldSettings struct {
 // Returns the unmodified JSON received from the API
 func (r PartialInputSchemaMessageTypeImageFieldSettings) RawJSON() string { return r.JSON.raw }
 func (r *PartialInputSchemaMessageTypeImageFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A JSON field used in a message type.
+type PartialInputSchemaMessageTypeJsonField struct {
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The label of the field.
+	Label string `json:"label,required"`
+	// The type of the field.
+	//
+	// Any of "json".
+	Type string `json:"type,required"`
+	// Settings for the json field.
+	Settings PartialInputSchemaMessageTypeJsonFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeJsonField) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeJsonField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the json field.
+type PartialInputSchemaMessageTypeJsonFieldSettings struct {
+	// The default value of the JSON field.
+	Default     any    `json:"default,nullable"`
+	Description string `json:"description"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// A JSON schema used to validate the structure of the JSON provided. Must be a
+	// valid JSON schema.
+	Schema any `json:"schema,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Required    respjson.Field
+		Schema      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialInputSchemaMessageTypeJsonFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *PartialInputSchemaMessageTypeJsonFieldSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1052,6 +1122,7 @@ type PartialUpsertParamsPartialInputSchemaUnion struct {
 	OfMessageTypeBooleanField     *PartialUpsertParamsPartialInputSchemaMessageTypeBooleanField     `json:",omitzero,inline"`
 	OfMessageTypeButtonField      *PartialUpsertParamsPartialInputSchemaMessageTypeButtonField      `json:",omitzero,inline"`
 	OfMessageTypeImageField       *PartialUpsertParamsPartialInputSchemaMessageTypeImageField       `json:",omitzero,inline"`
+	OfMessageTypeJsonField        *PartialUpsertParamsPartialInputSchemaMessageTypeJsonField        `json:",omitzero,inline"`
 	OfMessageTypeMarkdownField    *PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownField    `json:",omitzero,inline"`
 	OfMessageTypeMultiSelectField *PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectField `json:",omitzero,inline"`
 	OfMessageTypeSelectField      *PartialUpsertParamsPartialInputSchemaMessageTypeSelectField      `json:",omitzero,inline"`
@@ -1065,6 +1136,7 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) MarshalJSON() ([]byte, error
 	return param.MarshalUnion(u, u.OfMessageTypeBooleanField,
 		u.OfMessageTypeButtonField,
 		u.OfMessageTypeImageField,
+		u.OfMessageTypeJsonField,
 		u.OfMessageTypeMarkdownField,
 		u.OfMessageTypeMultiSelectField,
 		u.OfMessageTypeSelectField,
@@ -1083,6 +1155,8 @@ func (u *PartialUpsertParamsPartialInputSchemaUnion) asAny() any {
 		return u.OfMessageTypeButtonField
 	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
 		return u.OfMessageTypeImageField
+	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
+		return u.OfMessageTypeJsonField
 	} else if !param.IsOmitted(u.OfMessageTypeMarkdownField) {
 		return u.OfMessageTypeMarkdownField
 	} else if !param.IsOmitted(u.OfMessageTypeMultiSelectField) {
@@ -1131,6 +1205,8 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetKey() *string {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
@@ -1155,6 +1231,8 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetLabel() *string {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil && vt.Label.Valid() {
@@ -1178,6 +1256,8 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetType() *string {
 	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Type)
@@ -1205,6 +1285,8 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetSettings() (res partialUp
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
@@ -1225,6 +1307,7 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetSettings() (res partialUp
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings],
+// [*PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings],
@@ -1239,6 +1322,7 @@ type partialUpsertParamsPartialInputSchemaUnionSettings struct{ any }
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings:
+//	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings:
@@ -1251,6 +1335,15 @@ type partialUpsertParamsPartialInputSchemaUnionSettings struct{ any }
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetSchema() *any {
+	switch vt := u.any.(type) {
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings:
+		return &vt.Schema
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *string {
 	switch vt := u.any.(type) {
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
@@ -1258,6 +1351,8 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *st
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -1283,6 +1378,8 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetRequired() *bool 
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -1329,6 +1426,8 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDefault() (res pa
 	switch vt := u.any.(type) {
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings:
+		res.any = &vt.Default
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings:
@@ -1345,13 +1444,14 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDefault() (res pa
 	return res
 }
 
-// Can have the runtime types [*bool], [*string], [\*[]string]
+// Can have the runtime types [*bool], [*any], [*string], [\*[]string]
 type partialUpsertParamsPartialInputSchemaUnionSettingsDefault struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
 //	case *bool:
+//	case *any:
 //	case *string:
 //	case *[]string:
 //	default:
@@ -1596,6 +1696,58 @@ func (r PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings) Mars
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A JSON field used in a message type.
+//
+// The properties Key, Label, Type are required.
+type PartialUpsertParamsPartialInputSchemaMessageTypeJsonField struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero,required"`
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The type of the field.
+	//
+	// Any of "json".
+	Type string `json:"type,omitzero,required"`
+	// Settings for the json field.
+	Settings PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r PartialUpsertParamsPartialInputSchemaMessageTypeJsonField) MarshalJSON() (data []byte, err error) {
+	type shadow PartialUpsertParamsPartialInputSchemaMessageTypeJsonField
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PartialUpsertParamsPartialInputSchemaMessageTypeJsonField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[PartialUpsertParamsPartialInputSchemaMessageTypeJsonField](
+		"type", "json",
+	)
+}
+
+// Settings for the json field.
+type PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings struct {
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	// The default value of the JSON field.
+	Default any `json:"default,omitzero"`
+	// A JSON schema used to validate the structure of the JSON provided. Must be a
+	// valid JSON schema.
+	Schema any `json:"schema,omitzero"`
+	paramObj
+}
+
+func (r PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings) MarshalJSON() (data []byte, err error) {
+	type shadow PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1957,6 +2109,7 @@ type PartialValidateParamsPartialInputSchemaUnion struct {
 	OfMessageTypeBooleanField     *PartialValidateParamsPartialInputSchemaMessageTypeBooleanField     `json:",omitzero,inline"`
 	OfMessageTypeButtonField      *PartialValidateParamsPartialInputSchemaMessageTypeButtonField      `json:",omitzero,inline"`
 	OfMessageTypeImageField       *PartialValidateParamsPartialInputSchemaMessageTypeImageField       `json:",omitzero,inline"`
+	OfMessageTypeJsonField        *PartialValidateParamsPartialInputSchemaMessageTypeJsonField        `json:",omitzero,inline"`
 	OfMessageTypeMarkdownField    *PartialValidateParamsPartialInputSchemaMessageTypeMarkdownField    `json:",omitzero,inline"`
 	OfMessageTypeMultiSelectField *PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectField `json:",omitzero,inline"`
 	OfMessageTypeSelectField      *PartialValidateParamsPartialInputSchemaMessageTypeSelectField      `json:",omitzero,inline"`
@@ -1970,6 +2123,7 @@ func (u PartialValidateParamsPartialInputSchemaUnion) MarshalJSON() ([]byte, err
 	return param.MarshalUnion(u, u.OfMessageTypeBooleanField,
 		u.OfMessageTypeButtonField,
 		u.OfMessageTypeImageField,
+		u.OfMessageTypeJsonField,
 		u.OfMessageTypeMarkdownField,
 		u.OfMessageTypeMultiSelectField,
 		u.OfMessageTypeSelectField,
@@ -1988,6 +2142,8 @@ func (u *PartialValidateParamsPartialInputSchemaUnion) asAny() any {
 		return u.OfMessageTypeButtonField
 	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
 		return u.OfMessageTypeImageField
+	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
+		return u.OfMessageTypeJsonField
 	} else if !param.IsOmitted(u.OfMessageTypeMarkdownField) {
 		return u.OfMessageTypeMarkdownField
 	} else if !param.IsOmitted(u.OfMessageTypeMultiSelectField) {
@@ -2036,6 +2192,8 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetKey() *string {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
@@ -2060,6 +2218,8 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetLabel() *string {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil && vt.Label.Valid() {
@@ -2083,6 +2243,8 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetType() *string {
 	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Type)
@@ -2110,6 +2272,8 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetSettings() (res partial
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
@@ -2130,6 +2294,7 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetSettings() (res partial
 // [*PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings],
+// [*PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings],
@@ -2144,6 +2309,7 @@ type partialValidateParamsPartialInputSchemaUnionSettings struct{ any }
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings:
+//	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings:
@@ -2156,6 +2322,15 @@ type partialValidateParamsPartialInputSchemaUnionSettings struct{ any }
 func (u partialValidateParamsPartialInputSchemaUnionSettings) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u partialValidateParamsPartialInputSchemaUnionSettings) GetSchema() *any {
+	switch vt := u.any.(type) {
+	case *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings:
+		return &vt.Schema
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *string {
 	switch vt := u.any.(type) {
 	case *PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
@@ -2163,6 +2338,8 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *
 	case *PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -2188,6 +2365,8 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetRequired() *boo
 	case *PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -2234,6 +2413,8 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDefault() (res 
 	switch vt := u.any.(type) {
 	case *PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings:
+		res.any = &vt.Default
 	case *PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings:
@@ -2250,13 +2431,14 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDefault() (res 
 	return res
 }
 
-// Can have the runtime types [*bool], [*string], [\*[]string]
+// Can have the runtime types [*bool], [*any], [*string], [\*[]string]
 type partialValidateParamsPartialInputSchemaUnionSettingsDefault struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
 //	case *bool:
+//	case *any:
 //	case *string:
 //	case *[]string:
 //	default:
@@ -2501,6 +2683,58 @@ func (r PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings) Ma
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A JSON field used in a message type.
+//
+// The properties Key, Label, Type are required.
+type PartialValidateParamsPartialInputSchemaMessageTypeJsonField struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero,required"`
+	// The unique key of the field.
+	Key string `json:"key,required"`
+	// The type of the field.
+	//
+	// Any of "json".
+	Type string `json:"type,omitzero,required"`
+	// Settings for the json field.
+	Settings PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r PartialValidateParamsPartialInputSchemaMessageTypeJsonField) MarshalJSON() (data []byte, err error) {
+	type shadow PartialValidateParamsPartialInputSchemaMessageTypeJsonField
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PartialValidateParamsPartialInputSchemaMessageTypeJsonField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[PartialValidateParamsPartialInputSchemaMessageTypeJsonField](
+		"type", "json",
+	)
+}
+
+// Settings for the json field.
+type PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings struct {
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	// The default value of the JSON field.
+	Default any `json:"default,omitzero"`
+	// A JSON schema used to validate the structure of the JSON provided. Must be a
+	// valid JSON schema.
+	Schema any `json:"schema,omitzero"`
+	paramObj
+}
+
+func (r PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings) MarshalJSON() (data []byte, err error) {
+	type shadow PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
