@@ -111,20 +111,20 @@ func (r *TranslationService) Validate(ctx context.Context, localeCode string, pa
 type Translation struct {
 	// A JSON encoded string containing the key-value pairs of translation references
 	// and translation strings.
-	Content string `json:"content,required"`
+	Content string `json:"content" api:"required"`
 	// Indicates whether content is a JSON encoded object string or a string in the PO
 	// format.
 	//
 	// Any of "json", "po".
-	Format TranslationFormat `json:"format,required"`
+	Format TranslationFormat `json:"format" api:"required"`
 	// The timestamp of when the translation was created.
-	InsertedAt time.Time `json:"inserted_at,required" format:"date-time"`
+	InsertedAt time.Time `json:"inserted_at" api:"required" format:"date-time"`
 	// The locale code for the translation object.
-	LocaleCode string `json:"locale_code,required"`
+	LocaleCode string `json:"locale_code" api:"required"`
 	// An optional namespace for the translation to help categorize your translations.
-	Namespace string `json:"namespace,required"`
+	Namespace string `json:"namespace" api:"required"`
 	// The timestamp of when the translation was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -156,7 +156,7 @@ const (
 // Wraps the Translation response under the `translation` key.
 type TranslationGetResponse struct {
 	// A translation object.
-	Translation Translation `json:"translation,required"`
+	Translation Translation `json:"translation" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Translation respjson.Field
@@ -174,7 +174,7 @@ func (r *TranslationGetResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Translation response under the `translation` key.
 type TranslationUpsertResponse struct {
 	// A translation object.
-	Translation Translation `json:"translation,required"`
+	Translation Translation `json:"translation" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Translation respjson.Field
@@ -192,7 +192,7 @@ func (r *TranslationUpsertResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Translation response under the `translation` key.
 type TranslationValidateResponse struct {
 	// A translation object.
-	Translation Translation `json:"translation,required"`
+	Translation Translation `json:"translation" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Translation respjson.Field
@@ -209,7 +209,7 @@ func (r *TranslationValidateResponse) UnmarshalJSON(data []byte) error {
 
 type TranslationGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -247,7 +247,7 @@ const (
 
 type TranslationListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
@@ -293,12 +293,12 @@ const (
 
 type TranslationUpsertParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// An optional namespace that identifies the translation.
-	Namespace string `query:"namespace,required" json:"-"`
+	Namespace string `query:"namespace" api:"required" json:"-"`
 	// A translation object with a content attribute used to update or create a
 	// translation.
-	Translation TranslationUpsertParamsTranslation `json:"translation,omitzero,required"`
+	Translation TranslationUpsertParamsTranslation `json:"translation,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -340,12 +340,12 @@ func (r TranslationUpsertParams) URLQuery() (v url.Values, err error) {
 type TranslationUpsertParamsTranslation struct {
 	// A JSON encoded string containing the key-value pairs of translation references
 	// and translation strings.
-	Content string `json:"content,required"`
+	Content string `json:"content" api:"required"`
 	// Indicates whether content is a JSON encoded object string or a string in the PO
 	// format.
 	//
 	// Any of "json", "po".
-	Format string `json:"format,omitzero,required"`
+	Format string `json:"format,omitzero" api:"required"`
 	paramObj
 }
 
@@ -374,10 +374,10 @@ const (
 
 type TranslationValidateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A translation object with a content attribute used to update or create a
 	// translation.
-	Translation TranslationValidateParamsTranslation `json:"translation,omitzero,required"`
+	Translation TranslationValidateParamsTranslation `json:"translation,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -408,12 +408,12 @@ func (r TranslationValidateParams) URLQuery() (v url.Values, err error) {
 type TranslationValidateParamsTranslation struct {
 	// A JSON encoded string containing the key-value pairs of translation references
 	// and translation strings.
-	Content string `json:"content,required"`
+	Content string `json:"content" api:"required"`
 	// Indicates whether content is a JSON encoded object string or a string in the PO
 	// format.
 	//
 	// Any of "json", "po".
-	Format string `json:"format,omitzero,required"`
+	Format string `json:"format,omitzero" api:"required"`
 	paramObj
 }
 

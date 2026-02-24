@@ -107,22 +107,22 @@ func (r *PartialService) Validate(ctx context.Context, partialKey string, params
 // A partial is a reusable piece of content that can be used in a template.
 type Partial struct {
 	// The partial content.
-	Content string `json:"content,required"`
+	Content string `json:"content" api:"required"`
 	// The timestamp of when the partial was created.
-	InsertedAt time.Time `json:"inserted_at,required" format:"date-time"`
+	InsertedAt time.Time `json:"inserted_at" api:"required" format:"date-time"`
 	// The unique key string for the partial object. Must be at minimum 3 characters
 	// and at maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A name for the partial. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The partial type. One of 'html', 'json', 'markdown', 'text'.
 	//
 	// Any of "html", "text", "json", "markdown".
-	Type PartialType `json:"type,required"`
+	Type PartialType `json:"type" api:"required"`
 	// The timestamp of when the partial was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// Whether the partial and its content are in a valid state.
-	Valid bool `json:"valid,required"`
+	Valid bool `json:"valid" api:"required"`
 	// An arbitrary string attached to a partial object. Useful for adding notes about
 	// the partial for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
@@ -375,13 +375,13 @@ func (r *PartialInputSchemaUnionSettingsOptions) UnmarshalJSON(data []byte) erro
 // A boolean field used in a message type.
 type PartialInputSchemaMessageTypeBooleanField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "boolean".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the boolean field.
 	Settings PartialInputSchemaMessageTypeBooleanFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -427,17 +427,17 @@ func (r *PartialInputSchemaMessageTypeBooleanFieldSettings) UnmarshalJSON(data [
 // A button field used in a message type.
 type PartialInputSchemaMessageTypeButtonField struct {
 	// A text field used in a message type.
-	Action MessageTypeTextField `json:"action,required"`
+	Action MessageTypeTextField `json:"action" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// A text field used in a message type.
-	Text MessageTypeTextField `json:"text,required"`
+	Text MessageTypeTextField `json:"text" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the button field.
 	Settings PartialInputSchemaMessageTypeButtonFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -482,19 +482,19 @@ func (r *PartialInputSchemaMessageTypeButtonFieldSettings) UnmarshalJSON(data []
 // An image field used in a message type.
 type PartialInputSchemaMessageTypeImageField struct {
 	// A text field used in a message type.
-	Action MessageTypeTextField `json:"action,required"`
+	Action MessageTypeTextField `json:"action" api:"required"`
 	// A text field used in a message type.
-	Alt MessageTypeTextField `json:"alt,required"`
+	Alt MessageTypeTextField `json:"alt" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "image".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// A URL field used in a message type.
-	URL PartialInputSchemaMessageTypeImageFieldURL `json:"url,required"`
+	URL PartialInputSchemaMessageTypeImageFieldURL `json:"url" api:"required"`
 	// Settings for the image field.
 	Settings PartialInputSchemaMessageTypeImageFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -520,13 +520,13 @@ func (r *PartialInputSchemaMessageTypeImageField) UnmarshalJSON(data []byte) err
 // A URL field used in a message type.
 type PartialInputSchemaMessageTypeImageFieldURL struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the url field.
 	Settings PartialInputSchemaMessageTypeImageFieldURLSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -549,7 +549,7 @@ func (r *PartialInputSchemaMessageTypeImageFieldURL) UnmarshalJSON(data []byte) 
 // Settings for the url field.
 type PartialInputSchemaMessageTypeImageFieldURLSettings struct {
 	// The default value of the URL field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
@@ -592,13 +592,13 @@ func (r *PartialInputSchemaMessageTypeImageFieldSettings) UnmarshalJSON(data []b
 // A JSON field used in a message type.
 type PartialInputSchemaMessageTypeJsonField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "json".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the json field.
 	Settings PartialInputSchemaMessageTypeJsonFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -621,13 +621,13 @@ func (r *PartialInputSchemaMessageTypeJsonField) UnmarshalJSON(data []byte) erro
 // Settings for the json field.
 type PartialInputSchemaMessageTypeJsonFieldSettings struct {
 	// The default value of the JSON field.
-	Default     any    `json:"default,nullable"`
+	Default     any    `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// A JSON schema used to validate the structure of the JSON provided. Must be a
 	// valid JSON schema.
-	Schema any `json:"schema,nullable"`
+	Schema any `json:"schema" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
@@ -648,13 +648,13 @@ func (r *PartialInputSchemaMessageTypeJsonFieldSettings) UnmarshalJSON(data []by
 // A markdown field used in a message type.
 type PartialInputSchemaMessageTypeMarkdownField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "markdown".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the markdown field.
 	Settings PartialInputSchemaMessageTypeMarkdownFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -700,15 +700,15 @@ func (r *PartialInputSchemaMessageTypeMarkdownFieldSettings) UnmarshalJSON(data 
 // A multi-select field used in a message type.
 type PartialInputSchemaMessageTypeMultiSelectField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// Settings for the multi_select field.
-	Settings PartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings,required"`
+	Settings PartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings" api:"required"`
 	// The type of the field.
 	//
 	// Any of "multi_select".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Key         respjson.Field
@@ -729,7 +729,7 @@ func (r *PartialInputSchemaMessageTypeMultiSelectField) UnmarshalJSON(data []byt
 // Settings for the multi_select field.
 type PartialInputSchemaMessageTypeMultiSelectFieldSettings struct {
 	// The default values for the multi-select field.
-	Default     []string `json:"default,nullable"`
+	Default     []string `json:"default" api:"nullable"`
 	Description string   `json:"description"`
 	// The available options for the multi-select field.
 	Options []PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption `json:"options"`
@@ -754,7 +754,7 @@ func (r *PartialInputSchemaMessageTypeMultiSelectFieldSettings) UnmarshalJSON(da
 
 type PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label string `json:"label"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -777,15 +777,15 @@ func (r *PartialInputSchemaMessageTypeMultiSelectFieldSettingsOption) UnmarshalJ
 // A select field used in a message type.
 type PartialInputSchemaMessageTypeSelectField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// Settings for the select field.
-	Settings PartialInputSchemaMessageTypeSelectFieldSettings `json:"settings,required"`
+	Settings PartialInputSchemaMessageTypeSelectFieldSettings `json:"settings" api:"required"`
 	// The type of the field.
 	//
 	// Any of "select".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Key         respjson.Field
@@ -806,7 +806,7 @@ func (r *PartialInputSchemaMessageTypeSelectField) UnmarshalJSON(data []byte) er
 // Settings for the select field.
 type PartialInputSchemaMessageTypeSelectFieldSettings struct {
 	// The default value for the select field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// The available options for the select field.
 	Options []PartialInputSchemaMessageTypeSelectFieldSettingsOption `json:"options"`
@@ -831,7 +831,7 @@ func (r *PartialInputSchemaMessageTypeSelectFieldSettings) UnmarshalJSON(data []
 
 type PartialInputSchemaMessageTypeSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label string `json:"label"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -852,13 +852,13 @@ func (r *PartialInputSchemaMessageTypeSelectFieldSettingsOption) UnmarshalJSON(d
 // A textarea field used in a message type.
 type PartialInputSchemaMessageTypeTextareaField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "textarea".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the textarea field.
 	Settings PartialInputSchemaMessageTypeTextareaFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -881,7 +881,7 @@ func (r *PartialInputSchemaMessageTypeTextareaField) UnmarshalJSON(data []byte) 
 // Settings for the textarea field.
 type PartialInputSchemaMessageTypeTextareaFieldSettings struct {
 	// The default value of the textarea field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	MaxLength   int64  `json:"max_length"`
 	MinLength   int64  `json:"min_length"`
@@ -908,13 +908,13 @@ func (r *PartialInputSchemaMessageTypeTextareaFieldSettings) UnmarshalJSON(data 
 // A URL field used in a message type.
 type PartialInputSchemaMessageTypeURLField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the url field.
 	Settings PartialInputSchemaMessageTypeURLFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -937,7 +937,7 @@ func (r *PartialInputSchemaMessageTypeURLField) UnmarshalJSON(data []byte) error
 // Settings for the url field.
 type PartialInputSchemaMessageTypeURLFieldSettings struct {
 	// The default value of the URL field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
@@ -960,7 +960,7 @@ func (r *PartialInputSchemaMessageTypeURLFieldSettings) UnmarshalJSON(data []byt
 // Wraps the Partial response under the `partial` key.
 type PartialUpsertResponse struct {
 	// A partial is a reusable piece of content that can be used in a template.
-	Partial Partial `json:"partial,required"`
+	Partial Partial `json:"partial" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Partial     respjson.Field
@@ -978,7 +978,7 @@ func (r *PartialUpsertResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Partial response under the `partial` key.
 type PartialValidateResponse struct {
 	// A partial is a reusable piece of content that can be used in a template.
-	Partial Partial `json:"partial,required"`
+	Partial Partial `json:"partial" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Partial     respjson.Field
@@ -995,7 +995,7 @@ func (r *PartialValidateResponse) UnmarshalJSON(data []byte) error {
 
 type PartialGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -1017,7 +1017,7 @@ func (r PartialGetParams) URLQuery() (v url.Values, err error) {
 
 type PartialListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
@@ -1045,9 +1045,9 @@ func (r PartialListParams) URLQuery() (v url.Values, err error) {
 
 type PartialUpsertParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A partial object with attributes to update or create a partial.
-	Partial PartialUpsertParamsPartial `json:"partial,omitzero,required"`
+	Partial PartialUpsertParamsPartial `json:"partial,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -1081,13 +1081,13 @@ func (r PartialUpsertParams) URLQuery() (v url.Values, err error) {
 // The properties Content, Name, Type are required.
 type PartialUpsertParamsPartial struct {
 	// The partial content.
-	Content string `json:"content,required"`
+	Content string `json:"content" api:"required"`
 	// A name for the partial. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The partial type. One of 'html', 'json', 'markdown', 'text'.
 	//
 	// Any of "html", "text", "json", "markdown".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// An arbitrary string attached to a partial object. Useful for adding notes about
 	// the partial for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
@@ -1502,13 +1502,13 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetAction() *MessageTypeText
 // The properties Key, Label, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeBooleanField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "boolean".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the boolean field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -1551,17 +1551,17 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeBooleanFieldSettings) U
 // The properties Action, Key, Label, Text, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeButtonField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action MessageTypeTextFieldParam `json:"action,omitzero,required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A text field used in a message type.
-	Text MessageTypeTextFieldParam `json:"text,omitzero,required"`
+	Text MessageTypeTextFieldParam `json:"text,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the button field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -1602,19 +1602,19 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeButtonFieldSettings) Un
 // The properties Action, Alt, Key, Label, Type, URL are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeImageField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action MessageTypeTextFieldParam `json:"action,omitzero,required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// A text field used in a message type.
-	Alt MessageTypeTextFieldParam `json:"alt,omitzero,required"`
+	Alt MessageTypeTextFieldParam `json:"alt,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "image".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// A URL field used in a message type.
-	URL PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldURL `json:"url,omitzero,required"`
+	URL PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldURL `json:"url,omitzero" api:"required"`
 	// Settings for the image field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -1639,13 +1639,13 @@ func init() {
 // The properties Key, Label, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldURL struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the url field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldURLSettings `json:"settings,omitzero"`
 	paramObj
@@ -1704,13 +1704,13 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeImageFieldSettings) Unm
 // The properties Key, Label, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeJsonField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "json".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the json field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -1756,13 +1756,13 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeJsonFieldSettings) Unma
 // The properties Key, Label, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "markdown".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the markdown field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -1805,15 +1805,15 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeMarkdownFieldSettings) 
 // The properties Key, Label, Settings, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Settings for the multi_select field.
-	Settings PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings,omitzero,required"`
+	Settings PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "multi_select".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1854,7 +1854,7 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSetting
 // The property Value is required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label param.Opt[string] `json:"label,omitzero"`
 	paramObj
@@ -1873,15 +1873,15 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeMultiSelectFieldSetting
 // The properties Key, Label, Settings, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeSelectField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Settings for the select field.
-	Settings PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings `json:"settings,omitzero,required"`
+	Settings PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings `json:"settings,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "select".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1922,7 +1922,7 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettings) Un
 // The property Value is required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label param.Opt[string] `json:"label,omitzero"`
 	paramObj
@@ -1941,13 +1941,13 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeSelectFieldSettingsOpti
 // The properties Key, Label, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeTextareaField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "textarea".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the textarea field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeTextareaFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -1992,13 +1992,13 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeTextareaFieldSettings) 
 // The properties Key, Label, Type are required.
 type PartialUpsertParamsPartialInputSchemaMessageTypeURLField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the url field.
 	Settings PartialUpsertParamsPartialInputSchemaMessageTypeURLFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2038,9 +2038,9 @@ func (r *PartialUpsertParamsPartialInputSchemaMessageTypeURLFieldSettings) Unmar
 
 type PartialValidateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A partial object with attributes to update or create a partial.
-	Partial PartialValidateParamsPartial `json:"partial,omitzero,required"`
+	Partial PartialValidateParamsPartial `json:"partial,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -2068,13 +2068,13 @@ func (r PartialValidateParams) URLQuery() (v url.Values, err error) {
 // The properties Content, Name, Type are required.
 type PartialValidateParamsPartial struct {
 	// The partial content.
-	Content string `json:"content,required"`
+	Content string `json:"content" api:"required"`
 	// A name for the partial. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The partial type. One of 'html', 'json', 'markdown', 'text'.
 	//
 	// Any of "html", "text", "json", "markdown".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// An arbitrary string attached to a partial object. Useful for adding notes about
 	// the partial for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
@@ -2489,13 +2489,13 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetAction() *MessageTypeTe
 // The properties Key, Label, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeBooleanField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "boolean".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the boolean field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2538,17 +2538,17 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeBooleanFieldSettings)
 // The properties Action, Key, Label, Text, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeButtonField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action MessageTypeTextFieldParam `json:"action,omitzero,required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A text field used in a message type.
-	Text MessageTypeTextFieldParam `json:"text,omitzero,required"`
+	Text MessageTypeTextFieldParam `json:"text,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the button field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2589,19 +2589,19 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeButtonFieldSettings) 
 // The properties Action, Alt, Key, Label, Type, URL are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeImageField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action MessageTypeTextFieldParam `json:"action,omitzero,required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// A text field used in a message type.
-	Alt MessageTypeTextFieldParam `json:"alt,omitzero,required"`
+	Alt MessageTypeTextFieldParam `json:"alt,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "image".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// A URL field used in a message type.
-	URL PartialValidateParamsPartialInputSchemaMessageTypeImageFieldURL `json:"url,omitzero,required"`
+	URL PartialValidateParamsPartialInputSchemaMessageTypeImageFieldURL `json:"url,omitzero" api:"required"`
 	// Settings for the image field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2626,13 +2626,13 @@ func init() {
 // The properties Key, Label, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeImageFieldURL struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the url field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeImageFieldURLSettings `json:"settings,omitzero"`
 	paramObj
@@ -2691,13 +2691,13 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeImageFieldSettings) U
 // The properties Key, Label, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeJsonField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "json".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the json field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2743,13 +2743,13 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeJsonFieldSettings) Un
 // The properties Key, Label, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeMarkdownField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "markdown".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the markdown field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2792,15 +2792,15 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeMarkdownFieldSettings
 // The properties Key, Label, Settings, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Settings for the multi_select field.
-	Settings PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings,omitzero,required"`
+	Settings PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettings `json:"settings,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "multi_select".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -2841,7 +2841,7 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSetti
 // The property Value is required.
 type PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label param.Opt[string] `json:"label,omitzero"`
 	paramObj
@@ -2860,15 +2860,15 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeMultiSelectFieldSetti
 // The properties Key, Label, Settings, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeSelectField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Settings for the select field.
-	Settings PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings `json:"settings,omitzero,required"`
+	Settings PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings `json:"settings,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "select".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -2909,7 +2909,7 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettings) 
 // The property Value is required.
 type PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label param.Opt[string] `json:"label,omitzero"`
 	paramObj
@@ -2928,13 +2928,13 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeSelectFieldSettingsOp
 // The properties Key, Label, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeTextareaField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "textarea".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the textarea field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeTextareaFieldSettings `json:"settings,omitzero"`
 	paramObj
@@ -2979,13 +2979,13 @@ func (r *PartialValidateParamsPartialInputSchemaMessageTypeTextareaFieldSettings
 // The properties Key, Label, Type are required.
 type PartialValidateParamsPartialInputSchemaMessageTypeURLField struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the url field.
 	Settings PartialValidateParamsPartialInputSchemaMessageTypeURLFieldSettings `json:"settings,omitzero"`
 	paramObj

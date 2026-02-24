@@ -109,38 +109,38 @@ func (r *MessageTypeService) Validate(ctx context.Context, messageTypeKey string
 // within your application.
 type MessageType struct {
 	// The timestamp of when the message type was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The environment of the message type.
-	Environment string `json:"environment,required"`
+	Environment string `json:"environment" api:"required"`
 	// The unique key string for the message type object. Must be at minimum 3
 	// characters and at maximum 255 characters in length. Must be in the format of
 	// ^[a-z0-9_-]+$.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A name for the message type. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The owner of the message type.
 	//
 	// Any of "system", "user".
-	Owner MessageTypeOwner `json:"owner,required"`
+	Owner MessageTypeOwner `json:"owner" api:"required"`
 	// An HTML/liquid template for the message type preview.
-	Preview string `json:"preview,required"`
+	Preview string `json:"preview" api:"required"`
 	// The semantic version of the message type.
-	Semver string `json:"semver,required"`
+	Semver string `json:"semver" api:"required"`
 	// The SHA hash of the message type.
-	Sha string `json:"sha,required"`
+	Sha string `json:"sha" api:"required"`
 	// The timestamp of when the message type was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// Whether the message type is valid.
-	Valid bool `json:"valid,required"`
+	Valid bool `json:"valid" api:"required"`
 	// The variants of the message type.
-	Variants []MessageTypeVariant `json:"variants,required"`
+	Variants []MessageTypeVariant `json:"variants" api:"required"`
 	// The timestamp of when the message type was deleted.
-	ArchivedAt time.Time `json:"archived_at,nullable" format:"date-time"`
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
 	// The timestamp of when the message type was deleted.
-	DeletedAt time.Time `json:"deleted_at,nullable" format:"date-time"`
+	DeletedAt time.Time `json:"deleted_at" api:"nullable" format:"date-time"`
 	// An arbitrary string attached to a message type object. Useful for adding notes
 	// about the message type for internal purposes. Maximum of 280 characters allowed.
-	Description string `json:"description,nullable"`
+	Description string `json:"description" api:"nullable"`
 	// The icon name of the message type.
 	IconName string `json:"icon_name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -182,13 +182,13 @@ const (
 // A text field used in a message type.
 type MessageTypeTextField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "text".
-	Type MessageTypeTextFieldType `json:"type,required"`
+	Type MessageTypeTextFieldType `json:"type" api:"required"`
 	// Settings for the text field.
 	Settings MessageTypeTextFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -227,7 +227,7 @@ const (
 // Settings for the text field.
 type MessageTypeTextFieldSettings struct {
 	// The default value of the text field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	MaxLength   int64  `json:"max_length"`
 	MinLength   int64  `json:"min_length"`
@@ -256,13 +256,13 @@ func (r *MessageTypeTextFieldSettings) UnmarshalJSON(data []byte) error {
 // The properties Key, Label, Type are required.
 type MessageTypeTextFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "text".
-	Type MessageTypeTextFieldType `json:"type,omitzero,required"`
+	Type MessageTypeTextFieldType `json:"type,omitzero" api:"required"`
 	// Settings for the text field.
 	Settings MessageTypeTextFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -299,12 +299,12 @@ func (r *MessageTypeTextFieldSettingsParam) UnmarshalJSON(data []byte) error {
 // A variant of a message type.
 type MessageTypeVariant struct {
 	// The field types available for the variant.
-	Fields []MessageTypeVariantFieldUnion `json:"fields,required"`
+	Fields []MessageTypeVariantFieldUnion `json:"fields" api:"required"`
 	// The unique key string for the variant. Must be at minimum 3 characters and at
 	// maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A name for the variant. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Fields      respjson.Field
@@ -540,13 +540,13 @@ func (r *MessageTypeVariantFieldUnionSettingsOptions) UnmarshalJSON(data []byte)
 // A boolean field used in a message type.
 type MessageTypeVariantFieldMessageTypeBooleanField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "boolean".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the boolean field.
 	Settings MessageTypeVariantFieldMessageTypeBooleanFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -592,17 +592,17 @@ func (r *MessageTypeVariantFieldMessageTypeBooleanFieldSettings) UnmarshalJSON(d
 // A button field used in a message type.
 type MessageTypeVariantFieldMessageTypeButtonField struct {
 	// A text field used in a message type.
-	Action MessageTypeTextField `json:"action,required"`
+	Action MessageTypeTextField `json:"action" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// A text field used in a message type.
-	Text MessageTypeTextField `json:"text,required"`
+	Text MessageTypeTextField `json:"text" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the button field.
 	Settings MessageTypeVariantFieldMessageTypeButtonFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -647,19 +647,19 @@ func (r *MessageTypeVariantFieldMessageTypeButtonFieldSettings) UnmarshalJSON(da
 // An image field used in a message type.
 type MessageTypeVariantFieldMessageTypeImageField struct {
 	// A text field used in a message type.
-	Action MessageTypeTextField `json:"action,required"`
+	Action MessageTypeTextField `json:"action" api:"required"`
 	// A text field used in a message type.
-	Alt MessageTypeTextField `json:"alt,required"`
+	Alt MessageTypeTextField `json:"alt" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "image".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// A URL field used in a message type.
-	URL MessageTypeVariantFieldMessageTypeImageFieldURL `json:"url,required"`
+	URL MessageTypeVariantFieldMessageTypeImageFieldURL `json:"url" api:"required"`
 	// Settings for the image field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -685,13 +685,13 @@ func (r *MessageTypeVariantFieldMessageTypeImageField) UnmarshalJSON(data []byte
 // A URL field used in a message type.
 type MessageTypeVariantFieldMessageTypeImageFieldURL struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldURLSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -714,7 +714,7 @@ func (r *MessageTypeVariantFieldMessageTypeImageFieldURL) UnmarshalJSON(data []b
 // Settings for the url field.
 type MessageTypeVariantFieldMessageTypeImageFieldURLSettings struct {
 	// The default value of the URL field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
@@ -757,13 +757,13 @@ func (r *MessageTypeVariantFieldMessageTypeImageFieldSettings) UnmarshalJSON(dat
 // A JSON field used in a message type.
 type MessageTypeVariantFieldMessageTypeJsonField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "json".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the json field.
 	Settings MessageTypeVariantFieldMessageTypeJsonFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -786,13 +786,13 @@ func (r *MessageTypeVariantFieldMessageTypeJsonField) UnmarshalJSON(data []byte)
 // Settings for the json field.
 type MessageTypeVariantFieldMessageTypeJsonFieldSettings struct {
 	// The default value of the JSON field.
-	Default     any    `json:"default,nullable"`
+	Default     any    `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
 	// A JSON schema used to validate the structure of the JSON provided. Must be a
 	// valid JSON schema.
-	Schema any `json:"schema,nullable"`
+	Schema any `json:"schema" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Default     respjson.Field
@@ -813,13 +813,13 @@ func (r *MessageTypeVariantFieldMessageTypeJsonFieldSettings) UnmarshalJSON(data
 // A markdown field used in a message type.
 type MessageTypeVariantFieldMessageTypeMarkdownField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "markdown".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the markdown field.
 	Settings MessageTypeVariantFieldMessageTypeMarkdownFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -865,15 +865,15 @@ func (r *MessageTypeVariantFieldMessageTypeMarkdownFieldSettings) UnmarshalJSON(
 // A multi-select field used in a message type.
 type MessageTypeVariantFieldMessageTypeMultiSelectField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// Settings for the multi_select field.
-	Settings MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings `json:"settings,required"`
+	Settings MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings `json:"settings" api:"required"`
 	// The type of the field.
 	//
 	// Any of "multi_select".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Key         respjson.Field
@@ -894,7 +894,7 @@ func (r *MessageTypeVariantFieldMessageTypeMultiSelectField) UnmarshalJSON(data 
 // Settings for the multi_select field.
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings struct {
 	// The default values for the multi-select field.
-	Default     []string `json:"default,nullable"`
+	Default     []string `json:"default" api:"nullable"`
 	Description string   `json:"description"`
 	// The available options for the multi-select field.
 	Options []MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption `json:"options"`
@@ -921,7 +921,7 @@ func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettings) UnmarshalJS
 
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label string `json:"label"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -944,15 +944,15 @@ func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOption) Unmar
 // A select field used in a message type.
 type MessageTypeVariantFieldMessageTypeSelectField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// Settings for the select field.
-	Settings MessageTypeVariantFieldMessageTypeSelectFieldSettings `json:"settings,required"`
+	Settings MessageTypeVariantFieldMessageTypeSelectFieldSettings `json:"settings" api:"required"`
 	// The type of the field.
 	//
 	// Any of "select".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Key         respjson.Field
@@ -973,7 +973,7 @@ func (r *MessageTypeVariantFieldMessageTypeSelectField) UnmarshalJSON(data []byt
 // Settings for the select field.
 type MessageTypeVariantFieldMessageTypeSelectFieldSettings struct {
 	// The default value for the select field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// The available options for the select field.
 	Options []MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption `json:"options"`
@@ -998,7 +998,7 @@ func (r *MessageTypeVariantFieldMessageTypeSelectFieldSettings) UnmarshalJSON(da
 
 type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label string `json:"label"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1021,13 +1021,13 @@ func (r *MessageTypeVariantFieldMessageTypeSelectFieldSettingsOption) UnmarshalJ
 // A textarea field used in a message type.
 type MessageTypeVariantFieldMessageTypeTextareaField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "textarea".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the textarea field.
 	Settings MessageTypeVariantFieldMessageTypeTextareaFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1050,7 +1050,7 @@ func (r *MessageTypeVariantFieldMessageTypeTextareaField) UnmarshalJSON(data []b
 // Settings for the textarea field.
 type MessageTypeVariantFieldMessageTypeTextareaFieldSettings struct {
 	// The default value of the textarea field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	MaxLength   int64  `json:"max_length"`
 	MinLength   int64  `json:"min_length"`
@@ -1077,13 +1077,13 @@ func (r *MessageTypeVariantFieldMessageTypeTextareaFieldSettings) UnmarshalJSON(
 // A URL field used in a message type.
 type MessageTypeVariantFieldMessageTypeURLField struct {
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The label of the field.
-	Label string `json:"label,required"`
+	Label string `json:"label" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeURLFieldSettings `json:"settings"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1106,7 +1106,7 @@ func (r *MessageTypeVariantFieldMessageTypeURLField) UnmarshalJSON(data []byte) 
 // Settings for the url field.
 type MessageTypeVariantFieldMessageTypeURLFieldSettings struct {
 	// The default value of the URL field.
-	Default     string `json:"default,nullable"`
+	Default     string `json:"default" api:"nullable"`
 	Description string `json:"description"`
 	// Whether the field is required.
 	Required bool `json:"required"`
@@ -1131,12 +1131,12 @@ func (r *MessageTypeVariantFieldMessageTypeURLFieldSettings) UnmarshalJSON(data 
 // The properties Fields, Key, Name are required.
 type MessageTypeVariantParam struct {
 	// The field types available for the variant.
-	Fields []MessageTypeVariantFieldUnionParam `json:"fields,omitzero,required"`
+	Fields []MessageTypeVariantFieldUnionParam `json:"fields,omitzero" api:"required"`
 	// The unique key string for the variant. Must be at minimum 3 characters and at
 	// maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A name for the variant. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	paramObj
 }
 
@@ -1535,13 +1535,13 @@ func (u MessageTypeVariantFieldUnionParam) GetAction() *MessageTypeTextFieldPara
 // The properties Key, Label, Type are required.
 type MessageTypeVariantFieldMessageTypeBooleanFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "boolean".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the boolean field.
 	Settings MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -1584,17 +1584,17 @@ func (r *MessageTypeVariantFieldMessageTypeBooleanFieldSettingsParam) UnmarshalJ
 // The properties Action, Key, Label, Text, Type are required.
 type MessageTypeVariantFieldMessageTypeButtonFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action MessageTypeTextFieldParam `json:"action,omitzero,required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A text field used in a message type.
-	Text MessageTypeTextFieldParam `json:"text,omitzero,required"`
+	Text MessageTypeTextFieldParam `json:"text,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the button field.
 	Settings MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -1635,19 +1635,19 @@ func (r *MessageTypeVariantFieldMessageTypeButtonFieldSettingsParam) UnmarshalJS
 // The properties Action, Alt, Key, Label, Type, URL are required.
 type MessageTypeVariantFieldMessageTypeImageFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action MessageTypeTextFieldParam `json:"action,omitzero,required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// A text field used in a message type.
-	Alt MessageTypeTextFieldParam `json:"alt,omitzero,required"`
+	Alt MessageTypeTextFieldParam `json:"alt,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "image".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// A URL field used in a message type.
-	URL MessageTypeVariantFieldMessageTypeImageFieldURLParam `json:"url,omitzero,required"`
+	URL MessageTypeVariantFieldMessageTypeImageFieldURLParam `json:"url,omitzero" api:"required"`
 	// Settings for the image field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -1672,13 +1672,13 @@ func init() {
 // The properties Key, Label, Type are required.
 type MessageTypeVariantFieldMessageTypeImageFieldURLParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeImageFieldURLSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -1737,13 +1737,13 @@ func (r *MessageTypeVariantFieldMessageTypeImageFieldSettingsParam) UnmarshalJSO
 // The properties Key, Label, Type are required.
 type MessageTypeVariantFieldMessageTypeJsonFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "json".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the json field.
 	Settings MessageTypeVariantFieldMessageTypeJsonFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -1789,13 +1789,13 @@ func (r *MessageTypeVariantFieldMessageTypeJsonFieldSettingsParam) UnmarshalJSON
 // The properties Key, Label, Type are required.
 type MessageTypeVariantFieldMessageTypeMarkdownFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "markdown".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the markdown field.
 	Settings MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -1838,15 +1838,15 @@ func (r *MessageTypeVariantFieldMessageTypeMarkdownFieldSettingsParam) Unmarshal
 // The properties Key, Label, Settings, Type are required.
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Settings for the multi_select field.
-	Settings MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam `json:"settings,omitzero,required"`
+	Settings MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam `json:"settings,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "multi_select".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1887,7 +1887,7 @@ func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsParam) Unmars
 // The property Value is required.
 type MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label param.Opt[string] `json:"label,omitzero"`
 	paramObj
@@ -1906,15 +1906,15 @@ func (r *MessageTypeVariantFieldMessageTypeMultiSelectFieldSettingsOptionParam) 
 // The properties Key, Label, Settings, Type are required.
 type MessageTypeVariantFieldMessageTypeSelectFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// Settings for the select field.
-	Settings MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam `json:"settings,omitzero,required"`
+	Settings MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam `json:"settings,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "select".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -1955,7 +1955,7 @@ func (r *MessageTypeVariantFieldMessageTypeSelectFieldSettingsParam) UnmarshalJS
 // The property Value is required.
 type MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam struct {
 	// The value for the option.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The display label for the option.
 	Label param.Opt[string] `json:"label,omitzero"`
 	paramObj
@@ -1974,13 +1974,13 @@ func (r *MessageTypeVariantFieldMessageTypeSelectFieldSettingsOptionParam) Unmar
 // The properties Key, Label, Type are required.
 type MessageTypeVariantFieldMessageTypeTextareaFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "textarea".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the textarea field.
 	Settings MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -2025,13 +2025,13 @@ func (r *MessageTypeVariantFieldMessageTypeTextareaFieldSettingsParam) Unmarshal
 // The properties Key, Label, Type are required.
 type MessageTypeVariantFieldMessageTypeURLFieldParam struct {
 	// The label of the field.
-	Label param.Opt[string] `json:"label,omitzero,required"`
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// The unique key of the field.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the field.
 	//
 	// Any of "url".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	// Settings for the url field.
 	Settings MessageTypeVariantFieldMessageTypeURLFieldSettingsParam `json:"settings,omitzero"`
 	paramObj
@@ -2073,7 +2073,7 @@ func (r *MessageTypeVariantFieldMessageTypeURLFieldSettingsParam) UnmarshalJSON(
 type MessageTypeUpsertResponse struct {
 	// A message type is a schema for a message that maps to a UI component or element
 	// within your application.
-	MessageType MessageType `json:"message_type,required"`
+	MessageType MessageType `json:"message_type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		MessageType respjson.Field
@@ -2092,7 +2092,7 @@ func (r *MessageTypeUpsertResponse) UnmarshalJSON(data []byte) error {
 type MessageTypeValidateResponse struct {
 	// A message type is a schema for a message that maps to a UI component or element
 	// within your application.
-	MessageType MessageType `json:"message_type,required"`
+	MessageType MessageType `json:"message_type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		MessageType respjson.Field
@@ -2109,7 +2109,7 @@ func (r *MessageTypeValidateResponse) UnmarshalJSON(data []byte) error {
 
 type MessageTypeGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -2131,7 +2131,7 @@ func (r MessageTypeGetParams) URLQuery() (v url.Values, err error) {
 
 type MessageTypeListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
@@ -2159,9 +2159,9 @@ func (r MessageTypeListParams) URLQuery() (v url.Values, err error) {
 
 type MessageTypeUpsertParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create a message type.
-	MessageType MessageTypeUpsertParamsMessageType `json:"message_type,omitzero,required"`
+	MessageType MessageTypeUpsertParamsMessageType `json:"message_type,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -2197,11 +2197,11 @@ func (r MessageTypeUpsertParams) URLQuery() (v url.Values, err error) {
 type MessageTypeUpsertParamsMessageType struct {
 	// An arbitrary string attached to a message type object. Useful for adding notes
 	// about the message type for internal purposes. Maximum of 280 characters allowed.
-	Description param.Opt[string] `json:"description,omitzero,required"`
+	Description param.Opt[string] `json:"description,omitzero" api:"required"`
 	// A name for the message type. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// An HTML/liquid template for the message type preview.
-	Preview string `json:"preview,required"`
+	Preview string `json:"preview" api:"required"`
 	// The icon name of the message type.
 	IconName param.Opt[string] `json:"icon_name,omitzero"`
 	// The semantic version of the message type.
@@ -2221,9 +2221,9 @@ func (r *MessageTypeUpsertParamsMessageType) UnmarshalJSON(data []byte) error {
 
 type MessageTypeValidateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create a message type.
-	MessageType MessageTypeValidateParamsMessageType `json:"message_type,omitzero,required"`
+	MessageType MessageTypeValidateParamsMessageType `json:"message_type,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -2253,11 +2253,11 @@ func (r MessageTypeValidateParams) URLQuery() (v url.Values, err error) {
 type MessageTypeValidateParamsMessageType struct {
 	// An arbitrary string attached to a message type object. Useful for adding notes
 	// about the message type for internal purposes. Maximum of 280 characters allowed.
-	Description param.Opt[string] `json:"description,omitzero,required"`
+	Description param.Opt[string] `json:"description,omitzero" api:"required"`
 	// A name for the message type. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// An HTML/liquid template for the message type preview.
-	Preview string `json:"preview,required"`
+	Preview string `json:"preview" api:"required"`
 	// The icon name of the message type.
 	IconName param.Opt[string] `json:"icon_name,omitzero"`
 	// The semantic version of the message type.

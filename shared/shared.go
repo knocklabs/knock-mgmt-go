@@ -17,13 +17,13 @@ type paramObj = param.APIObject
 // The information about a paginated result.
 type PageInfo struct {
 	// The number of entries to fetch per-page.
-	PageSize int64 `json:"page_size,required"`
+	PageSize int64 `json:"page_size" api:"required"`
 	// The cursor to fetch entries after. Will only be present if there are more
 	// entries to fetch.
-	After string `json:"after,nullable"`
+	After string `json:"after" api:"nullable"`
 	// The cursor to fetch entries before. Will only be present if there are more
 	// entries to fetch before the current page.
-	Before string `json:"before,nullable"`
+	Before string `json:"before" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		PageSize    respjson.Field

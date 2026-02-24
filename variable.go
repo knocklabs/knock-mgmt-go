@@ -63,19 +63,19 @@ func (r *VariableService) ListAutoPaging(ctx context.Context, query VariableList
 // An environment variable object.
 type Variable struct {
 	// The timestamp of when the variable was created.
-	InsertedAt time.Time `json:"inserted_at,required" format:"date-time"`
+	InsertedAt time.Time `json:"inserted_at" api:"required" format:"date-time"`
 	// The key of the variable.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the variable.
 	//
 	// Any of "public", "secret".
-	Type VariableType `json:"type,required"`
+	Type VariableType `json:"type" api:"required"`
 	// The timestamp of when the variable was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The value of the variable.
-	Value string `json:"value,required"`
+	Value string `json:"value" api:"required"`
 	// The description of the variable.
-	Description string `json:"description,nullable"`
+	Description string `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InsertedAt  respjson.Field
@@ -105,7 +105,7 @@ const (
 
 type VariableListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.

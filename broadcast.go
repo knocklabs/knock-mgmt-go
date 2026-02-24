@@ -131,38 +131,38 @@ func (r *BroadcastService) Validate(ctx context.Context, broadcastKey string, pa
 // A broadcast object.
 type Broadcast struct {
 	// The timestamp of when the broadcast was created. (read-only).
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The slug of the environment in which the broadcast exists. (read-only).
-	Environment string `json:"environment,required"`
+	Environment string `json:"environment" api:"required"`
 	// The unique key string for the broadcast object. Must be at minimum 3 characters
 	// and at maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A name for the broadcast. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The SHA hash of the workflow data. (read-only).
-	Sha string `json:"sha,required"`
+	Sha string `json:"sha" api:"required"`
 	// The current status of the broadcast. One of: `draft`, `scheduled`, `sent`.
 	//
 	// Any of "draft", "scheduled", "sent".
-	Status BroadcastStatus `json:"status,required"`
+	Status BroadcastStatus `json:"status" api:"required"`
 	// A list of broadcast step objects in the broadcast. Broadcasts only support
 	// channel, branch, and delay steps.
-	Steps []BroadcastStepUnion `json:"steps,required"`
+	Steps []BroadcastStepUnion `json:"steps" api:"required"`
 	// The timestamp of when the broadcast was last updated. (read-only).
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// Whether the broadcast and its steps are in a valid state. (read-only).
-	Valid bool `json:"valid,required"`
+	Valid bool `json:"valid" api:"required"`
 	// The timestamp of when the broadcast was archived.
-	ArchivedAt time.Time `json:"archived_at,nullable" format:"date-time"`
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
 	// A list of categories that the broadcast belongs to.
 	Categories []string `json:"categories"`
 	// An arbitrary string attached to a broadcast object. Useful for adding notes
 	// about the broadcast for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
 	// The timestamp of when the broadcast is scheduled to be sent.
-	ScheduledAt time.Time `json:"scheduled_at,nullable" format:"date-time"`
+	ScheduledAt time.Time `json:"scheduled_at" api:"nullable" format:"date-time"`
 	// The timestamp of when the broadcast was sent. (read-only).
-	SentAt time.Time `json:"sent_at,nullable" format:"date-time"`
+	SentAt time.Time `json:"sent_at" api:"nullable" format:"date-time"`
 	// A map of broadcast settings.
 	Settings BroadcastSettings `json:"settings"`
 	// The key of the audience to target for this broadcast.
@@ -469,10 +469,10 @@ func (r *BroadcastSettings) UnmarshalJSON(data []byte) error {
 // The properties Name, Steps are required.
 type BroadcastRequestParam struct {
 	// A name for the broadcast. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// A list of broadcast step objects in the broadcast. Broadcasts only support
 	// channel, branch, and delay steps.
-	Steps []BroadcastRequestStepUnionParam `json:"steps,omitzero,required"`
+	Steps []BroadcastRequestStepUnionParam `json:"steps,omitzero" api:"required"`
 	// The timestamp of when the broadcast is scheduled to be sent.
 	ScheduledAt param.Opt[time.Time] `json:"scheduled_at,omitzero" format:"date-time"`
 	// An arbitrary string attached to a broadcast object. Useful for adding notes
@@ -1170,7 +1170,7 @@ func (r *BroadcastRequestSettingsParam) UnmarshalJSON(data []byte) error {
 // Wraps the Broadcast response under the `broadcast` key.
 type BroadcastCancelResponse struct {
 	// A broadcast object.
-	Broadcast Broadcast `json:"broadcast,required"`
+	Broadcast Broadcast `json:"broadcast" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Broadcast   respjson.Field
@@ -1188,7 +1188,7 @@ func (r *BroadcastCancelResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Broadcast response under the `broadcast` key.
 type BroadcastSendResponse struct {
 	// A broadcast object.
-	Broadcast Broadcast `json:"broadcast,required"`
+	Broadcast Broadcast `json:"broadcast" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Broadcast   respjson.Field
@@ -1206,7 +1206,7 @@ func (r *BroadcastSendResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Broadcast response under the `broadcast` key.
 type BroadcastUpsertResponse struct {
 	// A broadcast object.
-	Broadcast Broadcast `json:"broadcast,required"`
+	Broadcast Broadcast `json:"broadcast" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Broadcast   respjson.Field
@@ -1224,7 +1224,7 @@ func (r *BroadcastUpsertResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Broadcast response under the `broadcast` key.
 type BroadcastValidateResponse struct {
 	// A broadcast object.
-	Broadcast Broadcast `json:"broadcast,required"`
+	Broadcast Broadcast `json:"broadcast" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Broadcast   respjson.Field
@@ -1241,7 +1241,7 @@ func (r *BroadcastValidateResponse) UnmarshalJSON(data []byte) error {
 
 type BroadcastGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -1263,7 +1263,7 @@ func (r BroadcastGetParams) URLQuery() (v url.Values, err error) {
 
 type BroadcastListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
@@ -1291,7 +1291,7 @@ func (r BroadcastListParams) URLQuery() (v url.Values, err error) {
 
 type BroadcastCancelParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -1308,7 +1308,7 @@ func (r BroadcastCancelParams) URLQuery() (v url.Values, err error) {
 
 type BroadcastSendParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -1337,9 +1337,9 @@ func (r BroadcastSendParams) URLQuery() (v url.Values, err error) {
 
 type BroadcastUpsertParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A broadcast request for upserting a broadcast.
-	Broadcast BroadcastRequestParam `json:"broadcast,omitzero,required"`
+	Broadcast BroadcastRequestParam `json:"broadcast,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -1366,9 +1366,9 @@ func (r BroadcastUpsertParams) URLQuery() (v url.Values, err error) {
 
 type BroadcastValidateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A broadcast request for upserting a broadcast.
-	Broadcast BroadcastRequestParam `json:"broadcast,omitzero,required"`
+	Broadcast BroadcastRequestParam `json:"broadcast,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`

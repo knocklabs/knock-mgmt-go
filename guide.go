@@ -135,40 +135,40 @@ func (r *GuideService) Validate(ctx context.Context, guideKey string, params Gui
 // and other conditions.
 type Guide struct {
 	// Whether the guide is active.
-	Active bool `json:"active,required"`
+	Active bool `json:"active" api:"required"`
 	// The timestamp of when the guide was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The slug of the environment in which the guide exists.
-	Environment string `json:"environment,required"`
+	Environment string `json:"environment" api:"required"`
 	// The unique key string for the guide object. Must be at minimum 3 characters and
 	// at maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// A name for the guide. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The SHA hash of the guide.
-	Sha string `json:"sha,required"`
+	Sha string `json:"sha" api:"required"`
 	// The timestamp of when the guide was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPattern `json:"activation_url_patterns"`
 	// The timestamp of when the guide was archived.
-	ArchivedAt time.Time `json:"archived_at,nullable" format:"date-time"`
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
 	// The key of the channel in which the guide exists.
 	ChannelKey string `json:"channel_key"`
 	// The timestamp of when the guide was deleted.
-	DeletedAt time.Time `json:"deleted_at,nullable" format:"date-time"`
+	DeletedAt time.Time `json:"deleted_at" api:"nullable" format:"date-time"`
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
-	Description string `json:"description,nullable"`
+	Description string `json:"description" api:"nullable"`
 	// The semver of the guide.
 	Semver string `json:"semver"`
 	// A list of guide step objects in the guide.
 	Steps []GuideStep `json:"steps"`
 	// The ID of the target audience for the guide. When not set, will default to
 	// targeting all users.
-	TargetAudienceID string `json:"target_audience_id,nullable"`
+	TargetAudienceID string `json:"target_audience_id" api:"nullable"`
 	// A group of conditions to be evaluated.
-	TargetPropertyConditions ConditionGroupUnion `json:"target_property_conditions,nullable"`
+	TargetPropertyConditions ConditionGroupUnion `json:"target_property_conditions" api:"nullable"`
 	// The type of the guide. This is derived from the message type of the guide steps.
 	Type string `json:"type"`
 	// Whether the guide is valid.
@@ -210,7 +210,7 @@ type GuideActivationURLPattern struct {
 	// Whether to allow or block the guide at the specified location.
 	//
 	// Any of "allow", "block".
-	Directive GuideActivationURLPatternDirective `json:"directive,required"`
+	Directive GuideActivationURLPatternDirective `json:"directive" api:"required"`
 	// The URL pathname pattern to match against. Must be a valid URI path.
 	Pathname string `json:"pathname"`
 	// The URL query string pattern to match against (without the leading '?').
@@ -258,7 +258,7 @@ type GuideActivationURLPatternParam struct {
 	// Whether to allow or block the guide at the specified location.
 	//
 	// Any of "allow", "block".
-	Directive GuideActivationURLPatternDirective `json:"directive,omitzero,required"`
+	Directive GuideActivationURLPatternDirective `json:"directive,omitzero" api:"required"`
 	// The URL pathname pattern to match against. Must be a valid URI path.
 	Pathname param.Opt[string] `json:"pathname,omitzero"`
 	// The URL query string pattern to match against (without the leading '?').
@@ -279,13 +279,13 @@ func (r *GuideActivationURLPatternParam) UnmarshalJSON(data []byte) error {
 type GuideStep struct {
 	// The unique reference string for the step. Must be at minimum 3 characters and at
 	// maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// The key of the template schema to use for this step.
-	SchemaKey string `json:"schema_key,required"`
+	SchemaKey string `json:"schema_key" api:"required"`
 	// The semantic version of the template schema to use.
-	SchemaSemver string `json:"schema_semver,required"`
+	SchemaSemver string `json:"schema_semver" api:"required"`
 	// The key of the template schema variant to use.
-	SchemaVariantKey string `json:"schema_variant_key,required"`
+	SchemaVariantKey string `json:"schema_variant_key" api:"required"`
 	// A name for the step.
 	Name string `json:"name"`
 	// A map of values that make up the step's content. Each value must conform to its
@@ -325,13 +325,13 @@ func (r GuideStep) ToParam() GuideStepParam {
 type GuideStepParam struct {
 	// The unique reference string for the step. Must be at minimum 3 characters and at
 	// maximum 255 characters in length. Must be in the format of ^[a-z0-9_-]+$.
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// The key of the template schema to use for this step.
-	SchemaKey string `json:"schema_key,required"`
+	SchemaKey string `json:"schema_key" api:"required"`
 	// The semantic version of the template schema to use.
-	SchemaSemver string `json:"schema_semver,required"`
+	SchemaSemver string `json:"schema_semver" api:"required"`
 	// The key of the template schema variant to use.
-	SchemaVariantKey string `json:"schema_variant_key,required"`
+	SchemaVariantKey string `json:"schema_variant_key" api:"required"`
 	// A name for the step.
 	Name param.Opt[string] `json:"name,omitzero"`
 	// A map of values that make up the step's content. Each value must conform to its
@@ -352,7 +352,7 @@ func (r *GuideStepParam) UnmarshalJSON(data []byte) error {
 type GuideActivateResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
 	// and other conditions.
-	Guide Guide `json:"guide,required"`
+	Guide Guide `json:"guide" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Guide       respjson.Field
@@ -370,7 +370,7 @@ func (r *GuideActivateResponse) UnmarshalJSON(data []byte) error {
 // The response from archiving a guide.
 type GuideArchiveResponse struct {
 	// The result of the promote operation.
-	Result string `json:"result,required"`
+	Result string `json:"result" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Result      respjson.Field
@@ -389,7 +389,7 @@ func (r *GuideArchiveResponse) UnmarshalJSON(data []byte) error {
 type GuideUpsertResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
 	// and other conditions.
-	Guide Guide `json:"guide,required"`
+	Guide Guide `json:"guide" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Guide       respjson.Field
@@ -408,7 +408,7 @@ func (r *GuideUpsertResponse) UnmarshalJSON(data []byte) error {
 type GuideValidateResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
 	// and other conditions.
-	Guide Guide `json:"guide,required"`
+	Guide Guide `json:"guide" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Guide       respjson.Field
@@ -425,7 +425,7 @@ func (r *GuideValidateResponse) UnmarshalJSON(data []byte) error {
 
 type GuideGetParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -447,7 +447,7 @@ func (r GuideGetParams) URLQuery() (v url.Values, err error) {
 
 type GuideListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
@@ -475,7 +475,7 @@ func (r GuideListParams) URLQuery() (v url.Values, err error) {
 
 type GuideActivateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -515,7 +515,7 @@ func (r GuideActivateParams) URLQuery() (v url.Values, err error) {
 // The property Status is required.
 type GuideActivateParamsBodyGuideBooleanActivationParams struct {
 	// Whether to activate or deactivate the guide.
-	Status bool `json:"status,required"`
+	Status bool `json:"status" api:"required"`
 	paramObj
 }
 
@@ -549,9 +549,9 @@ func (r *GuideActivateParamsBodyGuideScheduledActivationParams) UnmarshalJSON(da
 
 type GuideUpsertParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create or update a guide.
-	Guide GuideUpsertParamsGuide `json:"guide,omitzero,required"`
+	Guide GuideUpsertParamsGuide `json:"guide,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -585,11 +585,11 @@ func (r GuideUpsertParams) URLQuery() (v url.Values, err error) {
 // The properties ChannelKey, Name, Steps are required.
 type GuideUpsertParamsGuide struct {
 	// The key of the channel in which the guide exists.
-	ChannelKey string `json:"channel_key,required"`
+	ChannelKey string `json:"channel_key" api:"required"`
 	// A name for the guide. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// A list of guide step objects in the guide.
-	Steps []GuideStepParam `json:"steps,omitzero,required"`
+	Steps []GuideStepParam `json:"steps,omitzero" api:"required"`
 	// The timestamp of when the guide was archived.
 	ArchivedAt param.Opt[time.Time] `json:"archived_at,omitzero" format:"date-time"`
 	// The timestamp of when the guide was deleted.
@@ -617,9 +617,9 @@ func (r *GuideUpsertParamsGuide) UnmarshalJSON(data []byte) error {
 
 type GuideValidateParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create or update a guide.
-	Guide GuideValidateParamsGuide `json:"guide,omitzero,required"`
+	Guide GuideValidateParamsGuide `json:"guide,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -647,11 +647,11 @@ func (r GuideValidateParams) URLQuery() (v url.Values, err error) {
 // The properties ChannelKey, Name, Steps are required.
 type GuideValidateParamsGuide struct {
 	// The key of the channel in which the guide exists.
-	ChannelKey string `json:"channel_key,required"`
+	ChannelKey string `json:"channel_key" api:"required"`
 	// A name for the guide. Must be at maximum 255 characters in length.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// A list of guide step objects in the guide.
-	Steps []GuideStepParam `json:"steps,omitzero,required"`
+	Steps []GuideStepParam `json:"steps,omitzero" api:"required"`
 	// The timestamp of when the guide was archived.
 	ArchivedAt param.Opt[time.Time] `json:"archived_at,omitzero" format:"date-time"`
 	// The timestamp of when the guide was deleted.
