@@ -1933,7 +1933,7 @@ const (
 )
 
 // RequestTemplateHeadersUnion contains all possible properties and values from
-// [string], [[]RequestTemplateHeadersArrayItem].
+// [string], [[]RequestTemplateHeadersRequestTemplateHeadersArrayItem].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
@@ -1942,9 +1942,9 @@ const (
 type RequestTemplateHeadersUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]RequestTemplateHeadersArrayItem]
-	// instead of an object.
-	OfRequestTemplateHeadersArray []RequestTemplateHeadersArrayItem `json:",inline"`
+	// This field will be present if the value is a
+	// [[]RequestTemplateHeadersRequestTemplateHeadersArrayItem] instead of an object.
+	OfRequestTemplateHeadersArray []RequestTemplateHeadersRequestTemplateHeadersArrayItem `json:",inline"`
 	JSON                          struct {
 		OfString                      respjson.Field
 		OfRequestTemplateHeadersArray respjson.Field
@@ -1957,7 +1957,7 @@ func (u RequestTemplateHeadersUnion) AsString() (v string) {
 	return
 }
 
-func (u RequestTemplateHeadersUnion) AsRequestTemplateHeadersArray() (v []RequestTemplateHeadersArrayItem) {
+func (u RequestTemplateHeadersUnion) AsRequestTemplateHeadersArray() (v []RequestTemplateHeadersRequestTemplateHeadersArrayItem) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1969,7 +1969,7 @@ func (r *RequestTemplateHeadersUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RequestTemplateHeadersArrayItem struct {
+type RequestTemplateHeadersRequestTemplateHeadersArrayItem struct {
 	// The key of the header.
 	Key string `json:"key" api:"required"`
 	// The value of the header.
@@ -1984,28 +1984,29 @@ type RequestTemplateHeadersArrayItem struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RequestTemplateHeadersArrayItem) RawJSON() string { return r.JSON.raw }
-func (r *RequestTemplateHeadersArrayItem) UnmarshalJSON(data []byte) error {
+func (r RequestTemplateHeadersRequestTemplateHeadersArrayItem) RawJSON() string { return r.JSON.raw }
+func (r *RequestTemplateHeadersRequestTemplateHeadersArrayItem) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // RequestTemplateQueryParamsUnion contains all possible properties and values from
-// [string], [[]RequestTemplateQueryParamsArrayItem].
+// [string], [[]RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfRequestTemplateQuerysArrayParam]
+// will be valid: OfString OfRequestTemplateQuerysArray]
 type RequestTemplateQueryParamsUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field will be present if the value is a
-	// [[]RequestTemplateQueryParamsArrayItem] instead of an object.
-	OfRequestTemplateQuerysArrayParam []RequestTemplateQueryParamsArrayItem `json:",inline"`
-	JSON                              struct {
-		OfString                          respjson.Field
-		OfRequestTemplateQuerysArrayParam respjson.Field
-		raw                               string
+	// [[]RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem] instead of an
+	// object.
+	OfRequestTemplateQuerysArray []RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem `json:",inline"`
+	JSON                         struct {
+		OfString                     respjson.Field
+		OfRequestTemplateQuerysArray respjson.Field
+		raw                          string
 	} `json:"-"`
 }
 
@@ -2014,7 +2015,7 @@ func (u RequestTemplateQueryParamsUnion) AsString() (v string) {
 	return
 }
 
-func (u RequestTemplateQueryParamsUnion) AsRequestTemplateQueryParamsArray() (v []RequestTemplateQueryParamsArrayItem) {
+func (u RequestTemplateQueryParamsUnion) AsRequestTemplateQueryParamsArray() (v []RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2026,7 +2027,7 @@ func (r *RequestTemplateQueryParamsUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RequestTemplateQueryParamsArrayItem struct {
+type RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem struct {
 	// The key of the query param.
 	Key string `json:"key" api:"required"`
 	// The value of the query param.
@@ -2041,8 +2042,10 @@ type RequestTemplateQueryParamsArrayItem struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RequestTemplateQueryParamsArrayItem) RawJSON() string { return r.JSON.raw }
-func (r *RequestTemplateQueryParamsArrayItem) UnmarshalJSON(data []byte) error {
+func (r RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItem) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2079,8 +2082,8 @@ func (r *RequestTemplateParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type RequestTemplateHeadersUnionParam struct {
-	OfString                      param.Opt[string]                      `json:",omitzero,inline"`
-	OfRequestTemplateHeadersArray []RequestTemplateHeadersArrayItemParam `json:",omitzero,inline"`
+	OfString                      param.Opt[string]                                            `json:",omitzero,inline"`
+	OfRequestTemplateHeadersArray []RequestTemplateHeadersRequestTemplateHeadersArrayItemParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -2101,7 +2104,7 @@ func (u *RequestTemplateHeadersUnionParam) asAny() any {
 }
 
 // The properties Key, Value are required.
-type RequestTemplateHeadersArrayItemParam struct {
+type RequestTemplateHeadersRequestTemplateHeadersArrayItemParam struct {
 	// The key of the header.
 	Key string `json:"key" api:"required"`
 	// The value of the header.
@@ -2109,11 +2112,11 @@ type RequestTemplateHeadersArrayItemParam struct {
 	paramObj
 }
 
-func (r RequestTemplateHeadersArrayItemParam) MarshalJSON() (data []byte, err error) {
-	type shadow RequestTemplateHeadersArrayItemParam
+func (r RequestTemplateHeadersRequestTemplateHeadersArrayItemParam) MarshalJSON() (data []byte, err error) {
+	type shadow RequestTemplateHeadersRequestTemplateHeadersArrayItemParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *RequestTemplateHeadersArrayItemParam) UnmarshalJSON(data []byte) error {
+func (r *RequestTemplateHeadersRequestTemplateHeadersArrayItemParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2121,13 +2124,13 @@ func (r *RequestTemplateHeadersArrayItemParam) UnmarshalJSON(data []byte) error 
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type RequestTemplateQueryParamsUnionParam struct {
-	OfString                          param.Opt[string]                          `json:",omitzero,inline"`
-	OfRequestTemplateQuerysArrayParam []RequestTemplateQueryParamsArrayItemParam `json:",omitzero,inline"`
+	OfString                     param.Opt[string]                                                    `json:",omitzero,inline"`
+	OfRequestTemplateQuerysArray []RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItemParam `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u RequestTemplateQueryParamsUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfRequestTemplateQuerysArrayParam)
+	return param.MarshalUnion(u, u.OfString, u.OfRequestTemplateQuerysArray)
 }
 func (u *RequestTemplateQueryParamsUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -2136,14 +2139,14 @@ func (u *RequestTemplateQueryParamsUnionParam) UnmarshalJSON(data []byte) error 
 func (u *RequestTemplateQueryParamsUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfRequestTemplateQuerysArrayParam) {
-		return &u.OfRequestTemplateQuerysArrayParam
+	} else if !param.IsOmitted(u.OfRequestTemplateQuerysArray) {
+		return &u.OfRequestTemplateQuerysArray
 	}
 	return nil
 }
 
 // The properties Key, Value are required.
-type RequestTemplateQueryParamsArrayItemParam struct {
+type RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItemParam struct {
 	// The key of the query param.
 	Key string `json:"key" api:"required"`
 	// The value of the query param.
@@ -2151,11 +2154,11 @@ type RequestTemplateQueryParamsArrayItemParam struct {
 	paramObj
 }
 
-func (r RequestTemplateQueryParamsArrayItemParam) MarshalJSON() (data []byte, err error) {
-	type shadow RequestTemplateQueryParamsArrayItemParam
+func (r RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItemParam) MarshalJSON() (data []byte, err error) {
+	type shadow RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItemParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *RequestTemplateQueryParamsArrayItemParam) UnmarshalJSON(data []byte) error {
+func (r *RequestTemplateQueryParamsRequestTemplateQueryParamsArrayItemParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
