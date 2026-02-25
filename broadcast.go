@@ -208,7 +208,7 @@ const (
 // BroadcastStepUnion contains all possible properties and values from
 // [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
 // [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
-// [WorkflowBranchStep], [WorkflowDelayStep].
+// [WorkflowBranchStep], [WorkflowDelayStep], [WorkflowRandomCohortStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type BroadcastStepUnion struct {
@@ -232,7 +232,11 @@ type BroadcastStepUnion struct {
 	Branches []WorkflowBranchStepBranch `json:"branches"`
 	// This field is from variant [WorkflowDelayStep].
 	Settings WorkflowDelayStepSettings `json:"settings"`
-	JSON     struct {
+	// This field is from variant [WorkflowRandomCohortStep].
+	CohortBranches []any `json:"cohort_branches"`
+	// This field is from variant [WorkflowRandomCohortStep].
+	CohortKey string `json:"cohort_key"`
+	JSON      struct {
 		Ref              respjson.Field
 		Template         respjson.Field
 		Type             respjson.Field
@@ -246,6 +250,8 @@ type BroadcastStepUnion struct {
 		ChannelOverrides respjson.Field
 		Branches         respjson.Field
 		Settings         respjson.Field
+		CohortBranches   respjson.Field
+		CohortKey        respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -286,6 +292,11 @@ func (u BroadcastStepUnion) AsWorkflowBranchStep() (v WorkflowBranchStep) {
 }
 
 func (u BroadcastStepUnion) AsWorkflowDelayStep() (v WorkflowDelayStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u BroadcastStepUnion) AsWorkflowRandomCohortStep() (v WorkflowRandomCohortStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -499,14 +510,15 @@ func (r *BroadcastRequestParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type BroadcastRequestStepUnionParam struct {
-	OfWorkflowWebhookStep   *WorkflowWebhookStepParam   `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep *WorkflowInAppFeedStepParam `json:",omitzero,inline"`
-	OfWorkflowChatStep      *WorkflowChatStepParam      `json:",omitzero,inline"`
-	OfWorkflowSMSStep       *WorkflowSMSStepParam       `json:",omitzero,inline"`
-	OfWorkflowPushStep      *WorkflowPushStepParam      `json:",omitzero,inline"`
-	OfWorkflowEmailStep     *WorkflowEmailStepParam     `json:",omitzero,inline"`
-	OfWorkflowBranchStep    *WorkflowBranchStepParam    `json:",omitzero,inline"`
-	OfWorkflowDelayStep     *WorkflowDelayStepParam     `json:",omitzero,inline"`
+	OfWorkflowWebhookStep      *WorkflowWebhookStepParam      `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep    *WorkflowInAppFeedStepParam    `json:",omitzero,inline"`
+	OfWorkflowChatStep         *WorkflowChatStepParam         `json:",omitzero,inline"`
+	OfWorkflowSMSStep          *WorkflowSMSStepParam          `json:",omitzero,inline"`
+	OfWorkflowPushStep         *WorkflowPushStepParam         `json:",omitzero,inline"`
+	OfWorkflowEmailStep        *WorkflowEmailStepParam        `json:",omitzero,inline"`
+	OfWorkflowBranchStep       *WorkflowBranchStepParam       `json:",omitzero,inline"`
+	OfWorkflowDelayStep        *WorkflowDelayStepParam        `json:",omitzero,inline"`
+	OfWorkflowRandomCohortStep *WorkflowRandomCohortStepParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -518,7 +530,8 @@ func (u BroadcastRequestStepUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfWorkflowPushStep,
 		u.OfWorkflowEmailStep,
 		u.OfWorkflowBranchStep,
-		u.OfWorkflowDelayStep)
+		u.OfWorkflowDelayStep,
+		u.OfWorkflowRandomCohortStep)
 }
 func (u *BroadcastRequestStepUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -541,6 +554,8 @@ func (u *BroadcastRequestStepUnionParam) asAny() any {
 		return u.OfWorkflowBranchStep
 	} else if !param.IsOmitted(u.OfWorkflowDelayStep) {
 		return u.OfWorkflowDelayStep
+	} else if !param.IsOmitted(u.OfWorkflowRandomCohortStep) {
+		return u.OfWorkflowRandomCohortStep
 	}
 	return nil
 }
@@ -557,6 +572,22 @@ func (u BroadcastRequestStepUnionParam) GetBranches() []WorkflowBranchStepBranch
 func (u BroadcastRequestStepUnionParam) GetSettings() *WorkflowDelayStepSettingsParam {
 	if vt := u.OfWorkflowDelayStep; vt != nil {
 		return &vt.Settings
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BroadcastRequestStepUnionParam) GetCohortBranches() []any {
+	if vt := u.OfWorkflowRandomCohortStep; vt != nil {
+		return vt.CohortBranches
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BroadcastRequestStepUnionParam) GetCohortKey() *string {
+	if vt := u.OfWorkflowRandomCohortStep; vt != nil && vt.CohortKey.Valid() {
+		return &vt.CohortKey.Value
 	}
 	return nil
 }
@@ -579,6 +610,8 @@ func (u BroadcastRequestStepUnionParam) GetRef() *string {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil {
+		return (*string)(&vt.Ref)
 	}
 	return nil
 }
@@ -600,6 +633,8 @@ func (u BroadcastRequestStepUnionParam) GetType() *string {
 	} else if vt := u.OfWorkflowBranchStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -677,6 +712,8 @@ func (u BroadcastRequestStepUnionParam) GetDescription() *string {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
 	}
 	return nil
 }
@@ -698,6 +735,8 @@ func (u BroadcastRequestStepUnionParam) GetName() *string {
 	} else if vt := u.OfWorkflowBranchStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	}
 	return nil

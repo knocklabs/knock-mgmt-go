@@ -1813,6 +1813,95 @@ func (r *WorkflowPushStepParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// An experiment step. Deterministically assigns recipients to percentage-based
+// cohorts for A/B testing and experimentation.
+type WorkflowRandomCohortStep struct {
+	// A list of cohort branches. Must have between 2 and 10 branches, and percentages
+	// must sum to 100.
+	CohortBranches []any `json:"cohort_branches" api:"required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The type of step.
+	//
+	// Any of "random_cohort".
+	Type WorkflowRandomCohortStepType `json:"type" api:"required"`
+	// The key used to deterministically assign recipients to cohorts. Defaults to the
+	// recipient ID if not provided.
+	CohortKey string `json:"cohort_key" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CohortBranches respjson.Field
+		Ref            respjson.Field
+		Type           respjson.Field
+		CohortKey      respjson.Field
+		Description    respjson.Field
+		Name           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowRandomCohortStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowRandomCohortStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowRandomCohortStep to a
+// WorkflowRandomCohortStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowRandomCohortStepParam.Overrides()
+func (r WorkflowRandomCohortStep) ToParam() WorkflowRandomCohortStepParam {
+	return param.Override[WorkflowRandomCohortStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of step.
+type WorkflowRandomCohortStepType string
+
+const (
+	WorkflowRandomCohortStepTypeRandomCohort WorkflowRandomCohortStepType = "random_cohort"
+)
+
+// An experiment step. Deterministically assigns recipients to percentage-based
+// cohorts for A/B testing and experimentation.
+//
+// The properties CohortBranches, Ref, Type are required.
+type WorkflowRandomCohortStepParam struct {
+	// A list of cohort branches. Must have between 2 and 10 branches, and percentages
+	// must sum to 100.
+	CohortBranches []any `json:"cohort_branches,omitzero" api:"required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The type of step.
+	//
+	// Any of "random_cohort".
+	Type WorkflowRandomCohortStepType `json:"type,omitzero" api:"required"`
+	// The key used to deterministically assign recipients to cohorts. Defaults to the
+	// recipient ID if not provided.
+	CohortKey param.Opt[string] `json:"cohort_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r WorkflowRandomCohortStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRandomCohortStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowRandomCohortStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A SMS step within a workflow. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
 type WorkflowSMSStep struct {
@@ -1948,10 +2037,10 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnion contains all possible properties and values from
 // [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
 // [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep], [WorkflowDelayStep],
-// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowStepWorkflowUpdateDataStep],
-// [WorkflowStepWorkflowUpdateObjectStep], [WorkflowStepWorkflowUpdateTenantStep],
-// [WorkflowStepWorkflowUpdateUserStep], [WorkflowThrottleStep],
-// [WorkflowBranchStep], [WorkflowTriggerWorkflowStep].
+// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowUpdateDataStep],
+// [WorkflowUpdateObjectStep], [WorkflowUpdateTenantStep],
+// [WorkflowUpdateUserStep], [WorkflowThrottleStep], [WorkflowBranchStep],
+// [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepUnion struct {
@@ -1973,15 +2062,17 @@ type WorkflowStepUnion struct {
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
 	// This field is a union of [WorkflowDelayStepSettings],
 	// [WorkflowBatchStepSettings], [RequestTemplate],
-	// [WorkflowStepWorkflowUpdateDataStepSettings],
-	// [WorkflowStepWorkflowUpdateObjectStepSettings],
-	// [WorkflowStepWorkflowUpdateTenantStepSettings],
-	// [WorkflowStepWorkflowUpdateUserStepSettings], [WorkflowThrottleStepSettings],
-	// [WorkflowTriggerWorkflowStepSettings]
+	// [WorkflowUpdateDataStepSettings], [WorkflowUpdateObjectStepSettings],
+	// [WorkflowUpdateTenantStepSettings], [WorkflowUpdateUserStepSettings],
+	// [WorkflowThrottleStepSettings], [WorkflowTriggerWorkflowStepSettings]
 	Settings WorkflowStepUnionSettings `json:"settings"`
 	// This field is from variant [WorkflowBranchStep].
 	Branches []WorkflowBranchStepBranch `json:"branches"`
-	JSON     struct {
+	// This field is from variant [WorkflowRandomCohortStep].
+	CohortBranches []any `json:"cohort_branches"`
+	// This field is from variant [WorkflowRandomCohortStep].
+	CohortKey string `json:"cohort_key"`
+	JSON      struct {
 		Ref              respjson.Field
 		Template         respjson.Field
 		Type             respjson.Field
@@ -1995,6 +2086,8 @@ type WorkflowStepUnion struct {
 		ChannelOverrides respjson.Field
 		Settings         respjson.Field
 		Branches         respjson.Field
+		CohortBranches   respjson.Field
+		CohortKey        respjson.Field
 		raw              string
 	} `json:"-"`
 }
@@ -2044,22 +2137,22 @@ func (u WorkflowStepUnion) AsWorkflowFetchStep() (v WorkflowFetchStep) {
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowUpdateDataStep() (v WorkflowStepWorkflowUpdateDataStep) {
+func (u WorkflowStepUnion) AsWorkflowUpdateDataStep() (v WorkflowUpdateDataStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowUpdateObjectStep() (v WorkflowStepWorkflowUpdateObjectStep) {
+func (u WorkflowStepUnion) AsWorkflowUpdateObjectStep() (v WorkflowUpdateObjectStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowUpdateTenantStep() (v WorkflowStepWorkflowUpdateTenantStep) {
+func (u WorkflowStepUnion) AsWorkflowUpdateTenantStep() (v WorkflowUpdateTenantStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowUpdateUserStep() (v WorkflowStepWorkflowUpdateUserStep) {
+func (u WorkflowStepUnion) AsWorkflowUpdateUserStep() (v WorkflowUpdateUserStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2070,6 +2163,11 @@ func (u WorkflowStepUnion) AsWorkflowThrottleStep() (v WorkflowThrottleStep) {
 }
 
 func (u WorkflowStepUnion) AsWorkflowBranchStep() (v WorkflowBranchStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowRandomCohortStep() (v WorkflowRandomCohortStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2338,254 +2436,6 @@ func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-// An update data function step. Merges data into the workflow's `data` scope for
-// use in subsequent steps.
-type WorkflowStepWorkflowUpdateDataStep struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update data step.
-	Settings WorkflowStepWorkflowUpdateDataStepSettings `json:"settings" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_data".
-	Type string `json:"type" api:"required"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Ref         respjson.Field
-		Settings    respjson.Field
-		Type        respjson.Field
-		Conditions  respjson.Field
-		Description respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateDataStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateDataStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The settings for the update data step.
-type WorkflowStepWorkflowUpdateDataStepSettings struct {
-	// A JSON string or Liquid template that evaluates to the data to merge into the
-	// workflow's data scope.
-	Data string `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateDataStepSettings) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateDataStepSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An update object step. Updates properties of a specific object referenced in the
-// workflow.
-type WorkflowStepWorkflowUpdateObjectStep struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update object step.
-	Settings WorkflowStepWorkflowUpdateObjectStepSettings `json:"settings" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_object".
-	Type string `json:"type" api:"required"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Ref         respjson.Field
-		Settings    respjson.Field
-		Type        respjson.Field
-		Conditions  respjson.Field
-		Description respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateObjectStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateObjectStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The settings for the update object step.
-type WorkflowStepWorkflowUpdateObjectStepSettings struct {
-	// The global identifier (GID) of the object to update. Format:
-	// gid://Object/{collection}/{id}
-	RecipientGid string `json:"recipient_gid" api:"required"`
-	// A JSON string or Liquid template that evaluates to the properties to update on
-	// the object.
-	UpdateProperties string `json:"update_properties" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		RecipientGid     respjson.Field
-		UpdateProperties respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateObjectStepSettings) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateObjectStepSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An update tenant step. Updates properties of a specific tenant referenced in the
-// workflow.
-type WorkflowStepWorkflowUpdateTenantStep struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update tenant step.
-	Settings WorkflowStepWorkflowUpdateTenantStepSettings `json:"settings" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_tenant".
-	Type string `json:"type" api:"required"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Ref         respjson.Field
-		Settings    respjson.Field
-		Type        respjson.Field
-		Conditions  respjson.Field
-		Description respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateTenantStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateTenantStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The settings for the update tenant step.
-type WorkflowStepWorkflowUpdateTenantStepSettings struct {
-	// The recipient mode determining how the tenant is selected. 'current' uses the
-	// workflow's current tenant. 'reference' uses a specific tenant ID.
-	//
-	// Any of "current", "reference".
-	RecipientMode string `json:"recipient_mode" api:"required"`
-	// A JSON string or Liquid template that evaluates to the properties to update on
-	// the tenant.
-	UpdateProperties string `json:"update_properties" api:"required"`
-	// The global identifier (GID) of the tenant to update. Required when
-	// recipient_mode is 'reference'. Format: gid://Object/$tenants/{id}
-	RecipientGid string `json:"recipient_gid" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		RecipientMode    respjson.Field
-		UpdateProperties respjson.Field
-		RecipientGid     respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateTenantStepSettings) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateTenantStepSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An update user step. Updates properties of a specific user referenced in the
-// workflow.
-type WorkflowStepWorkflowUpdateUserStep struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update user step.
-	Settings WorkflowStepWorkflowUpdateUserStepSettings `json:"settings" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_user".
-	Type string `json:"type" api:"required"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Ref         respjson.Field
-		Settings    respjson.Field
-		Type        respjson.Field
-		Conditions  respjson.Field
-		Description respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateUserStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateUserStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The settings for the update user step.
-type WorkflowStepWorkflowUpdateUserStepSettings struct {
-	// The recipient mode determining how the user is selected. 'current' uses the
-	// workflow's current user. 'reference' uses a specific user ID.
-	//
-	// Any of "current", "reference".
-	RecipientMode string `json:"recipient_mode" api:"required"`
-	// A JSON string or Liquid template that evaluates to the properties to update on
-	// the user.
-	UpdateProperties string `json:"update_properties" api:"required"`
-	// The global identifier (GID) of the user to update. Required when recipient_mode
-	// is 'reference'. Format: gid://Object/$users/{id}
-	RecipientGid string `json:"recipient_gid" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		RecipientMode    respjson.Field
-		UpdateProperties respjson.Field
-		RecipientGid     respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowUpdateUserStepSettings) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowUpdateUserStepSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 func WorkflowStepParamOfWorkflowWebhookStep(ref string, template WebhookTemplateParam, type_ WorkflowWebhookStepType) WorkflowStepUnionParam {
 	var variant WorkflowWebhookStepParam
 	variant.Ref = ref
@@ -2658,32 +2508,32 @@ func WorkflowStepParamOfWorkflowFetchStep(ref string, settings RequestTemplatePa
 	return WorkflowStepUnionParam{OfWorkflowFetchStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowUpdateDataStep(ref string, settings WorkflowStepWorkflowUpdateDataStepSettingsParam, type_ string) WorkflowStepUnionParam {
-	var variant WorkflowStepWorkflowUpdateDataStepParam
+func WorkflowStepParamOfWorkflowUpdateDataStep(ref string, settings WorkflowUpdateDataStepSettingsParam, type_ WorkflowUpdateDataStepType) WorkflowStepUnionParam {
+	var variant WorkflowUpdateDataStepParam
 	variant.Ref = ref
 	variant.Settings = settings
 	variant.Type = type_
 	return WorkflowStepUnionParam{OfWorkflowUpdateDataStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowUpdateObjectStep(ref string, settings WorkflowStepWorkflowUpdateObjectStepSettingsParam, type_ string) WorkflowStepUnionParam {
-	var variant WorkflowStepWorkflowUpdateObjectStepParam
+func WorkflowStepParamOfWorkflowUpdateObjectStep(ref string, settings WorkflowUpdateObjectStepSettingsParam, type_ WorkflowUpdateObjectStepType) WorkflowStepUnionParam {
+	var variant WorkflowUpdateObjectStepParam
 	variant.Ref = ref
 	variant.Settings = settings
 	variant.Type = type_
 	return WorkflowStepUnionParam{OfWorkflowUpdateObjectStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowUpdateTenantStep(ref string, settings WorkflowStepWorkflowUpdateTenantStepSettingsParam, type_ string) WorkflowStepUnionParam {
-	var variant WorkflowStepWorkflowUpdateTenantStepParam
+func WorkflowStepParamOfWorkflowUpdateTenantStep(ref string, settings WorkflowUpdateTenantStepSettingsParam, type_ WorkflowUpdateTenantStepType) WorkflowStepUnionParam {
+	var variant WorkflowUpdateTenantStepParam
 	variant.Ref = ref
 	variant.Settings = settings
 	variant.Type = type_
 	return WorkflowStepUnionParam{OfWorkflowUpdateTenantStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowUpdateUserStep(ref string, settings WorkflowStepWorkflowUpdateUserStepSettingsParam, type_ string) WorkflowStepUnionParam {
-	var variant WorkflowStepWorkflowUpdateUserStepParam
+func WorkflowStepParamOfWorkflowUpdateUserStep(ref string, settings WorkflowUpdateUserStepSettingsParam, type_ WorkflowUpdateUserStepType) WorkflowStepUnionParam {
+	var variant WorkflowUpdateUserStepParam
 	variant.Ref = ref
 	variant.Settings = settings
 	variant.Type = type_
@@ -2706,6 +2556,14 @@ func WorkflowStepParamOfWorkflowBranchStep(branches []WorkflowBranchStepBranchPa
 	return WorkflowStepUnionParam{OfWorkflowBranchStep: &variant}
 }
 
+func WorkflowStepParamOfWorkflowRandomCohortStep(cohortBranches []any, ref string, type_ WorkflowRandomCohortStepType) WorkflowStepUnionParam {
+	var variant WorkflowRandomCohortStepParam
+	variant.CohortBranches = cohortBranches
+	variant.Ref = ref
+	variant.Type = type_
+	return WorkflowStepUnionParam{OfWorkflowRandomCohortStep: &variant}
+}
+
 func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings WorkflowTriggerWorkflowStepSettingsParam, type_ WorkflowTriggerWorkflowStepType) WorkflowStepUnionParam {
 	var variant WorkflowTriggerWorkflowStepParam
 	variant.Ref = ref
@@ -2718,22 +2576,23 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowWebhookStep         *WorkflowWebhookStepParam                  `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam                `json:",omitzero,inline"`
-	OfWorkflowChatStep            *WorkflowChatStepParam                     `json:",omitzero,inline"`
-	OfWorkflowSMSStep             *WorkflowSMSStepParam                      `json:",omitzero,inline"`
-	OfWorkflowPushStep            *WorkflowPushStepParam                     `json:",omitzero,inline"`
-	OfWorkflowEmailStep           *WorkflowEmailStepParam                    `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam                    `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam                    `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam                    `json:",omitzero,inline"`
-	OfWorkflowUpdateDataStep      *WorkflowStepWorkflowUpdateDataStepParam   `json:",omitzero,inline"`
-	OfWorkflowUpdateObjectStep    *WorkflowStepWorkflowUpdateObjectStepParam `json:",omitzero,inline"`
-	OfWorkflowUpdateTenantStep    *WorkflowStepWorkflowUpdateTenantStepParam `json:",omitzero,inline"`
-	OfWorkflowUpdateUserStep      *WorkflowStepWorkflowUpdateUserStepParam   `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam                 `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam                   `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam          `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowWebhookStepParam         `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam       `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowChatStepParam            `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowSMSStepParam             `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowPushStepParam            `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowEmailStepParam           `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
+	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam      `json:",omitzero,inline"`
+	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam    `json:",omitzero,inline"`
+	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam    `json:",omitzero,inline"`
+	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam      `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
+	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam    `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -2753,6 +2612,7 @@ func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfWorkflowUpdateUserStep,
 		u.OfWorkflowThrottleStep,
 		u.OfWorkflowBranchStep,
+		u.OfWorkflowRandomCohortStep,
 		u.OfWorkflowTriggerWorkflowStep)
 }
 func (u *WorkflowStepUnionParam) UnmarshalJSON(data []byte) error {
@@ -2790,6 +2650,8 @@ func (u *WorkflowStepUnionParam) asAny() any {
 		return u.OfWorkflowThrottleStep
 	} else if !param.IsOmitted(u.OfWorkflowBranchStep) {
 		return u.OfWorkflowBranchStep
+	} else if !param.IsOmitted(u.OfWorkflowRandomCohortStep) {
+		return u.OfWorkflowRandomCohortStep
 	} else if !param.IsOmitted(u.OfWorkflowTriggerWorkflowStep) {
 		return u.OfWorkflowTriggerWorkflowStep
 	}
@@ -2800,6 +2662,22 @@ func (u *WorkflowStepUnionParam) asAny() any {
 func (u WorkflowStepUnionParam) GetBranches() []WorkflowBranchStepBranchParam {
 	if vt := u.OfWorkflowBranchStep; vt != nil {
 		return vt.Branches
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepUnionParam) GetCohortBranches() []any {
+	if vt := u.OfWorkflowRandomCohortStep; vt != nil {
+		return vt.CohortBranches
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepUnionParam) GetCohortKey() *string {
+	if vt := u.OfWorkflowRandomCohortStep; vt != nil && vt.CohortKey.Valid() {
+		return &vt.CohortKey.Value
 	}
 	return nil
 }
@@ -2835,6 +2713,8 @@ func (u WorkflowStepUnionParam) GetRef() *string {
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowBranchStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil {
 		return (*string)(&vt.Ref)
@@ -2873,6 +2753,8 @@ func (u WorkflowStepUnionParam) GetType() *string {
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowBranchStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil {
 		return (*string)(&vt.Type)
@@ -2966,6 +2848,8 @@ func (u WorkflowStepUnionParam) GetDescription() *string {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowBranchStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	}
@@ -3003,6 +2887,8 @@ func (u WorkflowStepUnionParam) GetName() *string {
 	} else if vt := u.OfWorkflowThrottleStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowBranchStep; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfWorkflowRandomCohortStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowTriggerWorkflowStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
@@ -3497,11 +3383,10 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 
 // Can have the runtime types [*WorkflowDelayStepSettingsParam],
 // [*WorkflowBatchStepSettingsParam], [*RequestTemplateParam],
-// [*WorkflowStepWorkflowUpdateDataStepSettingsParam],
-// [*WorkflowStepWorkflowUpdateObjectStepSettingsParam],
-// [*WorkflowStepWorkflowUpdateTenantStepSettingsParam],
-// [*WorkflowStepWorkflowUpdateUserStepSettingsParam],
-// [*WorkflowThrottleStepSettingsParam],
+// [*WorkflowUpdateDataStepSettingsParam],
+// [*WorkflowUpdateObjectStepSettingsParam],
+// [*WorkflowUpdateTenantStepSettingsParam],
+// [*WorkflowUpdateUserStepSettingsParam], [*WorkflowThrottleStepSettingsParam],
 // [*WorkflowTriggerWorkflowStepSettingsParam]
 type workflowStepUnionParamSettings struct{ any }
 
@@ -3511,10 +3396,10 @@ type workflowStepUnionParamSettings struct{ any }
 //	case *knockmapi.WorkflowDelayStepSettingsParam:
 //	case *knockmapi.WorkflowBatchStepSettingsParam:
 //	case *knockmapi.RequestTemplateParam:
-//	case *knockmapi.WorkflowStepWorkflowUpdateDataStepSettingsParam:
-//	case *knockmapi.WorkflowStepWorkflowUpdateObjectStepSettingsParam:
-//	case *knockmapi.WorkflowStepWorkflowUpdateTenantStepSettingsParam:
-//	case *knockmapi.WorkflowStepWorkflowUpdateUserStepSettingsParam:
+//	case *knockmapi.WorkflowUpdateDataStepSettingsParam:
+//	case *knockmapi.WorkflowUpdateObjectStepSettingsParam:
+//	case *knockmapi.WorkflowUpdateTenantStepSettingsParam:
+//	case *knockmapi.WorkflowUpdateUserStepSettingsParam:
 //	case *knockmapi.WorkflowThrottleStepSettingsParam:
 //	case *knockmapi.WorkflowTriggerWorkflowStepSettingsParam:
 //	default:
@@ -3750,7 +3635,7 @@ func (u workflowStepUnionParamSettings) GetWorkflowKey() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetData() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowUpdateDataStepSettingsParam:
+	case *WorkflowUpdateDataStepSettingsParam:
 		return (*string)(&vt.Data)
 	case *WorkflowTriggerWorkflowStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.Data)
@@ -3761,11 +3646,11 @@ func (u workflowStepUnionParamSettings) GetData() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetRecipientGid() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowUpdateObjectStepSettingsParam:
+	case *WorkflowUpdateObjectStepSettingsParam:
 		return (*string)(&vt.RecipientGid)
-	case *WorkflowStepWorkflowUpdateTenantStepSettingsParam:
+	case *WorkflowUpdateTenantStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.RecipientGid)
-	case *WorkflowStepWorkflowUpdateUserStepSettingsParam:
+	case *WorkflowUpdateUserStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.RecipientGid)
 	}
 	return nil
@@ -3774,11 +3659,11 @@ func (u workflowStepUnionParamSettings) GetRecipientGid() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetUpdateProperties() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowUpdateObjectStepSettingsParam:
+	case *WorkflowUpdateObjectStepSettingsParam:
 		return (*string)(&vt.UpdateProperties)
-	case *WorkflowStepWorkflowUpdateTenantStepSettingsParam:
+	case *WorkflowUpdateTenantStepSettingsParam:
 		return (*string)(&vt.UpdateProperties)
-	case *WorkflowStepWorkflowUpdateUserStepSettingsParam:
+	case *WorkflowUpdateUserStepSettingsParam:
 		return (*string)(&vt.UpdateProperties)
 	}
 	return nil
@@ -3787,263 +3672,12 @@ func (u workflowStepUnionParamSettings) GetUpdateProperties() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetRecipientMode() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowUpdateTenantStepSettingsParam:
+	case *WorkflowUpdateTenantStepSettingsParam:
 		return (*string)(&vt.RecipientMode)
-	case *WorkflowStepWorkflowUpdateUserStepSettingsParam:
+	case *WorkflowUpdateUserStepSettingsParam:
 		return (*string)(&vt.RecipientMode)
 	}
 	return nil
-}
-
-// An update data function step. Merges data into the workflow's `data` scope for
-// use in subsequent steps.
-//
-// The properties Ref, Settings, Type are required.
-type WorkflowStepWorkflowUpdateDataStepParam struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update data step.
-	Settings WorkflowStepWorkflowUpdateDataStepSettingsParam `json:"settings,omitzero" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_data".
-	Type string `json:"type,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateDataStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateDataStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateDataStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateDataStepParam](
-		"type", "update_data",
-	)
-}
-
-// The settings for the update data step.
-//
-// The property Data is required.
-type WorkflowStepWorkflowUpdateDataStepSettingsParam struct {
-	// A JSON string or Liquid template that evaluates to the data to merge into the
-	// workflow's data scope.
-	Data string `json:"data" api:"required"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateDataStepSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateDataStepSettingsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateDataStepSettingsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An update object step. Updates properties of a specific object referenced in the
-// workflow.
-//
-// The properties Ref, Settings, Type are required.
-type WorkflowStepWorkflowUpdateObjectStepParam struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update object step.
-	Settings WorkflowStepWorkflowUpdateObjectStepSettingsParam `json:"settings,omitzero" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_object".
-	Type string `json:"type,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateObjectStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateObjectStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateObjectStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateObjectStepParam](
-		"type", "update_object",
-	)
-}
-
-// The settings for the update object step.
-//
-// The properties RecipientGid, UpdateProperties are required.
-type WorkflowStepWorkflowUpdateObjectStepSettingsParam struct {
-	// The global identifier (GID) of the object to update. Format:
-	// gid://Object/{collection}/{id}
-	RecipientGid string `json:"recipient_gid" api:"required"`
-	// A JSON string or Liquid template that evaluates to the properties to update on
-	// the object.
-	UpdateProperties string `json:"update_properties" api:"required"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateObjectStepSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateObjectStepSettingsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateObjectStepSettingsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An update tenant step. Updates properties of a specific tenant referenced in the
-// workflow.
-//
-// The properties Ref, Settings, Type are required.
-type WorkflowStepWorkflowUpdateTenantStepParam struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update tenant step.
-	Settings WorkflowStepWorkflowUpdateTenantStepSettingsParam `json:"settings,omitzero" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_tenant".
-	Type string `json:"type,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateTenantStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateTenantStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateTenantStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateTenantStepParam](
-		"type", "update_tenant",
-	)
-}
-
-// The settings for the update tenant step.
-//
-// The properties RecipientMode, UpdateProperties are required.
-type WorkflowStepWorkflowUpdateTenantStepSettingsParam struct {
-	// The recipient mode determining how the tenant is selected. 'current' uses the
-	// workflow's current tenant. 'reference' uses a specific tenant ID.
-	//
-	// Any of "current", "reference".
-	RecipientMode string `json:"recipient_mode,omitzero" api:"required"`
-	// A JSON string or Liquid template that evaluates to the properties to update on
-	// the tenant.
-	UpdateProperties string `json:"update_properties" api:"required"`
-	// The global identifier (GID) of the tenant to update. Required when
-	// recipient_mode is 'reference'. Format: gid://Object/$tenants/{id}
-	RecipientGid param.Opt[string] `json:"recipient_gid,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateTenantStepSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateTenantStepSettingsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateTenantStepSettingsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateTenantStepSettingsParam](
-		"recipient_mode", "current", "reference",
-	)
-}
-
-// An update user step. Updates properties of a specific user referenced in the
-// workflow.
-//
-// The properties Ref, Settings, Type are required.
-type WorkflowStepWorkflowUpdateUserStepParam struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the update user step.
-	Settings WorkflowStepWorkflowUpdateUserStepSettingsParam `json:"settings,omitzero" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "update_user".
-	Type string `json:"type,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateUserStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateUserStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateUserStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateUserStepParam](
-		"type", "update_user",
-	)
-}
-
-// The settings for the update user step.
-//
-// The properties RecipientMode, UpdateProperties are required.
-type WorkflowStepWorkflowUpdateUserStepSettingsParam struct {
-	// The recipient mode determining how the user is selected. 'current' uses the
-	// workflow's current user. 'reference' uses a specific user ID.
-	//
-	// Any of "current", "reference".
-	RecipientMode string `json:"recipient_mode,omitzero" api:"required"`
-	// A JSON string or Liquid template that evaluates to the properties to update on
-	// the user.
-	UpdateProperties string `json:"update_properties" api:"required"`
-	// The global identifier (GID) of the user to update. Required when recipient_mode
-	// is 'reference'. Format: gid://Object/$users/{id}
-	RecipientGid param.Opt[string] `json:"recipient_gid,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowUpdateUserStepSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowUpdateUserStepSettingsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowUpdateUserStepSettingsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowUpdateUserStepSettingsParam](
-		"recipient_mode", "current", "reference",
-	)
 }
 
 // A throttle function step. Read more in the
@@ -4325,6 +3959,547 @@ func (r *WorkflowTriggerWorkflowStepSettingsParam) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// An update data function step. Merges data into the workflow's `data` scope for
+// use in subsequent steps.
+type WorkflowUpdateDataStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update data step.
+	Settings WorkflowUpdateDataStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_data".
+	Type WorkflowUpdateDataStepType `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateDataStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateDataStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowUpdateDataStep to a WorkflowUpdateDataStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowUpdateDataStepParam.Overrides()
+func (r WorkflowUpdateDataStep) ToParam() WorkflowUpdateDataStepParam {
+	return param.Override[WorkflowUpdateDataStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The settings for the update data step.
+type WorkflowUpdateDataStepSettings struct {
+	// A JSON string or Liquid template that evaluates to the data to merge into the
+	// workflow's data scope.
+	Data string `json:"data" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateDataStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateDataStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of the workflow step.
+type WorkflowUpdateDataStepType string
+
+const (
+	WorkflowUpdateDataStepTypeUpdateData WorkflowUpdateDataStepType = "update_data"
+)
+
+// An update data function step. Merges data into the workflow's `data` scope for
+// use in subsequent steps.
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowUpdateDataStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update data step.
+	Settings WorkflowUpdateDataStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_data".
+	Type WorkflowUpdateDataStepType `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpdateDataStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateDataStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateDataStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the update data step.
+//
+// The property Data is required.
+type WorkflowUpdateDataStepSettingsParam struct {
+	// A JSON string or Liquid template that evaluates to the data to merge into the
+	// workflow's data scope.
+	Data string `json:"data" api:"required"`
+	paramObj
+}
+
+func (r WorkflowUpdateDataStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateDataStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateDataStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An update object step. Updates properties of a specific object referenced in the
+// workflow.
+type WorkflowUpdateObjectStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update object step.
+	Settings WorkflowUpdateObjectStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_object".
+	Type WorkflowUpdateObjectStepType `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateObjectStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateObjectStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowUpdateObjectStep to a
+// WorkflowUpdateObjectStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowUpdateObjectStepParam.Overrides()
+func (r WorkflowUpdateObjectStep) ToParam() WorkflowUpdateObjectStepParam {
+	return param.Override[WorkflowUpdateObjectStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The settings for the update object step.
+type WorkflowUpdateObjectStepSettings struct {
+	// The global identifier (GID) of the object to update. Format:
+	// gid://Object/{collection}/{id}
+	RecipientGid string `json:"recipient_gid" api:"required"`
+	// A JSON string or Liquid template that evaluates to the properties to update on
+	// the object.
+	UpdateProperties string `json:"update_properties" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RecipientGid     respjson.Field
+		UpdateProperties respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateObjectStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateObjectStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of the workflow step.
+type WorkflowUpdateObjectStepType string
+
+const (
+	WorkflowUpdateObjectStepTypeUpdateObject WorkflowUpdateObjectStepType = "update_object"
+)
+
+// An update object step. Updates properties of a specific object referenced in the
+// workflow.
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowUpdateObjectStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update object step.
+	Settings WorkflowUpdateObjectStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_object".
+	Type WorkflowUpdateObjectStepType `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpdateObjectStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateObjectStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateObjectStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the update object step.
+//
+// The properties RecipientGid, UpdateProperties are required.
+type WorkflowUpdateObjectStepSettingsParam struct {
+	// The global identifier (GID) of the object to update. Format:
+	// gid://Object/{collection}/{id}
+	RecipientGid string `json:"recipient_gid" api:"required"`
+	// A JSON string or Liquid template that evaluates to the properties to update on
+	// the object.
+	UpdateProperties string `json:"update_properties" api:"required"`
+	paramObj
+}
+
+func (r WorkflowUpdateObjectStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateObjectStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateObjectStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An update tenant step. Updates properties of a specific tenant referenced in the
+// workflow.
+type WorkflowUpdateTenantStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update tenant step.
+	Settings WorkflowUpdateTenantStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_tenant".
+	Type WorkflowUpdateTenantStepType `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateTenantStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateTenantStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowUpdateTenantStep to a
+// WorkflowUpdateTenantStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowUpdateTenantStepParam.Overrides()
+func (r WorkflowUpdateTenantStep) ToParam() WorkflowUpdateTenantStepParam {
+	return param.Override[WorkflowUpdateTenantStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The settings for the update tenant step.
+type WorkflowUpdateTenantStepSettings struct {
+	// The recipient mode determining how the tenant is selected. 'current' uses the
+	// workflow's current tenant. 'reference' uses a specific tenant ID.
+	//
+	// Any of "current", "reference".
+	RecipientMode string `json:"recipient_mode" api:"required"`
+	// A JSON string or Liquid template that evaluates to the properties to update on
+	// the tenant.
+	UpdateProperties string `json:"update_properties" api:"required"`
+	// The global identifier (GID) of the tenant to update. Required when
+	// recipient_mode is 'reference'. Format: gid://Object/$tenants/{id}
+	RecipientGid string `json:"recipient_gid" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RecipientMode    respjson.Field
+		UpdateProperties respjson.Field
+		RecipientGid     respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateTenantStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateTenantStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of the workflow step.
+type WorkflowUpdateTenantStepType string
+
+const (
+	WorkflowUpdateTenantStepTypeUpdateTenant WorkflowUpdateTenantStepType = "update_tenant"
+)
+
+// An update tenant step. Updates properties of a specific tenant referenced in the
+// workflow.
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowUpdateTenantStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update tenant step.
+	Settings WorkflowUpdateTenantStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_tenant".
+	Type WorkflowUpdateTenantStepType `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpdateTenantStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateTenantStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateTenantStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the update tenant step.
+//
+// The properties RecipientMode, UpdateProperties are required.
+type WorkflowUpdateTenantStepSettingsParam struct {
+	// The recipient mode determining how the tenant is selected. 'current' uses the
+	// workflow's current tenant. 'reference' uses a specific tenant ID.
+	//
+	// Any of "current", "reference".
+	RecipientMode string `json:"recipient_mode,omitzero" api:"required"`
+	// A JSON string or Liquid template that evaluates to the properties to update on
+	// the tenant.
+	UpdateProperties string `json:"update_properties" api:"required"`
+	// The global identifier (GID) of the tenant to update. Required when
+	// recipient_mode is 'reference'. Format: gid://Object/$tenants/{id}
+	RecipientGid param.Opt[string] `json:"recipient_gid,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpdateTenantStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateTenantStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateTenantStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowUpdateTenantStepSettingsParam](
+		"recipient_mode", "current", "reference",
+	)
+}
+
+// An update user step. Updates properties of a specific user referenced in the
+// workflow.
+type WorkflowUpdateUserStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update user step.
+	Settings WorkflowUpdateUserStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_user".
+	Type WorkflowUpdateUserStepType `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateUserStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateUserStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowUpdateUserStep to a WorkflowUpdateUserStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowUpdateUserStepParam.Overrides()
+func (r WorkflowUpdateUserStep) ToParam() WorkflowUpdateUserStepParam {
+	return param.Override[WorkflowUpdateUserStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The settings for the update user step.
+type WorkflowUpdateUserStepSettings struct {
+	// The recipient mode determining how the user is selected. 'current' uses the
+	// workflow's current user. 'reference' uses a specific user ID.
+	//
+	// Any of "current", "reference".
+	RecipientMode string `json:"recipient_mode" api:"required"`
+	// A JSON string or Liquid template that evaluates to the properties to update on
+	// the user.
+	UpdateProperties string `json:"update_properties" api:"required"`
+	// The global identifier (GID) of the user to update. Required when recipient_mode
+	// is 'reference'. Format: gid://Object/$users/{id}
+	RecipientGid string `json:"recipient_gid" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		RecipientMode    respjson.Field
+		UpdateProperties respjson.Field
+		RecipientGid     respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUpdateUserStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUpdateUserStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of the workflow step.
+type WorkflowUpdateUserStepType string
+
+const (
+	WorkflowUpdateUserStepTypeUpdateUser WorkflowUpdateUserStepType = "update_user"
+)
+
+// An update user step. Updates properties of a specific user referenced in the
+// workflow.
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowUpdateUserStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the update user step.
+	Settings WorkflowUpdateUserStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "update_user".
+	Type WorkflowUpdateUserStepType `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpdateUserStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateUserStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateUserStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the update user step.
+//
+// The properties RecipientMode, UpdateProperties are required.
+type WorkflowUpdateUserStepSettingsParam struct {
+	// The recipient mode determining how the user is selected. 'current' uses the
+	// workflow's current user. 'reference' uses a specific user ID.
+	//
+	// Any of "current", "reference".
+	RecipientMode string `json:"recipient_mode,omitzero" api:"required"`
+	// A JSON string or Liquid template that evaluates to the properties to update on
+	// the user.
+	UpdateProperties string `json:"update_properties" api:"required"`
+	// The global identifier (GID) of the user to update. Required when recipient_mode
+	// is 'reference'. Format: gid://Object/$users/{id}
+	RecipientGid param.Opt[string] `json:"recipient_gid,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpdateUserStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpdateUserStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpdateUserStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowUpdateUserStepSettingsParam](
+		"recipient_mode", "current", "reference",
+	)
+}
+
 // A webhook step within a workflow to send an HTTP request to a generic channel.
 // Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
@@ -4487,7 +4662,7 @@ type WorkflowGetResponse struct {
 	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
 	// Information about a user within the Knock dashboard. Not to be confused with an
 	// external user (recipient) of a workflow.
-	CreatedBy WorkflowGetResponseCreatedBy `json:"created_by" api:"nullable"`
+	CreatedBy MemberUser `json:"created_by" api:"nullable"`
 	// The timestamp of when the workflow was deleted. (read-only).
 	DeletedAt time.Time `json:"deleted_at" format:"date-time"`
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
@@ -4509,7 +4684,7 @@ type WorkflowGetResponse struct {
 	TriggerFrequency WorkflowGetResponseTriggerFrequency `json:"trigger_frequency"`
 	// Information about a user within the Knock dashboard. Not to be confused with an
 	// external user (recipient) of a workflow.
-	UpdatedBy WorkflowGetResponseUpdatedBy `json:"updated_by" api:"nullable"`
+	UpdatedBy MemberUser `json:"updated_by" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Active                respjson.Field
@@ -4538,40 +4713,6 @@ type WorkflowGetResponse struct {
 // Returns the unmodified JSON received from the API
 func (r WorkflowGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *WorkflowGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Information about a user within the Knock dashboard. Not to be confused with an
-// external user (recipient) of a workflow.
-type WorkflowGetResponseCreatedBy struct {
-	// The user's unique identifier.
-	ID string `json:"id" api:"required" format:"uuid"`
-	// The timestamp of when the user was created.
-	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
-	// The user's email address.
-	Email string `json:"email" api:"required" format:"email"`
-	// The timestamp of when the user was last updated.
-	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
-	// The URL of the user's avatar image.
-	AvatarURL string `json:"avatar_url" api:"nullable"`
-	// The user's display name.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		Email       respjson.Field
-		UpdatedAt   respjson.Field
-		AvatarURL   respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowGetResponseCreatedBy) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowGetResponseCreatedBy) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4609,40 +4750,6 @@ const (
 	WorkflowGetResponseTriggerFrequencyOncePerRecipient          WorkflowGetResponseTriggerFrequency = "once_per_recipient"
 	WorkflowGetResponseTriggerFrequencyOncePerRecipientPerTenant WorkflowGetResponseTriggerFrequency = "once_per_recipient_per_tenant"
 )
-
-// Information about a user within the Knock dashboard. Not to be confused with an
-// external user (recipient) of a workflow.
-type WorkflowGetResponseUpdatedBy struct {
-	// The user's unique identifier.
-	ID string `json:"id" api:"required" format:"uuid"`
-	// The timestamp of when the user was created.
-	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
-	// The user's email address.
-	Email string `json:"email" api:"required" format:"email"`
-	// The timestamp of when the user was last updated.
-	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
-	// The URL of the user's avatar image.
-	AvatarURL string `json:"avatar_url" api:"nullable"`
-	// The user's display name.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		Email       respjson.Field
-		UpdatedAt   respjson.Field
-		AvatarURL   respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowGetResponseUpdatedBy) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowGetResponseUpdatedBy) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Wraps the Workflow response under the `workflow` key.
 type WorkflowActivateResponse struct {

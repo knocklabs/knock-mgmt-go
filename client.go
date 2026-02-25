@@ -28,6 +28,7 @@ type Client struct {
 	APIKeys       APIKeyService
 	ChannelGroups ChannelGroupService
 	Channels      ChannelService
+	Members       MemberService
 	Environments  EnvironmentService
 	Variables     VariableService
 	Guides        GuideService
@@ -68,6 +69,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.APIKeys = NewAPIKeyService(opts...)
 	r.ChannelGroups = NewChannelGroupService(opts...)
 	r.Channels = NewChannelService(opts...)
+	r.Members = NewMemberService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Variables = NewVariableService(opts...)
 	r.Guides = NewGuideService(opts...)
