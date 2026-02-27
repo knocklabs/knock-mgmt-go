@@ -19,6 +19,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Workflows let you express your cross-channel notification logic.
+//
 // WorkflowStepService contains methods and other services that help with
 // interacting with the knock mgmt API.
 //

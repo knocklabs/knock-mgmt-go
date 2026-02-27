@@ -20,6 +20,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Branches in Knock are a way to isolate changes to your Knock resources.
+//
 // BranchService contains methods and other services that help with interacting
 // with the knock mgmt API.
 //

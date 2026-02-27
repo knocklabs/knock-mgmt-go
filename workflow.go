@@ -22,6 +22,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Workflows let you express your cross-channel notification logic.
+//
 // WorkflowService contains methods and other services that help with interacting
 // with the knock mgmt API.
 //
@@ -30,7 +32,8 @@ import (
 // the [NewWorkflowService] method instead.
 type WorkflowService struct {
 	Options []option.RequestOption
-	Steps   WorkflowStepService
+	// Workflows let you express your cross-channel notification logic.
+	Steps WorkflowStepService
 }
 
 // NewWorkflowService generates a new service that applies the given options to

@@ -20,6 +20,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Email layouts wrap your email templates and provide a consistent look and feel.
+//
 // EmailLayoutService contains methods and other services that help with
 // interacting with the knock mgmt API.
 //

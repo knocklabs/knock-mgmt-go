@@ -22,6 +22,9 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// A message type allows you to specify an in-app schema that defines the fields
+// available for your in-app notifications.
+//
 // MessageTypeService contains methods and other services that help with
 // interacting with the knock mgmt API.
 //

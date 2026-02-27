@@ -20,6 +20,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Translations are per-locale string files that can be used in your templates.
+//
 // TranslationService contains methods and other services that help with
 // interacting with the knock mgmt API.
 //
