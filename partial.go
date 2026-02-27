@@ -22,6 +22,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Partials allow you to reuse content across templates.
+//
 // PartialService contains methods and other services that help with interacting
 // with the knock mgmt API.
 //

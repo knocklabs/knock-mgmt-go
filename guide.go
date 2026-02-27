@@ -21,6 +21,9 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Guides let you define in-app guides that can be displayed to users based on
+// priority and other conditions.
+//
 // GuideService contains methods and other services that help with interacting with
 // the knock mgmt API.
 //

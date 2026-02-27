@@ -20,6 +20,9 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Environments are isolated instances of your account that map to your
+// infrastructure.
+//
 // EnvironmentService contains methods and other services that help with
 // interacting with the knock mgmt API.
 //

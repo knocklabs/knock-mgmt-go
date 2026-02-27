@@ -20,6 +20,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Commits are versioned changes to resources.
+//
 // CommitService contains methods and other services that help with interacting
 // with the knock mgmt API.
 //

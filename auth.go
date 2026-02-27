@@ -13,6 +13,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Resources for managing your Knock account.
+//
 // AuthService contains methods and other services that help with interacting with
 // the knock mgmt API.
 //
