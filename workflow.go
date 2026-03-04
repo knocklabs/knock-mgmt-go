@@ -2039,11 +2039,11 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 
 // WorkflowStepUnion contains all possible properties and values from
 // [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
-// [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep], [WorkflowDelayStep],
-// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowUpdateDataStep],
-// [WorkflowUpdateObjectStep], [WorkflowUpdateTenantStep],
-// [WorkflowUpdateUserStep], [WorkflowThrottleStep], [WorkflowBranchStep],
-// [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
+// [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
+// [WorkflowStepWorkflowAIAgentStep], [WorkflowDelayStep], [WorkflowBatchStep],
+// [WorkflowFetchStep], [WorkflowUpdateDataStep], [WorkflowUpdateObjectStep],
+// [WorkflowUpdateTenantStep], [WorkflowUpdateUserStep], [WorkflowThrottleStep],
+// [WorkflowBranchStep], [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepUnion struct {
@@ -2063,8 +2063,8 @@ type WorkflowStepUnion struct {
 	// This field is a union of [InAppFeedChannelSettings], [ChatChannelSettings],
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
-	// This field is a union of [WorkflowDelayStepSettings],
-	// [WorkflowBatchStepSettings], [RequestTemplate],
+	// This field is a union of [WorkflowStepWorkflowAIAgentStepSettings],
+	// [WorkflowDelayStepSettings], [WorkflowBatchStepSettings], [RequestTemplate],
 	// [WorkflowUpdateDataStepSettings], [WorkflowUpdateObjectStepSettings],
 	// [WorkflowUpdateTenantStepSettings], [WorkflowUpdateUserStepSettings],
 	// [WorkflowThrottleStepSettings], [WorkflowTriggerWorkflowStepSettings]
@@ -2121,6 +2121,11 @@ func (u WorkflowStepUnion) AsWorkflowPushStep() (v WorkflowPushStep) {
 }
 
 func (u WorkflowStepUnion) AsWorkflowEmailStep() (v WorkflowEmailStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowAIAgentStep() (v WorkflowStepWorkflowAIAgentStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2338,6 +2343,18 @@ func (r *WorkflowStepUnionChannelOverrides) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [WorkflowStepUnion].
 type WorkflowStepUnionSettings struct {
+	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	Model string `json:"model"`
+	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	RequestPrompt string `json:"request_prompt"`
+	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	ResponseType string `json:"response_type"`
+	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	HaltOnError bool `json:"halt_on_error"`
+	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	ResponseSchema string `json:"response_schema"`
+	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	WebSearchEnabled bool `json:"web_search_enabled"`
 	// This field is from variant [WorkflowDelayStepSettings].
 	DelayFor Duration `json:"delay_for"`
 	// This field is from variant [WorkflowDelayStepSettings].
@@ -2393,6 +2410,12 @@ type WorkflowStepUnionSettings struct {
 	// This field is from variant [WorkflowTriggerWorkflowStepSettings].
 	WorkflowKey string `json:"workflow_key"`
 	JSON        struct {
+		Model                     respjson.Field
+		RequestPrompt             respjson.Field
+		ResponseType              respjson.Field
+		HaltOnError               respjson.Field
+		ResponseSchema            respjson.Field
+		WebSearchEnabled          respjson.Field
 		DelayFor                  respjson.Field
 		DelayUntilFieldPath       respjson.Field
 		BatchExecutionMode        respjson.Field
@@ -2437,6 +2460,83 @@ func (r *WorkflowStepUnionSettings) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// An AI agent function step. Fetches data from an AI model and merges it into the
+// workflow's `data` scope for use in later steps. Supports Liquid templating in
+// the prompt. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/ai-agent-function).
+type WorkflowStepWorkflowAIAgentStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the AI agent step.
+	Settings WorkflowStepWorkflowAIAgentStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "ai_agent".
+	Type string `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowAIAgentStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowAIAgentStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the AI agent step.
+type WorkflowStepWorkflowAIAgentStepSettings struct {
+	// The AI model to use in `provider:model` format (e.g.
+	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
+	// documentation for a list of supported models.
+	Model string `json:"model" api:"required"`
+	// The prompt template for the AI request. Supports Liquid templating.
+	RequestPrompt string `json:"request_prompt" api:"required"`
+	// The type of response to expect from the AI model.
+	//
+	// Any of "text", "json".
+	ResponseType string `json:"response_type" api:"required"`
+	// Whether to halt the workflow if the AI fetch fails.
+	HaltOnError bool `json:"halt_on_error" api:"nullable"`
+	// A JSON schema string for structured output. Required when `response_type` is
+	// `json`. Must not be set when `response_type` is `text`.
+	ResponseSchema string `json:"response_schema" api:"nullable"`
+	// Whether to enable web search for the AI request.
+	WebSearchEnabled bool `json:"web_search_enabled" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Model            respjson.Field
+		RequestPrompt    respjson.Field
+		ResponseType     respjson.Field
+		HaltOnError      respjson.Field
+		ResponseSchema   respjson.Field
+		WebSearchEnabled respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowAIAgentStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowAIAgentStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 func WorkflowStepParamOfWorkflowWebhookStep(ref string, template WebhookTemplateParam, type_ WorkflowWebhookStepType) WorkflowStepUnionParam {
@@ -2485,6 +2585,14 @@ func WorkflowStepParamOfWorkflowEmailStep(ref string, template EmailTemplatePara
 	variant.Template = template
 	variant.Type = type_
 	return WorkflowStepUnionParam{OfWorkflowEmailStep: &variant}
+}
+
+func WorkflowStepParamOfWorkflowAIAgentStep(ref string, settings WorkflowStepWorkflowAIAgentStepSettingsParam, type_ string) WorkflowStepUnionParam {
+	var variant WorkflowStepWorkflowAIAgentStepParam
+	variant.Ref = ref
+	variant.Settings = settings
+	variant.Type = type_
+	return WorkflowStepUnionParam{OfWorkflowAIAgentStep: &variant}
 }
 
 func WorkflowStepParamOfWorkflowDelayStep(ref string, settings WorkflowDelayStepSettingsParam, type_ WorkflowDelayStepType) WorkflowStepUnionParam {
@@ -2579,23 +2687,24 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowWebhookStep         *WorkflowWebhookStepParam         `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam       `json:",omitzero,inline"`
-	OfWorkflowChatStep            *WorkflowChatStepParam            `json:",omitzero,inline"`
-	OfWorkflowSMSStep             *WorkflowSMSStepParam             `json:",omitzero,inline"`
-	OfWorkflowPushStep            *WorkflowPushStepParam            `json:",omitzero,inline"`
-	OfWorkflowEmailStep           *WorkflowEmailStepParam           `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
-	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam      `json:",omitzero,inline"`
-	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam    `json:",omitzero,inline"`
-	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam    `json:",omitzero,inline"`
-	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam      `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
-	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam    `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowWebhookStepParam             `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam           `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowChatStepParam                `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowSMSStepParam                 `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowPushStepParam                `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowEmailStepParam               `json:",omitzero,inline"`
+	OfWorkflowAIAgentStep         *WorkflowStepWorkflowAIAgentStepParam `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam               `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam               `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam               `json:",omitzero,inline"`
+	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam          `json:",omitzero,inline"`
+	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam        `json:",omitzero,inline"`
+	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam        `json:",omitzero,inline"`
+	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam          `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam            `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam              `json:",omitzero,inline"`
+	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam        `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam     `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -2606,6 +2715,7 @@ func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfWorkflowSMSStep,
 		u.OfWorkflowPushStep,
 		u.OfWorkflowEmailStep,
+		u.OfWorkflowAIAgentStep,
 		u.OfWorkflowDelayStep,
 		u.OfWorkflowBatchStep,
 		u.OfWorkflowFetchStep,
@@ -2635,6 +2745,8 @@ func (u *WorkflowStepUnionParam) asAny() any {
 		return u.OfWorkflowPushStep
 	} else if !param.IsOmitted(u.OfWorkflowEmailStep) {
 		return u.OfWorkflowEmailStep
+	} else if !param.IsOmitted(u.OfWorkflowAIAgentStep) {
+		return u.OfWorkflowAIAgentStep
 	} else if !param.IsOmitted(u.OfWorkflowDelayStep) {
 		return u.OfWorkflowDelayStep
 	} else if !param.IsOmitted(u.OfWorkflowBatchStep) {
@@ -2699,6 +2811,8 @@ func (u WorkflowStepUnionParam) GetRef() *string {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowEmailStep; vt != nil {
 		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowAIAgentStep; vt != nil {
+		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
@@ -2738,6 +2852,8 @@ func (u WorkflowStepUnionParam) GetType() *string {
 	} else if vt := u.OfWorkflowPushStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowEmailStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowAIAgentStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Type)
@@ -2833,6 +2949,8 @@ func (u WorkflowStepUnionParam) GetDescription() *string {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowEmailStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
+	} else if vt := u.OfWorkflowAIAgentStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowBatchStep; vt != nil && vt.Description.Valid() {
@@ -2872,6 +2990,8 @@ func (u WorkflowStepUnionParam) GetName() *string {
 	} else if vt := u.OfWorkflowPushStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowEmailStep; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfWorkflowAIAgentStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
@@ -3179,6 +3299,8 @@ func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowEmailStep; vt != nil {
 		return &vt.Conditions
+	} else if vt := u.OfWorkflowAIAgentStep; vt != nil {
+		return &vt.Conditions
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
@@ -3362,7 +3484,9 @@ func (u workflowStepUnionParamChannelOverrides) GetLinkTracking() *bool {
 //
 // Or use AsAny() to get the underlying value
 func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSettings) {
-	if vt := u.OfWorkflowDelayStep; vt != nil {
+	if vt := u.OfWorkflowAIAgentStep; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
 		res.any = &vt.Settings
@@ -3384,9 +3508,9 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 	return
 }
 
-// Can have the runtime types [*WorkflowDelayStepSettingsParam],
-// [*WorkflowBatchStepSettingsParam], [*RequestTemplateParam],
-// [*WorkflowUpdateDataStepSettingsParam],
+// Can have the runtime types [*WorkflowStepWorkflowAIAgentStepSettingsParam],
+// [*WorkflowDelayStepSettingsParam], [*WorkflowBatchStepSettingsParam],
+// [*RequestTemplateParam], [*WorkflowUpdateDataStepSettingsParam],
 // [*WorkflowUpdateObjectStepSettingsParam],
 // [*WorkflowUpdateTenantStepSettingsParam],
 // [*WorkflowUpdateUserStepSettingsParam], [*WorkflowThrottleStepSettingsParam],
@@ -3396,6 +3520,7 @@ type workflowStepUnionParamSettings struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *knockmapi.WorkflowStepWorkflowAIAgentStepSettingsParam:
 //	case *knockmapi.WorkflowDelayStepSettingsParam:
 //	case *knockmapi.WorkflowBatchStepSettingsParam:
 //	case *knockmapi.RequestTemplateParam:
@@ -3409,6 +3534,60 @@ type workflowStepUnionParamSettings struct{ any }
 //	    fmt.Errorf("not present")
 //	}
 func (u workflowStepUnionParamSettings) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetModel() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+		return &vt.Model
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetRequestPrompt() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+		return &vt.RequestPrompt
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetResponseType() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+		return &vt.ResponseType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetHaltOnError() *bool {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.HaltOnError)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetResponseSchema() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.ResponseSchema)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetWebSearchEnabled() *bool {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+		return paramutil.AddrIfPresent(vt.WebSearchEnabled)
+	}
+	return nil
+}
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetDelayFor() *DurationParam {
@@ -3681,6 +3860,83 @@ func (u workflowStepUnionParamSettings) GetRecipientMode() *string {
 		return (*string)(&vt.RecipientMode)
 	}
 	return nil
+}
+
+// An AI agent function step. Fetches data from an AI model and merges it into the
+// workflow's `data` scope for use in later steps. Supports Liquid templating in
+// the prompt. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/ai-agent-function).
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowStepWorkflowAIAgentStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the AI agent step.
+	Settings WorkflowStepWorkflowAIAgentStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "ai_agent".
+	Type string `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowAIAgentStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowAIAgentStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowAIAgentStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowAIAgentStepParam](
+		"type", "ai_agent",
+	)
+}
+
+// The settings for the AI agent step.
+//
+// The properties Model, RequestPrompt, ResponseType are required.
+type WorkflowStepWorkflowAIAgentStepSettingsParam struct {
+	// The AI model to use in `provider:model` format (e.g.
+	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
+	// documentation for a list of supported models.
+	Model string `json:"model" api:"required"`
+	// The prompt template for the AI request. Supports Liquid templating.
+	RequestPrompt string `json:"request_prompt" api:"required"`
+	// The type of response to expect from the AI model.
+	//
+	// Any of "text", "json".
+	ResponseType string `json:"response_type,omitzero" api:"required"`
+	// Whether to halt the workflow if the AI fetch fails.
+	HaltOnError param.Opt[bool] `json:"halt_on_error,omitzero"`
+	// A JSON schema string for structured output. Required when `response_type` is
+	// `json`. Must not be set when `response_type` is `text`.
+	ResponseSchema param.Opt[string] `json:"response_schema,omitzero"`
+	// Whether to enable web search for the AI request.
+	WebSearchEnabled param.Opt[bool] `json:"web_search_enabled,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowAIAgentStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowAIAgentStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowAIAgentStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowAIAgentStepSettingsParam](
+		"response_type", "text", "json",
+	)
 }
 
 // A throttle function step. Read more in the
