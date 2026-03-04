@@ -749,6 +749,170 @@ const (
 	WorkflowTriggerFrequencyOncePerRecipientPerTenant WorkflowTriggerFrequency = "once_per_recipient_per_tenant"
 )
 
+// An AI agent function step. Fetches data from an AI model and merges it into the
+// workflow's `data` scope for use in later steps. Supports Liquid templating in
+// the prompt. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/ai-agent-function).
+type WorkflowAIAgentStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the AI agent step.
+	Settings WorkflowAIAgentStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "ai_agent".
+	Type WorkflowAIAgentStepType `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowAIAgentStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowAIAgentStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowAIAgentStep to a WorkflowAIAgentStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowAIAgentStepParam.Overrides()
+func (r WorkflowAIAgentStep) ToParam() WorkflowAIAgentStepParam {
+	return param.Override[WorkflowAIAgentStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The settings for the AI agent step.
+type WorkflowAIAgentStepSettings struct {
+	// The AI model to use in `provider:model` format (e.g.
+	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
+	// documentation for a list of supported models.
+	Model string `json:"model" api:"required"`
+	// The prompt template for the AI request. Supports Liquid templating.
+	RequestPrompt string `json:"request_prompt" api:"required"`
+	// The type of response to expect from the AI model.
+	//
+	// Any of "text", "json".
+	ResponseType string `json:"response_type" api:"required"`
+	// Whether to halt the workflow if the AI fetch fails.
+	HaltOnError bool `json:"halt_on_error" api:"nullable"`
+	// A JSON schema string for structured output. Required when `response_type` is
+	// `json`. Must not be set when `response_type` is `text`.
+	ResponseSchema string `json:"response_schema" api:"nullable"`
+	// Whether to enable web search for the AI request.
+	WebSearchEnabled bool `json:"web_search_enabled" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Model            respjson.Field
+		RequestPrompt    respjson.Field
+		ResponseType     respjson.Field
+		HaltOnError      respjson.Field
+		ResponseSchema   respjson.Field
+		WebSearchEnabled respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowAIAgentStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowAIAgentStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of the workflow step.
+type WorkflowAIAgentStepType string
+
+const (
+	WorkflowAIAgentStepTypeAIAgent WorkflowAIAgentStepType = "ai_agent"
+)
+
+// An AI agent function step. Fetches data from an AI model and merges it into the
+// workflow's `data` scope for use in later steps. Supports Liquid templating in
+// the prompt. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/ai-agent-function).
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowAIAgentStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the AI agent step.
+	Settings WorkflowAIAgentStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "ai_agent".
+	Type WorkflowAIAgentStepType `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowAIAgentStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowAIAgentStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowAIAgentStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the AI agent step.
+//
+// The properties Model, RequestPrompt, ResponseType are required.
+type WorkflowAIAgentStepSettingsParam struct {
+	// The AI model to use in `provider:model` format (e.g.
+	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
+	// documentation for a list of supported models.
+	Model string `json:"model" api:"required"`
+	// The prompt template for the AI request. Supports Liquid templating.
+	RequestPrompt string `json:"request_prompt" api:"required"`
+	// The type of response to expect from the AI model.
+	//
+	// Any of "text", "json".
+	ResponseType string `json:"response_type,omitzero" api:"required"`
+	// Whether to halt the workflow if the AI fetch fails.
+	HaltOnError param.Opt[bool] `json:"halt_on_error,omitzero"`
+	// A JSON schema string for structured output. Required when `response_type` is
+	// `json`. Must not be set when `response_type` is `text`.
+	ResponseSchema param.Opt[string] `json:"response_schema,omitzero"`
+	// Whether to enable web search for the AI request.
+	WebSearchEnabled param.Opt[bool] `json:"web_search_enabled,omitzero"`
+	paramObj
+}
+
+func (r WorkflowAIAgentStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowAIAgentStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowAIAgentStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowAIAgentStepSettingsParam](
+		"response_type", "text", "json",
+	)
+}
+
 // A batch function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/batch-function).
 type WorkflowBatchStep struct {
@@ -2040,7 +2204,7 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnion contains all possible properties and values from
 // [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
 // [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
-// [WorkflowStepWorkflowAIAgentStep], [WorkflowDelayStep], [WorkflowBatchStep],
+// [WorkflowAIAgentStep], [WorkflowDelayStep], [WorkflowBatchStep],
 // [WorkflowFetchStep], [WorkflowUpdateDataStep], [WorkflowUpdateObjectStep],
 // [WorkflowUpdateTenantStep], [WorkflowUpdateUserStep], [WorkflowThrottleStep],
 // [WorkflowBranchStep], [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
@@ -2063,7 +2227,7 @@ type WorkflowStepUnion struct {
 	// This field is a union of [InAppFeedChannelSettings], [ChatChannelSettings],
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
-	// This field is a union of [WorkflowStepWorkflowAIAgentStepSettings],
+	// This field is a union of [WorkflowAIAgentStepSettings],
 	// [WorkflowDelayStepSettings], [WorkflowBatchStepSettings], [RequestTemplate],
 	// [WorkflowUpdateDataStepSettings], [WorkflowUpdateObjectStepSettings],
 	// [WorkflowUpdateTenantStepSettings], [WorkflowUpdateUserStepSettings],
@@ -2125,7 +2289,7 @@ func (u WorkflowStepUnion) AsWorkflowEmailStep() (v WorkflowEmailStep) {
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowAIAgentStep() (v WorkflowStepWorkflowAIAgentStep) {
+func (u WorkflowStepUnion) AsWorkflowAIAgentStep() (v WorkflowAIAgentStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2343,17 +2507,17 @@ func (r *WorkflowStepUnionChannelOverrides) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [WorkflowStepUnion].
 type WorkflowStepUnionSettings struct {
-	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	// This field is from variant [WorkflowAIAgentStepSettings].
 	Model string `json:"model"`
-	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	// This field is from variant [WorkflowAIAgentStepSettings].
 	RequestPrompt string `json:"request_prompt"`
-	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	// This field is from variant [WorkflowAIAgentStepSettings].
 	ResponseType string `json:"response_type"`
-	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	// This field is from variant [WorkflowAIAgentStepSettings].
 	HaltOnError bool `json:"halt_on_error"`
-	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	// This field is from variant [WorkflowAIAgentStepSettings].
 	ResponseSchema string `json:"response_schema"`
-	// This field is from variant [WorkflowStepWorkflowAIAgentStepSettings].
+	// This field is from variant [WorkflowAIAgentStepSettings].
 	WebSearchEnabled bool `json:"web_search_enabled"`
 	// This field is from variant [WorkflowDelayStepSettings].
 	DelayFor Duration `json:"delay_for"`
@@ -2462,83 +2626,6 @@ func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-// An AI agent function step. Fetches data from an AI model and merges it into the
-// workflow's `data` scope for use in later steps. Supports Liquid templating in
-// the prompt. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/ai-agent-function).
-type WorkflowStepWorkflowAIAgentStep struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the AI agent step.
-	Settings WorkflowStepWorkflowAIAgentStepSettings `json:"settings" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "ai_agent".
-	Type string `json:"type" api:"required"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Ref         respjson.Field
-		Settings    respjson.Field
-		Type        respjson.Field
-		Conditions  respjson.Field
-		Description respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowAIAgentStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowAIAgentStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The settings for the AI agent step.
-type WorkflowStepWorkflowAIAgentStepSettings struct {
-	// The AI model to use in `provider:model` format (e.g.
-	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
-	// documentation for a list of supported models.
-	Model string `json:"model" api:"required"`
-	// The prompt template for the AI request. Supports Liquid templating.
-	RequestPrompt string `json:"request_prompt" api:"required"`
-	// The type of response to expect from the AI model.
-	//
-	// Any of "text", "json".
-	ResponseType string `json:"response_type" api:"required"`
-	// Whether to halt the workflow if the AI fetch fails.
-	HaltOnError bool `json:"halt_on_error" api:"nullable"`
-	// A JSON schema string for structured output. Required when `response_type` is
-	// `json`. Must not be set when `response_type` is `text`.
-	ResponseSchema string `json:"response_schema" api:"nullable"`
-	// Whether to enable web search for the AI request.
-	WebSearchEnabled bool `json:"web_search_enabled" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Model            respjson.Field
-		RequestPrompt    respjson.Field
-		ResponseType     respjson.Field
-		HaltOnError      respjson.Field
-		ResponseSchema   respjson.Field
-		WebSearchEnabled respjson.Field
-		ExtraFields      map[string]respjson.Field
-		raw              string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowAIAgentStepSettings) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowAIAgentStepSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 func WorkflowStepParamOfWorkflowWebhookStep(ref string, template WebhookTemplateParam, type_ WorkflowWebhookStepType) WorkflowStepUnionParam {
 	var variant WorkflowWebhookStepParam
 	variant.Ref = ref
@@ -2587,8 +2674,8 @@ func WorkflowStepParamOfWorkflowEmailStep(ref string, template EmailTemplatePara
 	return WorkflowStepUnionParam{OfWorkflowEmailStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowAIAgentStep(ref string, settings WorkflowStepWorkflowAIAgentStepSettingsParam, type_ string) WorkflowStepUnionParam {
-	var variant WorkflowStepWorkflowAIAgentStepParam
+func WorkflowStepParamOfWorkflowAIAgentStep(ref string, settings WorkflowAIAgentStepSettingsParam, type_ WorkflowAIAgentStepType) WorkflowStepUnionParam {
+	var variant WorkflowAIAgentStepParam
 	variant.Ref = ref
 	variant.Settings = settings
 	variant.Type = type_
@@ -2687,24 +2774,24 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowWebhookStep         *WorkflowWebhookStepParam             `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam           `json:",omitzero,inline"`
-	OfWorkflowChatStep            *WorkflowChatStepParam                `json:",omitzero,inline"`
-	OfWorkflowSMSStep             *WorkflowSMSStepParam                 `json:",omitzero,inline"`
-	OfWorkflowPushStep            *WorkflowPushStepParam                `json:",omitzero,inline"`
-	OfWorkflowEmailStep           *WorkflowEmailStepParam               `json:",omitzero,inline"`
-	OfWorkflowAIAgentStep         *WorkflowStepWorkflowAIAgentStepParam `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam               `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam               `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam               `json:",omitzero,inline"`
-	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam          `json:",omitzero,inline"`
-	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam        `json:",omitzero,inline"`
-	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam        `json:",omitzero,inline"`
-	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam          `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam            `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam              `json:",omitzero,inline"`
-	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam        `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam     `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowWebhookStepParam         `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam       `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowChatStepParam            `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowSMSStepParam             `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowPushStepParam            `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowEmailStepParam           `json:",omitzero,inline"`
+	OfWorkflowAIAgentStep         *WorkflowAIAgentStepParam         `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
+	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam      `json:",omitzero,inline"`
+	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam    `json:",omitzero,inline"`
+	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam    `json:",omitzero,inline"`
+	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam      `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
+	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam    `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -3508,7 +3595,7 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 	return
 }
 
-// Can have the runtime types [*WorkflowStepWorkflowAIAgentStepSettingsParam],
+// Can have the runtime types [*WorkflowAIAgentStepSettingsParam],
 // [*WorkflowDelayStepSettingsParam], [*WorkflowBatchStepSettingsParam],
 // [*RequestTemplateParam], [*WorkflowUpdateDataStepSettingsParam],
 // [*WorkflowUpdateObjectStepSettingsParam],
@@ -3520,7 +3607,7 @@ type workflowStepUnionParamSettings struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *knockmapi.WorkflowStepWorkflowAIAgentStepSettingsParam:
+//	case *knockmapi.WorkflowAIAgentStepSettingsParam:
 //	case *knockmapi.WorkflowDelayStepSettingsParam:
 //	case *knockmapi.WorkflowBatchStepSettingsParam:
 //	case *knockmapi.RequestTemplateParam:
@@ -3538,7 +3625,7 @@ func (u workflowStepUnionParamSettings) AsAny() any { return u.any }
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetModel() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+	case *WorkflowAIAgentStepSettingsParam:
 		return &vt.Model
 	}
 	return nil
@@ -3547,7 +3634,7 @@ func (u workflowStepUnionParamSettings) GetModel() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetRequestPrompt() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+	case *WorkflowAIAgentStepSettingsParam:
 		return &vt.RequestPrompt
 	}
 	return nil
@@ -3556,7 +3643,7 @@ func (u workflowStepUnionParamSettings) GetRequestPrompt() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetResponseType() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+	case *WorkflowAIAgentStepSettingsParam:
 		return &vt.ResponseType
 	}
 	return nil
@@ -3565,7 +3652,7 @@ func (u workflowStepUnionParamSettings) GetResponseType() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetHaltOnError() *bool {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+	case *WorkflowAIAgentStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.HaltOnError)
 	}
 	return nil
@@ -3574,7 +3661,7 @@ func (u workflowStepUnionParamSettings) GetHaltOnError() *bool {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetResponseSchema() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+	case *WorkflowAIAgentStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.ResponseSchema)
 	}
 	return nil
@@ -3583,7 +3670,7 @@ func (u workflowStepUnionParamSettings) GetResponseSchema() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetWebSearchEnabled() *bool {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowAIAgentStepSettingsParam:
+	case *WorkflowAIAgentStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.WebSearchEnabled)
 	}
 	return nil
@@ -3860,83 +3947,6 @@ func (u workflowStepUnionParamSettings) GetRecipientMode() *string {
 		return (*string)(&vt.RecipientMode)
 	}
 	return nil
-}
-
-// An AI agent function step. Fetches data from an AI model and merges it into the
-// workflow's `data` scope for use in later steps. Supports Liquid templating in
-// the prompt. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/ai-agent-function).
-//
-// The properties Ref, Settings, Type are required.
-type WorkflowStepWorkflowAIAgentStepParam struct {
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The settings for the AI agent step.
-	Settings WorkflowStepWorkflowAIAgentStepSettingsParam `json:"settings,omitzero" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "ai_agent".
-	Type string `json:"type,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowAIAgentStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowAIAgentStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowAIAgentStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowAIAgentStepParam](
-		"type", "ai_agent",
-	)
-}
-
-// The settings for the AI agent step.
-//
-// The properties Model, RequestPrompt, ResponseType are required.
-type WorkflowStepWorkflowAIAgentStepSettingsParam struct {
-	// The AI model to use in `provider:model` format (e.g.
-	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
-	// documentation for a list of supported models.
-	Model string `json:"model" api:"required"`
-	// The prompt template for the AI request. Supports Liquid templating.
-	RequestPrompt string `json:"request_prompt" api:"required"`
-	// The type of response to expect from the AI model.
-	//
-	// Any of "text", "json".
-	ResponseType string `json:"response_type,omitzero" api:"required"`
-	// Whether to halt the workflow if the AI fetch fails.
-	HaltOnError param.Opt[bool] `json:"halt_on_error,omitzero"`
-	// A JSON schema string for structured output. Required when `response_type` is
-	// `json`. Must not be set when `response_type` is `text`.
-	ResponseSchema param.Opt[string] `json:"response_schema,omitzero"`
-	// Whether to enable web search for the AI request.
-	WebSearchEnabled param.Opt[bool] `json:"web_search_enabled,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowAIAgentStepSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowAIAgentStepSettingsParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowAIAgentStepSettingsParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowAIAgentStepSettingsParam](
-		"response_type", "text", "json",
-	)
 }
 
 // A throttle function step. Read more in the
