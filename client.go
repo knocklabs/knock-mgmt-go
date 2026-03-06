@@ -47,7 +47,6 @@ type Client struct {
 	// Branches in Knock are a way to isolate changes to your Knock resources.
 	Branches   BranchService
 	Broadcasts BroadcastService
-	Audiences  AudienceService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -89,7 +88,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Guides = NewGuideService(opts...)
 	r.Branches = NewBranchService(opts...)
 	r.Broadcasts = NewBroadcastService(opts...)
-	r.Audiences = NewAudienceService(opts...)
 
 	return
 }
