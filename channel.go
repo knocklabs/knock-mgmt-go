@@ -91,20 +91,25 @@ type Channel struct {
 	CustomIconURL string `json:"custom_icon_url" api:"nullable"`
 	// Optional description of the channel's purpose or usage.
 	Description string `json:"description" api:"nullable"`
+	// Per-environment settings for this channel, keyed by environment slug (e.g.,
+	// 'development', 'production'). Only included when requested via the `include`
+	// parameter or when retrieving a single channel.
+	EnvironmentSettings map[string]ChannelEnvironmentSetting `json:"environment_settings" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		CreatedAt     respjson.Field
-		Key           respjson.Field
-		Name          respjson.Field
-		Provider      respjson.Field
-		Type          respjson.Field
-		UpdatedAt     respjson.Field
-		ArchivedAt    respjson.Field
-		CustomIconURL respjson.Field
-		Description   respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                  respjson.Field
+		CreatedAt           respjson.Field
+		Key                 respjson.Field
+		Name                respjson.Field
+		Provider            respjson.Field
+		Type                respjson.Field
+		UpdatedAt           respjson.Field
+		ArchivedAt          respjson.Field
+		CustomIconURL       respjson.Field
+		Description         respjson.Field
+		EnvironmentSettings respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
@@ -127,6 +132,40 @@ const (
 	ChannelTypeChat       ChannelType = "chat"
 	ChannelTypeHTTP       ChannelType = "http"
 )
+
+// Environment-specific settings for a channel.
+type ChannelEnvironmentSetting struct {
+	// The unique identifier for these environment settings.
+	ID string `json:"id" api:"required" format:"uuid"`
+	// Whether the channel is in sandbox mode for this environment. Sandbox mode may
+	// prevent actual message delivery.
+	IsSandbox bool `json:"is_sandbox" api:"required"`
+	// Whether the channel configuration is valid and ready to send messages in this
+	// environment.
+	IsValid bool `json:"is_valid" api:"required"`
+	// Channel-type-specific settings (e.g., from_address for email). Structure varies
+	// by channel type.
+	ChannelSettings map[string]any `json:"channel_settings" api:"nullable"`
+	// Provider-specific settings (e.g., API keys, credentials). Structure varies by
+	// provider. Secret values are obfuscated unless they are Liquid templates.
+	ProviderSettings map[string]any `json:"provider_settings" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		IsSandbox        respjson.Field
+		IsValid          respjson.Field
+		ChannelSettings  respjson.Field
+		ProviderSettings respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChannelEnvironmentSetting) RawJSON() string { return r.JSON.raw }
+func (r *ChannelEnvironmentSetting) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Chat channel settings. Only used as configuration as part of a workflow channel
 // step.
@@ -411,6 +450,11 @@ type ChannelListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Associated resources to include in the response. Accepts `environment_settings`
+	// to include per-environment channel configuration.
+	//
+	// Any of "environment_settings".
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 
