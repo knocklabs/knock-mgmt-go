@@ -49,11 +49,11 @@ func (r *PartialService) Get(ctx context.Context, partialKey string, query Parti
 	opts = slices.Concat(r.Options, opts)
 	if partialKey == "" {
 		err = errors.New("missing required partial_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/partials/%s", partialKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // List all partials for a given environment.
@@ -86,11 +86,11 @@ func (r *PartialService) Upsert(ctx context.Context, partialKey string, params P
 	opts = slices.Concat(r.Options, opts)
 	if partialKey == "" {
 		err = errors.New("missing required partial_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/partials/%s", partialKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates a partial payload without persisting it.
@@ -100,11 +100,11 @@ func (r *PartialService) Validate(ctx context.Context, partialKey string, params
 	opts = slices.Concat(r.Options, opts)
 	if partialKey == "" {
 		err = errors.New("missing required partial_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/partials/%s/validate", partialKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A partial is a reusable piece of content that can be used in a template.

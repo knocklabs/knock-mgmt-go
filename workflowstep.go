@@ -45,15 +45,15 @@ func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, stepRef strin
 	opts = slices.Concat(r.Options, opts)
 	if params.WorkflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	if stepRef == "" {
 		err = errors.New("missing required step_ref parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s/steps/%s/preview_template", params.WorkflowKey, stepRef)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A response to a preview workflow template request.

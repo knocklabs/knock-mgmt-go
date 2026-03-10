@@ -46,11 +46,11 @@ func (r *CommitService) Get(ctx context.Context, id string, opts ...option.Reque
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/commits/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of commits in a given environment. The commits are
@@ -83,7 +83,7 @@ func (r *CommitService) CommitAll(ctx context.Context, body CommitCommitAllParam
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Promote all changes across all resources to the target environment from its
@@ -92,7 +92,7 @@ func (r *CommitService) PromoteAll(ctx context.Context, body CommitPromoteAllPar
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits/promote"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Promotes one change to the subsequent environment.
@@ -100,11 +100,11 @@ func (r *CommitService) PromoteOne(ctx context.Context, id string, opts ...optio
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/commits/%s/promote", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // A commit is a change to a resource within an environment, made by an author.

@@ -46,11 +46,11 @@ func (r *EmailLayoutService) Get(ctx context.Context, emailLayoutKey string, que
 	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
 		err = errors.New("missing required email_layout_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/email_layouts/%s", emailLayoutKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of email layouts available in a given environment.
@@ -83,11 +83,11 @@ func (r *EmailLayoutService) Upsert(ctx context.Context, emailLayoutKey string, 
 	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
 		err = errors.New("missing required email_layout_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/email_layouts/%s", emailLayoutKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates an email layout payload without persisting it.
@@ -97,11 +97,11 @@ func (r *EmailLayoutService) Validate(ctx context.Context, emailLayoutKey string
 	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
 		err = errors.New("missing required email_layout_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/email_layouts/%s/validate", emailLayoutKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A versioned email layout used within an environment.

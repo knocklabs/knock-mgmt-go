@@ -41,7 +41,7 @@ func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/api_keys/exchange"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns an API key that can be used to make requests to the public API.

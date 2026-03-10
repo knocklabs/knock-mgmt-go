@@ -47,11 +47,11 @@ func (r *EnvironmentService) Get(ctx context.Context, environmentSlug string, op
 	opts = slices.Concat(r.Options, opts)
 	if environmentSlug == "" {
 		err = errors.New("missing required environment_slug parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/environments/%s", environmentSlug)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of environments. The environments will be returned in

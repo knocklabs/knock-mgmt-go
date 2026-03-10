@@ -51,11 +51,11 @@ func (r *WorkflowService) Get(ctx context.Context, workflowKey string, query Wor
 	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s", workflowKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of workflows available in a given environment. The
@@ -92,11 +92,11 @@ func (r *WorkflowService) Activate(ctx context.Context, workflowKey string, para
 	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s/activate", workflowKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Runs the latest version of a committed workflow in a given environment using the
@@ -105,11 +105,11 @@ func (r *WorkflowService) Run(ctx context.Context, workflowKey string, params Wo
 	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s/run", workflowKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a workflow of a given key, or creates a new one if it does not yet
@@ -120,11 +120,11 @@ func (r *WorkflowService) Upsert(ctx context.Context, workflowKey string, params
 	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s", workflowKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates a workflow payload without persisting it. Some read-only fields will
@@ -135,11 +135,11 @@ func (r *WorkflowService) Validate(ctx context.Context, workflowKey string, para
 	opts = slices.Concat(r.Options, opts)
 	if workflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s/validate", workflowKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A condition to be evaluated.
