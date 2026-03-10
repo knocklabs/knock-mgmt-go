@@ -4,6 +4,8 @@ package knockmapi
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -34,6 +36,18 @@ type VariableService struct {
 func NewVariableService(opts ...option.RequestOption) (r VariableService) {
 	r = VariableService{}
 	r.Options = opts
+	return
+}
+
+// Returns a single variable by key with per-environment value overrides.
+func (r *VariableService) Get(ctx context.Context, key string, opts ...option.RequestOption) (res *Variable, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if key == "" {
+		err = errors.New("missing required key parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/variables/%s", key)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 

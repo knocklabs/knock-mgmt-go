@@ -301,6 +301,7 @@ Response Types:
 
 Methods:
 
+- <code title="get /v1/variables/{key}">client.Variables.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#VariableService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, key <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Variable">Variable</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/variables">client.Variables.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#VariableService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#VariableListParams">VariableListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Variable">Variable</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Guides
