@@ -5,6 +5,8 @@ package knockmapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -35,6 +37,20 @@ type ChannelService struct {
 func NewChannelService(opts ...option.RequestOption) (r ChannelService) {
 	r = ChannelService{}
 	r.Options = opts
+	return
+}
+
+// Returns a channel with all environment-specific settings. Secret values in
+// provider settings are obfuscated unless they are Liquid templates (e.g.,
+// `{{ vars.api_key }}`).
+func (r *ChannelService) Get(ctx context.Context, channelKey string, opts ...option.RequestOption) (res *Channel, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if channelKey == "" {
+		err = errors.New("missing required channel_key parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/channels/%s", channelKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
@@ -94,7 +110,7 @@ type Channel struct {
 	// Per-environment settings for this channel, keyed by environment slug (e.g.,
 	// 'development', 'production'). Only included when requested via the `include`
 	// parameter or when retrieving a single channel.
-	EnvironmentSettings map[string]ChannelEnvironmentSetting `json:"environment_settings" api:"nullable"`
+	EnvironmentSettings map[string]ChannelEnvironmentSettings `json:"environment_settings" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -134,7 +150,7 @@ const (
 )
 
 // Environment-specific settings for a channel.
-type ChannelEnvironmentSetting struct {
+type ChannelEnvironmentSettings struct {
 	// The unique identifier for these environment settings.
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Whether the channel is in sandbox mode for this environment. Sandbox mode may
@@ -162,8 +178,8 @@ type ChannelEnvironmentSetting struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChannelEnvironmentSetting) RawJSON() string { return r.JSON.raw }
-func (r *ChannelEnvironmentSetting) UnmarshalJSON(data []byte) error {
+func (r ChannelEnvironmentSettings) RawJSON() string { return r.JSON.raw }
+func (r *ChannelEnvironmentSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -236,6 +236,7 @@ Params Types:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Channel">Channel</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ChannelEnvironmentSettings">ChannelEnvironmentSettings</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ChatChannelSettings">ChatChannelSettings</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailChannelSettings">EmailChannelSettings</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#InAppFeedChannelSettings">InAppFeedChannelSettings</a>
@@ -244,6 +245,7 @@ Response Types:
 
 Methods:
 
+- <code title="get /v1/channels/{channel_key}">client.Channels.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ChannelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, channelKey <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Channel">Channel</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/channels">client.Channels.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ChannelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ChannelListParams">ChannelListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Channel">Channel</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Members
