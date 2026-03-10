@@ -569,30 +569,30 @@ func (r AudienceUpsertParams) URLQuery() (v url.Values, err error) {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type AudienceUpsertParamsAudienceUnion struct {
-	OfStaticAudienceRequest  *AudienceUpsertParamsAudienceStaticAudienceRequest  `json:",omitzero,inline"`
-	OfDynamicAudienceRequest *AudienceUpsertParamsAudienceDynamicAudienceRequest `json:",omitzero,inline"`
+	OfStatic  *AudienceUpsertParamsAudienceStatic  `json:",omitzero,inline"`
+	OfDynamic *AudienceUpsertParamsAudienceDynamic `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u AudienceUpsertParamsAudienceUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfStaticAudienceRequest, u.OfDynamicAudienceRequest)
+	return param.MarshalUnion(u, u.OfStatic, u.OfDynamic)
 }
 func (u *AudienceUpsertParamsAudienceUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *AudienceUpsertParamsAudienceUnion) asAny() any {
-	if !param.IsOmitted(u.OfStaticAudienceRequest) {
-		return u.OfStaticAudienceRequest
-	} else if !param.IsOmitted(u.OfDynamicAudienceRequest) {
-		return u.OfDynamicAudienceRequest
+	if !param.IsOmitted(u.OfStatic) {
+		return u.OfStatic
+	} else if !param.IsOmitted(u.OfDynamic) {
+		return u.OfDynamic
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u AudienceUpsertParamsAudienceUnion) GetSegments() []AudienceUpsertParamsAudienceDynamicAudienceRequestSegment {
-	if vt := u.OfDynamicAudienceRequest; vt != nil {
+func (u AudienceUpsertParamsAudienceUnion) GetSegments() []AudienceUpsertParamsAudienceDynamicSegment {
+	if vt := u.OfDynamic; vt != nil {
 		return vt.Segments
 	}
 	return nil
@@ -600,9 +600,9 @@ func (u AudienceUpsertParamsAudienceUnion) GetSegments() []AudienceUpsertParamsA
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u AudienceUpsertParamsAudienceUnion) GetName() *string {
-	if vt := u.OfStaticAudienceRequest; vt != nil {
+	if vt := u.OfStatic; vt != nil {
 		return (*string)(&vt.Name)
-	} else if vt := u.OfDynamicAudienceRequest; vt != nil {
+	} else if vt := u.OfDynamic; vt != nil {
 		return (*string)(&vt.Name)
 	}
 	return nil
@@ -610,9 +610,9 @@ func (u AudienceUpsertParamsAudienceUnion) GetName() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u AudienceUpsertParamsAudienceUnion) GetType() *string {
-	if vt := u.OfStaticAudienceRequest; vt != nil {
+	if vt := u.OfStatic; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfDynamicAudienceRequest; vt != nil {
+	} else if vt := u.OfDynamic; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -620,9 +620,9 @@ func (u AudienceUpsertParamsAudienceUnion) GetType() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u AudienceUpsertParamsAudienceUnion) GetDescription() *string {
-	if vt := u.OfStaticAudienceRequest; vt != nil && vt.Description.Valid() {
+	if vt := u.OfStatic; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
-	} else if vt := u.OfDynamicAudienceRequest; vt != nil && vt.Description.Valid() {
+	} else if vt := u.OfDynamic; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	}
 	return nil
@@ -631,15 +631,15 @@ func (u AudienceUpsertParamsAudienceUnion) GetDescription() *string {
 func init() {
 	apijson.RegisterUnion[AudienceUpsertParamsAudienceUnion](
 		"type",
-		apijson.Discriminator[AudienceUpsertParamsAudienceStaticAudienceRequest]("static"),
-		apijson.Discriminator[AudienceUpsertParamsAudienceDynamicAudienceRequest]("dynamic"),
+		apijson.Discriminator[AudienceUpsertParamsAudienceStatic]("static"),
+		apijson.Discriminator[AudienceUpsertParamsAudienceDynamic]("dynamic"),
 	)
 }
 
 // Request body for creating/updating a static audience.
 //
 // The properties Name, Type are required.
-type AudienceUpsertParamsAudienceStaticAudienceRequest struct {
+type AudienceUpsertParamsAudienceStatic struct {
 	// The name of the audience.
 	Name string `json:"name" api:"required"`
 	// A description of the audience.
@@ -651,18 +651,18 @@ type AudienceUpsertParamsAudienceStaticAudienceRequest struct {
 	paramObj
 }
 
-func (r AudienceUpsertParamsAudienceStaticAudienceRequest) MarshalJSON() (data []byte, err error) {
-	type shadow AudienceUpsertParamsAudienceStaticAudienceRequest
+func (r AudienceUpsertParamsAudienceStatic) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceUpsertParamsAudienceStatic
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AudienceUpsertParamsAudienceStaticAudienceRequest) UnmarshalJSON(data []byte) error {
+func (r *AudienceUpsertParamsAudienceStatic) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Request body for creating/updating a dynamic audience.
 //
 // The properties Name, Type are required.
-type AudienceUpsertParamsAudienceDynamicAudienceRequest struct {
+type AudienceUpsertParamsAudienceDynamic struct {
 	// The name of the audience.
 	Name string `json:"name" api:"required"`
 	// A description of the audience.
@@ -670,7 +670,7 @@ type AudienceUpsertParamsAudienceDynamicAudienceRequest struct {
 	// A list of segments that define the dynamic audience membership criteria. Each
 	// segment contains one or more conditions joined by AND. Multiple segments are
 	// joined by OR.
-	Segments []AudienceUpsertParamsAudienceDynamicAudienceRequestSegment `json:"segments,omitzero"`
+	Segments []AudienceUpsertParamsAudienceDynamicSegment `json:"segments,omitzero"`
 	// The type of audience. Set to `dynamic` for dynamic audiences.
 	//
 	// This field can be elided, and will marshal its zero value as "dynamic".
@@ -678,26 +678,26 @@ type AudienceUpsertParamsAudienceDynamicAudienceRequest struct {
 	paramObj
 }
 
-func (r AudienceUpsertParamsAudienceDynamicAudienceRequest) MarshalJSON() (data []byte, err error) {
-	type shadow AudienceUpsertParamsAudienceDynamicAudienceRequest
+func (r AudienceUpsertParamsAudienceDynamic) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceUpsertParamsAudienceDynamic
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AudienceUpsertParamsAudienceDynamicAudienceRequest) UnmarshalJSON(data []byte) error {
+func (r *AudienceUpsertParamsAudienceDynamic) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property Conditions is required.
-type AudienceUpsertParamsAudienceDynamicAudienceRequestSegment struct {
+type AudienceUpsertParamsAudienceDynamicSegment struct {
 	// A list of conditions within this segment, joined by AND.
 	Conditions []AudienceConditionParam `json:"conditions,omitzero" api:"required"`
 	paramObj
 }
 
-func (r AudienceUpsertParamsAudienceDynamicAudienceRequestSegment) MarshalJSON() (data []byte, err error) {
-	type shadow AudienceUpsertParamsAudienceDynamicAudienceRequestSegment
+func (r AudienceUpsertParamsAudienceDynamicSegment) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceUpsertParamsAudienceDynamicSegment
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AudienceUpsertParamsAudienceDynamicAudienceRequestSegment) UnmarshalJSON(data []byte) error {
+func (r *AudienceUpsertParamsAudienceDynamicSegment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -734,30 +734,30 @@ func (r AudienceValidateParams) URLQuery() (v url.Values, err error) {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type AudienceValidateParamsAudienceUnion struct {
-	OfStaticAudienceRequest  *AudienceValidateParamsAudienceStaticAudienceRequest  `json:",omitzero,inline"`
-	OfDynamicAudienceRequest *AudienceValidateParamsAudienceDynamicAudienceRequest `json:",omitzero,inline"`
+	OfStatic  *AudienceValidateParamsAudienceStatic  `json:",omitzero,inline"`
+	OfDynamic *AudienceValidateParamsAudienceDynamic `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u AudienceValidateParamsAudienceUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfStaticAudienceRequest, u.OfDynamicAudienceRequest)
+	return param.MarshalUnion(u, u.OfStatic, u.OfDynamic)
 }
 func (u *AudienceValidateParamsAudienceUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *AudienceValidateParamsAudienceUnion) asAny() any {
-	if !param.IsOmitted(u.OfStaticAudienceRequest) {
-		return u.OfStaticAudienceRequest
-	} else if !param.IsOmitted(u.OfDynamicAudienceRequest) {
-		return u.OfDynamicAudienceRequest
+	if !param.IsOmitted(u.OfStatic) {
+		return u.OfStatic
+	} else if !param.IsOmitted(u.OfDynamic) {
+		return u.OfDynamic
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u AudienceValidateParamsAudienceUnion) GetSegments() []AudienceValidateParamsAudienceDynamicAudienceRequestSegment {
-	if vt := u.OfDynamicAudienceRequest; vt != nil {
+func (u AudienceValidateParamsAudienceUnion) GetSegments() []AudienceValidateParamsAudienceDynamicSegment {
+	if vt := u.OfDynamic; vt != nil {
 		return vt.Segments
 	}
 	return nil
@@ -765,9 +765,9 @@ func (u AudienceValidateParamsAudienceUnion) GetSegments() []AudienceValidatePar
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u AudienceValidateParamsAudienceUnion) GetName() *string {
-	if vt := u.OfStaticAudienceRequest; vt != nil {
+	if vt := u.OfStatic; vt != nil {
 		return (*string)(&vt.Name)
-	} else if vt := u.OfDynamicAudienceRequest; vt != nil {
+	} else if vt := u.OfDynamic; vt != nil {
 		return (*string)(&vt.Name)
 	}
 	return nil
@@ -775,9 +775,9 @@ func (u AudienceValidateParamsAudienceUnion) GetName() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u AudienceValidateParamsAudienceUnion) GetType() *string {
-	if vt := u.OfStaticAudienceRequest; vt != nil {
+	if vt := u.OfStatic; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfDynamicAudienceRequest; vt != nil {
+	} else if vt := u.OfDynamic; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -785,9 +785,9 @@ func (u AudienceValidateParamsAudienceUnion) GetType() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u AudienceValidateParamsAudienceUnion) GetDescription() *string {
-	if vt := u.OfStaticAudienceRequest; vt != nil && vt.Description.Valid() {
+	if vt := u.OfStatic; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
-	} else if vt := u.OfDynamicAudienceRequest; vt != nil && vt.Description.Valid() {
+	} else if vt := u.OfDynamic; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	}
 	return nil
@@ -796,15 +796,15 @@ func (u AudienceValidateParamsAudienceUnion) GetDescription() *string {
 func init() {
 	apijson.RegisterUnion[AudienceValidateParamsAudienceUnion](
 		"type",
-		apijson.Discriminator[AudienceValidateParamsAudienceStaticAudienceRequest]("static"),
-		apijson.Discriminator[AudienceValidateParamsAudienceDynamicAudienceRequest]("dynamic"),
+		apijson.Discriminator[AudienceValidateParamsAudienceStatic]("static"),
+		apijson.Discriminator[AudienceValidateParamsAudienceDynamic]("dynamic"),
 	)
 }
 
 // Request body for creating/updating a static audience.
 //
 // The properties Name, Type are required.
-type AudienceValidateParamsAudienceStaticAudienceRequest struct {
+type AudienceValidateParamsAudienceStatic struct {
 	// The name of the audience.
 	Name string `json:"name" api:"required"`
 	// A description of the audience.
@@ -816,18 +816,18 @@ type AudienceValidateParamsAudienceStaticAudienceRequest struct {
 	paramObj
 }
 
-func (r AudienceValidateParamsAudienceStaticAudienceRequest) MarshalJSON() (data []byte, err error) {
-	type shadow AudienceValidateParamsAudienceStaticAudienceRequest
+func (r AudienceValidateParamsAudienceStatic) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceValidateParamsAudienceStatic
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AudienceValidateParamsAudienceStaticAudienceRequest) UnmarshalJSON(data []byte) error {
+func (r *AudienceValidateParamsAudienceStatic) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Request body for creating/updating a dynamic audience.
 //
 // The properties Name, Type are required.
-type AudienceValidateParamsAudienceDynamicAudienceRequest struct {
+type AudienceValidateParamsAudienceDynamic struct {
 	// The name of the audience.
 	Name string `json:"name" api:"required"`
 	// A description of the audience.
@@ -835,7 +835,7 @@ type AudienceValidateParamsAudienceDynamicAudienceRequest struct {
 	// A list of segments that define the dynamic audience membership criteria. Each
 	// segment contains one or more conditions joined by AND. Multiple segments are
 	// joined by OR.
-	Segments []AudienceValidateParamsAudienceDynamicAudienceRequestSegment `json:"segments,omitzero"`
+	Segments []AudienceValidateParamsAudienceDynamicSegment `json:"segments,omitzero"`
 	// The type of audience. Set to `dynamic` for dynamic audiences.
 	//
 	// This field can be elided, and will marshal its zero value as "dynamic".
@@ -843,25 +843,25 @@ type AudienceValidateParamsAudienceDynamicAudienceRequest struct {
 	paramObj
 }
 
-func (r AudienceValidateParamsAudienceDynamicAudienceRequest) MarshalJSON() (data []byte, err error) {
-	type shadow AudienceValidateParamsAudienceDynamicAudienceRequest
+func (r AudienceValidateParamsAudienceDynamic) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceValidateParamsAudienceDynamic
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AudienceValidateParamsAudienceDynamicAudienceRequest) UnmarshalJSON(data []byte) error {
+func (r *AudienceValidateParamsAudienceDynamic) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property Conditions is required.
-type AudienceValidateParamsAudienceDynamicAudienceRequestSegment struct {
+type AudienceValidateParamsAudienceDynamicSegment struct {
 	// A list of conditions within this segment, joined by AND.
 	Conditions []AudienceConditionParam `json:"conditions,omitzero" api:"required"`
 	paramObj
 }
 
-func (r AudienceValidateParamsAudienceDynamicAudienceRequestSegment) MarshalJSON() (data []byte, err error) {
-	type shadow AudienceValidateParamsAudienceDynamicAudienceRequestSegment
+func (r AudienceValidateParamsAudienceDynamicSegment) MarshalJSON() (data []byte, err error) {
+	type shadow AudienceValidateParamsAudienceDynamicSegment
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AudienceValidateParamsAudienceDynamicAudienceRequestSegment) UnmarshalJSON(data []byte) error {
+func (r *AudienceValidateParamsAudienceDynamicSegment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
