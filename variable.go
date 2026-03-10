@@ -37,7 +37,9 @@ func NewVariableService(opts ...option.RequestOption) (r VariableService) {
 	return
 }
 
-// Returns a paginated list of variables for a given environment.
+// Returns a list of variables. When an environment is specified, returns
+// per-environment variables. Otherwise, returns project-scoped variables with
+// per-environment overrides.
 func (r *VariableService) List(ctx context.Context, query VariableListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Variable], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -55,7 +57,9 @@ func (r *VariableService) List(ctx context.Context, query VariableListParams, op
 	return res, nil
 }
 
-// Returns a paginated list of variables for a given environment.
+// Returns a list of variables. When an environment is specified, returns
+// per-environment variables. Otherwise, returns project-scoped variables with
+// per-environment overrides.
 func (r *VariableService) ListAutoPaging(ctx context.Context, query VariableListParams, opts ...option.RequestOption) *pagination.EntriesCursorAutoPager[Variable] {
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
@@ -72,20 +76,24 @@ type Variable struct {
 	Type VariableType `json:"type" api:"required"`
 	// The timestamp of when the variable was last updated.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
-	// The value of the variable.
-	Value string `json:"value" api:"required"`
 	// The description of the variable.
 	Description string `json:"description" api:"nullable"`
+	// A map of environment slugs to their override values. Only present for
+	// project-scoped responses.
+	EnvironmentValues map[string]string `json:"environment_values"`
+	// The default value of the variable. For secret variables, this is obfuscated.
+	Value string `json:"value" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		InsertedAt  respjson.Field
-		Key         respjson.Field
-		Type        respjson.Field
-		UpdatedAt   respjson.Field
-		Value       respjson.Field
-		Description respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		InsertedAt        respjson.Field
+		Key               respjson.Field
+		Type              respjson.Field
+		UpdatedAt         respjson.Field
+		Description       respjson.Field
+		EnvironmentValues respjson.Field
+		Value             respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -115,6 +123,10 @@ type VariableListParams struct {
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter variables by type. Supports 'public' or 'secret'.
+	//
+	// Any of "public", "secret".
+	Type VariableListParamsType `query:"type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -125,3 +137,11 @@ func (r VariableListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+// Filter variables by type. Supports 'public' or 'secret'.
+type VariableListParamsType string
+
+const (
+	VariableListParamsTypePublic VariableListParamsType = "public"
+	VariableListParamsTypeSecret VariableListParamsType = "secret"
+)
