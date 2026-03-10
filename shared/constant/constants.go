@@ -18,6 +18,15 @@ func ValueOf[T Constant[T]]() T {
 	return t.Default()
 }
 
+type Dynamic string // Always "dynamic"
+type Static string  // Always "static"
+
+func (c Dynamic) Default() Dynamic { return "dynamic" }
+func (c Static) Default() Static   { return "static" }
+
+func (c Dynamic) MarshalJSON() ([]byte, error) { return marshalString(c) }
+func (c Static) MarshalJSON() ([]byte, error)  { return marshalString(c) }
+
 type constant[T any] interface {
 	Constant[T]
 	*T
