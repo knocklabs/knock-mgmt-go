@@ -48,11 +48,11 @@ func (r *AudienceService) Get(ctx context.Context, audienceKey string, query Aud
 	opts = slices.Concat(r.Options, opts)
 	if audienceKey == "" {
 		err = errors.New("missing required audience_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/audiences/%s", audienceKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of audiences for the given environment.
@@ -83,11 +83,11 @@ func (r *AudienceService) Archive(ctx context.Context, audienceKey string, body 
 	opts = slices.Concat(r.Options, opts)
 	if audienceKey == "" {
 		err = errors.New("missing required audience_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/audiences/%s", audienceKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an audience of a given key, or creates a new one if it does not yet
@@ -96,11 +96,11 @@ func (r *AudienceService) Upsert(ctx context.Context, audienceKey string, params
 	opts = slices.Concat(r.Options, opts)
 	if audienceKey == "" {
 		err = errors.New("missing required audience_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/audiences/%s", audienceKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates an audience payload without persisting it.
@@ -108,11 +108,11 @@ func (r *AudienceService) Validate(ctx context.Context, audienceKey string, para
 	opts = slices.Concat(r.Options, opts)
 	if audienceKey == "" {
 		err = errors.New("missing required audience_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/audiences/%s/validate", audienceKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // AudienceUnion contains all possible properties and values from [StaticAudience],

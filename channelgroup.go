@@ -44,11 +44,11 @@ func (r *ChannelGroupService) Get(ctx context.Context, channelGroupKey string, o
 	opts = slices.Concat(r.Options, opts)
 	if channelGroupKey == "" {
 		err = errors.New("missing required channel_group_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/channel_groups/%s", channelGroupKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of channel groups. Note: the list of channel groups is
@@ -82,11 +82,11 @@ func (r *ChannelGroupService) Delete(ctx context.Context, channelGroupKey string
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if channelGroupKey == "" {
 		err = errors.New("missing required channel_group_key parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/channel_groups/%s", channelGroupKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Creates or updates a channel group by key.
@@ -94,11 +94,11 @@ func (r *ChannelGroupService) Upsert(ctx context.Context, channelGroupKey string
 	opts = slices.Concat(r.Options, opts)
 	if channelGroupKey == "" {
 		err = errors.New("missing required channel_group_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/channel_groups/%s", channelGroupKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // A group of channels with rules for when they are applicable.

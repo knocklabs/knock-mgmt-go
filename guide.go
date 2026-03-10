@@ -48,11 +48,11 @@ func (r *GuideService) Get(ctx context.Context, guideKey string, query GuideGetP
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/guides/%s", guideKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of guides available in a given environment.
@@ -87,11 +87,11 @@ func (r *GuideService) Activate(ctx context.Context, guideKey string, params Gui
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/guides/%s/activate", guideKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Archives a given guide across all environments.
@@ -99,11 +99,11 @@ func (r *GuideService) Archive(ctx context.Context, guideKey string, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/guides/%s", guideKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a guide of a given key, or creates a new one if it does not yet exist.
@@ -113,11 +113,11 @@ func (r *GuideService) Upsert(ctx context.Context, guideKey string, params Guide
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/guides/%s", guideKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates a guide payload without persisting it.
@@ -127,11 +127,11 @@ func (r *GuideService) Validate(ctx context.Context, guideKey string, params Gui
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/guides/%s/validate", guideKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A guide defines an in-app guide that can be displayed to users based on priority

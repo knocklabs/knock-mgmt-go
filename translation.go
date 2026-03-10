@@ -46,11 +46,11 @@ func (r *TranslationService) Get(ctx context.Context, localeCode string, query T
 	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
 		err = errors.New("missing required locale_code parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/translations/%s", localeCode)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of translations available in a given environment. The
@@ -87,11 +87,11 @@ func (r *TranslationService) Upsert(ctx context.Context, localeCode string, para
 	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
 		err = errors.New("missing required locale_code parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/translations/%s", localeCode)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates a translation payload without persisting it.
@@ -102,11 +102,11 @@ func (r *TranslationService) Validate(ctx context.Context, localeCode string, pa
 	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
 		err = errors.New("missing required locale_code parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/translations/%s/validate", localeCode)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A translation object.

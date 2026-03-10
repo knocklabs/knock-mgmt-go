@@ -46,11 +46,11 @@ func (r *BroadcastService) Get(ctx context.Context, broadcastKey string, query B
 	opts = slices.Concat(r.Options, opts)
 	if broadcastKey == "" {
 		err = errors.New("missing required broadcast_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/broadcasts/%s", broadcastKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of broadcasts available in a given environment. The
@@ -84,11 +84,11 @@ func (r *BroadcastService) Cancel(ctx context.Context, broadcastKey string, body
 	opts = slices.Concat(r.Options, opts)
 	if broadcastKey == "" {
 		err = errors.New("missing required broadcast_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/broadcasts/%s/cancel", broadcastKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Sends a broadcast immediately or schedules it to send at a future time.
@@ -96,11 +96,11 @@ func (r *BroadcastService) Send(ctx context.Context, broadcastKey string, params
 	opts = slices.Concat(r.Options, opts)
 	if broadcastKey == "" {
 		err = errors.New("missing required broadcast_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/broadcasts/%s/send", broadcastKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a broadcast of a given key, or creates a new one if it does not yet
@@ -109,11 +109,11 @@ func (r *BroadcastService) Upsert(ctx context.Context, broadcastKey string, para
 	opts = slices.Concat(r.Options, opts)
 	if broadcastKey == "" {
 		err = errors.New("missing required broadcast_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/broadcasts/%s", broadcastKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates a broadcast payload without persisting it.
@@ -121,11 +121,11 @@ func (r *BroadcastService) Validate(ctx context.Context, broadcastKey string, pa
 	opts = slices.Concat(r.Options, opts)
 	if broadcastKey == "" {
 		err = errors.New("missing required broadcast_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/broadcasts/%s/validate", broadcastKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A broadcast object.

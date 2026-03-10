@@ -46,11 +46,11 @@ func (r *BranchService) New(ctx context.Context, branchSlug string, body BranchN
 	opts = slices.Concat(r.Options, opts)
 	if branchSlug == "" {
 		err = errors.New("missing required branch_slug parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/branches/%s", branchSlug)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a single branch by the `branch_slug`.
@@ -58,11 +58,11 @@ func (r *BranchService) Get(ctx context.Context, branchSlug string, query Branch
 	opts = slices.Concat(r.Options, opts)
 	if branchSlug == "" {
 		err = errors.New("missing required branch_slug parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/branches/%s", branchSlug)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of branches. The branches will be returned in order of
@@ -96,11 +96,11 @@ func (r *BranchService) Delete(ctx context.Context, branchSlug string, body Bran
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if branchSlug == "" {
 		err = errors.New("missing required branch_slug parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/branches/%s", branchSlug)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, nil, opts...)
-	return
+	return err
 }
 
 // A branch object.

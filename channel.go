@@ -47,11 +47,11 @@ func (r *ChannelService) Get(ctx context.Context, channelKey string, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	if channelKey == "" {
 		err = errors.New("missing required channel_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/channels/%s", channelKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of channels. Note: the list of channels is across the

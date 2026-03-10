@@ -44,11 +44,11 @@ func (r *VariableService) Get(ctx context.Context, key string, opts ...option.Re
 	opts = slices.Concat(r.Options, opts)
 	if key == "" {
 		err = errors.New("missing required key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/variables/%s", key)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of variables. When an environment is specified, returns

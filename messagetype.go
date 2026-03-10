@@ -50,11 +50,11 @@ func (r *MessageTypeService) Get(ctx context.Context, messageTypeKey string, que
 	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
 		err = errors.New("missing required message_type_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/message_types/%s", messageTypeKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of message types available in a given environment.
@@ -87,11 +87,11 @@ func (r *MessageTypeService) Upsert(ctx context.Context, messageTypeKey string, 
 	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
 		err = errors.New("missing required message_type_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/message_types/%s", messageTypeKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Validates a message type payload without persisting it.
@@ -102,11 +102,11 @@ func (r *MessageTypeService) Validate(ctx context.Context, messageTypeKey string
 	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
 		err = errors.New("missing required message_type_key parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/message_types/%s/validate", messageTypeKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A message type is a schema for a message that maps to a UI component or element
