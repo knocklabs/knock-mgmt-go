@@ -38,7 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Workflows.List(context.Background(), knockmapi.WorkflowListParams{
+	_, _ = client.Workflows.List(context.Background(), knockmapi.WorkflowListParams{
 		Environment: "development",
 	})
 	if userAgent != fmt.Sprintf("KnockMgmt/Go %s", internal.PackageVersion) {
