@@ -198,8 +198,8 @@ type AudienceCondition struct {
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
-	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator AudienceConditionOperator `json:"operator" api:"required"`
 	// The property to be evaluated. Properties are dynamic values using path
@@ -250,6 +250,7 @@ const (
 	AudienceConditionOperatorIsTimestampBefore    AudienceConditionOperator = "is_timestamp_before"
 	AudienceConditionOperatorIsTimestampOnOrAfter AudienceConditionOperator = "is_timestamp_on_or_after"
 	AudienceConditionOperatorIsTimestampBetween   AudienceConditionOperator = "is_timestamp_between"
+	AudienceConditionOperatorIsBetween            AudienceConditionOperator = "is_between"
 	AudienceConditionOperatorEmpty                AudienceConditionOperator = "empty"
 	AudienceConditionOperatorNotEmpty             AudienceConditionOperator = "not_empty"
 	AudienceConditionOperatorExists               AudienceConditionOperator = "exists"
@@ -268,8 +269,8 @@ type AudienceConditionParam struct {
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
-	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator AudienceConditionOperator `json:"operator,omitzero" api:"required"`
 	// The property to be evaluated. Properties are dynamic values using path

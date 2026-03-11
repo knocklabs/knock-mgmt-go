@@ -149,8 +149,8 @@ type Condition struct {
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
-	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator" api:"required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
@@ -205,6 +205,7 @@ const (
 	ConditionOperatorIsTimestampBefore    ConditionOperator = "is_timestamp_before"
 	ConditionOperatorIsTimestampOnOrAfter ConditionOperator = "is_timestamp_on_or_after"
 	ConditionOperatorIsTimestampBetween   ConditionOperator = "is_timestamp_between"
+	ConditionOperatorIsBetween            ConditionOperator = "is_between"
 	ConditionOperatorEmpty                ConditionOperator = "empty"
 	ConditionOperatorNotEmpty             ConditionOperator = "not_empty"
 	ConditionOperatorExists               ConditionOperator = "exists"
@@ -223,8 +224,8 @@ type ConditionParam struct {
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
-	// "is_timestamp_on_or_after", "is_timestamp_between", "empty", "not_empty",
-	// "exists", "not_exists", "is_timestamp", "is_audience_member",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
 	// "is_not_audience_member".
 	Operator ConditionOperator `json:"operator,omitzero" api:"required"`
 	// The variable to be evaluated. Variables can be either static values or dynamic
