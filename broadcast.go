@@ -345,6 +345,8 @@ type BroadcastStepUnionTemplate struct {
 	// This field is from variant [EmailTemplate].
 	HTMLBody string `json:"html_body"`
 	// This field is from variant [EmailTemplate].
+	IsMjml bool `json:"is_mjml"`
+	// This field is from variant [EmailTemplate].
 	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
 	JSON         struct {
 		Method        respjson.Field
@@ -362,6 +364,7 @@ type BroadcastStepUnionTemplate struct {
 		Title         respjson.Field
 		Subject       respjson.Field
 		HTMLBody      respjson.Field
+		IsMjml        respjson.Field
 		VisualBlocks  respjson.Field
 		raw           string
 	} `json:"-"`
@@ -885,6 +888,15 @@ func (u broadcastRequestStepUnionParamTemplate) GetHTMLBody() *string {
 	switch vt := u.any.(type) {
 	case *EmailTemplateParam:
 		return paramutil.AddrIfPresent(vt.HTMLBody)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u broadcastRequestStepUnionParamTemplate) GetIsMjml() *bool {
+	switch vt := u.any.(type) {
+	case *EmailTemplateParam:
+		return paramutil.AddrIfPresent(vt.IsMjml)
 	}
 	return nil
 }

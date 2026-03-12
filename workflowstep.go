@@ -117,6 +117,8 @@ type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
 	Subject string `json:"subject"`
 	// This field is from variant [EmailTemplate].
 	HTMLBody string `json:"html_body"`
+	// This field is from variant [EmailTemplate].
+	IsMjml   bool   `json:"is_mjml"`
 	TextBody string `json:"text_body"`
 	// This field is from variant [EmailTemplate].
 	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
@@ -145,6 +147,7 @@ type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
 		Settings      respjson.Field
 		Subject       respjson.Field
 		HTMLBody      respjson.Field
+		IsMjml        respjson.Field
 		TextBody      respjson.Field
 		VisualBlocks  respjson.Field
 		MarkdownBody  respjson.Field
