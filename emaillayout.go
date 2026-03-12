@@ -108,7 +108,7 @@ func (r *EmailLayoutService) Validate(ctx context.Context, emailLayoutKey string
 type EmailLayout struct {
 	// The timestamp of when the email layout was created.
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
-	// The complete HTML content of the email layout.
+	// The complete HTML or MJML content of the email layout.
 	HTMLLayout string `json:"html_layout" api:"required"`
 	// The unique key for this email layout.
 	Key string `json:"key" api:"required"`
@@ -122,6 +122,9 @@ type EmailLayout struct {
 	Environment string `json:"environment"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutFooterLink `json:"footer_links"`
+	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
+	// tags.
+	IsMjml bool `json:"is_mjml"`
 	// The timestamp of when the email layout was last updated.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -134,6 +137,7 @@ type EmailLayout struct {
 		TextLayout  respjson.Field
 		Environment respjson.Field
 		FooterLinks respjson.Field
+		IsMjml      respjson.Field
 		UpdatedAt   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -290,12 +294,15 @@ func (r EmailLayoutUpsertParams) URLQuery() (v url.Values, err error) {
 //
 // The properties HTMLLayout, Name, TextLayout are required.
 type EmailLayoutUpsertParamsEmailLayout struct {
-	// The complete HTML content of the email layout.
+	// The complete HTML or MJML content of the email layout.
 	HTMLLayout string `json:"html_layout" api:"required"`
 	// The friendly name of this email layout.
 	Name string `json:"name" api:"required"`
 	// The complete plain text content of the email layout.
 	TextLayout string `json:"text_layout" api:"required"`
+	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
+	// tags.
+	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutUpsertParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
 	paramObj
@@ -358,12 +365,15 @@ func (r EmailLayoutValidateParams) URLQuery() (v url.Values, err error) {
 //
 // The properties HTMLLayout, Name, TextLayout are required.
 type EmailLayoutValidateParamsEmailLayout struct {
-	// The complete HTML content of the email layout.
+	// The complete HTML or MJML content of the email layout.
 	HTMLLayout string `json:"html_layout" api:"required"`
 	// The friendly name of this email layout.
 	Name string `json:"name" api:"required"`
 	// The complete plain text content of the email layout.
 	TextLayout string `json:"text_layout" api:"required"`
+	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
+	// tags.
+	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutValidateParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
 	paramObj
