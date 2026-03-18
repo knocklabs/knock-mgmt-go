@@ -310,6 +310,10 @@ type TranslationUpsertParams struct {
 	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
 	// The message to commit the resource with, only used if `commit` is `true`.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// When set to true, forces the upsert to override existing content regardless of
+	// environment restrictions. This bypasses the development-only environment check
+	// and origin environment checks.
+	Force param.Opt[bool] `query:"force,omitzero" json:"-"`
 	// Optionally specify the returned content format. Supports 'json' and 'po'.
 	// Defaults to 'json'.
 	//
