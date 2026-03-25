@@ -652,7 +652,7 @@ type AudienceUpsertParamsAudienceStatic struct {
 	// The type of audience. Set to `static` for static audiences.
 	//
 	// This field can be elided, and will marshal its zero value as "static".
-	Type constant.Static `json:"type" api:"required"`
+	Type constant.Static `json:"type" default:"static"`
 	paramObj
 }
 
@@ -679,7 +679,7 @@ type AudienceUpsertParamsAudienceDynamic struct {
 	// The type of audience. Set to `dynamic` for dynamic audiences.
 	//
 	// This field can be elided, and will marshal its zero value as "dynamic".
-	Type constant.Dynamic `json:"type" api:"required"`
+	Type constant.Dynamic `json:"type" default:"dynamic"`
 	paramObj
 }
 
@@ -817,7 +817,7 @@ type AudienceValidateParamsAudienceStatic struct {
 	// The type of audience. Set to `static` for static audiences.
 	//
 	// This field can be elided, and will marshal its zero value as "static".
-	Type constant.Static `json:"type" api:"required"`
+	Type constant.Static `json:"type" default:"static"`
 	paramObj
 }
 
@@ -844,7 +844,7 @@ type AudienceValidateParamsAudienceDynamic struct {
 	// The type of audience. Set to `dynamic` for dynamic audiences.
 	//
 	// This field can be elided, and will marshal its zero value as "dynamic".
-	Type constant.Dynamic `json:"type" api:"required"`
+	Type constant.Dynamic `json:"type" default:"dynamic"`
 	paramObj
 }
 
