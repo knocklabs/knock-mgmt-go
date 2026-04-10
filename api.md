@@ -44,6 +44,11 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#RequestTemplate">RequestTemplate</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SMSTemplate">SMSTemplate</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WebhookTemplate">WebhookTemplate</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplatePreviewResponse">TemplatePreviewResponse</a>
+
+Methods:
+
+- <code title="post /v1/templates/preview">client.Templates.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplateService.Preview">Preview</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplatePreviewParams">TemplatePreviewParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplatePreviewResponse">TemplatePreviewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # EmailLayouts
 
