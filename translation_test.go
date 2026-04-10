@@ -36,6 +36,7 @@ func TestTranslationGetWithOptionalParams(t *testing.T) {
 			Format:                 knockmapi.TranslationGetParamsFormatJson,
 			HideUncommittedChanges: knockmapi.Bool(true),
 			Namespace:              knockmapi.String("namespace"),
+			Tenant:                 knockmapi.String("tenant"),
 		},
 	)
 	if err != nil {
@@ -71,6 +72,7 @@ func TestTranslationListWithOptionalParams(t *testing.T) {
 		Limit:                  knockmapi.Int(0),
 		LocaleCode:             knockmapi.String("locale_code"),
 		Namespace:              knockmapi.String("namespace"),
+		Tenant:                 knockmapi.String("tenant"),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -110,6 +112,7 @@ func TestTranslationUpsertWithOptionalParams(t *testing.T) {
 			CommitMessage: knockmapi.String("commit_message"),
 			Force:         knockmapi.Bool(true),
 			Format:        knockmapi.TranslationUpsertParamsFormatJson,
+			Tenant:        knockmapi.String("tenant"),
 		},
 	)
 	if err != nil {

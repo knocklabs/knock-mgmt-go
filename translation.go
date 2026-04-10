@@ -127,6 +127,8 @@ type Translation struct {
 	Namespace string `json:"namespace" api:"required"`
 	// The timestamp of when the translation was last updated.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// An optional tenant identifier to scope the translation to a specific tenant.
+	Tenant string `json:"tenant"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -135,6 +137,7 @@ type Translation struct {
 		LocaleCode  respjson.Field
 		Namespace   respjson.Field
 		UpdatedAt   respjson.Field
+		Tenant      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -222,6 +225,8 @@ type TranslationGetParams struct {
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
 	// A specific namespace to filter translations for.
 	Namespace param.Opt[string] `query:"namespace,omitzero" json:"-"`
+	// A specific tenant to scope the translation to.
+	Tenant param.Opt[string] `query:"tenant,omitzero" json:"-"`
 	// Optionally specify the returned content format. Supports 'json' and 'po'.
 	// Defaults to 'json'.
 	//
@@ -268,6 +273,8 @@ type TranslationListParams struct {
 	LocaleCode param.Opt[string] `query:"locale_code,omitzero" json:"-"`
 	// A specific namespace to filter translations for.
 	Namespace param.Opt[string] `query:"namespace,omitzero" json:"-"`
+	// A specific tenant to filter translations for.
+	Tenant param.Opt[string] `query:"tenant,omitzero" json:"-"`
 	// Optionally specify the returned content format. Supports 'json' and 'po'.
 	// Defaults to 'json'.
 	//
@@ -314,6 +321,8 @@ type TranslationUpsertParams struct {
 	// environment restrictions. This bypasses the development-only environment check
 	// and origin environment checks.
 	Force param.Opt[bool] `query:"force,omitzero" json:"-"`
+	// An optional tenant to scope the translation to.
+	Tenant param.Opt[string] `query:"tenant,omitzero" json:"-"`
 	// Optionally specify the returned content format. Supports 'json' and 'po'.
 	// Defaults to 'json'.
 	//
