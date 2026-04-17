@@ -167,6 +167,10 @@ func TestTemplatePreviewWithOptionalParams(t *testing.T) {
 			TextContent: knockmapi.String("text_content"),
 		},
 		Tenant: knockmapi.String("tenant"),
+		Workflow: knockmapi.TemplatePreviewParamsWorkflow{
+			Key:        "key",
+			Categories: []string{"string"},
+		},
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
