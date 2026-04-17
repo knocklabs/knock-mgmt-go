@@ -2656,6 +2656,9 @@ type TemplatePreviewParams struct {
 	// Email layout configuration. Only applicable for email channel type. Falls back
 	// to environment default if not provided.
 	Layout TemplatePreviewParamsLayout `json:"layout,omitzero"`
+	// Optional workflow context for variable hydration. When provided,
+	// recipient/actor/tenant are resolved via Knock.
+	Workflow TemplatePreviewParamsWorkflow `json:"workflow,omitzero"`
 	// The data to pass to the template for rendering.
 	Data map[string]any `json:"data,omitzero"`
 	paramObj
@@ -3010,5 +3013,25 @@ func (r TemplatePreviewParamsLayout) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *TemplatePreviewParamsLayout) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Optional workflow context for variable hydration. When provided,
+// recipient/actor/tenant are resolved via Knock.
+//
+// The property Key is required.
+type TemplatePreviewParamsWorkflow struct {
+	// The workflow key.
+	Key string `json:"key" api:"required"`
+	// Workflow categories.
+	Categories []string `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r TemplatePreviewParamsWorkflow) MarshalJSON() (data []byte, err error) {
+	type shadow TemplatePreviewParamsWorkflow
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TemplatePreviewParamsWorkflow) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
