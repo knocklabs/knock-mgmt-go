@@ -118,6 +118,9 @@ type EmailLayout struct {
 	Sha string `json:"sha" api:"required"`
 	// The complete plaintext content of the email layout.
 	TextLayout string `json:"text_layout" api:"required"`
+	// Overrides to apply against account branding variables in an email layout,
+	// including dark mode-specific values.
+	BrandingOverrides EmailLayoutBrandingOverrides `json:"branding_overrides" api:"nullable"`
 	// The environment of the email layout.
 	Environment string `json:"environment"`
 	// A list of one or more items to show in the footer of the email layout.
@@ -129,24 +132,71 @@ type EmailLayout struct {
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CreatedAt   respjson.Field
-		HTMLLayout  respjson.Field
-		Key         respjson.Field
-		Name        respjson.Field
-		Sha         respjson.Field
-		TextLayout  respjson.Field
-		Environment respjson.Field
-		FooterLinks respjson.Field
-		IsMjml      respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		CreatedAt         respjson.Field
+		HTMLLayout        respjson.Field
+		Key               respjson.Field
+		Name              respjson.Field
+		Sha               respjson.Field
+		TextLayout        respjson.Field
+		BrandingOverrides respjson.Field
+		Environment       respjson.Field
+		FooterLinks       respjson.Field
+		IsMjml            respjson.Field
+		UpdatedAt         respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r EmailLayout) RawJSON() string { return r.JSON.raw }
 func (r *EmailLayout) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Overrides to apply against account branding variables in an email layout,
+// including dark mode-specific values.
+type EmailLayoutBrandingOverrides struct {
+	// A URL for a dark mode icon override.
+	DarkIconURL string `json:"dark_icon_url" api:"nullable"`
+	// A URL for a dark mode logo override.
+	DarkLogoURL string `json:"dark_logo_url" api:"nullable"`
+	// The dark mode primary brand color in hex format.
+	DarkPrimaryColor string `json:"dark_primary_color" api:"nullable"`
+	// The dark mode contrast color for the primary brand color in hex format.
+	DarkPrimaryColorContrast string `json:"dark_primary_color_contrast" api:"nullable"`
+	// A URL for a light mode icon override.
+	IconURL string `json:"icon_url" api:"nullable"`
+	// A URL for a light mode logo override.
+	LogoURL string `json:"logo_url" api:"nullable"`
+	// The light mode primary brand color in hex format.
+	PrimaryColor string `json:"primary_color" api:"nullable"`
+	// The light mode contrast color for the primary brand color in hex format.
+	PrimaryColorContrast string `json:"primary_color_contrast" api:"nullable"`
+	// The light mode primary text color in hex format.
+	PrimaryTextColor string `json:"primary_text_color" api:"nullable"`
+	// The light mode secondary text color in hex format.
+	SecondaryTextColor string `json:"secondary_text_color" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		DarkIconURL              respjson.Field
+		DarkLogoURL              respjson.Field
+		DarkPrimaryColor         respjson.Field
+		DarkPrimaryColorContrast respjson.Field
+		IconURL                  respjson.Field
+		LogoURL                  respjson.Field
+		PrimaryColor             respjson.Field
+		PrimaryColorContrast     respjson.Field
+		PrimaryTextColor         respjson.Field
+		SecondaryTextColor       respjson.Field
+		ExtraFields              map[string]respjson.Field
+		raw                      string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailLayoutBrandingOverrides) RawJSON() string { return r.JSON.raw }
+func (r *EmailLayoutBrandingOverrides) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -307,6 +357,9 @@ type EmailLayoutUpsertParamsEmailLayout struct {
 	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
 	// tags.
 	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
+	// Overrides to apply against account branding variables in an email layout,
+	// including dark mode-specific values.
+	BrandingOverrides EmailLayoutUpsertParamsEmailLayoutBrandingOverrides `json:"branding_overrides,omitzero"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutUpsertParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
 	paramObj
@@ -317,6 +370,40 @@ func (r EmailLayoutUpsertParamsEmailLayout) MarshalJSON() (data []byte, err erro
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *EmailLayoutUpsertParamsEmailLayout) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Overrides to apply against account branding variables in an email layout,
+// including dark mode-specific values.
+type EmailLayoutUpsertParamsEmailLayoutBrandingOverrides struct {
+	// A URL for a dark mode icon override.
+	DarkIconURL param.Opt[string] `json:"dark_icon_url,omitzero"`
+	// A URL for a dark mode logo override.
+	DarkLogoURL param.Opt[string] `json:"dark_logo_url,omitzero"`
+	// The dark mode primary brand color in hex format.
+	DarkPrimaryColor param.Opt[string] `json:"dark_primary_color,omitzero"`
+	// The dark mode contrast color for the primary brand color in hex format.
+	DarkPrimaryColorContrast param.Opt[string] `json:"dark_primary_color_contrast,omitzero"`
+	// A URL for a light mode icon override.
+	IconURL param.Opt[string] `json:"icon_url,omitzero"`
+	// A URL for a light mode logo override.
+	LogoURL param.Opt[string] `json:"logo_url,omitzero"`
+	// The light mode primary brand color in hex format.
+	PrimaryColor param.Opt[string] `json:"primary_color,omitzero"`
+	// The light mode contrast color for the primary brand color in hex format.
+	PrimaryColorContrast param.Opt[string] `json:"primary_color_contrast,omitzero"`
+	// The light mode primary text color in hex format.
+	PrimaryTextColor param.Opt[string] `json:"primary_text_color,omitzero"`
+	// The light mode secondary text color in hex format.
+	SecondaryTextColor param.Opt[string] `json:"secondary_text_color,omitzero"`
+	paramObj
+}
+
+func (r EmailLayoutUpsertParamsEmailLayoutBrandingOverrides) MarshalJSON() (data []byte, err error) {
+	type shadow EmailLayoutUpsertParamsEmailLayoutBrandingOverrides
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutUpsertParamsEmailLayoutBrandingOverrides) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -378,6 +465,9 @@ type EmailLayoutValidateParamsEmailLayout struct {
 	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
 	// tags.
 	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
+	// Overrides to apply against account branding variables in an email layout,
+	// including dark mode-specific values.
+	BrandingOverrides EmailLayoutValidateParamsEmailLayoutBrandingOverrides `json:"branding_overrides,omitzero"`
 	// A list of one or more items to show in the footer of the email layout.
 	FooterLinks []EmailLayoutValidateParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
 	paramObj
@@ -388,6 +478,40 @@ func (r EmailLayoutValidateParamsEmailLayout) MarshalJSON() (data []byte, err er
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *EmailLayoutValidateParamsEmailLayout) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Overrides to apply against account branding variables in an email layout,
+// including dark mode-specific values.
+type EmailLayoutValidateParamsEmailLayoutBrandingOverrides struct {
+	// A URL for a dark mode icon override.
+	DarkIconURL param.Opt[string] `json:"dark_icon_url,omitzero"`
+	// A URL for a dark mode logo override.
+	DarkLogoURL param.Opt[string] `json:"dark_logo_url,omitzero"`
+	// The dark mode primary brand color in hex format.
+	DarkPrimaryColor param.Opt[string] `json:"dark_primary_color,omitzero"`
+	// The dark mode contrast color for the primary brand color in hex format.
+	DarkPrimaryColorContrast param.Opt[string] `json:"dark_primary_color_contrast,omitzero"`
+	// A URL for a light mode icon override.
+	IconURL param.Opt[string] `json:"icon_url,omitzero"`
+	// A URL for a light mode logo override.
+	LogoURL param.Opt[string] `json:"logo_url,omitzero"`
+	// The light mode primary brand color in hex format.
+	PrimaryColor param.Opt[string] `json:"primary_color,omitzero"`
+	// The light mode contrast color for the primary brand color in hex format.
+	PrimaryColorContrast param.Opt[string] `json:"primary_color_contrast,omitzero"`
+	// The light mode primary text color in hex format.
+	PrimaryTextColor param.Opt[string] `json:"primary_text_color,omitzero"`
+	// The light mode secondary text color in hex format.
+	SecondaryTextColor param.Opt[string] `json:"secondary_text_color,omitzero"`
+	paramObj
+}
+
+func (r EmailLayoutValidateParamsEmailLayoutBrandingOverrides) MarshalJSON() (data []byte, err error) {
+	type shadow EmailLayoutValidateParamsEmailLayoutBrandingOverrides
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutValidateParamsEmailLayoutBrandingOverrides) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
