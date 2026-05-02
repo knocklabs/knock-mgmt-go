@@ -170,6 +170,7 @@ func TestTemplatePreviewWithOptionalParams(t *testing.T) {
 		Workflow: knockmapi.TemplatePreviewParamsWorkflow{
 			Key:        "key",
 			Categories: []string{"string"},
+			Commercial: knockmapi.Bool(true),
 		},
 	})
 	if err != nil {

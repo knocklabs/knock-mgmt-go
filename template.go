@@ -3023,6 +3023,8 @@ func (r *TemplatePreviewParamsLayout) UnmarshalJSON(data []byte) error {
 type TemplatePreviewParamsWorkflow struct {
 	// The workflow key.
 	Key string `json:"key" api:"required"`
+	// Whether the workflow is marked as commercial messaging.
+	Commercial param.Opt[bool] `json:"commercial,omitzero"`
 	// Workflow categories.
 	Categories []string `json:"categories,omitzero"`
 	paramObj
