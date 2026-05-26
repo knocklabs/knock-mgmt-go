@@ -174,44 +174,49 @@ const (
 )
 
 // PartialInputSchemaUnion contains all possible properties and values from
-// [shared.MessageTypeBooleanField], [shared.MessageTypeButtonField],
-// [shared.MessageTypeImageField], [shared.MessageTypeJsonField],
+// [shared.MessageTypeSelectField], [shared.MessageTypeBooleanField],
+// [shared.MessageTypeJsonField], [MessageTypeTextField],
+// [shared.MessageTypeImageField], [shared.MessageTypeURLField],
 // [shared.MessageTypeMarkdownField], [shared.MessageTypeMultiSelectField],
-// [shared.MessageTypeSelectField], [MessageTypeTextField],
-// [shared.MessageTypeTextareaField], [shared.MessageTypeURLField].
+// [shared.MessageTypeButtonField], [shared.MessageTypeTextareaField].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type PartialInputSchemaUnion struct {
 	Key   string `json:"key"`
 	Label string `json:"label"`
-	Type  string `json:"type"`
-	// This field is a union of [shared.MessageTypeBooleanFieldSettings],
-	// [shared.MessageTypeButtonFieldSettings], [shared.MessageTypeImageFieldSettings],
-	// [shared.MessageTypeJsonFieldSettings],
-	// [shared.MessageTypeMarkdownFieldSettings],
+	// This field is a union of [shared.MessageTypeSelectFieldSettings],
+	// [shared.MessageTypeBooleanFieldSettings], [shared.MessageTypeJsonFieldSettings],
+	// [MessageTypeTextFieldSettings], [shared.MessageTypeImageFieldSettings],
+	// [shared.MessageTypeURLFieldSettings], [shared.MessageTypeMarkdownFieldSettings],
 	// [shared.MessageTypeMultiSelectFieldSettings],
-	// [shared.MessageTypeSelectFieldSettings], [MessageTypeTextFieldSettings],
-	// [shared.MessageTypeTextareaFieldSettings], [shared.MessageTypeURLFieldSettings]
+	// [shared.MessageTypeButtonFieldSettings],
+	// [shared.MessageTypeTextareaFieldSettings]
 	Settings PartialInputSchemaUnionSettings `json:"settings"`
-	// This field is from variant [shared.MessageTypeButtonField].
+	Type     string                          `json:"type"`
+	// This field is from variant [shared.MessageTypeImageField].
 	Action MessageTypeTextField `json:"action"`
-	// This field is from variant [shared.MessageTypeButtonField].
-	Text MessageTypeTextField `json:"text"`
 	// This field is from variant [shared.MessageTypeImageField].
 	Alt MessageTypeTextField `json:"alt"`
 	// This field is from variant [shared.MessageTypeImageField].
-	URL  shared.MessageTypeURLField `json:"url"`
+	URL shared.MessageTypeURLField `json:"url"`
+	// This field is from variant [shared.MessageTypeButtonField].
+	Text MessageTypeTextField `json:"text"`
 	JSON struct {
 		Key      respjson.Field
 		Label    respjson.Field
-		Type     respjson.Field
 		Settings respjson.Field
+		Type     respjson.Field
 		Action   respjson.Field
-		Text     respjson.Field
 		Alt      respjson.Field
 		URL      respjson.Field
+		Text     respjson.Field
 		raw      string
 	} `json:"-"`
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeSelectField() (v shared.MessageTypeSelectField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
 }
 
 func (u PartialInputSchemaUnion) AsMessageTypeBooleanField() (v shared.MessageTypeBooleanField) {
@@ -219,7 +224,12 @@ func (u PartialInputSchemaUnion) AsMessageTypeBooleanField() (v shared.MessageTy
 	return
 }
 
-func (u PartialInputSchemaUnion) AsMessageTypeButtonField() (v shared.MessageTypeButtonField) {
+func (u PartialInputSchemaUnion) AsMessageTypeJsonField() (v shared.MessageTypeJsonField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -229,7 +239,7 @@ func (u PartialInputSchemaUnion) AsMessageTypeImageField() (v shared.MessageType
 	return
 }
 
-func (u PartialInputSchemaUnion) AsMessageTypeJsonField() (v shared.MessageTypeJsonField) {
+func (u PartialInputSchemaUnion) AsMessageTypeURLField() (v shared.MessageTypeURLField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -244,22 +254,12 @@ func (u PartialInputSchemaUnion) AsMessageTypeMultiSelectField() (v shared.Messa
 	return
 }
 
-func (u PartialInputSchemaUnion) AsMessageTypeSelectField() (v shared.MessageTypeSelectField) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
+func (u PartialInputSchemaUnion) AsMessageTypeButtonField() (v shared.MessageTypeButtonField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 func (u PartialInputSchemaUnion) AsMessageTypeTextareaField() (v shared.MessageTypeTextareaField) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u PartialInputSchemaUnion) AsMessageTypeURLField() (v shared.MessageTypeURLField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -278,26 +278,26 @@ func (r *PartialInputSchemaUnion) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [PartialInputSchemaUnion].
 type PartialInputSchemaUnionSettings struct {
-	// This field is a union of [bool], [any], [string], [[]string], [string],
-	// [string], [string], [string]
+	// This field is a union of [string], [bool], [any], [string], [string], [string],
+	// [[]string], [string]
 	Default     PartialInputSchemaUnionSettingsDefault `json:"default"`
 	Description string                                 `json:"description"`
+	// This field is a union of [[]shared.MessageTypeSelectFieldSettingsOption],
+	// [[]shared.MessageTypeMultiSelectFieldSettingsOption]
+	Options     PartialInputSchemaUnionSettingsOptions `json:"options"`
 	Placeholder string                                 `json:"placeholder"`
 	Required    bool                                   `json:"required"`
 	// This field is from variant [shared.MessageTypeJsonFieldSettings].
-	Schema any `json:"schema"`
-	// This field is a union of [[]shared.MessageTypeMultiSelectFieldSettingsOption],
-	// [[]shared.MessageTypeSelectFieldSettingsOption]
-	Options   PartialInputSchemaUnionSettingsOptions `json:"options"`
-	MaxLength int64                                  `json:"max_length"`
-	MinLength int64                                  `json:"min_length"`
+	Schema    any   `json:"schema"`
+	MaxLength int64 `json:"max_length"`
+	MinLength int64 `json:"min_length"`
 	JSON      struct {
 		Default     respjson.Field
 		Description respjson.Field
+		Options     respjson.Field
 		Placeholder respjson.Field
 		Required    respjson.Field
 		Schema      respjson.Field
-		Options     respjson.Field
 		MaxLength   respjson.Field
 		MinLength   respjson.Field
 		raw         string
@@ -316,21 +316,21 @@ func (r *PartialInputSchemaUnionSettings) UnmarshalJSON(data []byte) error {
 // [PartialInputSchemaUnion].
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfMessageTypeJsonFieldSettingsDefault OfString
+// will be valid: OfString OfBool OfMessageTypeJsonFieldSettingsDefault
 // OfStringArray]
 type PartialInputSchemaUnionSettingsDefault struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [any] instead of an object.
 	OfMessageTypeJsonFieldSettingsDefault any `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
 	// This field will be present if the value is a [[]string] instead of an object.
 	OfStringArray []string `json:",inline"`
 	JSON          struct {
+		OfString                              respjson.Field
 		OfBool                                respjson.Field
 		OfMessageTypeJsonFieldSettingsDefault respjson.Field
-		OfString                              respjson.Field
 		OfStringArray                         respjson.Field
 		raw                                   string
 	} `json:"-"`
@@ -348,18 +348,18 @@ func (r *PartialInputSchemaUnionSettingsDefault) UnmarshalJSON(data []byte) erro
 // [PartialInputSchemaUnion].
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfMessageTypeMultiSelectFieldSettingsOptions
-// OfMessageTypeSelectFieldSettingsOptions]
+// will be valid: OfMessageTypeSelectFieldSettingsOptions
+// OfMessageTypeMultiSelectFieldSettingsOptions]
 type PartialInputSchemaUnionSettingsOptions struct {
-	// This field will be present if the value is a
-	// [[]shared.MessageTypeMultiSelectFieldSettingsOption] instead of an object.
-	OfMessageTypeMultiSelectFieldSettingsOptions []shared.MessageTypeMultiSelectFieldSettingsOption `json:",inline"`
 	// This field will be present if the value is a
 	// [[]shared.MessageTypeSelectFieldSettingsOption] instead of an object.
 	OfMessageTypeSelectFieldSettingsOptions []shared.MessageTypeSelectFieldSettingsOption `json:",inline"`
-	JSON                                    struct {
-		OfMessageTypeMultiSelectFieldSettingsOptions respjson.Field
+	// This field will be present if the value is a
+	// [[]shared.MessageTypeMultiSelectFieldSettingsOption] instead of an object.
+	OfMessageTypeMultiSelectFieldSettingsOptions []shared.MessageTypeMultiSelectFieldSettingsOption `json:",inline"`
+	JSON                                         struct {
 		OfMessageTypeSelectFieldSettingsOptions      respjson.Field
+		OfMessageTypeMultiSelectFieldSettingsOptions respjson.Field
 		raw                                          string
 	} `json:"-"`
 }
@@ -534,64 +534,56 @@ func init() {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type PartialUpsertParamsPartialInputSchemaUnion struct {
+	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam      `json:",omitzero,inline"`
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam     `json:",omitzero,inline"`
-	OfMessageTypeButtonField      *shared.MessageTypeButtonFieldParam      `json:",omitzero,inline"`
-	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam       `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam        `json:",omitzero,inline"`
+	OfMessageTypeTextField        *MessageTypeTextFieldParam               `json:",omitzero,inline"`
+	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam       `json:",omitzero,inline"`
+	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam         `json:",omitzero,inline"`
 	OfMessageTypeMarkdownField    *shared.MessageTypeMarkdownFieldParam    `json:",omitzero,inline"`
 	OfMessageTypeMultiSelectField *shared.MessageTypeMultiSelectFieldParam `json:",omitzero,inline"`
-	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam      `json:",omitzero,inline"`
-	OfMessageTypeTextField        *MessageTypeTextFieldParam               `json:",omitzero,inline"`
+	OfMessageTypeButtonField      *shared.MessageTypeButtonFieldParam      `json:",omitzero,inline"`
 	OfMessageTypeTextareaField    *shared.MessageTypeTextareaFieldParam    `json:",omitzero,inline"`
-	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam         `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u PartialUpsertParamsPartialInputSchemaUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfMessageTypeBooleanField,
-		u.OfMessageTypeButtonField,
-		u.OfMessageTypeImageField,
+	return param.MarshalUnion(u, u.OfMessageTypeSelectField,
+		u.OfMessageTypeBooleanField,
 		u.OfMessageTypeJsonField,
+		u.OfMessageTypeTextField,
+		u.OfMessageTypeImageField,
+		u.OfMessageTypeURLField,
 		u.OfMessageTypeMarkdownField,
 		u.OfMessageTypeMultiSelectField,
-		u.OfMessageTypeSelectField,
-		u.OfMessageTypeTextField,
-		u.OfMessageTypeTextareaField,
-		u.OfMessageTypeURLField)
+		u.OfMessageTypeButtonField,
+		u.OfMessageTypeTextareaField)
 }
 func (u *PartialUpsertParamsPartialInputSchemaUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *PartialUpsertParamsPartialInputSchemaUnion) asAny() any {
-	if !param.IsOmitted(u.OfMessageTypeBooleanField) {
+	if !param.IsOmitted(u.OfMessageTypeSelectField) {
+		return u.OfMessageTypeSelectField
+	} else if !param.IsOmitted(u.OfMessageTypeBooleanField) {
 		return u.OfMessageTypeBooleanField
-	} else if !param.IsOmitted(u.OfMessageTypeButtonField) {
-		return u.OfMessageTypeButtonField
-	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
-		return u.OfMessageTypeImageField
 	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
 		return u.OfMessageTypeJsonField
+	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
+		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
+		return u.OfMessageTypeImageField
+	} else if !param.IsOmitted(u.OfMessageTypeURLField) {
+		return u.OfMessageTypeURLField
 	} else if !param.IsOmitted(u.OfMessageTypeMarkdownField) {
 		return u.OfMessageTypeMarkdownField
 	} else if !param.IsOmitted(u.OfMessageTypeMultiSelectField) {
 		return u.OfMessageTypeMultiSelectField
-	} else if !param.IsOmitted(u.OfMessageTypeSelectField) {
-		return u.OfMessageTypeSelectField
-	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
-		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeButtonField) {
+		return u.OfMessageTypeButtonField
 	} else if !param.IsOmitted(u.OfMessageTypeTextareaField) {
 		return u.OfMessageTypeTextareaField
-	} else if !param.IsOmitted(u.OfMessageTypeURLField) {
-		return u.OfMessageTypeURLField
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u PartialUpsertParamsPartialInputSchemaUnion) GetText() *MessageTypeTextFieldParam {
-	if vt := u.OfMessageTypeButtonField; vt != nil {
-		return &vt.Text
 	}
 	return nil
 }
@@ -613,26 +605,34 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetURL() *shared.MessageType
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u PartialUpsertParamsPartialInputSchemaUnion) GetText() *MessageTypeTextFieldParam {
+	if vt := u.OfMessageTypeButtonField; vt != nil {
+		return &vt.Text
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u PartialUpsertParamsPartialInputSchemaUnion) GetKey() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil {
+	if vt := u.OfMessageTypeSelectField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeButtonField; vt != nil {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeTextField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Key)
 	}
 	return nil
@@ -640,25 +640,25 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetKey() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u PartialUpsertParamsPartialInputSchemaUnion) GetLabel() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.Valid() {
+	if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeButtonField; vt != nil && vt.Label.Valid() {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
+	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	}
 	return nil
@@ -666,25 +666,25 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetLabel() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u PartialUpsertParamsPartialInputSchemaUnion) GetType() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil {
+	if vt := u.OfMessageTypeSelectField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeButtonField; vt != nil {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeTextField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -694,55 +694,55 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetType() *string {
 //
 // Or use AsAny() to get the underlying value
 func (u PartialUpsertParamsPartialInputSchemaUnion) GetSettings() (res partialUpsertParamsPartialInputSchemaUnionSettings) {
-	if vt := u.OfMessageTypeBooleanField; vt != nil {
+	if vt := u.OfMessageTypeSelectField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeButtonField; vt != nil {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeTextField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		res.any = &vt.Settings
 	}
 	return
 }
 
-// Can have the runtime types [*shared.MessageTypeBooleanFieldSettingsParam],
-// [*shared.MessageTypeButtonFieldSettingsParam],
-// [*shared.MessageTypeImageFieldSettingsParam],
+// Can have the runtime types [*shared.MessageTypeSelectFieldSettingsParam],
+// [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
+// [*MessageTypeTextFieldSettingsParam],
+// [*shared.MessageTypeImageFieldSettingsParam],
+// [*shared.MessageTypeURLFieldSettingsParam],
 // [*shared.MessageTypeMarkdownFieldSettingsParam],
 // [*shared.MessageTypeMultiSelectFieldSettingsParam],
-// [*shared.MessageTypeSelectFieldSettingsParam],
-// [*MessageTypeTextFieldSettingsParam],
-// [*shared.MessageTypeTextareaFieldSettingsParam],
-// [*shared.MessageTypeURLFieldSettingsParam]
+// [*shared.MessageTypeButtonFieldSettingsParam],
+// [*shared.MessageTypeTextareaFieldSettingsParam]
 type partialUpsertParamsPartialInputSchemaUnionSettings struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *shared.MessageTypeSelectFieldSettingsParam:
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
-//	case *shared.MessageTypeButtonFieldSettingsParam:
-//	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
+//	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *shared.MessageTypeImageFieldSettingsParam:
+//	case *shared.MessageTypeURLFieldSettingsParam:
 //	case *shared.MessageTypeMarkdownFieldSettingsParam:
 //	case *shared.MessageTypeMultiSelectFieldSettingsParam:
-//	case *shared.MessageTypeSelectFieldSettingsParam:
-//	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *shared.MessageTypeButtonFieldSettingsParam:
 //	case *shared.MessageTypeTextareaFieldSettingsParam:
-//	case *shared.MessageTypeURLFieldSettingsParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -760,25 +760,25 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetSchema() *any {
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *string {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeButtonFieldSettingsParam:
+	case *shared.MessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeJsonFieldSettingsParam:
+	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Description)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeButtonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	}
 	return nil
@@ -787,25 +787,25 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *st
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetPlaceholder() *string {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeButtonFieldSettingsParam:
+	case *shared.MessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeJsonFieldSettingsParam:
+	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeButtonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	}
 	return nil
@@ -814,25 +814,25 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetPlaceholder() *st
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetRequired() *bool {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeButtonFieldSettingsParam:
+	case *shared.MessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeJsonFieldSettingsParam:
+	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Required)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeButtonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	}
 	return nil
@@ -865,35 +865,35 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetMinLength() *int6
 // Or use AsAny() to get the underlying value
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDefault() (res partialUpsertParamsPartialInputSchemaUnionSettingsDefault) {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		res.any = &vt.Default
+	case *MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *shared.MessageTypeURLFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		res.any = &vt.Default
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
-	case *MessageTypeTextFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	}
 	return res
 }
 
-// Can have the runtime types [*bool], [*any], [*string], [\*[]string]
+// Can have the runtime types [*string], [*bool], [*any], [\*[]string]
 type partialUpsertParamsPartialInputSchemaUnionSettingsDefault struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *string:
 //	case *bool:
 //	case *any:
-//	case *string:
 //	case *[]string:
 //	default:
 //	    fmt.Errorf("not present")
@@ -905,24 +905,24 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettingsDefault) AsAny() any {
 // Or use AsAny() to get the underlying value
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetOptions() (res partialUpsertParamsPartialInputSchemaUnionSettingsOptions) {
 	switch vt := u.any.(type) {
-	case *shared.MessageTypeMultiSelectFieldSettingsParam:
-		res.any = &vt.Options
 	case *shared.MessageTypeSelectFieldSettingsParam:
+		res.any = &vt.Options
+	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		res.any = &vt.Options
 	}
 	return res
 }
 
 // Can have the runtime types
-// [_[]shared.MessageTypeMultiSelectFieldSettingsOptionParam],
-// [_[]shared.MessageTypeSelectFieldSettingsOptionParam]
+// [_[]shared.MessageTypeSelectFieldSettingsOptionParam],
+// [_[]shared.MessageTypeMultiSelectFieldSettingsOptionParam]
 type partialUpsertParamsPartialInputSchemaUnionSettingsOptions struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *[]shared.MessageTypeMultiSelectFieldSettingsOptionParam:
 //	case *[]shared.MessageTypeSelectFieldSettingsOptionParam:
+//	case *[]shared.MessageTypeMultiSelectFieldSettingsOptionParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -930,9 +930,9 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettingsOptions) AsAny() any {
 
 // Returns a pointer to the underlying variant's Action property, if present.
 func (u PartialUpsertParamsPartialInputSchemaUnion) GetAction() *MessageTypeTextFieldParam {
-	if vt := u.OfMessageTypeButtonField; vt != nil {
+	if vt := u.OfMessageTypeImageField; vt != nil {
 		return &vt.Action
-	} else if vt := u.OfMessageTypeImageField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return &vt.Action
 	}
 	return nil
@@ -1008,64 +1008,56 @@ func init() {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type PartialValidateParamsPartialInputSchemaUnion struct {
+	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam      `json:",omitzero,inline"`
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam     `json:",omitzero,inline"`
-	OfMessageTypeButtonField      *shared.MessageTypeButtonFieldParam      `json:",omitzero,inline"`
-	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam       `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam        `json:",omitzero,inline"`
+	OfMessageTypeTextField        *MessageTypeTextFieldParam               `json:",omitzero,inline"`
+	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam       `json:",omitzero,inline"`
+	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam         `json:",omitzero,inline"`
 	OfMessageTypeMarkdownField    *shared.MessageTypeMarkdownFieldParam    `json:",omitzero,inline"`
 	OfMessageTypeMultiSelectField *shared.MessageTypeMultiSelectFieldParam `json:",omitzero,inline"`
-	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam      `json:",omitzero,inline"`
-	OfMessageTypeTextField        *MessageTypeTextFieldParam               `json:",omitzero,inline"`
+	OfMessageTypeButtonField      *shared.MessageTypeButtonFieldParam      `json:",omitzero,inline"`
 	OfMessageTypeTextareaField    *shared.MessageTypeTextareaFieldParam    `json:",omitzero,inline"`
-	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam         `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u PartialValidateParamsPartialInputSchemaUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfMessageTypeBooleanField,
-		u.OfMessageTypeButtonField,
-		u.OfMessageTypeImageField,
+	return param.MarshalUnion(u, u.OfMessageTypeSelectField,
+		u.OfMessageTypeBooleanField,
 		u.OfMessageTypeJsonField,
+		u.OfMessageTypeTextField,
+		u.OfMessageTypeImageField,
+		u.OfMessageTypeURLField,
 		u.OfMessageTypeMarkdownField,
 		u.OfMessageTypeMultiSelectField,
-		u.OfMessageTypeSelectField,
-		u.OfMessageTypeTextField,
-		u.OfMessageTypeTextareaField,
-		u.OfMessageTypeURLField)
+		u.OfMessageTypeButtonField,
+		u.OfMessageTypeTextareaField)
 }
 func (u *PartialValidateParamsPartialInputSchemaUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *PartialValidateParamsPartialInputSchemaUnion) asAny() any {
-	if !param.IsOmitted(u.OfMessageTypeBooleanField) {
+	if !param.IsOmitted(u.OfMessageTypeSelectField) {
+		return u.OfMessageTypeSelectField
+	} else if !param.IsOmitted(u.OfMessageTypeBooleanField) {
 		return u.OfMessageTypeBooleanField
-	} else if !param.IsOmitted(u.OfMessageTypeButtonField) {
-		return u.OfMessageTypeButtonField
-	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
-		return u.OfMessageTypeImageField
 	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
 		return u.OfMessageTypeJsonField
+	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
+		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
+		return u.OfMessageTypeImageField
+	} else if !param.IsOmitted(u.OfMessageTypeURLField) {
+		return u.OfMessageTypeURLField
 	} else if !param.IsOmitted(u.OfMessageTypeMarkdownField) {
 		return u.OfMessageTypeMarkdownField
 	} else if !param.IsOmitted(u.OfMessageTypeMultiSelectField) {
 		return u.OfMessageTypeMultiSelectField
-	} else if !param.IsOmitted(u.OfMessageTypeSelectField) {
-		return u.OfMessageTypeSelectField
-	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
-		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeButtonField) {
+		return u.OfMessageTypeButtonField
 	} else if !param.IsOmitted(u.OfMessageTypeTextareaField) {
 		return u.OfMessageTypeTextareaField
-	} else if !param.IsOmitted(u.OfMessageTypeURLField) {
-		return u.OfMessageTypeURLField
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u PartialValidateParamsPartialInputSchemaUnion) GetText() *MessageTypeTextFieldParam {
-	if vt := u.OfMessageTypeButtonField; vt != nil {
-		return &vt.Text
 	}
 	return nil
 }
@@ -1087,26 +1079,34 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetURL() *shared.MessageTy
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u PartialValidateParamsPartialInputSchemaUnion) GetText() *MessageTypeTextFieldParam {
+	if vt := u.OfMessageTypeButtonField; vt != nil {
+		return &vt.Text
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u PartialValidateParamsPartialInputSchemaUnion) GetKey() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil {
+	if vt := u.OfMessageTypeSelectField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeButtonField; vt != nil {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeTextField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Key)
 	}
 	return nil
@@ -1114,25 +1114,25 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetKey() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u PartialValidateParamsPartialInputSchemaUnion) GetLabel() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.Valid() {
+	if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeButtonField; vt != nil && vt.Label.Valid() {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
+	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	}
 	return nil
@@ -1140,25 +1140,25 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetLabel() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u PartialValidateParamsPartialInputSchemaUnion) GetType() *string {
-	if vt := u.OfMessageTypeBooleanField; vt != nil {
+	if vt := u.OfMessageTypeSelectField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeButtonField; vt != nil {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeTextField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -1168,55 +1168,55 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetType() *string {
 //
 // Or use AsAny() to get the underlying value
 func (u PartialValidateParamsPartialInputSchemaUnion) GetSettings() (res partialValidateParamsPartialInputSchemaUnionSettings) {
-	if vt := u.OfMessageTypeBooleanField; vt != nil {
+	if vt := u.OfMessageTypeSelectField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeButtonField; vt != nil {
+	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeJsonField; vt != nil {
+	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMarkdownField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeMultiSelectField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeSelectField; vt != nil {
-		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeTextField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextareaField; vt != nil {
-		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		res.any = &vt.Settings
 	}
 	return
 }
 
-// Can have the runtime types [*shared.MessageTypeBooleanFieldSettingsParam],
-// [*shared.MessageTypeButtonFieldSettingsParam],
-// [*shared.MessageTypeImageFieldSettingsParam],
+// Can have the runtime types [*shared.MessageTypeSelectFieldSettingsParam],
+// [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
+// [*MessageTypeTextFieldSettingsParam],
+// [*shared.MessageTypeImageFieldSettingsParam],
+// [*shared.MessageTypeURLFieldSettingsParam],
 // [*shared.MessageTypeMarkdownFieldSettingsParam],
 // [*shared.MessageTypeMultiSelectFieldSettingsParam],
-// [*shared.MessageTypeSelectFieldSettingsParam],
-// [*MessageTypeTextFieldSettingsParam],
-// [*shared.MessageTypeTextareaFieldSettingsParam],
-// [*shared.MessageTypeURLFieldSettingsParam]
+// [*shared.MessageTypeButtonFieldSettingsParam],
+// [*shared.MessageTypeTextareaFieldSettingsParam]
 type partialValidateParamsPartialInputSchemaUnionSettings struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *shared.MessageTypeSelectFieldSettingsParam:
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
-//	case *shared.MessageTypeButtonFieldSettingsParam:
-//	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
+//	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *shared.MessageTypeImageFieldSettingsParam:
+//	case *shared.MessageTypeURLFieldSettingsParam:
 //	case *shared.MessageTypeMarkdownFieldSettingsParam:
 //	case *shared.MessageTypeMultiSelectFieldSettingsParam:
-//	case *shared.MessageTypeSelectFieldSettingsParam:
-//	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *shared.MessageTypeButtonFieldSettingsParam:
 //	case *shared.MessageTypeTextareaFieldSettingsParam:
-//	case *shared.MessageTypeURLFieldSettingsParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -1234,25 +1234,25 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetSchema() *any {
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *string {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeButtonFieldSettingsParam:
+	case *shared.MessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeJsonFieldSettingsParam:
+	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Description)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeButtonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Description)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	}
 	return nil
@@ -1261,25 +1261,25 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetPlaceholder() *string {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeButtonFieldSettingsParam:
+	case *shared.MessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeJsonFieldSettingsParam:
+	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeButtonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	}
 	return nil
@@ -1288,25 +1288,25 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetPlaceholder() *
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetRequired() *bool {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeButtonFieldSettingsParam:
+	case *shared.MessageTypeJsonFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeJsonFieldSettingsParam:
+	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Required)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeButtonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Required)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	}
 	return nil
@@ -1339,35 +1339,35 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetMinLength() *in
 // Or use AsAny() to get the underlying value
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDefault() (res partialValidateParamsPartialInputSchemaUnionSettingsDefault) {
 	switch vt := u.any.(type) {
+	case *shared.MessageTypeSelectFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		res.any = &vt.Default
+	case *MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *shared.MessageTypeURLFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeMarkdownFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		res.any = &vt.Default
-	case *shared.MessageTypeSelectFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
-	case *MessageTypeTextFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
-	case *shared.MessageTypeURLFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	}
 	return res
 }
 
-// Can have the runtime types [*bool], [*any], [*string], [\*[]string]
+// Can have the runtime types [*string], [*bool], [*any], [\*[]string]
 type partialValidateParamsPartialInputSchemaUnionSettingsDefault struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *string:
 //	case *bool:
 //	case *any:
-//	case *string:
 //	case *[]string:
 //	default:
 //	    fmt.Errorf("not present")
@@ -1379,24 +1379,24 @@ func (u partialValidateParamsPartialInputSchemaUnionSettingsDefault) AsAny() any
 // Or use AsAny() to get the underlying value
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetOptions() (res partialValidateParamsPartialInputSchemaUnionSettingsOptions) {
 	switch vt := u.any.(type) {
-	case *shared.MessageTypeMultiSelectFieldSettingsParam:
-		res.any = &vt.Options
 	case *shared.MessageTypeSelectFieldSettingsParam:
+		res.any = &vt.Options
+	case *shared.MessageTypeMultiSelectFieldSettingsParam:
 		res.any = &vt.Options
 	}
 	return res
 }
 
 // Can have the runtime types
-// [_[]shared.MessageTypeMultiSelectFieldSettingsOptionParam],
-// [_[]shared.MessageTypeSelectFieldSettingsOptionParam]
+// [_[]shared.MessageTypeSelectFieldSettingsOptionParam],
+// [_[]shared.MessageTypeMultiSelectFieldSettingsOptionParam]
 type partialValidateParamsPartialInputSchemaUnionSettingsOptions struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *[]shared.MessageTypeMultiSelectFieldSettingsOptionParam:
 //	case *[]shared.MessageTypeSelectFieldSettingsOptionParam:
+//	case *[]shared.MessageTypeMultiSelectFieldSettingsOptionParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -1404,9 +1404,9 @@ func (u partialValidateParamsPartialInputSchemaUnionSettingsOptions) AsAny() any
 
 // Returns a pointer to the underlying variant's Action property, if present.
 func (u PartialValidateParamsPartialInputSchemaUnion) GetAction() *MessageTypeTextFieldParam {
-	if vt := u.OfMessageTypeButtonField; vt != nil {
+	if vt := u.OfMessageTypeImageField; vt != nil {
 		return &vt.Action
-	} else if vt := u.OfMessageTypeImageField; vt != nil {
+	} else if vt := u.OfMessageTypeButtonField; vt != nil {
 		return &vt.Action
 	}
 	return nil
