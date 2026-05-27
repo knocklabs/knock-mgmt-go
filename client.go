@@ -38,6 +38,8 @@ type Client struct {
 	ChannelGroups ChannelGroupService
 	Channels      ChannelService
 	Members       MemberService
+	// Sources receive external events that can trigger Knock actions.
+	DataSources DataSourceService
 	// Environments are isolated instances of your account that map to your
 	// infrastructure.
 	Environments EnvironmentService
@@ -94,6 +96,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ChannelGroups = NewChannelGroupService(opts...)
 	r.Channels = NewChannelService(opts...)
 	r.Members = NewMemberService(opts...)
+	r.DataSources = NewDataSourceService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Variables = NewVariableService(opts...)
 	r.Guides = NewGuideService(opts...)
