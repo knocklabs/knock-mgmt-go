@@ -674,6 +674,9 @@ type Workflow struct {
 	Description string `json:"description"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags"`
 	// A JSON schema for the expected structure of the workflow trigger's `data`
 	// payload (available in templates as `{{ data.field_name }}`). Used to validate
 	// trigger requests. Read more in the
@@ -702,6 +705,7 @@ type Workflow struct {
 		DeletedAt             respjson.Field
 		Description           respjson.Field
 		Settings              respjson.Field
+		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
 		TriggerFrequency      respjson.Field
 		ExtraFields           map[string]respjson.Field
@@ -4952,6 +4956,9 @@ type WorkflowGetResponse struct {
 	Description string `json:"description"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags"`
 	// A JSON schema for the expected structure of the workflow trigger's `data`
 	// payload (available in templates as `{{ data.field_name }}`). Used to validate
 	// trigger requests. Read more in the
@@ -4984,6 +4991,7 @@ type WorkflowGetResponse struct {
 		DeletedAt             respjson.Field
 		Description           respjson.Field
 		Settings              respjson.Field
+		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
 		TriggerFrequency      respjson.Field
 		UpdatedBy             respjson.Field
@@ -5369,6 +5377,9 @@ type WorkflowUpsertParamsWorkflow struct {
 	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
 	// A map of workflow settings.
 	Settings WorkflowUpsertParamsWorkflowSettings `json:"settings,omitzero"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags,omitzero"`
 	// A JSON schema for the expected structure of the workflow trigger's `data`
 	// payload (available in templates as `{{ data.field_name }}`). Used to validate
 	// trigger requests. Read more in the
@@ -5463,6 +5474,9 @@ type WorkflowValidateParamsWorkflow struct {
 	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
 	// A map of workflow settings.
 	Settings WorkflowValidateParamsWorkflowSettings `json:"settings,omitzero"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags,omitzero"`
 	// A JSON schema for the expected structure of the workflow trigger's `data`
 	// payload (available in templates as `{{ data.field_name }}`). Used to validate
 	// trigger requests. Read more in the

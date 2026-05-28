@@ -174,6 +174,7 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				ArchivedAt:       knockmapi.Time(time.Now()),
 				DeletedAt:        knockmapi.Time(time.Now()),
 				Description:      knockmapi.String("A guide to help users get started with the application"),
+				Tags:             []string{"string"},
 				TargetAudienceID: param.Null[string](),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
@@ -240,6 +241,7 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 				ArchivedAt:       knockmapi.Time(time.Now()),
 				DeletedAt:        knockmapi.Time(time.Now()),
 				Description:      knockmapi.String("A guide to help users get started with the application"),
+				Tags:             []string{"string"},
 				TargetAudienceID: param.Null[string](),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
