@@ -224,6 +224,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
+				Tags: []string{"string"},
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
@@ -317,6 +318,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
+				Tags: []string{"string"},
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},

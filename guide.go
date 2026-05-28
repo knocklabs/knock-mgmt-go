@@ -167,6 +167,9 @@ type Guide struct {
 	Semver string `json:"semver"`
 	// A list of guide step objects in the guide.
 	Steps []GuideStep `json:"steps"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags"`
 	// The ID of the target audience for the guide. When not set, will default to
 	// targeting all users.
 	TargetAudienceID string `json:"target_audience_id" api:"nullable"`
@@ -192,6 +195,7 @@ type Guide struct {
 		Description              respjson.Field
 		Semver                   respjson.Field
 		Steps                    respjson.Field
+		Tags                     respjson.Field
 		TargetAudienceID         respjson.Field
 		TargetPropertyConditions respjson.Field
 		Type                     respjson.Field
@@ -609,6 +613,9 @@ type GuideUpsertParamsGuide struct {
 	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags,omitzero"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
 	paramObj
@@ -671,6 +678,9 @@ type GuideValidateParamsGuide struct {
 	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags,omitzero"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
 	paramObj
