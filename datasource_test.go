@@ -15,7 +15,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 )
 
-func TestDataSourceGet(t *testing.T) {
+func TestDataSourceGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -33,6 +33,7 @@ func TestDataSourceGet(t *testing.T) {
 		"key",
 		knockmapi.DataSourceGetParams{
 			Environment: "development",
+			Annotate:    knockmapi.Bool(true),
 		},
 	)
 	if err != nil {
@@ -299,6 +300,7 @@ func TestDataSourceUpsertWithOptionalParams(t *testing.T) {
 				},
 				PreconfiguredProvider: knockmapi.String("preconfigured_provider"),
 			},
+			Annotate: knockmapi.Bool(true),
 		},
 	)
 	if err != nil {

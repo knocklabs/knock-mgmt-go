@@ -204,8 +204,6 @@ func (r *Source) UnmarshalJSON(data []byte) error {
 
 // Environment-specific settings for a source.
 type SourceEnvironmentSettings struct {
-	// The timestamp of when these environment settings were created.
-	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Event action mappings configured for this source in the environment.
 	Mappings []SourceEventActionMapping `json:"mappings" api:"required"`
 	// Source settings for this environment, including endpoint, verification behavior,
@@ -215,7 +213,6 @@ type SourceEnvironmentSettings struct {
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		CreatedAt   respjson.Field
 		Mappings    respjson.Field
 		Settings    respjson.Field
 		UpdatedAt   respjson.Field
@@ -1138,6 +1135,8 @@ func (r *DataSourceUpsertResponse) UnmarshalJSON(data []byte) error {
 type DataSourceGetParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
+	// Whether to annotate the resource. Only used in the Knock CLI.
+	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1280,6 +1279,8 @@ type DataSourceUpsertParams struct {
 	// A source request for setting a source and its environment-specific
 	// configuration.
 	Source SourceRequestParam `json:"source,omitzero" api:"required"`
+	// Whether to annotate the resource. Only used in the Knock CLI.
+	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	paramObj
 }
 
