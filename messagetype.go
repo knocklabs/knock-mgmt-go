@@ -338,25 +338,30 @@ func (r MessageTypeVariant) ToParam() MessageTypeVariantParam {
 }
 
 // MessageTypeVariantFieldUnion contains all possible properties and values from
-// [shared.MessageTypeSelectField], [shared.MessageTypeBooleanField],
-// [shared.MessageTypeJsonField], [MessageTypeTextField],
-// [shared.MessageTypeImageField], [shared.MessageTypeURLField],
-// [shared.MessageTypeMarkdownField], [shared.MessageTypeMultiSelectField],
-// [shared.MessageTypeButtonField], [shared.MessageTypeTextareaField].
+// [MessageTypeVariantFieldMessageTypeListField], [shared.MessageTypeSelectField],
+// [shared.MessageTypeBooleanField], [shared.MessageTypeJsonField],
+// [MessageTypeVariantFieldMessageTypeNumberField], [MessageTypeTextField],
+// [shared.MessageTypeImageField], [MessageTypeVariantFieldMessageTypeColorField],
+// [shared.MessageTypeURLField], [shared.MessageTypeMarkdownField],
+// [shared.MessageTypeMultiSelectField], [shared.MessageTypeButtonField],
+// [shared.MessageTypeTextareaField].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type MessageTypeVariantFieldUnion struct {
 	Key   string `json:"key"`
 	Label string `json:"label"`
-	// This field is a union of [shared.MessageTypeSelectFieldSettings],
+	Type  string `json:"type"`
+	// This field is a union of [MessageTypeVariantFieldMessageTypeListFieldSettings],
+	// [shared.MessageTypeSelectFieldSettings],
 	// [shared.MessageTypeBooleanFieldSettings], [shared.MessageTypeJsonFieldSettings],
+	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings],
 	// [MessageTypeTextFieldSettings], [shared.MessageTypeImageFieldSettings],
+	// [MessageTypeVariantFieldMessageTypeColorFieldSettings],
 	// [shared.MessageTypeURLFieldSettings], [shared.MessageTypeMarkdownFieldSettings],
 	// [shared.MessageTypeMultiSelectFieldSettings],
 	// [shared.MessageTypeButtonFieldSettings],
 	// [shared.MessageTypeTextareaFieldSettings]
 	Settings MessageTypeVariantFieldUnionSettings `json:"settings"`
-	Type     string                               `json:"type"`
 	// This field is from variant [shared.MessageTypeImageField].
 	Action MessageTypeTextField `json:"action"`
 	// This field is from variant [shared.MessageTypeImageField].
@@ -368,14 +373,19 @@ type MessageTypeVariantFieldUnion struct {
 	JSON struct {
 		Key      respjson.Field
 		Label    respjson.Field
-		Settings respjson.Field
 		Type     respjson.Field
+		Settings respjson.Field
 		Action   respjson.Field
 		Alt      respjson.Field
 		URL      respjson.Field
 		Text     respjson.Field
 		raw      string
 	} `json:"-"`
+}
+
+func (u MessageTypeVariantFieldUnion) AsMessageTypeListField() (v MessageTypeVariantFieldMessageTypeListField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
 }
 
 func (u MessageTypeVariantFieldUnion) AsMessageTypeSelectField() (v shared.MessageTypeSelectField) {
@@ -393,12 +403,22 @@ func (u MessageTypeVariantFieldUnion) AsMessageTypeJsonField() (v shared.Message
 	return
 }
 
+func (u MessageTypeVariantFieldUnion) AsMessageTypeNumberField() (v MessageTypeVariantFieldMessageTypeNumberField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
 func (u MessageTypeVariantFieldUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 func (u MessageTypeVariantFieldUnion) AsMessageTypeImageField() (v shared.MessageTypeImageField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u MessageTypeVariantFieldUnion) AsMessageTypeColorField() (v MessageTypeVariantFieldMessageTypeColorField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -442,26 +462,42 @@ func (r *MessageTypeVariantFieldUnion) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [MessageTypeVariantFieldUnion].
 type MessageTypeVariantFieldUnionSettings struct {
-	// This field is a union of [string], [bool], [any], [string], [string], [string],
-	// [[]string], [string]
+	// This field is a union of [[]any], [string], [bool], [any], [float64], [string],
+	// [string], [string], [string], [[]string], [string]
 	Default     MessageTypeVariantFieldUnionSettingsDefault `json:"default"`
 	Description string                                      `json:"description"`
+	// This field is from variant
+	// [MessageTypeVariantFieldMessageTypeListFieldSettings].
+	ItemSchema  any    `json:"item_schema"`
+	Placeholder string `json:"placeholder"`
+	Required    bool   `json:"required"`
 	// This field is a union of [[]shared.MessageTypeSelectFieldSettingsOption],
 	// [[]shared.MessageTypeMultiSelectFieldSettingsOption]
-	Options     MessageTypeVariantFieldUnionSettingsOptions `json:"options"`
-	Placeholder string                                      `json:"placeholder"`
-	Required    bool                                        `json:"required"`
+	Options MessageTypeVariantFieldUnionSettingsOptions `json:"options"`
 	// This field is from variant [shared.MessageTypeJsonFieldSettings].
-	Schema    any   `json:"schema"`
-	MaxLength int64 `json:"max_length"`
-	MinLength int64 `json:"min_length"`
+	Schema any `json:"schema"`
+	// This field is from variant
+	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings].
+	Max float64 `json:"max"`
+	// This field is from variant
+	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings].
+	Min float64 `json:"min"`
+	// This field is from variant
+	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings].
+	UnitLabel string `json:"unit_label"`
+	MaxLength int64  `json:"max_length"`
+	MinLength int64  `json:"min_length"`
 	JSON      struct {
 		Default     respjson.Field
 		Description respjson.Field
-		Options     respjson.Field
+		ItemSchema  respjson.Field
 		Placeholder respjson.Field
 		Required    respjson.Field
+		Options     respjson.Field
 		Schema      respjson.Field
+		Max         respjson.Field
+		Min         respjson.Field
+		UnitLabel   respjson.Field
 		MaxLength   respjson.Field
 		MinLength   respjson.Field
 		raw         string
@@ -480,21 +516,27 @@ func (r *MessageTypeVariantFieldUnionSettings) UnmarshalJSON(data []byte) error 
 // [MessageTypeVariantFieldUnion].
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfBool OfMessageTypeJsonFieldSettingsDefault
-// OfStringArray]
+// will be valid: OfAnyArray OfString OfBool OfMessageTypeJsonFieldSettingsDefault
+// OfFloat OfStringArray]
 type MessageTypeVariantFieldUnionSettingsDefault struct {
+	// This field will be present if the value is a [[]any] instead of an object.
+	OfAnyArray []any `json:",inline"`
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [any] instead of an object.
 	OfMessageTypeJsonFieldSettingsDefault any `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
 	// This field will be present if the value is a [[]string] instead of an object.
 	OfStringArray []string `json:",inline"`
 	JSON          struct {
+		OfAnyArray                            respjson.Field
 		OfString                              respjson.Field
 		OfBool                                respjson.Field
 		OfMessageTypeJsonFieldSettingsDefault respjson.Field
+		OfFloat                               respjson.Field
 		OfStringArray                         respjson.Field
 		raw                                   string
 	} `json:"-"`
@@ -532,6 +574,183 @@ func (r *MessageTypeVariantFieldUnionSettingsOptions) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A list field used in a message type.
+type MessageTypeVariantFieldMessageTypeListField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "list".
+	Type string `json:"type" api:"required"`
+	// Settings for the list field.
+	Settings MessageTypeVariantFieldMessageTypeListFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeVariantFieldMessageTypeListField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeVariantFieldMessageTypeListField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the list field.
+type MessageTypeVariantFieldMessageTypeListFieldSettings struct {
+	// The default value of the list field.
+	Default     []any  `json:"default" api:"nullable"`
+	Description string `json:"description" api:"nullable"`
+	// A JSON schema used to validate the structure of each item in the list. Must be a
+	// valid JSON schema.
+	ItemSchema  any    `json:"item_schema" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		ItemSchema  respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeVariantFieldMessageTypeListFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeVariantFieldMessageTypeListFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A numeric field used in a message type or partial input schema, with optional
+// min/max bounds and a unit label for display.
+type MessageTypeVariantFieldMessageTypeNumberField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "number".
+	Type string `json:"type" api:"required"`
+	// Settings for the number field.
+	Settings MessageTypeVariantFieldMessageTypeNumberFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeVariantFieldMessageTypeNumberField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeVariantFieldMessageTypeNumberField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the number field.
+type MessageTypeVariantFieldMessageTypeNumberFieldSettings struct {
+	// The default numeric value.
+	Default     float64 `json:"default" api:"nullable"`
+	Description string  `json:"description" api:"nullable"`
+	// Optional inclusive maximum allowed value.
+	Max float64 `json:"max" api:"nullable"`
+	// Optional inclusive minimum allowed value.
+	Min         float64 `json:"min" api:"nullable"`
+	Placeholder string  `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// Optional short label shown after the input (e.g. px, kg).
+	UnitLabel string `json:"unit_label" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Max         respjson.Field
+		Min         respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		UnitLabel   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeVariantFieldMessageTypeNumberFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeVariantFieldMessageTypeNumberFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A hex color field (#RGB or #RRGGBB) used in a message type or partial input
+// schema.
+type MessageTypeVariantFieldMessageTypeColorField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "color".
+	Type string `json:"type" api:"required"`
+	// Settings for the color field.
+	Settings MessageTypeVariantFieldMessageTypeColorFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeVariantFieldMessageTypeColorField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeVariantFieldMessageTypeColorField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the color field.
+type MessageTypeVariantFieldMessageTypeColorFieldSettings struct {
+	// The default hex color value.
+	Default     string `json:"default" api:"nullable"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeVariantFieldMessageTypeColorFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeVariantFieldMessageTypeColorFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A variant of a message type.
 //
 // The properties Fields, Key, Name are required.
@@ -558,25 +777,31 @@ func (r *MessageTypeVariantParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type MessageTypeVariantFieldUnionParam struct {
-	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam      `json:",omitzero,inline"`
-	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam     `json:",omitzero,inline"`
-	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam        `json:",omitzero,inline"`
-	OfMessageTypeTextField        *MessageTypeTextFieldParam               `json:",omitzero,inline"`
-	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam       `json:",omitzero,inline"`
-	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam         `json:",omitzero,inline"`
-	OfMessageTypeMarkdownField    *shared.MessageTypeMarkdownFieldParam    `json:",omitzero,inline"`
-	OfMessageTypeMultiSelectField *shared.MessageTypeMultiSelectFieldParam `json:",omitzero,inline"`
-	OfMessageTypeButtonField      *shared.MessageTypeButtonFieldParam      `json:",omitzero,inline"`
-	OfMessageTypeTextareaField    *shared.MessageTypeTextareaFieldParam    `json:",omitzero,inline"`
+	OfMessageTypeListField        *MessageTypeVariantFieldMessageTypeListFieldParam   `json:",omitzero,inline"`
+	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam                 `json:",omitzero,inline"`
+	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam                `json:",omitzero,inline"`
+	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam                   `json:",omitzero,inline"`
+	OfMessageTypeNumberField      *MessageTypeVariantFieldMessageTypeNumberFieldParam `json:",omitzero,inline"`
+	OfMessageTypeTextField        *MessageTypeTextFieldParam                          `json:",omitzero,inline"`
+	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam                  `json:",omitzero,inline"`
+	OfMessageTypeColorField       *MessageTypeVariantFieldMessageTypeColorFieldParam  `json:",omitzero,inline"`
+	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam                    `json:",omitzero,inline"`
+	OfMessageTypeMarkdownField    *shared.MessageTypeMarkdownFieldParam               `json:",omitzero,inline"`
+	OfMessageTypeMultiSelectField *shared.MessageTypeMultiSelectFieldParam            `json:",omitzero,inline"`
+	OfMessageTypeButtonField      *shared.MessageTypeButtonFieldParam                 `json:",omitzero,inline"`
+	OfMessageTypeTextareaField    *shared.MessageTypeTextareaFieldParam               `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u MessageTypeVariantFieldUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfMessageTypeSelectField,
+	return param.MarshalUnion(u, u.OfMessageTypeListField,
+		u.OfMessageTypeSelectField,
 		u.OfMessageTypeBooleanField,
 		u.OfMessageTypeJsonField,
+		u.OfMessageTypeNumberField,
 		u.OfMessageTypeTextField,
 		u.OfMessageTypeImageField,
+		u.OfMessageTypeColorField,
 		u.OfMessageTypeURLField,
 		u.OfMessageTypeMarkdownField,
 		u.OfMessageTypeMultiSelectField,
@@ -588,16 +813,22 @@ func (u *MessageTypeVariantFieldUnionParam) UnmarshalJSON(data []byte) error {
 }
 
 func (u *MessageTypeVariantFieldUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfMessageTypeSelectField) {
+	if !param.IsOmitted(u.OfMessageTypeListField) {
+		return u.OfMessageTypeListField
+	} else if !param.IsOmitted(u.OfMessageTypeSelectField) {
 		return u.OfMessageTypeSelectField
 	} else if !param.IsOmitted(u.OfMessageTypeBooleanField) {
 		return u.OfMessageTypeBooleanField
 	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
 		return u.OfMessageTypeJsonField
+	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
+		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
 		return u.OfMessageTypeTextField
 	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
 		return u.OfMessageTypeImageField
+	} else if !param.IsOmitted(u.OfMessageTypeColorField) {
+		return u.OfMessageTypeColorField
 	} else if !param.IsOmitted(u.OfMessageTypeURLField) {
 		return u.OfMessageTypeURLField
 	} else if !param.IsOmitted(u.OfMessageTypeMarkdownField) {
@@ -638,15 +869,21 @@ func (u MessageTypeVariantFieldUnionParam) GetText() *MessageTypeTextFieldParam 
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u MessageTypeVariantFieldUnionParam) GetKey() *string {
-	if vt := u.OfMessageTypeSelectField; vt != nil {
+	if vt := u.OfMessageTypeListField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeSelectField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
+		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeColorField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Key)
@@ -664,15 +901,21 @@ func (u MessageTypeVariantFieldUnionParam) GetKey() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u MessageTypeVariantFieldUnionParam) GetLabel() *string {
-	if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
+	if vt := u.OfMessageTypeListField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeSelectField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeBooleanField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeColorField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeURLField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
@@ -690,15 +933,21 @@ func (u MessageTypeVariantFieldUnionParam) GetLabel() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u MessageTypeVariantFieldUnionParam) GetType() *string {
-	if vt := u.OfMessageTypeSelectField; vt != nil {
+	if vt := u.OfMessageTypeListField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeSelectField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
+		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeColorField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		return (*string)(&vt.Type)
@@ -718,15 +967,21 @@ func (u MessageTypeVariantFieldUnionParam) GetType() *string {
 //
 // Or use AsAny() to get the underlying value
 func (u MessageTypeVariantFieldUnionParam) GetSettings() (res messageTypeVariantFieldUnionParamSettings) {
-	if vt := u.OfMessageTypeSelectField; vt != nil {
+	if vt := u.OfMessageTypeListField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeSelectField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeBooleanField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
+		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeColorField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeURLField; vt != nil {
 		res.any = &vt.Settings
@@ -742,11 +997,15 @@ func (u MessageTypeVariantFieldUnionParam) GetSettings() (res messageTypeVariant
 	return
 }
 
-// Can have the runtime types [*shared.MessageTypeSelectFieldSettingsParam],
+// Can have the runtime types
+// [*MessageTypeVariantFieldMessageTypeListFieldSettingsParam],
+// [*shared.MessageTypeSelectFieldSettingsParam],
 // [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam],
 // [*MessageTypeTextFieldSettingsParam],
 // [*shared.MessageTypeImageFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeColorFieldSettingsParam],
 // [*shared.MessageTypeURLFieldSettingsParam],
 // [*shared.MessageTypeMarkdownFieldSettingsParam],
 // [*shared.MessageTypeMultiSelectFieldSettingsParam],
@@ -757,11 +1016,14 @@ type messageTypeVariantFieldUnionParamSettings struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *knockmapi.MessageTypeVariantFieldMessageTypeListFieldSettingsParam:
 //	case *shared.MessageTypeSelectFieldSettingsParam:
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
+//	case *knockmapi.MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 //	case *knockmapi.MessageTypeTextFieldSettingsParam:
 //	case *shared.MessageTypeImageFieldSettingsParam:
+//	case *knockmapi.MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 //	case *shared.MessageTypeURLFieldSettingsParam:
 //	case *shared.MessageTypeMarkdownFieldSettingsParam:
 //	case *shared.MessageTypeMultiSelectFieldSettingsParam:
@@ -773,6 +1035,15 @@ type messageTypeVariantFieldUnionParamSettings struct{ any }
 func (u messageTypeVariantFieldUnionParamSettings) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u messageTypeVariantFieldUnionParamSettings) GetItemSchema() *any {
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeListFieldSettingsParam:
+		return &vt.ItemSchema
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetSchema() *any {
 	switch vt := u.any.(type) {
 	case *shared.MessageTypeJsonFieldSettingsParam:
@@ -782,17 +1053,50 @@ func (u messageTypeVariantFieldUnionParamSettings) GetSchema() *any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u messageTypeVariantFieldUnionParamSettings) GetMax() *float64 {
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Max)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u messageTypeVariantFieldUnionParamSettings) GetMin() *float64 {
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Min)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u messageTypeVariantFieldUnionParamSettings) GetUnitLabel() *string {
+	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.UnitLabel)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetDescription() *string {
 	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeListFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
 	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -811,15 +1115,21 @@ func (u messageTypeVariantFieldUnionParamSettings) GetDescription() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetPlaceholder() *string {
 	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeListFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
@@ -838,15 +1148,21 @@ func (u messageTypeVariantFieldUnionParamSettings) GetPlaceholder() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u messageTypeVariantFieldUnionParamSettings) GetRequired() *bool {
 	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeListFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeSelectFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
 	case *MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeURLFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -889,13 +1205,19 @@ func (u messageTypeVariantFieldUnionParamSettings) GetMinLength() *int64 {
 // Or use AsAny() to get the underlying value
 func (u messageTypeVariantFieldUnionParamSettings) GetDefault() (res messageTypeVariantFieldUnionParamSettingsDefault) {
 	switch vt := u.any.(type) {
+	case *MessageTypeVariantFieldMessageTypeListFieldSettingsParam:
+		res.any = &vt.Default
 	case *shared.MessageTypeSelectFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeBooleanFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		res.any = &vt.Default
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeURLFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
@@ -909,15 +1231,18 @@ func (u messageTypeVariantFieldUnionParamSettings) GetDefault() (res messageType
 	return res
 }
 
-// Can have the runtime types [*string], [*bool], [*any], [\*[]string]
+// Can have the runtime types [*[]any], [*string], [*bool], [*any], [*float64],
+// [\*[]string]
 type messageTypeVariantFieldUnionParamSettingsDefault struct{ any }
 
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
+//	case *[]any:
 //	case *string:
 //	case *bool:
 //	case *any:
+//	case *float64:
 //	case *[]string:
 //	default:
 //	    fmt.Errorf("not present")
@@ -960,6 +1285,167 @@ func (u MessageTypeVariantFieldUnionParam) GetAction() *MessageTypeTextFieldPara
 		return &vt.Action
 	}
 	return nil
+}
+
+// A list field used in a message type.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeVariantFieldMessageTypeListFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "list".
+	Type string `json:"type,omitzero" api:"required"`
+	// Settings for the list field.
+	Settings MessageTypeVariantFieldMessageTypeListFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeVariantFieldMessageTypeListFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeVariantFieldMessageTypeListFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeListFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeListFieldParam](
+		"type", "list",
+	)
+}
+
+// Settings for the list field.
+type MessageTypeVariantFieldMessageTypeListFieldSettingsParam struct {
+	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	// The default value of the list field.
+	Default []any `json:"default,omitzero"`
+	// A JSON schema used to validate the structure of each item in the list. Must be a
+	// valid JSON schema.
+	ItemSchema any `json:"item_schema,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeVariantFieldMessageTypeListFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeVariantFieldMessageTypeListFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeListFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A numeric field used in a message type or partial input schema, with optional
+// min/max bounds and a unit label for display.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeVariantFieldMessageTypeNumberFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "number".
+	Type string `json:"type,omitzero" api:"required"`
+	// Settings for the number field.
+	Settings MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeVariantFieldMessageTypeNumberFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeVariantFieldMessageTypeNumberFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeNumberFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeNumberFieldParam](
+		"type", "number",
+	)
+}
+
+// Settings for the number field.
+type MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam struct {
+	// The default numeric value.
+	Default     param.Opt[float64] `json:"default,omitzero"`
+	Description param.Opt[string]  `json:"description,omitzero"`
+	// Optional inclusive maximum allowed value.
+	Max param.Opt[float64] `json:"max,omitzero"`
+	// Optional inclusive minimum allowed value.
+	Min         param.Opt[float64] `json:"min,omitzero"`
+	Placeholder param.Opt[string]  `json:"placeholder,omitzero"`
+	// Optional short label shown after the input (e.g. px, kg).
+	UnitLabel param.Opt[string] `json:"unit_label,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A hex color field (#RGB or #RRGGBB) used in a message type or partial input
+// schema.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeVariantFieldMessageTypeColorFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "color".
+	Type string `json:"type,omitzero" api:"required"`
+	// Settings for the color field.
+	Settings MessageTypeVariantFieldMessageTypeColorFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeVariantFieldMessageTypeColorFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeVariantFieldMessageTypeColorFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeColorFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[MessageTypeVariantFieldMessageTypeColorFieldParam](
+		"type", "color",
+	)
+}
+
+// Settings for the color field.
+type MessageTypeVariantFieldMessageTypeColorFieldSettingsParam struct {
+	// The default hex color value.
+	Default     param.Opt[string] `json:"default,omitzero"`
+	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeVariantFieldMessageTypeColorFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeVariantFieldMessageTypeColorFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeVariantFieldMessageTypeColorFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Wraps the MessageType response under the `message_type` key.
