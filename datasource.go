@@ -367,7 +367,7 @@ type SourceLog struct {
 	// The decoded source event name.
 	Event string `json:"event" api:"required"`
 	// The actions executed after receiving the source event. Only present when
-	// `includes` contains `actions`.
+	// `include` contains `actions`.
 	Actions []SourceLogAction `json:"actions"`
 	// The data payload parsed by the source.
 	Data map[string]any `json:"data" api:"nullable"`
@@ -437,7 +437,7 @@ func (r *SourceLogAction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A paginated list of source logs. Include `actions` in the `includes` query
+// A paginated list of source logs. Include `actions` in the `include` query
 // parameter to return action details for each log.
 type SourceLogsResponse struct {
 	// The source logs for the requested source and environment.
@@ -529,12 +529,12 @@ type SourceProviderResponse struct {
 	Provider SourceProviderResponseProvider `json:"provider" api:"required"`
 	// Provider version.
 	Version string `json:"version" api:"required"`
-	// Default event action mappings for the provider. Only present when `includes`
+	// Default event action mappings for the provider. Only present when `include`
 	// contains `default_action_mappings`.
 	DefaultActionMappings []SourceProviderResponseDefaultActionMapping `json:"default_action_mappings"`
 	// Example payloads keyed by event type.
 	ExamplePayloads map[string][]SourceProviderResponseExamplePayload `json:"example_payloads" api:"nullable"`
-	// JSON Schema fields needed to configure the source. Only present when `includes`
+	// JSON Schema fields needed to configure the source. Only present when `include`
 	// contains `static_fields`.
 	StaticFields map[string]any `json:"static_fields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -565,7 +565,7 @@ type SourceProviderResponseDefaultSettings struct {
 	EventTypePath string `json:"event_type_path" api:"required"`
 	// Path to find the idempotency key from the data.
 	IdempotencyKeyPath string `json:"idempotency_key_path" api:"nullable"`
-	// Verification script source code. Only present when `includes` contains
+	// Verification script source code. Only present when `include` contains
 	// `preprocessing_script`.
 	PreprocessingScript SourceProviderResponseDefaultSettingsPreprocessingScript `json:"preprocessing_script" api:"nullable"`
 	// Path to find the timestamp from the data.
@@ -588,7 +588,7 @@ func (r *SourceProviderResponseDefaultSettings) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Verification script source code. Only present when `includes` contains
+// Verification script source code. Only present when `include` contains
 // `preprocessing_script`.
 type SourceProviderResponseDefaultSettingsPreprocessingScript struct {
 	// Script language.
@@ -627,7 +627,7 @@ type SourceProviderResponseProvider struct {
 	WebhookDocsURL string `json:"webhook_docs_url" api:"required"`
 	// Provider website URL.
 	WebsiteURL string `json:"website_url" api:"required"`
-	// Provider branding assets. Only present when `includes` contains `branding`.
+	// Provider branding assets. Only present when `include` contains `branding`.
 	Branding SourceProviderResponseProviderBranding `json:"branding" api:"nullable"`
 	// Knock tutorial URL for setting up the provider.
 	KnockTutorialURL string `json:"knock_tutorial_url" api:"nullable"`
@@ -654,7 +654,7 @@ func (r *SourceProviderResponseProvider) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Provider branding assets. Only present when `includes` contains `branding`.
+// Provider branding assets. Only present when `include` contains `branding`.
 type SourceProviderResponseProviderBranding struct {
 	// Provider icon image URL or path.
 	IconImage      string                                               `json:"icon_image" api:"required"`
@@ -1097,14 +1097,18 @@ type SourcesResponseEntry struct {
 	CustomImageURL string `json:"custom_image_url" api:"nullable"`
 	// Source description.
 	Description string `json:"description" api:"nullable"`
+	// Per-environment settings keyed by environment slug. Present only when requested
+	// via `include`.
+	EnvironmentSettings map[string]SourceEnvironmentSettings `json:"environment_settings" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Key            respjson.Field
-		Name           respjson.Field
-		CustomImageURL respjson.Field
-		Description    respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
+		Key                 respjson.Field
+		Name                respjson.Field
+		CustomImageURL      respjson.Field
+		Description         respjson.Field
+		EnvironmentSettings respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
@@ -1186,7 +1190,7 @@ type DataSourceListLogsParams struct {
 	// the actions executed after receiving each source event.
 	//
 	// Any of "actions".
-	Includes []string `query:"includes,omitzero" json:"-"`
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1200,8 +1204,14 @@ func (r DataSourceListLogsParams) URLQuery() (v url.Values, err error) {
 }
 
 type DataSourceListSourcesParams struct {
+	// Whether to annotate the resource. Only used in the Knock CLI.
+	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The environment slug.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	// Associated resources to include in each source. Accepts `environment_settings`.
+	//
+	// Any of "environment_settings".
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1245,7 +1255,7 @@ type DataSourceGetProviderParams struct {
 	//
 	// Any of "branding", "default_action_mappings", "example_payloads",
 	// "preprocessing_script", "static_fields".
-	Includes []string `query:"includes,omitzero" json:"-"`
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 

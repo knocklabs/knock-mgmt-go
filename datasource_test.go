@@ -98,7 +98,7 @@ func TestDataSourceListLogsWithOptionalParams(t *testing.T) {
 			Date:        knockmapi.String("date"),
 			EndingAt:    knockmapi.Time(time.Now()),
 			Event:       knockmapi.String("event"),
-			Includes:    []string{"actions"},
+			Include:     []string{"actions"},
 			Limit:       knockmapi.Int(0),
 			StartingAt:  knockmapi.Time(time.Now()),
 		},
@@ -149,7 +149,9 @@ func TestDataSourceListSourcesWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.DataSources.ListSources(context.TODO(), knockmapi.DataSourceListSourcesParams{
+		Annotate:    knockmapi.Bool(true),
 		Environment: knockmapi.String("development"),
+		Include:     []string{"environment_settings"},
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -212,7 +214,7 @@ func TestDataSourceGetProviderWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"key",
 		knockmapi.DataSourceGetProviderParams{
-			Includes: []string{"branding"},
+			Include: []string{"branding"},
 		},
 	)
 	if err != nil {
