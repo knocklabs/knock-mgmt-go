@@ -12,7 +12,6 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
-	"github.com/knocklabs/knock-mgmt-go/packages/param"
 )
 
 func TestGuideGetWithOptionalParams(t *testing.T) {
@@ -171,11 +170,11 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 					Pathname:  knockmapi.String("/dashboard/*"),
 					Search:    knockmapi.String("tab=settings"),
 				}},
-				ArchivedAt:       knockmapi.Time(time.Now()),
-				DeletedAt:        knockmapi.Time(time.Now()),
-				Description:      knockmapi.String("A guide to help users get started with the application"),
-				Tags:             []string{"string"},
-				TargetAudienceID: param.Null[string](),
+				ArchivedAt:        knockmapi.Time(time.Now()),
+				DeletedAt:         knockmapi.Time(time.Now()),
+				Description:       knockmapi.String("A guide to help users get started with the application"),
+				Tags:              []string{"string"},
+				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
@@ -238,11 +237,11 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 					Pathname:  knockmapi.String("/dashboard/*"),
 					Search:    knockmapi.String("tab=settings"),
 				}},
-				ArchivedAt:       knockmapi.Time(time.Now()),
-				DeletedAt:        knockmapi.Time(time.Now()),
-				Description:      knockmapi.String("A guide to help users get started with the application"),
-				Tags:             []string{"string"},
-				TargetAudienceID: param.Null[string](),
+				ArchivedAt:        knockmapi.Time(time.Now()),
+				DeletedAt:         knockmapi.Time(time.Now()),
+				Description:       knockmapi.String("A guide to help users get started with the application"),
+				Tags:              []string{"string"},
+				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
