@@ -170,9 +170,9 @@ type Guide struct {
 	// Use tags to organize resources internally within your account. For example, by
 	// team or product area.
 	Tags []string `json:"tags"`
-	// The ID of the target audience for the guide. When not set, will default to
+	// The key of the target audience for the guide. When not set, will default to
 	// targeting all users.
-	TargetAudienceID string `json:"target_audience_id" api:"nullable"`
+	TargetAudienceKey string `json:"target_audience_key" api:"nullable"`
 	// A group of conditions to be evaluated.
 	TargetPropertyConditions ConditionGroupUnion `json:"target_property_conditions" api:"nullable"`
 	// The type of the guide. This is derived from the message type of the guide steps.
@@ -196,7 +196,7 @@ type Guide struct {
 		Semver                   respjson.Field
 		Steps                    respjson.Field
 		Tags                     respjson.Field
-		TargetAudienceID         respjson.Field
+		TargetAudienceKey        respjson.Field
 		TargetPropertyConditions respjson.Field
 		Type                     respjson.Field
 		Valid                    respjson.Field
@@ -608,9 +608,9 @@ type GuideUpsertParamsGuide struct {
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The ID of the target audience for the guide. When not set, will default to
+	// The key of the target audience for the guide. When not set, will default to
 	// targeting all users.
-	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
+	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -673,9 +673,9 @@ type GuideValidateParamsGuide struct {
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The ID of the target audience for the guide. When not set, will default to
+	// The key of the target audience for the guide. When not set, will default to
 	// targeting all users.
-	TargetAudienceID param.Opt[string] `json:"target_audience_id,omitzero"`
+	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
 	// Use tags to organize resources internally within your account. For example, by
