@@ -130,6 +130,11 @@ type ChannelGroup struct {
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The timestamp of when the channel group was archived (soft deleted).
 	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
+	// The resources where this channel group is visible as a step destination (e.g.
+	// workflow, broadcast).
+	//
+	// Any of "workflow", "broadcast".
+	VisibleIn []string `json:"visible_in"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChannelRules respjson.Field
@@ -141,6 +146,7 @@ type ChannelGroup struct {
 		Source       respjson.Field
 		UpdatedAt    respjson.Field
 		ArchivedAt   respjson.Field
+		VisibleIn    respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
@@ -335,10 +341,16 @@ type ChannelGroupUpsertParamsChannelGroup struct {
 	// Rules for determining which channels should be used.
 	ChannelRules []ChannelGroupUpsertParamsChannelGroupChannelRule `json:"channel_rules,omitzero"`
 	// Determines how the channel rules are applied ('any' means any rule can match,
-	// 'all' means all rules must match).
+	// 'all' means all rules must match). Defaults to 'any'.
 	//
 	// Any of "any", "all".
 	Operator string `json:"operator,omitzero"`
+	// Optional. Where the channel group is visible as a step destination. Defaults to
+	// both workflow and broadcast when creating; omitted on update preserves the
+	// existing value.
+	//
+	// Any of "workflow", "broadcast".
+	VisibleIn []string `json:"visible_in,omitzero"`
 	paramObj
 }
 

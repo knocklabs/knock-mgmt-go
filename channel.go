@@ -111,6 +111,11 @@ type Channel struct {
 	// 'development', 'production'). Only included when requested via the `include`
 	// parameter or when retrieving a single channel.
 	EnvironmentSettings map[string]ChannelEnvironmentSettings `json:"environment_settings" api:"nullable"`
+	// The resources where this channel is visible as a step destination (e.g.
+	// workflow, broadcast).
+	//
+	// Any of "workflow", "broadcast".
+	VisibleIn []string `json:"visible_in"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -124,6 +129,7 @@ type Channel struct {
 		CustomIconURL       respjson.Field
 		Description         respjson.Field
 		EnvironmentSettings respjson.Field
+		VisibleIn           respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`

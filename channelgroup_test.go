@@ -114,7 +114,8 @@ func TestChannelGroupUpsertWithOptionalParams(t *testing.T) {
 					Operator:   "equal_to",
 					Variable:   knockmapi.String("variable"),
 				}},
-				Operator: "any",
+				Operator:  "any",
+				VisibleIn: []string{"workflow"},
 			},
 		},
 	)
