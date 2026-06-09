@@ -214,8 +214,8 @@ type ChannelGroupRule struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
-	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
-	// "is_not_audience_member".
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
 	Operator ChannelGroupRuleOperator `json:"operator" api:"nullable"`
 	// For conditional rules, the variable to evaluate.
 	Variable string `json:"variable" api:"nullable"`
@@ -254,27 +254,29 @@ const (
 type ChannelGroupRuleOperator string
 
 const (
-	ChannelGroupRuleOperatorEqualTo              ChannelGroupRuleOperator = "equal_to"
-	ChannelGroupRuleOperatorNotEqualTo           ChannelGroupRuleOperator = "not_equal_to"
-	ChannelGroupRuleOperatorGreaterThan          ChannelGroupRuleOperator = "greater_than"
-	ChannelGroupRuleOperatorLessThan             ChannelGroupRuleOperator = "less_than"
-	ChannelGroupRuleOperatorGreaterThanOrEqualTo ChannelGroupRuleOperator = "greater_than_or_equal_to"
-	ChannelGroupRuleOperatorLessThanOrEqualTo    ChannelGroupRuleOperator = "less_than_or_equal_to"
-	ChannelGroupRuleOperatorContains             ChannelGroupRuleOperator = "contains"
-	ChannelGroupRuleOperatorNotContains          ChannelGroupRuleOperator = "not_contains"
-	ChannelGroupRuleOperatorContainsAll          ChannelGroupRuleOperator = "contains_all"
-	ChannelGroupRuleOperatorNotContainsAll       ChannelGroupRuleOperator = "not_contains_all"
-	ChannelGroupRuleOperatorIsTimestampBefore    ChannelGroupRuleOperator = "is_timestamp_before"
-	ChannelGroupRuleOperatorIsTimestampOnOrAfter ChannelGroupRuleOperator = "is_timestamp_on_or_after"
-	ChannelGroupRuleOperatorIsTimestampBetween   ChannelGroupRuleOperator = "is_timestamp_between"
-	ChannelGroupRuleOperatorIsBetween            ChannelGroupRuleOperator = "is_between"
-	ChannelGroupRuleOperatorEmpty                ChannelGroupRuleOperator = "empty"
-	ChannelGroupRuleOperatorNotEmpty             ChannelGroupRuleOperator = "not_empty"
-	ChannelGroupRuleOperatorExists               ChannelGroupRuleOperator = "exists"
-	ChannelGroupRuleOperatorNotExists            ChannelGroupRuleOperator = "not_exists"
-	ChannelGroupRuleOperatorIsTimestamp          ChannelGroupRuleOperator = "is_timestamp"
-	ChannelGroupRuleOperatorIsAudienceMember     ChannelGroupRuleOperator = "is_audience_member"
-	ChannelGroupRuleOperatorIsNotAudienceMember  ChannelGroupRuleOperator = "is_not_audience_member"
+	ChannelGroupRuleOperatorEqualTo                 ChannelGroupRuleOperator = "equal_to"
+	ChannelGroupRuleOperatorNotEqualTo              ChannelGroupRuleOperator = "not_equal_to"
+	ChannelGroupRuleOperatorGreaterThan             ChannelGroupRuleOperator = "greater_than"
+	ChannelGroupRuleOperatorLessThan                ChannelGroupRuleOperator = "less_than"
+	ChannelGroupRuleOperatorGreaterThanOrEqualTo    ChannelGroupRuleOperator = "greater_than_or_equal_to"
+	ChannelGroupRuleOperatorLessThanOrEqualTo       ChannelGroupRuleOperator = "less_than_or_equal_to"
+	ChannelGroupRuleOperatorContains                ChannelGroupRuleOperator = "contains"
+	ChannelGroupRuleOperatorNotContains             ChannelGroupRuleOperator = "not_contains"
+	ChannelGroupRuleOperatorContainsAll             ChannelGroupRuleOperator = "contains_all"
+	ChannelGroupRuleOperatorNotContainsAll          ChannelGroupRuleOperator = "not_contains_all"
+	ChannelGroupRuleOperatorIsTimestampBefore       ChannelGroupRuleOperator = "is_timestamp_before"
+	ChannelGroupRuleOperatorIsTimestampOnOrAfter    ChannelGroupRuleOperator = "is_timestamp_on_or_after"
+	ChannelGroupRuleOperatorIsTimestampBetween      ChannelGroupRuleOperator = "is_timestamp_between"
+	ChannelGroupRuleOperatorIsBetween               ChannelGroupRuleOperator = "is_between"
+	ChannelGroupRuleOperatorEmpty                   ChannelGroupRuleOperator = "empty"
+	ChannelGroupRuleOperatorNotEmpty                ChannelGroupRuleOperator = "not_empty"
+	ChannelGroupRuleOperatorExists                  ChannelGroupRuleOperator = "exists"
+	ChannelGroupRuleOperatorNotExists               ChannelGroupRuleOperator = "not_exists"
+	ChannelGroupRuleOperatorIsTimestamp             ChannelGroupRuleOperator = "is_timestamp"
+	ChannelGroupRuleOperatorIsTimestampBeforeNow    ChannelGroupRuleOperator = "is_timestamp_before_now"
+	ChannelGroupRuleOperatorIsTimestampOnOrAfterNow ChannelGroupRuleOperator = "is_timestamp_on_or_after_now"
+	ChannelGroupRuleOperatorIsAudienceMember        ChannelGroupRuleOperator = "is_audience_member"
+	ChannelGroupRuleOperatorIsNotAudienceMember     ChannelGroupRuleOperator = "is_not_audience_member"
 )
 
 // Wraps the ChannelGroup response under the `channel_group` key.
@@ -395,8 +397,8 @@ type ChannelGroupUpsertParamsChannelGroupChannelRule struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
-	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
-	// "is_not_audience_member".
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
 	Operator string `json:"operator,omitzero"`
 	paramObj
 }
@@ -414,6 +416,6 @@ func init() {
 		"rule_type", "if", "unless", "always",
 	)
 	apijson.RegisterFieldValidator[ChannelGroupUpsertParamsChannelGroupChannelRule](
-		"operator", "equal_to", "not_equal_to", "greater_than", "less_than", "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains", "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty", "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member", "is_not_audience_member",
+		"operator", "equal_to", "not_equal_to", "greater_than", "less_than", "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains", "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty", "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now", "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member",
 	)
 }

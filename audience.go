@@ -199,8 +199,8 @@ type AudienceCondition struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
-	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
-	// "is_not_audience_member".
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
 	Operator AudienceConditionOperator `json:"operator" api:"required"`
 	// The property to be evaluated. Properties are dynamic values using path
 	// expressions like `recipient.plan` or `recipient.created_at`.
@@ -237,27 +237,29 @@ func (r AudienceCondition) ToParam() AudienceConditionParam {
 type AudienceConditionOperator string
 
 const (
-	AudienceConditionOperatorEqualTo              AudienceConditionOperator = "equal_to"
-	AudienceConditionOperatorNotEqualTo           AudienceConditionOperator = "not_equal_to"
-	AudienceConditionOperatorGreaterThan          AudienceConditionOperator = "greater_than"
-	AudienceConditionOperatorLessThan             AudienceConditionOperator = "less_than"
-	AudienceConditionOperatorGreaterThanOrEqualTo AudienceConditionOperator = "greater_than_or_equal_to"
-	AudienceConditionOperatorLessThanOrEqualTo    AudienceConditionOperator = "less_than_or_equal_to"
-	AudienceConditionOperatorContains             AudienceConditionOperator = "contains"
-	AudienceConditionOperatorNotContains          AudienceConditionOperator = "not_contains"
-	AudienceConditionOperatorContainsAll          AudienceConditionOperator = "contains_all"
-	AudienceConditionOperatorNotContainsAll       AudienceConditionOperator = "not_contains_all"
-	AudienceConditionOperatorIsTimestampBefore    AudienceConditionOperator = "is_timestamp_before"
-	AudienceConditionOperatorIsTimestampOnOrAfter AudienceConditionOperator = "is_timestamp_on_or_after"
-	AudienceConditionOperatorIsTimestampBetween   AudienceConditionOperator = "is_timestamp_between"
-	AudienceConditionOperatorIsBetween            AudienceConditionOperator = "is_between"
-	AudienceConditionOperatorEmpty                AudienceConditionOperator = "empty"
-	AudienceConditionOperatorNotEmpty             AudienceConditionOperator = "not_empty"
-	AudienceConditionOperatorExists               AudienceConditionOperator = "exists"
-	AudienceConditionOperatorNotExists            AudienceConditionOperator = "not_exists"
-	AudienceConditionOperatorIsTimestamp          AudienceConditionOperator = "is_timestamp"
-	AudienceConditionOperatorIsAudienceMember     AudienceConditionOperator = "is_audience_member"
-	AudienceConditionOperatorIsNotAudienceMember  AudienceConditionOperator = "is_not_audience_member"
+	AudienceConditionOperatorEqualTo                 AudienceConditionOperator = "equal_to"
+	AudienceConditionOperatorNotEqualTo              AudienceConditionOperator = "not_equal_to"
+	AudienceConditionOperatorGreaterThan             AudienceConditionOperator = "greater_than"
+	AudienceConditionOperatorLessThan                AudienceConditionOperator = "less_than"
+	AudienceConditionOperatorGreaterThanOrEqualTo    AudienceConditionOperator = "greater_than_or_equal_to"
+	AudienceConditionOperatorLessThanOrEqualTo       AudienceConditionOperator = "less_than_or_equal_to"
+	AudienceConditionOperatorContains                AudienceConditionOperator = "contains"
+	AudienceConditionOperatorNotContains             AudienceConditionOperator = "not_contains"
+	AudienceConditionOperatorContainsAll             AudienceConditionOperator = "contains_all"
+	AudienceConditionOperatorNotContainsAll          AudienceConditionOperator = "not_contains_all"
+	AudienceConditionOperatorIsTimestampBefore       AudienceConditionOperator = "is_timestamp_before"
+	AudienceConditionOperatorIsTimestampOnOrAfter    AudienceConditionOperator = "is_timestamp_on_or_after"
+	AudienceConditionOperatorIsTimestampBetween      AudienceConditionOperator = "is_timestamp_between"
+	AudienceConditionOperatorIsBetween               AudienceConditionOperator = "is_between"
+	AudienceConditionOperatorEmpty                   AudienceConditionOperator = "empty"
+	AudienceConditionOperatorNotEmpty                AudienceConditionOperator = "not_empty"
+	AudienceConditionOperatorExists                  AudienceConditionOperator = "exists"
+	AudienceConditionOperatorNotExists               AudienceConditionOperator = "not_exists"
+	AudienceConditionOperatorIsTimestamp             AudienceConditionOperator = "is_timestamp"
+	AudienceConditionOperatorIsTimestampBeforeNow    AudienceConditionOperator = "is_timestamp_before_now"
+	AudienceConditionOperatorIsTimestampOnOrAfterNow AudienceConditionOperator = "is_timestamp_on_or_after_now"
+	AudienceConditionOperatorIsAudienceMember        AudienceConditionOperator = "is_audience_member"
+	AudienceConditionOperatorIsNotAudienceMember     AudienceConditionOperator = "is_not_audience_member"
 )
 
 // A condition to evaluate for audience membership.
@@ -270,8 +272,8 @@ type AudienceConditionParam struct {
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
-	// "not_empty", "exists", "not_exists", "is_timestamp", "is_audience_member",
-	// "is_not_audience_member".
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
 	Operator AudienceConditionOperator `json:"operator,omitzero" api:"required"`
 	// The property to be evaluated. Properties are dynamic values using path
 	// expressions like `recipient.plan` or `recipient.created_at`.
