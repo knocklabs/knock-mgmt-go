@@ -231,12 +231,14 @@ func (r *SourceEnvironmentSettings) UnmarshalJSON(data []byte) error {
 // and preprocess script.
 type SourceEnvironmentSettingsSettings struct {
 	// The public endpoint that receives source events for this environment.
-	Endpoint            string `json:"endpoint"`
+	Endpoint string `json:"endpoint"`
+	// Whether the source processes events idempotently (CDP legacy sources only).
 	EnforceIdempotency  bool   `json:"enforce_idempotency" api:"nullable"`
 	EnforceVerification bool   `json:"enforce_verification"`
 	EventTypePath       string `json:"event_type_path" api:"nullable"`
-	HandleIdentifies    bool   `json:"handle_identifies" api:"nullable"`
-	IdempotencyKeyPath  string `json:"idempotency_key_path" api:"nullable"`
+	// Whether the source processes identify calls (CDP legacy sources only).
+	HandleIdentifies   bool   `json:"handle_identifies" api:"nullable"`
+	IdempotencyKeyPath string `json:"idempotency_key_path" api:"nullable"`
 	// A script that runs before source events are mapped.
 	PreprocessScript SourcePreprocessScript `json:"preprocess_script" api:"nullable"`
 	TimestampPath    string                 `json:"timestamp_path" api:"nullable"`
