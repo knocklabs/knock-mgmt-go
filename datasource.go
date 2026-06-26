@@ -293,6 +293,8 @@ type SourceEventActionMapping struct {
 	// "objects_delete", "objects_subscribe", "objects_unsubscribe", "tenants_set",
 	// "tenants_delete", "audiences_add_member", "audiences_remove_member".
 	ActionType SourceEventActionMappingActionType `json:"action_type" api:"required"`
+	// Whether the mapping is active. Inactive mappings are skipped during execution.
+	Active bool `json:"active" api:"required"`
 	// The timestamp of when the mapping was created.
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The decoded event type that triggers the action.
@@ -305,17 +307,15 @@ type SourceEventActionMapping struct {
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The action-specific parameters for the mapping.
 	ActionParameters map[string]any `json:"action_parameters" api:"nullable"`
-	// The timestamp of when the mapping was deactivated.
-	InactiveAt time.Time `json:"inactive_at" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ActionType       respjson.Field
+		Active           respjson.Field
 		CreatedAt        respjson.Field
 		EventType        respjson.Field
 		IsDeleted        respjson.Field
 		UpdatedAt        respjson.Field
 		ActionParameters respjson.Field
-		InactiveAt       respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
@@ -963,8 +963,9 @@ type SourceRequestEnvironmentSettingMappingParam struct {
 	ActionType string `json:"action_type,omitzero" api:"required"`
 	// The decoded event type that triggers the action.
 	EventType string `json:"event_type" api:"required"`
-	// The timestamp to deactivate the mapping.
-	InactiveAt param.Opt[time.Time] `json:"inactive_at,omitzero" format:"date-time"`
+	// Whether the mapping is active. Set to false to deactivate the mapping without
+	// deleting it. Defaults to true.
+	Active param.Opt[bool] `json:"active,omitzero"`
 	// Whether to delete the mapping. Workflow trigger mappings must be marked deleted
 	// before they can be removed.
 	IsDeleted param.Opt[bool] `json:"is_deleted,omitzero"`
@@ -1040,6 +1041,8 @@ type SourceStatusResponseMappingsRequiringCommit struct {
 	//
 	// Any of "workflows_trigger".
 	ActionType string `json:"action_type" api:"required"`
+	// Whether the mapping is active. Inactive mappings are skipped during execution.
+	Active bool `json:"active" api:"required"`
 	// The decoded event type that triggers the action.
 	EventType string `json:"event_type" api:"required"`
 	// Whether the mapping is pending deletion.
@@ -1050,16 +1053,14 @@ type SourceStatusResponseMappingsRequiringCommit struct {
 	//
 	// Any of "deleted", "updated".
 	Status string `json:"status" api:"required"`
-	// The timestamp of when the mapping was deactivated.
-	InactiveAt time.Time `json:"inactive_at" api:"nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ActionType  respjson.Field
+		Active      respjson.Field
 		EventType   respjson.Field
 		IsDeleted   respjson.Field
 		ResourceKey respjson.Field
 		Status      respjson.Field
-		InactiveAt  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
