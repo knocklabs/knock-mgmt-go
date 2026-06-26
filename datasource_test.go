@@ -285,8 +285,8 @@ func TestDataSourceUpsertWithOptionalParams(t *testing.T) {
 							ActionParameters: map[string]any{
 								"foo": "bar",
 							},
-							InactiveAt: knockmapi.Time(time.Now()),
-							IsDeleted:  knockmapi.Bool(true),
+							Active:    knockmapi.Bool(true),
+							IsDeleted: knockmapi.Bool(true),
 						}},
 						Settings: knockmapi.SourceRequestEnvironmentSettingSettingsParam{
 							EnforceVerification: knockmapi.Bool(false),
