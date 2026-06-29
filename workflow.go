@@ -2211,7 +2211,8 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnion contains all possible properties and values from
 // [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
 // [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
-// [WorkflowAIAgentStep], [WorkflowDelayStep], [WorkflowBatchStep],
+// [WorkflowAIAgentStep], [WorkflowDelayStep],
+// [WorkflowStepWorkflowWaitForEventStep], [WorkflowBatchStep],
 // [WorkflowFetchStep], [WorkflowUpdateDataStep], [WorkflowUpdateObjectStep],
 // [WorkflowUpdateTenantStep], [WorkflowUpdateUserStep], [WorkflowThrottleStep],
 // [WorkflowBranchStep], [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
@@ -2235,7 +2236,8 @@ type WorkflowStepUnion struct {
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
 	// This field is a union of [WorkflowAIAgentStepSettings],
-	// [WorkflowDelayStepSettings], [WorkflowBatchStepSettings], [RequestTemplate],
+	// [WorkflowDelayStepSettings], [WorkflowStepWorkflowWaitForEventStepSettings],
+	// [WorkflowBatchStepSettings], [RequestTemplate],
 	// [WorkflowUpdateDataStepSettings], [WorkflowUpdateObjectStepSettings],
 	// [WorkflowUpdateTenantStepSettings], [WorkflowUpdateUserStepSettings],
 	// [WorkflowThrottleStepSettings], [WorkflowTriggerWorkflowStepSettings]
@@ -2302,6 +2304,11 @@ func (u WorkflowStepUnion) AsWorkflowAIAgentStep() (v WorkflowAIAgentStep) {
 }
 
 func (u WorkflowStepUnion) AsWorkflowDelayStep() (v WorkflowDelayStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowWaitForEventStep() (v WorkflowStepWorkflowWaitForEventStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2533,6 +2540,16 @@ type WorkflowStepUnionSettings struct {
 	DelayFor Duration `json:"delay_for"`
 	// This field is from variant [WorkflowDelayStepSettings].
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
+	Event WorkflowStepWorkflowWaitForEventStepSettingsEvent `json:"event"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
+	ExpiresAfter Duration `json:"expires_after"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition `json:"match_conditions"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
+	OnMatch string `json:"on_match"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
+	OnTimeout string `json:"on_timeout"`
 	// This field is from variant [WorkflowBatchStepSettings].
 	BatchExecutionMode string `json:"batch_execution_mode"`
 	// This field is from variant [WorkflowBatchStepSettings].
@@ -2592,6 +2609,11 @@ type WorkflowStepUnionSettings struct {
 		WebSearchEnabled          respjson.Field
 		DelayFor                  respjson.Field
 		DelayUntilFieldPath       respjson.Field
+		Event                     respjson.Field
+		ExpiresAfter              respjson.Field
+		MatchConditions           respjson.Field
+		OnMatch                   respjson.Field
+		OnTimeout                 respjson.Field
 		BatchExecutionMode        respjson.Field
 		BatchItemsMaxLimit        respjson.Field
 		BatchItemsRenderLimit     respjson.Field
@@ -2634,6 +2656,127 @@ func (r *WorkflowStepUnionSettings) UnmarshalJSON(data []byte) error {
 // WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// A wait for event function step that pauses a workflow until a matching event is
+// received.
+type WorkflowStepWorkflowWaitForEventStep struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the wait for event step.
+	Settings WorkflowStepWorkflowWaitForEventStepSettings `json:"settings" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "wait_for_event".
+	Type string `json:"type" api:"required"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Ref         respjson.Field
+		Settings    respjson.Field
+		Type        respjson.Field
+		Conditions  respjson.Field
+		Description respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The settings for the wait for event step.
+type WorkflowStepWorkflowWaitForEventStepSettings struct {
+	// An integration source event to wait for.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsEvent `json:"event" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
+	// A list of condition groups the incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition `json:"match_conditions"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event           respjson.Field
+		ExpiresAfter    respjson.Field
+		MatchConditions respjson.Field
+		OnMatch         respjson.Field
+		OnTimeout       respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettings) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An integration source event to wait for.
+type WorkflowStepWorkflowWaitForEventStepSettingsEvent struct {
+	// The name of the event to wait for.
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "integration_source".
+	EventType string `json:"event_type" api:"required"`
+	// The key of the integration source that emits the event to wait for.
+	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventKey             respjson.Field
+		EventType            respjson.Field
+		IntegrationSourceKey respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsEvent) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition struct {
+	// A list of conditions.
+	Conditions []Condition `json:"conditions"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		Operator    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 func WorkflowStepParamOfWorkflowWebhookStep(ref string, template WebhookTemplateParam, type_ WorkflowWebhookStepType) WorkflowStepUnionParam {
@@ -2698,6 +2841,14 @@ func WorkflowStepParamOfWorkflowDelayStep(ref string, settings WorkflowDelayStep
 	variant.Settings = settings
 	variant.Type = type_
 	return WorkflowStepUnionParam{OfWorkflowDelayStep: &variant}
+}
+
+func WorkflowStepParamOfWorkflowWaitForEventStep(ref string, settings WorkflowStepWorkflowWaitForEventStepSettingsParam, type_ string) WorkflowStepUnionParam {
+	var variant WorkflowStepWorkflowWaitForEventStepParam
+	variant.Ref = ref
+	variant.Settings = settings
+	variant.Type = type_
+	return WorkflowStepUnionParam{OfWorkflowWaitForEventStep: &variant}
 }
 
 func WorkflowStepParamOfWorkflowBatchStep(ref string, settings WorkflowBatchStepSettingsParam, type_ WorkflowBatchStepType) WorkflowStepUnionParam {
@@ -2784,24 +2935,25 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowStepUnionParam struct {
-	OfWorkflowWebhookStep         *WorkflowWebhookStepParam         `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam       `json:",omitzero,inline"`
-	OfWorkflowChatStep            *WorkflowChatStepParam            `json:",omitzero,inline"`
-	OfWorkflowSMSStep             *WorkflowSMSStepParam             `json:",omitzero,inline"`
-	OfWorkflowPushStep            *WorkflowPushStepParam            `json:",omitzero,inline"`
-	OfWorkflowEmailStep           *WorkflowEmailStepParam           `json:",omitzero,inline"`
-	OfWorkflowAIAgentStep         *WorkflowAIAgentStepParam         `json:",omitzero,inline"`
-	OfWorkflowDelayStep           *WorkflowDelayStepParam           `json:",omitzero,inline"`
-	OfWorkflowBatchStep           *WorkflowBatchStepParam           `json:",omitzero,inline"`
-	OfWorkflowFetchStep           *WorkflowFetchStepParam           `json:",omitzero,inline"`
-	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam      `json:",omitzero,inline"`
-	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam    `json:",omitzero,inline"`
-	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam    `json:",omitzero,inline"`
-	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam      `json:",omitzero,inline"`
-	OfWorkflowThrottleStep        *WorkflowThrottleStepParam        `json:",omitzero,inline"`
-	OfWorkflowBranchStep          *WorkflowBranchStepParam          `json:",omitzero,inline"`
-	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam    `json:",omitzero,inline"`
-	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam `json:",omitzero,inline"`
+	OfWorkflowWebhookStep         *WorkflowWebhookStepParam                  `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam                `json:",omitzero,inline"`
+	OfWorkflowChatStep            *WorkflowChatStepParam                     `json:",omitzero,inline"`
+	OfWorkflowSMSStep             *WorkflowSMSStepParam                      `json:",omitzero,inline"`
+	OfWorkflowPushStep            *WorkflowPushStepParam                     `json:",omitzero,inline"`
+	OfWorkflowEmailStep           *WorkflowEmailStepParam                    `json:",omitzero,inline"`
+	OfWorkflowAIAgentStep         *WorkflowAIAgentStepParam                  `json:",omitzero,inline"`
+	OfWorkflowDelayStep           *WorkflowDelayStepParam                    `json:",omitzero,inline"`
+	OfWorkflowWaitForEventStep    *WorkflowStepWorkflowWaitForEventStepParam `json:",omitzero,inline"`
+	OfWorkflowBatchStep           *WorkflowBatchStepParam                    `json:",omitzero,inline"`
+	OfWorkflowFetchStep           *WorkflowFetchStepParam                    `json:",omitzero,inline"`
+	OfWorkflowUpdateDataStep      *WorkflowUpdateDataStepParam               `json:",omitzero,inline"`
+	OfWorkflowUpdateObjectStep    *WorkflowUpdateObjectStepParam             `json:",omitzero,inline"`
+	OfWorkflowUpdateTenantStep    *WorkflowUpdateTenantStepParam             `json:",omitzero,inline"`
+	OfWorkflowUpdateUserStep      *WorkflowUpdateUserStepParam               `json:",omitzero,inline"`
+	OfWorkflowThrottleStep        *WorkflowThrottleStepParam                 `json:",omitzero,inline"`
+	OfWorkflowBranchStep          *WorkflowBranchStepParam                   `json:",omitzero,inline"`
+	OfWorkflowRandomCohortStep    *WorkflowRandomCohortStepParam             `json:",omitzero,inline"`
+	OfWorkflowTriggerWorkflowStep *WorkflowTriggerWorkflowStepParam          `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -2814,6 +2966,7 @@ func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfWorkflowEmailStep,
 		u.OfWorkflowAIAgentStep,
 		u.OfWorkflowDelayStep,
+		u.OfWorkflowWaitForEventStep,
 		u.OfWorkflowBatchStep,
 		u.OfWorkflowFetchStep,
 		u.OfWorkflowUpdateDataStep,
@@ -2846,6 +2999,8 @@ func (u *WorkflowStepUnionParam) asAny() any {
 		return u.OfWorkflowAIAgentStep
 	} else if !param.IsOmitted(u.OfWorkflowDelayStep) {
 		return u.OfWorkflowDelayStep
+	} else if !param.IsOmitted(u.OfWorkflowWaitForEventStep) {
+		return u.OfWorkflowWaitForEventStep
 	} else if !param.IsOmitted(u.OfWorkflowBatchStep) {
 		return u.OfWorkflowBatchStep
 	} else if !param.IsOmitted(u.OfWorkflowFetchStep) {
@@ -2912,6 +3067,8 @@ func (u WorkflowStepUnionParam) GetRef() *string {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil {
+		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
@@ -2953,6 +3110,8 @@ func (u WorkflowStepUnionParam) GetType() *string {
 	} else if vt := u.OfWorkflowAIAgentStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
 		return (*string)(&vt.Type)
@@ -3050,6 +3209,8 @@ func (u WorkflowStepUnionParam) GetDescription() *string {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
+	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
 	} else if vt := u.OfWorkflowBatchStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowFetchStep; vt != nil && vt.Description.Valid() {
@@ -3091,6 +3252,8 @@ func (u WorkflowStepUnionParam) GetName() *string {
 	} else if vt := u.OfWorkflowAIAgentStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowDelayStep; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowBatchStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
@@ -3409,6 +3572,8 @@ func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		return &vt.Conditions
+	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil {
+		return &vt.Conditions
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowUpdateDataStep; vt != nil {
@@ -3594,6 +3759,8 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		res.any = &vt.Settings
+	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil {
+		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
@@ -3615,8 +3782,10 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 }
 
 // Can have the runtime types [*WorkflowAIAgentStepSettingsParam],
-// [*WorkflowDelayStepSettingsParam], [*WorkflowBatchStepSettingsParam],
-// [*RequestTemplateParam], [*WorkflowUpdateDataStepSettingsParam],
+// [*WorkflowDelayStepSettingsParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsParam],
+// [*WorkflowBatchStepSettingsParam], [*RequestTemplateParam],
+// [*WorkflowUpdateDataStepSettingsParam],
 // [*WorkflowUpdateObjectStepSettingsParam],
 // [*WorkflowUpdateTenantStepSettingsParam],
 // [*WorkflowUpdateUserStepSettingsParam], [*WorkflowThrottleStepSettingsParam],
@@ -3628,6 +3797,7 @@ type workflowStepUnionParamSettings struct{ any }
 //	switch u.AsAny().(type) {
 //	case *knockmapi.WorkflowAIAgentStepSettingsParam:
 //	case *knockmapi.WorkflowDelayStepSettingsParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsParam:
 //	case *knockmapi.WorkflowBatchStepSettingsParam:
 //	case *knockmapi.RequestTemplateParam:
 //	case *knockmapi.WorkflowUpdateDataStepSettingsParam:
@@ -3709,6 +3879,51 @@ func (u workflowStepUnionParamSettings) GetDelayUntilFieldPath() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowDelayStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.DelayUntilFieldPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetEvent() *WorkflowStepWorkflowWaitForEventStepSettingsEventParam {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
+		return &vt.Event
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetExpiresAfter() *DurationParam {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
+		return &vt.ExpiresAfter
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetMatchConditions() []WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
+		return vt.MatchConditions
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetOnMatch() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
+		return &vt.OnMatch
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetOnTimeout() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
+		return &vt.OnTimeout
 	}
 	return nil
 }
@@ -3966,6 +4181,134 @@ func (u workflowStepUnionParamSettings) GetRecipientMode() *string {
 		return (*string)(&vt.RecipientMode)
 	}
 	return nil
+}
+
+// A wait for event function step that pauses a workflow until a matching event is
+// received.
+//
+// The properties Ref, Settings, Type are required.
+type WorkflowStepWorkflowWaitForEventStepParam struct {
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The settings for the wait for event step.
+	Settings WorkflowStepWorkflowWaitForEventStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "wait_for_event".
+	Type string `json:"type,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepParam](
+		"type", "wait_for_event",
+	)
+}
+
+// The settings for the wait for event step.
+//
+// The property Event is required.
+type WorkflowStepWorkflowWaitForEventStepSettingsParam struct {
+	// An integration source event to wait for.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsEventParam `json:"event,omitzero" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
+	// A list of condition groups the incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam `json:"match_conditions,omitzero"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match,omitzero"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsParam](
+		"on_match", "continue", "halt",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsParam](
+		"on_timeout", "continue", "halt",
+	)
+}
+
+// An integration source event to wait for.
+//
+// The properties EventKey, EventType, IntegrationSourceKey are required.
+type WorkflowStepWorkflowWaitForEventStepSettingsEventParam struct {
+	// The name of the event to wait for.
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "integration_source".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	// The key of the integration source that emits the event to wait for.
+	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsEventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsEventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsEventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsEventParam](
+		"event_type", "integration_source",
+	)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam struct {
+	// A list of conditions.
+	Conditions []ConditionParam `json:"conditions,omitzero"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam](
+		"operator", "and",
+	)
 }
 
 // A throttle function step. Read more in the
