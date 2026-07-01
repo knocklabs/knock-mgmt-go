@@ -204,8 +204,8 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
-							From:  knockmapi.Time("18:11:19.117Z"),
-							Until: knockmapi.Time("18:11:19.117Z"),
+							From:  knockmapi.String("18:11:19.117Z"),
+							Until: knockmapi.String("18:11:19.117Z"),
 						}},
 					},
 				}},
@@ -298,8 +298,8 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
-							From:  knockmapi.Time("18:11:19.117Z"),
-							Until: knockmapi.Time("18:11:19.117Z"),
+							From:  knockmapi.String("18:11:19.117Z"),
+							Until: knockmapi.String("18:11:19.117Z"),
 						}},
 					},
 				}},

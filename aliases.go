@@ -224,6 +224,34 @@ type MessageTypeSelectFieldSettingsParam = shared.MessageTypeSelectFieldSettings
 // This is an alias to an internal type.
 type MessageTypeSelectFieldSettingsOptionParam = shared.MessageTypeSelectFieldSettingsOptionParam
 
+// A text field used in a message type.
+//
+// This is an alias to an internal type.
+type MessageTypeTextField = shared.MessageTypeTextField
+
+// The type of the field.
+//
+// This is an alias to an internal type.
+type MessageTypeTextFieldType = shared.MessageTypeTextFieldType
+
+// Equals "text"
+const MessageTypeTextFieldTypeText = shared.MessageTypeTextFieldTypeText
+
+// Settings for the text field.
+//
+// This is an alias to an internal type.
+type MessageTypeTextFieldSettings = shared.MessageTypeTextFieldSettings
+
+// A text field used in a message type.
+//
+// This is an alias to an internal type.
+type MessageTypeTextFieldParam = shared.MessageTypeTextFieldParam
+
+// Settings for the text field.
+//
+// This is an alias to an internal type.
+type MessageTypeTextFieldSettingsParam = shared.MessageTypeTextFieldSettingsParam
+
 // A textarea field used in a message type.
 //
 // This is an alias to an internal type.
