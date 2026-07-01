@@ -20,6 +20,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Commits are versioned changes to resources.
+//
 // CommitService contains methods and other services that help with interacting
 // with the knock mgmt API.
 //
@@ -44,11 +46,11 @@ func (r *CommitService) Get(ctx context.Context, id string, opts ...option.Reque
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/commits/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a paginated list of commits in a given environment. The commits are
@@ -81,7 +83,7 @@ func (r *CommitService) CommitAll(ctx context.Context, body CommitCommitAllParam
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Promote all changes across all resources to the target environment from its
@@ -90,7 +92,7 @@ func (r *CommitService) PromoteAll(ctx context.Context, body CommitPromoteAllPar
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits/promote"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Promotes one change to the subsequent environment.
@@ -98,25 +100,25 @@ func (r *CommitService) PromoteOne(ctx context.Context, id string, opts ...optio
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/commits/%s/promote", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // A commit is a change to a resource within an environment, made by an author.
 type Commit struct {
 	// The unique identifier for the commit.
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// The author of the commit.
-	Author CommitAuthor `json:"author,required"`
+	Author CommitAuthor `json:"author" api:"required"`
 	// The timestamp of when the commit was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The environment of the commit.
-	Environment string `json:"environment,required"`
+	Environment string `json:"environment" api:"required"`
 	// The resource object associated with the commit.
-	Resource CommitResource `json:"resource,required"`
+	Resource CommitResource `json:"resource" api:"required"`
 	// The optional message about the commit.
 	CommitMessage string `json:"commit_message"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -141,9 +143,9 @@ func (r *Commit) UnmarshalJSON(data []byte) error {
 // The author of the commit.
 type CommitAuthor struct {
 	// The email address of the commit author.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// The name of the commit author.
-	Name string `json:"name,nullable"`
+	Name string `json:"name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Email       respjson.Field
@@ -162,12 +164,12 @@ func (r *CommitAuthor) UnmarshalJSON(data []byte) error {
 // The resource object associated with the commit.
 type CommitResource struct {
 	// The unique identifier for the resource.
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// The type of the resource object.
 	//
 	// Any of "audience", "email_layout", "guide", "message_type", "partial",
 	// "translation", "workflow".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier  respjson.Field
@@ -186,7 +188,7 @@ func (r *CommitResource) UnmarshalJSON(data []byte) error {
 // The response from committing all changes.
 type CommitCommitAllResponse struct {
 	// The result of the commit operation.
-	Result string `json:"result,required"`
+	Result string `json:"result" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Result      respjson.Field
@@ -204,7 +206,7 @@ func (r *CommitCommitAllResponse) UnmarshalJSON(data []byte) error {
 // The response from promoting all changes.
 type CommitPromoteAllResponse struct {
 	// The result of the promote operation.
-	Result string `json:"result,required"`
+	Result string `json:"result" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Result      respjson.Field
@@ -222,7 +224,7 @@ func (r *CommitPromoteAllResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Commit response under the `commit` key.
 type CommitPromoteOneResponse struct {
 	// A commit is a change to a resource within an environment, made by an author.
-	Commit Commit `json:"commit,required"`
+	Commit Commit `json:"commit" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Commit      respjson.Field
@@ -239,11 +241,14 @@ func (r *CommitPromoteOneResponse) UnmarshalJSON(data []byte) error {
 
 type CommitListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Whether to show commits in the given environment that have not been promoted to
@@ -302,7 +307,10 @@ const (
 
 type CommitCommitAllParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// An optional message to include in a commit.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
 	// Filter changes to commit by resource identifier. Must be used together with
@@ -362,8 +370,11 @@ type CommitPromoteAllParams struct {
 	// “production” (in that order), setting this param to “production” will promote
 	// all commits not currently in production from staging.
 	//
-	// Note: This must be a non-development environment.
-	ToEnvironment string `query:"to_environment,required" json:"-"`
+	// When this param is set to `"development"`, the `"branch"` param must be
+	// provided.
+	ToEnvironment string `query:"to_environment" api:"required" json:"-"`
+	// The slug of the branch to promote all changes from.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Filter commits to promote by resource identifier. Must be used together with
 	// resource_type.
 	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`

@@ -14,7 +14,7 @@ import (
 )
 
 func TestPartialGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -32,6 +32,7 @@ func TestPartialGetWithOptionalParams(t *testing.T) {
 		knockmapi.PartialGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -45,7 +46,7 @@ func TestPartialGetWithOptionalParams(t *testing.T) {
 }
 
 func TestPartialListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -62,6 +63,7 @@ func TestPartialListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -75,7 +77,7 @@ func TestPartialListWithOptionalParams(t *testing.T) {
 }
 
 func TestPartialUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -93,16 +95,33 @@ func TestPartialUpsertWithOptionalParams(t *testing.T) {
 		knockmapi.PartialUpsertParams{
 			Environment: "development",
 			Partial: knockmapi.PartialUpsertParamsPartial{
-				Content:            "<p>Hello, world!</p>",
-				Name:               "My Partial",
-				Type:               "html",
-				Description:        knockmapi.String("description"),
-				IconName:           knockmapi.String("icon_name"),
-				VisualBlockEnabled: knockmapi.Bool(false),
+				Content:     "<p>Hello, world!</p>",
+				Name:        "My Partial",
+				Type:        "html",
+				Description: knockmapi.String("This is a test partial"),
+				IconName:    knockmapi.String("icon_name"),
+				InputSchema: []knockmapi.PartialUpsertParamsPartialInputSchemaUnion{{
+					OfMessageTypeTextField: &knockmapi.MessageTypeTextFieldParam{
+						Key:   "text_field",
+						Label: knockmapi.String("My text field"),
+						Type:  knockmapi.MessageTypeTextFieldTypeText,
+						Settings: knockmapi.MessageTypeTextFieldSettingsParam{
+							Default:     knockmapi.String("A placeholder"),
+							Description: knockmapi.String("A description of the text field"),
+							MaxLength:   knockmapi.Int(100),
+							MinLength:   knockmapi.Int(10),
+							Placeholder: knockmapi.String("A placeholder for the field."),
+							Required:    knockmapi.Bool(true),
+						},
+					},
+				}},
+				VisualBlockEnabled: knockmapi.Bool(true),
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Force:         knockmapi.Bool(true),
 		},
 	)
 	if err != nil {
@@ -115,7 +134,7 @@ func TestPartialUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestPartialValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -133,13 +152,29 @@ func TestPartialValidateWithOptionalParams(t *testing.T) {
 		knockmapi.PartialValidateParams{
 			Environment: "development",
 			Partial: knockmapi.PartialValidateParamsPartial{
-				Content:            "<p>Hello, world!</p>",
-				Name:               "My Partial",
-				Type:               "html",
-				Description:        knockmapi.String("description"),
-				IconName:           knockmapi.String("icon_name"),
-				VisualBlockEnabled: knockmapi.Bool(false),
+				Content:     "<p>Hello, world!</p>",
+				Name:        "My Partial",
+				Type:        "html",
+				Description: knockmapi.String("This is a test partial"),
+				IconName:    knockmapi.String("icon_name"),
+				InputSchema: []knockmapi.PartialValidateParamsPartialInputSchemaUnion{{
+					OfMessageTypeTextField: &knockmapi.MessageTypeTextFieldParam{
+						Key:   "text_field",
+						Label: knockmapi.String("My text field"),
+						Type:  knockmapi.MessageTypeTextFieldTypeText,
+						Settings: knockmapi.MessageTypeTextFieldSettingsParam{
+							Default:     knockmapi.String("A placeholder"),
+							Description: knockmapi.String("A description of the text field"),
+							MaxLength:   knockmapi.Int(100),
+							MinLength:   knockmapi.Int(10),
+							Placeholder: knockmapi.String("A placeholder for the field."),
+							Required:    knockmapi.Bool(true),
+						},
+					},
+				}},
+				VisualBlockEnabled: knockmapi.Bool(true),
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

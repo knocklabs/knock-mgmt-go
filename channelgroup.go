@@ -4,6 +4,8 @@ package knockmapi
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -37,6 +39,18 @@ func NewChannelGroupService(opts ...option.RequestOption) (r ChannelGroupService
 	return
 }
 
+// Get a channel group by its key.
+func (r *ChannelGroupService) Get(ctx context.Context, channelGroupKey string, opts ...option.RequestOption) (res *ChannelGroup, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if channelGroupKey == "" {
+		err = errors.New("missing required channel_group_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/channel_groups/%s", channelGroupKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Returns a paginated list of channel groups. Note: the list of channel groups is
 // across the entire account, not scoped to an environment.
 func (r *ChannelGroupService) List(ctx context.Context, query ChannelGroupListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[ChannelGroup], err error) {
@@ -62,33 +76,65 @@ func (r *ChannelGroupService) ListAutoPaging(ctx context.Context, query ChannelG
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives (soft deletes) a channel group by key.
+func (r *ChannelGroupService) Delete(ctx context.Context, channelGroupKey string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if channelGroupKey == "" {
+		err = errors.New("missing required channel_group_key parameter")
+		return err
+	}
+	path := fmt.Sprintf("v1/channel_groups/%s", channelGroupKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
+// Creates or updates a channel group by key.
+func (r *ChannelGroupService) Upsert(ctx context.Context, channelGroupKey string, body ChannelGroupUpsertParams, opts ...option.RequestOption) (res *ChannelGroupUpsertResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if channelGroupKey == "" {
+		err = errors.New("missing required channel_group_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/channel_groups/%s", channelGroupKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // A group of channels with rules for when they are applicable.
 type ChannelGroup struct {
 	// Rules for determining which channels should be used.
-	ChannelRules []ChannelGroupRule `json:"channel_rules,required"`
+	ChannelRules []ChannelGroupRule `json:"channel_rules" api:"required"`
 	// The type of channels contained in this group.
 	//
 	// Any of "email", "in_app", "in_app_feed", "in_app_guide", "sms", "push", "chat",
 	// "http".
-	ChannelType ChannelGroupChannelType `json:"channel_type,required"`
+	ChannelType ChannelGroupChannelType `json:"channel_type" api:"required"`
 	// The timestamp of when the channel group was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Unique identifier for the channel group within a project.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The human-readable name of the channel group.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Determines how the channel rules are applied ('any' means any rule can match,
 	// 'all' means all rules must match).
 	//
 	// Any of "any", "all".
-	Operator ChannelGroupOperator `json:"operator,required"`
+	Operator ChannelGroupOperator `json:"operator" api:"required"`
 	// Whether this channel group was created by the system or a user. Only user
 	// created channel groups can be modified.
 	//
 	// Any of "system", "user".
-	Source ChannelGroupSource `json:"source,required"`
+	Source ChannelGroupSource `json:"source" api:"required"`
 	// The timestamp of when the channel group was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// The timestamp of when the channel group was archived (soft deleted).
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
+	// The resources where this channel group is visible as a step destination (e.g.
+	// workflow, broadcast).
+	//
+	// Any of "workflow", "broadcast".
+	VisibleIn []string `json:"visible_in"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChannelRules respjson.Field
@@ -99,6 +145,8 @@ type ChannelGroup struct {
 		Operator     respjson.Field
 		Source       respjson.Field
 		UpdatedAt    respjson.Field
+		ArchivedAt   respjson.Field
+		VisibleIn    respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
@@ -146,29 +194,31 @@ const (
 // group.
 type ChannelGroupRule struct {
 	// A configured channel, which is a way to route messages to a provider.
-	Channel Channel `json:"channel,required"`
+	Channel Channel `json:"channel" api:"required"`
 	// The timestamp of when the rule was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The order index of this rule within the channel group.
-	Index int64 `json:"index,required"`
+	Index int64 `json:"index" api:"required"`
 	// The type of rule (if = conditional, unless = negative conditional, always =
 	// always apply).
 	//
 	// Any of "if", "unless", "always".
-	RuleType ChannelGroupRuleRuleType `json:"rule_type,required"`
+	RuleType ChannelGroupRuleRuleType `json:"rule_type" api:"required"`
 	// The timestamp of when the rule was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// For conditional rules, the value to compare against.
-	Argument string `json:"argument,nullable"`
+	Argument string `json:"argument" api:"nullable"`
 	// For conditional rules, the operator to apply.
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
-	// "contains_all", "not_contains_all", "empty", "not_empty", "is_audience_member",
-	// "is_not_audience_member".
-	Operator ChannelGroupRuleOperator `json:"operator,nullable"`
+	// "contains_all", "not_contains_all", "is_timestamp_before",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
+	Operator ChannelGroupRuleOperator `json:"operator" api:"nullable"`
 	// For conditional rules, the variable to evaluate.
-	Variable string `json:"variable,nullable"`
+	Variable string `json:"variable" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Channel     respjson.Field
@@ -204,21 +254,48 @@ const (
 type ChannelGroupRuleOperator string
 
 const (
-	ChannelGroupRuleOperatorEqualTo              ChannelGroupRuleOperator = "equal_to"
-	ChannelGroupRuleOperatorNotEqualTo           ChannelGroupRuleOperator = "not_equal_to"
-	ChannelGroupRuleOperatorGreaterThan          ChannelGroupRuleOperator = "greater_than"
-	ChannelGroupRuleOperatorLessThan             ChannelGroupRuleOperator = "less_than"
-	ChannelGroupRuleOperatorGreaterThanOrEqualTo ChannelGroupRuleOperator = "greater_than_or_equal_to"
-	ChannelGroupRuleOperatorLessThanOrEqualTo    ChannelGroupRuleOperator = "less_than_or_equal_to"
-	ChannelGroupRuleOperatorContains             ChannelGroupRuleOperator = "contains"
-	ChannelGroupRuleOperatorNotContains          ChannelGroupRuleOperator = "not_contains"
-	ChannelGroupRuleOperatorContainsAll          ChannelGroupRuleOperator = "contains_all"
-	ChannelGroupRuleOperatorNotContainsAll       ChannelGroupRuleOperator = "not_contains_all"
-	ChannelGroupRuleOperatorEmpty                ChannelGroupRuleOperator = "empty"
-	ChannelGroupRuleOperatorNotEmpty             ChannelGroupRuleOperator = "not_empty"
-	ChannelGroupRuleOperatorIsAudienceMember     ChannelGroupRuleOperator = "is_audience_member"
-	ChannelGroupRuleOperatorIsNotAudienceMember  ChannelGroupRuleOperator = "is_not_audience_member"
+	ChannelGroupRuleOperatorEqualTo                 ChannelGroupRuleOperator = "equal_to"
+	ChannelGroupRuleOperatorNotEqualTo              ChannelGroupRuleOperator = "not_equal_to"
+	ChannelGroupRuleOperatorGreaterThan             ChannelGroupRuleOperator = "greater_than"
+	ChannelGroupRuleOperatorLessThan                ChannelGroupRuleOperator = "less_than"
+	ChannelGroupRuleOperatorGreaterThanOrEqualTo    ChannelGroupRuleOperator = "greater_than_or_equal_to"
+	ChannelGroupRuleOperatorLessThanOrEqualTo       ChannelGroupRuleOperator = "less_than_or_equal_to"
+	ChannelGroupRuleOperatorContains                ChannelGroupRuleOperator = "contains"
+	ChannelGroupRuleOperatorNotContains             ChannelGroupRuleOperator = "not_contains"
+	ChannelGroupRuleOperatorContainsAll             ChannelGroupRuleOperator = "contains_all"
+	ChannelGroupRuleOperatorNotContainsAll          ChannelGroupRuleOperator = "not_contains_all"
+	ChannelGroupRuleOperatorIsTimestampBefore       ChannelGroupRuleOperator = "is_timestamp_before"
+	ChannelGroupRuleOperatorIsTimestampOnOrAfter    ChannelGroupRuleOperator = "is_timestamp_on_or_after"
+	ChannelGroupRuleOperatorIsTimestampBetween      ChannelGroupRuleOperator = "is_timestamp_between"
+	ChannelGroupRuleOperatorIsBetween               ChannelGroupRuleOperator = "is_between"
+	ChannelGroupRuleOperatorEmpty                   ChannelGroupRuleOperator = "empty"
+	ChannelGroupRuleOperatorNotEmpty                ChannelGroupRuleOperator = "not_empty"
+	ChannelGroupRuleOperatorExists                  ChannelGroupRuleOperator = "exists"
+	ChannelGroupRuleOperatorNotExists               ChannelGroupRuleOperator = "not_exists"
+	ChannelGroupRuleOperatorIsTimestamp             ChannelGroupRuleOperator = "is_timestamp"
+	ChannelGroupRuleOperatorIsTimestampBeforeNow    ChannelGroupRuleOperator = "is_timestamp_before_now"
+	ChannelGroupRuleOperatorIsTimestampOnOrAfterNow ChannelGroupRuleOperator = "is_timestamp_on_or_after_now"
+	ChannelGroupRuleOperatorIsAudienceMember        ChannelGroupRuleOperator = "is_audience_member"
+	ChannelGroupRuleOperatorIsNotAudienceMember     ChannelGroupRuleOperator = "is_not_audience_member"
 )
+
+// Wraps the ChannelGroup response under the `channel_group` key.
+type ChannelGroupUpsertResponse struct {
+	// A group of channels with rules for when they are applicable.
+	ChannelGroup ChannelGroup `json:"channel_group" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChannelGroup respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChannelGroupUpsertResponse) RawJSON() string { return r.JSON.raw }
+func (r *ChannelGroupUpsertResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type ChannelGroupListParams struct {
 	// The cursor to fetch entries after.
@@ -236,4 +313,109 @@ func (r ChannelGroupListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type ChannelGroupUpsertParams struct {
+	// A request to create or update a channel group.
+	ChannelGroup ChannelGroupUpsertParamsChannelGroup `json:"channel_group,omitzero" api:"required"`
+	paramObj
+}
+
+func (r ChannelGroupUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow ChannelGroupUpsertParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChannelGroupUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request to create or update a channel group.
+//
+// The properties ChannelType, Name are required.
+type ChannelGroupUpsertParamsChannelGroup struct {
+	// The type of channels contained in this group.
+	//
+	// Any of "email", "in_app", "in_app_feed", "in_app_guide", "sms", "push", "chat",
+	// "http".
+	ChannelType string `json:"channel_type,omitzero" api:"required"`
+	// The human-readable name of the channel group.
+	Name string `json:"name" api:"required"`
+	// Rules for determining which channels should be used.
+	ChannelRules []ChannelGroupUpsertParamsChannelGroupChannelRule `json:"channel_rules,omitzero"`
+	// Determines how the channel rules are applied ('any' means any rule can match,
+	// 'all' means all rules must match). Defaults to 'any'.
+	//
+	// Any of "any", "all".
+	Operator string `json:"operator,omitzero"`
+	// Optional. Where the channel group is visible as a step destination. Defaults to
+	// both workflow and broadcast when creating; omitted on update preserves the
+	// existing value.
+	//
+	// Any of "workflow", "broadcast".
+	VisibleIn []string `json:"visible_in,omitzero"`
+	paramObj
+}
+
+func (r ChannelGroupUpsertParamsChannelGroup) MarshalJSON() (data []byte, err error) {
+	type shadow ChannelGroupUpsertParamsChannelGroup
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChannelGroupUpsertParamsChannelGroup) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ChannelGroupUpsertParamsChannelGroup](
+		"channel_type", "email", "in_app", "in_app_feed", "in_app_guide", "sms", "push", "chat", "http",
+	)
+	apijson.RegisterFieldValidator[ChannelGroupUpsertParamsChannelGroup](
+		"operator", "any", "all",
+	)
+}
+
+// A rule that determines if a channel should be executed as part of a channel
+// group.
+//
+// The properties ChannelKey, RuleType are required.
+type ChannelGroupUpsertParamsChannelGroupChannelRule struct {
+	// The key of the channel this rule applies to.
+	ChannelKey string `json:"channel_key" api:"required"`
+	// The type of rule (if = conditional, unless = negative conditional, always =
+	// always apply).
+	//
+	// Any of "if", "unless", "always".
+	RuleType string `json:"rule_type,omitzero" api:"required"`
+	// For conditional rules, the value to compare against.
+	Argument param.Opt[string] `json:"argument,omitzero"`
+	// For conditional rules, the variable to evaluate.
+	Variable param.Opt[string] `json:"variable,omitzero"`
+	// The order index of this rule within the channel group.
+	Index param.Opt[int64] `json:"index,omitzero"`
+	// For conditional rules, the operator to apply.
+	//
+	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
+	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
+	// "contains_all", "not_contains_all", "is_timestamp_before",
+	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
+	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
+	Operator string `json:"operator,omitzero"`
+	paramObj
+}
+
+func (r ChannelGroupUpsertParamsChannelGroupChannelRule) MarshalJSON() (data []byte, err error) {
+	type shadow ChannelGroupUpsertParamsChannelGroupChannelRule
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChannelGroupUpsertParamsChannelGroupChannelRule) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ChannelGroupUpsertParamsChannelGroupChannelRule](
+		"rule_type", "if", "unless", "always",
+	)
+	apijson.RegisterFieldValidator[ChannelGroupUpsertParamsChannelGroupChannelRule](
+		"operator", "equal_to", "not_equal_to", "greater_than", "less_than", "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains", "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty", "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now", "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member",
+	)
 }

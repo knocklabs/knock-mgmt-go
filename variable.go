@@ -4,6 +4,8 @@ package knockmapi
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -37,7 +39,21 @@ func NewVariableService(opts ...option.RequestOption) (r VariableService) {
 	return
 }
 
-// Returns a paginated list of variables for a given environment.
+// Returns a single variable by key with per-environment value overrides.
+func (r *VariableService) Get(ctx context.Context, key string, opts ...option.RequestOption) (res *Variable, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if key == "" {
+		err = errors.New("missing required key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/variables/%s", key)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Returns a list of variables. When an environment is specified, returns
+// per-environment variables. Otherwise, returns project-scoped variables with
+// per-environment overrides.
 func (r *VariableService) List(ctx context.Context, query VariableListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Variable], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -55,7 +71,9 @@ func (r *VariableService) List(ctx context.Context, query VariableListParams, op
 	return res, nil
 }
 
-// Returns a paginated list of variables for a given environment.
+// Returns a list of variables. When an environment is specified, returns
+// per-environment variables. Otherwise, returns project-scoped variables with
+// per-environment overrides.
 func (r *VariableService) ListAutoPaging(ctx context.Context, query VariableListParams, opts ...option.RequestOption) *pagination.EntriesCursorAutoPager[Variable] {
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
@@ -63,29 +81,33 @@ func (r *VariableService) ListAutoPaging(ctx context.Context, query VariableList
 // An environment variable object.
 type Variable struct {
 	// The timestamp of when the variable was created.
-	InsertedAt time.Time `json:"inserted_at,required" format:"date-time"`
+	InsertedAt time.Time `json:"inserted_at" api:"required" format:"date-time"`
 	// The key of the variable.
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The type of the variable.
 	//
 	// Any of "public", "secret".
-	Type VariableType `json:"type,required"`
+	Type VariableType `json:"type" api:"required"`
 	// The timestamp of when the variable was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// The value of the variable.
-	Value string `json:"value,required"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The description of the variable.
-	Description string `json:"description,nullable"`
+	Description string `json:"description" api:"nullable"`
+	// A map of environment slugs to their override values. Only present for
+	// project-scoped responses.
+	EnvironmentValues map[string]string `json:"environment_values"`
+	// The default value of the variable. For secret variables, this is obfuscated.
+	Value string `json:"value" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		InsertedAt  respjson.Field
-		Key         respjson.Field
-		Type        respjson.Field
-		UpdatedAt   respjson.Field
-		Value       respjson.Field
-		Description respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		InsertedAt        respjson.Field
+		Key               respjson.Field
+		Type              respjson.Field
+		UpdatedAt         respjson.Field
+		Description       respjson.Field
+		EnvironmentValues respjson.Field
+		Value             respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -105,13 +127,20 @@ const (
 
 type VariableListParams struct {
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter variables by type. Supports 'public' or 'secret'.
+	//
+	// Any of "public", "secret".
+	Type VariableListParamsType `query:"type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -122,3 +151,11 @@ func (r VariableListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+// Filter variables by type. Supports 'public' or 'secret'.
+type VariableListParamsType string
+
+const (
+	VariableListParamsTypePublic VariableListParamsType = "public"
+	VariableListParamsTypeSecret VariableListParamsType = "secret"
+)

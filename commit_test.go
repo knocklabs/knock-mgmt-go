@@ -14,7 +14,7 @@ import (
 )
 
 func TestCommitGet(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -37,7 +37,7 @@ func TestCommitGet(t *testing.T) {
 }
 
 func TestCommitListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -53,6 +53,7 @@ func TestCommitListWithOptionalParams(t *testing.T) {
 		Environment: "development",
 		After:       knockmapi.String("after"),
 		Before:      knockmapi.String("before"),
+		Branch:      knockmapi.String("feature-branch"),
 		Limit:       knockmapi.Int(0),
 		Promoted:    knockmapi.Bool(true),
 		ResourceID:  knockmapi.String("resource_id"),
@@ -70,7 +71,7 @@ func TestCommitListWithOptionalParams(t *testing.T) {
 }
 
 func TestCommitCommitAllWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -84,6 +85,7 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Commits.CommitAll(context.TODO(), knockmapi.CommitCommitAllParams{
 		Environment:   "development",
+		Branch:        knockmapi.String("feature-branch"),
 		CommitMessage: knockmapi.String("commit_message"),
 		ResourceID:    knockmapi.String("resource_id"),
 		ResourceType: knockmapi.CommitCommitAllParamsResourceTypeUnion{
@@ -100,7 +102,7 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 }
 
 func TestCommitPromoteAllWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -114,6 +116,7 @@ func TestCommitPromoteAllWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Commits.PromoteAll(context.TODO(), knockmapi.CommitPromoteAllParams{
 		ToEnvironment: "to_environment",
+		Branch:        knockmapi.String("branch"),
 		ResourceID:    knockmapi.String("resource_id"),
 		ResourceType: knockmapi.CommitPromoteAllParamsResourceTypeUnion{
 			OfCommitPromoteAllsResourceTypeString: knockmapi.String("audience"),
@@ -129,7 +132,7 @@ func TestCommitPromoteAllWithOptionalParams(t *testing.T) {
 }
 
 func TestCommitPromoteOne(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

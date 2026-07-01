@@ -14,7 +14,7 @@ import (
 )
 
 func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -35,6 +35,7 @@ func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
 			Recipient: knockmapi.WorkflowStepPreviewTemplateParamsRecipientUnion{
 				OfString: knockmapi.String("dnedry"),
 			},
+			Branch: knockmapi.String("feature-branch"),
 			Actor: knockmapi.WorkflowStepPreviewTemplateParamsActorUnion{
 				OfString: knockmapi.String("dnedry"),
 			},

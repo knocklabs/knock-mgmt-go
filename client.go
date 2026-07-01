@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/knocklabs/knock-mgmt-go/internal/requestconfig"
 	"github.com/knocklabs/knock-mgmt-go/option"
@@ -16,32 +17,60 @@ import (
 // interacting with the knock mgmt API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options       []option.RequestOption
-	Templates     TemplateService
-	EmailLayouts  EmailLayoutService
-	Commits       CommitService
-	Partials      PartialService
-	Translations  TranslationService
-	Workflows     WorkflowService
-	MessageTypes  MessageTypeService
+	Options   []option.RequestOption
+	Templates TemplateService
+	// Email layouts wrap your email templates and provide a consistent look and feel.
+	EmailLayouts EmailLayoutService
+	// Commits are versioned changes to resources.
+	Commits CommitService
+	// Partials allow you to reuse content across templates.
+	Partials PartialService
+	// Translations are per-locale string files that can be used in your templates.
+	Translations TranslationService
+	// Workflows let you express your cross-channel notification logic.
+	Workflows WorkflowService
+	// A message type allows you to specify an in-app schema that defines the fields
+	// available for your in-app notifications.
+	MessageTypes MessageTypeService
+	// Resources for managing your Knock account.
 	Auth          AuthService
 	APIKeys       APIKeyService
 	ChannelGroups ChannelGroupService
 	Channels      ChannelService
-	Environments  EnvironmentService
-	Variables     VariableService
-	Guides        GuideService
+	Members       MemberService
+	// Sources receive external events that can trigger Knock actions.
+	DataSources DataSourceService
+	// Environments are isolated instances of your account that map to your
+	// infrastructure.
+	Environments EnvironmentService
+	Variables    VariableService
+	// Guides let you define in-app guides that can be displayed to users based on
+	// priority and other conditions.
+	Guides GuideService
+	// Branches in Knock are a way to isolate changes to your Knock resources.
+	Branches   BranchService
+	Broadcasts BroadcastService
+	// Audiences define sets of users that can be targeted for notifications.
+	Audiences AudienceService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
 // KNOCK_MGMT_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
-	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
+	defaults := []option.RequestOption{option.WithHTTPClient(defaultHTTPClient()), option.WithEnvironmentProduction()}
 	if o, ok := os.LookupEnv("KNOCK_MGMT_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
 	if o, ok := os.LookupEnv("KNOCK_SERVICE_TOKEN"); ok {
 		defaults = append(defaults, option.WithServiceToken(o))
+	}
+	if o, ok := os.LookupEnv("KNOCK_MGMT_CUSTOM_HEADERS"); ok {
+		for _, line := range strings.Split(o, "\n") {
+			colon := strings.Index(line, ":")
+			if colon >= 0 {
+				defaults = append(defaults, option.WithHeader(strings.TrimSpace(line[:colon]), strings.TrimSpace(line[colon+1:])))
+			}
+		}
 	}
 	return defaults
 }
@@ -66,9 +95,14 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.APIKeys = NewAPIKeyService(opts...)
 	r.ChannelGroups = NewChannelGroupService(opts...)
 	r.Channels = NewChannelService(opts...)
+	r.Members = NewMemberService(opts...)
+	r.DataSources = NewDataSourceService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Variables = NewVariableService(opts...)
 	r.Guides = NewGuideService(opts...)
+	r.Branches = NewBranchService(opts...)
+	r.Broadcasts = NewBroadcastService(opts...)
+	r.Audiences = NewAudienceService(opts...)
 
 	return
 }

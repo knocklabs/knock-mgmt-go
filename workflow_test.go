@@ -15,7 +15,7 @@ import (
 )
 
 func TestWorkflowGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -33,6 +33,7 @@ func TestWorkflowGetWithOptionalParams(t *testing.T) {
 		knockmapi.WorkflowGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -46,7 +47,7 @@ func TestWorkflowGetWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -63,6 +64,7 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -75,8 +77,8 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestWorkflowActivate(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+func TestWorkflowActivateWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -94,6 +96,7 @@ func TestWorkflowActivate(t *testing.T) {
 		knockmapi.WorkflowActivateParams{
 			Environment: "development",
 			Status:      true,
+			Branch:      knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {
@@ -106,7 +109,7 @@ func TestWorkflowActivate(t *testing.T) {
 }
 
 func TestWorkflowRunWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -126,6 +129,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 			Recipients: []knockmapi.WorkflowRunParamsRecipientUnion{{
 				OfString: knockmapi.String("dnedry"),
 			}},
+			Branch: knockmapi.String("feature-branch"),
 			Actor: knockmapi.WorkflowRunParamsActorUnion{
 				OfObjectRecipientReference: &knockmapi.WorkflowRunParamsActorObjectRecipientReference{
 					ID:         "project_1",
@@ -149,7 +153,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -200,8 +204,8 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
-							From:  knockmapi.Time("18:11:19.117Z"),
-							Until: knockmapi.Time("18:11:19.117Z"),
+							From:  knockmapi.String("18:11:19.117Z"),
+							Until: knockmapi.String("18:11:19.117Z"),
 						}},
 					},
 				}},
@@ -220,14 +224,17 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
+				Tags: []string{"string"},
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
 				TriggerFrequency: "every_trigger",
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Force:         knockmapi.Bool(true),
 		},
 	)
 	if err != nil {
@@ -240,7 +247,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestWorkflowValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -291,8 +298,8 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 						SendWindows: []knockmapi.SendWindowParam{{
 							Day:   knockmapi.SendWindowDayMonday,
 							Type:  knockmapi.SendWindowTypeSend,
-							From:  knockmapi.Time("18:11:19.117Z"),
-							Until: knockmapi.Time("18:11:19.117Z"),
+							From:  knockmapi.String("18:11:19.117Z"),
+							Until: knockmapi.String("18:11:19.117Z"),
 						}},
 					},
 				}},
@@ -311,11 +318,13 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
+				Tags: []string{"string"},
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
 				TriggerFrequency: "every_trigger",
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

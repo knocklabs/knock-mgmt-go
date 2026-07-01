@@ -12,11 +12,10 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
-	"github.com/knocklabs/knock-mgmt-go/packages/param"
 )
 
 func TestGuideGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -34,6 +33,7 @@ func TestGuideGetWithOptionalParams(t *testing.T) {
 		knockmapi.GuideGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -47,7 +47,7 @@ func TestGuideGetWithOptionalParams(t *testing.T) {
 }
 
 func TestGuideListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -64,6 +64,7 @@ func TestGuideListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -77,7 +78,7 @@ func TestGuideListWithOptionalParams(t *testing.T) {
 }
 
 func TestGuideActivateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -94,6 +95,7 @@ func TestGuideActivateWithOptionalParams(t *testing.T) {
 		"guide_key",
 		knockmapi.GuideActivateParams{
 			Environment: "development",
+			Branch:      knockmapi.String("feature-branch"),
 			OfGuideScheduledActivations: &knockmapi.GuideActivateParamsBodyGuideScheduledActivationParams{
 				From:  knockmapi.Time(time.Now()),
 				Until: knockmapi.Time(time.Now()),
@@ -110,7 +112,7 @@ func TestGuideActivateWithOptionalParams(t *testing.T) {
 }
 
 func TestGuideArchive(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -133,7 +135,7 @@ func TestGuideArchive(t *testing.T) {
 }
 
 func TestGuideUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -165,12 +167,14 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				}},
 				ActivationURLPatterns: []knockmapi.GuideActivationURLPatternParam{{
 					Directive: knockmapi.GuideActivationURLPatternDirectiveAllow,
-					Pathname:  "/dashboard/*",
+					Pathname:  knockmapi.String("/dashboard/*"),
+					Search:    knockmapi.String("tab=settings"),
 				}},
-				ArchivedAt:       knockmapi.Time(time.Now()),
-				DeletedAt:        knockmapi.Time(time.Now()),
-				Description:      knockmapi.String("A guide to help users get started with the application"),
-				TargetAudienceID: param.Null[string](),
+				ArchivedAt:        knockmapi.Time(time.Now()),
+				DeletedAt:         knockmapi.Time(time.Now()),
+				Description:       knockmapi.String("A guide to help users get started with the application"),
+				Tags:              []string{"string"},
+				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
@@ -182,8 +186,10 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				},
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Force:         knockmapi.Bool(true),
 		},
 	)
 	if err != nil {
@@ -196,7 +202,7 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestGuideValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -228,12 +234,14 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 				}},
 				ActivationURLPatterns: []knockmapi.GuideActivationURLPatternParam{{
 					Directive: knockmapi.GuideActivationURLPatternDirectiveAllow,
-					Pathname:  "/dashboard/*",
+					Pathname:  knockmapi.String("/dashboard/*"),
+					Search:    knockmapi.String("tab=settings"),
 				}},
-				ArchivedAt:       knockmapi.Time(time.Now()),
-				DeletedAt:        knockmapi.Time(time.Now()),
-				Description:      knockmapi.String("A guide to help users get started with the application"),
-				TargetAudienceID: param.Null[string](),
+				ArchivedAt:        knockmapi.Time(time.Now()),
+				DeletedAt:         knockmapi.Time(time.Now()),
+				Description:       knockmapi.String("A guide to help users get started with the application"),
+				Tags:              []string{"string"},
+				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
@@ -244,6 +252,7 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

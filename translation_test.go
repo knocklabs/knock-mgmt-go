@@ -14,7 +14,7 @@ import (
 )
 
 func TestTranslationGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -32,9 +32,11 @@ func TestTranslationGetWithOptionalParams(t *testing.T) {
 		knockmapi.TranslationGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			Format:                 knockmapi.TranslationGetParamsFormatJson,
 			HideUncommittedChanges: knockmapi.Bool(true),
 			Namespace:              knockmapi.String("namespace"),
+			Tenant:                 knockmapi.String("tenant"),
 		},
 	)
 	if err != nil {
@@ -47,7 +49,7 @@ func TestTranslationGetWithOptionalParams(t *testing.T) {
 }
 
 func TestTranslationListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -64,11 +66,13 @@ func TestTranslationListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		Format:                 knockmapi.TranslationListParamsFormatJson,
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 		LocaleCode:             knockmapi.String("locale_code"),
 		Namespace:              knockmapi.String("namespace"),
+		Tenant:                 knockmapi.String("tenant"),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -80,7 +84,7 @@ func TestTranslationListWithOptionalParams(t *testing.T) {
 }
 
 func TestTranslationUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -103,9 +107,12 @@ func TestTranslationUpsertWithOptionalParams(t *testing.T) {
 				Format:  "json",
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Force:         knockmapi.Bool(true),
 			Format:        knockmapi.TranslationUpsertParamsFormatJson,
+			Tenant:        knockmapi.String("tenant"),
 		},
 	)
 	if err != nil {
@@ -117,8 +124,8 @@ func TestTranslationUpsertWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestTranslationValidate(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+func TestTranslationValidateWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -139,6 +146,7 @@ func TestTranslationValidate(t *testing.T) {
 				Content: `{"hello":"Hello, world!"}`,
 				Format:  "json",
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

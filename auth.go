@@ -13,6 +13,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Resources for managing your Knock account.
+//
 // AuthService contains methods and other services that help with interacting with
 // the knock mgmt API.
 //
@@ -38,28 +40,28 @@ func (r *AuthService) Verify(ctx context.Context, opts ...option.RequestOption) 
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/whoami"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Information about the current calling scope.
 type AuthVerifyResponse struct {
 	// Account plan features and limits.
-	AccountFeatures AuthVerifyResponseAccountFeatures `json:"account_features,required"`
+	AccountFeatures AuthVerifyResponseAccountFeatures `json:"account_features" api:"required"`
 	// The display name of the account.
-	AccountName string `json:"account_name,required"`
+	AccountName string `json:"account_name" api:"required"`
 	// The unique slug identifier for the account.
-	AccountSlug string `json:"account_slug,required"`
+	AccountSlug string `json:"account_slug" api:"required"`
 	// The type of authentication context - either a service token or OAuth user
 	// context.
 	//
 	// Any of "service_token", "oauth_context".
-	Type AuthVerifyResponseType `json:"type,required"`
+	Type AuthVerifyResponseType `json:"type" api:"required"`
 	// The name of the service token if authenticated via service token, null for OAuth
 	// contexts.
-	ServiceTokenName string `json:"service_token_name,nullable"`
+	ServiceTokenName string `json:"service_token_name" api:"nullable"`
 	// The ID of the authenticated user if in OAuth context, null for service token
 	// contexts.
-	UserID string `json:"user_id,nullable"`
+	UserID string `json:"user_id" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountFeatures  respjson.Field
@@ -86,7 +88,7 @@ type AuthVerifyResponseAccountFeatures struct {
 	// Whether custom branding can be applied to notifications.
 	CustomBrandingAllowed bool `json:"custom_branding_allowed"`
 	// Number of days data is retained, null for unlimited retention.
-	DataRetentionDays int64 `json:"data_retention_days,nullable"`
+	DataRetentionDays int64 `json:"data_retention_days" api:"nullable"`
 	// Whether data warehouse integration extensions are available.
 	DataWarehouseExtensionAllowed bool `json:"data_warehouse_extension_allowed"`
 	// Whether Datadog integration extension is available.
@@ -94,7 +96,9 @@ type AuthVerifyResponseAccountFeatures struct {
 	// Whether directory sync functionality is available.
 	DsyncAllowed bool `json:"dsync_allowed"`
 	// Monthly limit for guide notification recipients, null for unlimited.
-	GuidesMonthlyNotifiedRecipientsLimit int64 `json:"guides_monthly_notified_recipients_limit,nullable"`
+	GuidesMonthlyNotifiedRecipientsLimit int64 `json:"guides_monthly_notified_recipients_limit" api:"nullable"`
+	// Whether per-tenant scope for guide messages is allowed.
+	GuidesPerTenantScopeAllowed bool `json:"guides_per_tenant_scope_allowed"`
 	// Whether Heap integration extension is available.
 	HeapExtensionAllowed bool `json:"heap_extension_allowed"`
 	// Whether Knock branding is required to be displayed.
@@ -102,7 +106,7 @@ type AuthVerifyResponseAccountFeatures struct {
 	// Whether Litmus email preview integration is available.
 	LitmusEmailPreviewAllowed bool `json:"litmus_email_preview_allowed"`
 	// Monthly limit for messages sent, null for unlimited.
-	MessageSentLimit int64 `json:"message_sent_limit,nullable"`
+	MessageSentLimit int64 `json:"message_sent_limit" api:"nullable"`
 	// Whether New Relic integration extension is available.
 	NewRelicExtensionAllowed bool `json:"new_relic_extension_allowed"`
 	// Whether Segment integration extension is available.
@@ -124,6 +128,7 @@ type AuthVerifyResponseAccountFeatures struct {
 		DatadogExtensionAllowed              respjson.Field
 		DsyncAllowed                         respjson.Field
 		GuidesMonthlyNotifiedRecipientsLimit respjson.Field
+		GuidesPerTenantScopeAllowed          respjson.Field
 		HeapExtensionAllowed                 respjson.Field
 		KnockBrandingRequired                respjson.Field
 		LitmusEmailPreviewAllowed            respjson.Field

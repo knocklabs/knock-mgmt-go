@@ -14,7 +14,7 @@ import (
 )
 
 func TestMessageTypeGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -32,6 +32,7 @@ func TestMessageTypeGetWithOptionalParams(t *testing.T) {
 		knockmapi.MessageTypeGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -45,7 +46,7 @@ func TestMessageTypeGetWithOptionalParams(t *testing.T) {
 }
 
 func TestMessageTypeListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -62,6 +63,7 @@ func TestMessageTypeListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -75,7 +77,7 @@ func TestMessageTypeListWithOptionalParams(t *testing.T) {
 }
 
 func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -109,6 +111,7 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 								Description: knockmapi.String("A description of the text field"),
 								MaxLength:   knockmapi.Int(100),
 								MinLength:   knockmapi.Int(10),
+								Placeholder: knockmapi.String("A placeholder for the field."),
 								Required:    knockmapi.Bool(true),
 							},
 						},
@@ -118,8 +121,10 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 				}},
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Force:         knockmapi.Bool(true),
 		},
 	)
 	if err != nil {
@@ -132,7 +137,7 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -166,6 +171,7 @@ func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
 								Description: knockmapi.String("A description of the text field"),
 								MaxLength:   knockmapi.Int(100),
 								MinLength:   knockmapi.Int(10),
+								Placeholder: knockmapi.String("A placeholder for the field."),
 								Required:    knockmapi.Bool(true),
 							},
 						},
@@ -174,6 +180,7 @@ func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
 					Name: "Default",
 				}},
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

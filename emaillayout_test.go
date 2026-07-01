@@ -14,7 +14,7 @@ import (
 )
 
 func TestEmailLayoutGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -32,6 +32,7 @@ func TestEmailLayoutGetWithOptionalParams(t *testing.T) {
 		knockmapi.EmailLayoutGetParams{
 			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
+			Branch:                 knockmapi.String("feature-branch"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -45,7 +46,7 @@ func TestEmailLayoutGetWithOptionalParams(t *testing.T) {
 }
 
 func TestEmailLayoutListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -62,6 +63,7 @@ func TestEmailLayoutListWithOptionalParams(t *testing.T) {
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
+		Branch:                 knockmapi.String("feature-branch"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -75,7 +77,7 @@ func TestEmailLayoutListWithOptionalParams(t *testing.T) {
 }
 
 func TestEmailLayoutUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -96,14 +98,29 @@ func TestEmailLayoutUpsertWithOptionalParams(t *testing.T) {
 				HTMLLayout: "<html><body>Hello, world!</body></html>",
 				Name:       "Transactional",
 				TextLayout: "Hello, world!",
+				BrandingOverrides: knockmapi.EmailLayoutUpsertParamsEmailLayoutBrandingOverrides{
+					DarkIconURL:              knockmapi.String("https://cdn.example.com/icon-dark.png"),
+					DarkLogoURL:              knockmapi.String("https://cdn.example.com/logo-dark.png"),
+					DarkPrimaryColor:         knockmapi.String("#1A1A2E"),
+					DarkPrimaryColorContrast: knockmapi.String("#FFFFFF"),
+					IconURL:                  knockmapi.String("https://cdn.example.com/icon-light.png"),
+					LogoURL:                  knockmapi.String("https://cdn.example.com/logo-light.png"),
+					PrimaryColor:             knockmapi.String("#4F46E5"),
+					PrimaryColorContrast:     knockmapi.String("#FFFFFF"),
+					PrimaryTextColor:         knockmapi.String("#111827"),
+					SecondaryTextColor:       knockmapi.String("#6B7280"),
+				},
 				FooterLinks: []knockmapi.EmailLayoutUpsertParamsEmailLayoutFooterLink{{
 					Text: "Example",
 					URL:  "http://example.com",
 				}},
+				IsMjml: knockmapi.Bool(true),
 			},
 			Annotate:      knockmapi.Bool(true),
+			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Force:         knockmapi.Bool(true),
 		},
 	)
 	if err != nil {
@@ -116,7 +133,7 @@ func TestEmailLayoutUpsertWithOptionalParams(t *testing.T) {
 }
 
 func TestEmailLayoutValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism doesn't support callbacks yet")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -137,11 +154,25 @@ func TestEmailLayoutValidateWithOptionalParams(t *testing.T) {
 				HTMLLayout: "<html><body>Hello, world!</body></html>",
 				Name:       "Transactional",
 				TextLayout: "Hello, world!",
+				BrandingOverrides: knockmapi.EmailLayoutValidateParamsEmailLayoutBrandingOverrides{
+					DarkIconURL:              knockmapi.String("https://cdn.example.com/icon-dark.png"),
+					DarkLogoURL:              knockmapi.String("https://cdn.example.com/logo-dark.png"),
+					DarkPrimaryColor:         knockmapi.String("#1A1A2E"),
+					DarkPrimaryColorContrast: knockmapi.String("#FFFFFF"),
+					IconURL:                  knockmapi.String("https://cdn.example.com/icon-light.png"),
+					LogoURL:                  knockmapi.String("https://cdn.example.com/logo-light.png"),
+					PrimaryColor:             knockmapi.String("#4F46E5"),
+					PrimaryColorContrast:     knockmapi.String("#FFFFFF"),
+					PrimaryTextColor:         knockmapi.String("#111827"),
+					SecondaryTextColor:       knockmapi.String("#6B7280"),
+				},
 				FooterLinks: []knockmapi.EmailLayoutValidateParamsEmailLayoutFooterLink{{
 					Text: "Example",
 					URL:  "http://example.com",
 				}},
+				IsMjml: knockmapi.Bool(true),
 			},
+			Branch: knockmapi.String("feature-branch"),
 		},
 	)
 	if err != nil {

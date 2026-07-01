@@ -19,6 +19,8 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
+// Workflows let you express your cross-channel notification logic.
+//
 // WorkflowStepService contains methods and other services that help with
 // interacting with the knock mgmt API.
 //
@@ -43,15 +45,15 @@ func (r *WorkflowStepService) PreviewTemplate(ctx context.Context, stepRef strin
 	opts = slices.Concat(r.Options, opts)
 	if params.WorkflowKey == "" {
 		err = errors.New("missing required workflow_key parameter")
-		return
+		return nil, err
 	}
 	if stepRef == "" {
 		err = errors.New("missing required step_ref parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/workflows/%s/steps/%s/preview_template", params.WorkflowKey, stepRef)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A response to a preview workflow template request.
@@ -59,13 +61,13 @@ type WorkflowStepPreviewTemplateResponse struct {
 	// The content type of the preview.
 	//
 	// Any of "email", "in_app_feed", "push", "chat", "sms", "http".
-	ContentType WorkflowStepPreviewTemplateResponseContentType `json:"content_type,required"`
+	ContentType WorkflowStepPreviewTemplateResponseContentType `json:"content_type" api:"required"`
 	// The result of the preview.
 	//
 	// Any of "success", "error".
-	Result WorkflowStepPreviewTemplateResponseResult `json:"result,required"`
+	Result WorkflowStepPreviewTemplateResponseResult `json:"result" api:"required"`
 	// The rendered template, ready to be previewed.
-	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template,required"`
+	Template WorkflowStepPreviewTemplateResponseTemplateUnion `json:"template" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ContentType respjson.Field
@@ -108,14 +110,16 @@ const (
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
+	// This field is a union of [EmailTemplateSettings], [PushTemplateSettings],
+	// [SMSTemplateSettings]
+	Settings WorkflowStepPreviewTemplateResponseTemplateUnionSettings `json:"settings"`
 	// This field is from variant [EmailTemplate].
 	Subject string `json:"subject"`
 	// This field is from variant [EmailTemplate].
 	HTMLBody string `json:"html_body"`
-	// This field is a union of [EmailTemplateSettings], [PushTemplateSettings],
-	// [SMSTemplateSettings]
-	Settings WorkflowStepPreviewTemplateResponseTemplateUnionSettings `json:"settings"`
-	TextBody string                                                   `json:"text_body"`
+	// This field is from variant [EmailTemplate].
+	IsMjml   bool   `json:"is_mjml"`
+	TextBody string `json:"text_body"`
 	// This field is from variant [EmailTemplate].
 	VisualBlocks []EmailTemplateVisualBlockUnion `json:"visual_blocks"`
 	MarkdownBody string                          `json:"markdown_body"`
@@ -140,9 +144,10 @@ type WorkflowStepPreviewTemplateResponseTemplateUnion struct {
 	// This field is from variant [RequestTemplate].
 	QueryParams RequestTemplateQueryParamsUnion `json:"query_params"`
 	JSON        struct {
+		Settings      respjson.Field
 		Subject       respjson.Field
 		HTMLBody      respjson.Field
-		Settings      respjson.Field
+		IsMjml        respjson.Field
 		TextBody      respjson.Field
 		VisualBlocks  respjson.Field
 		MarkdownBody  respjson.Field
@@ -232,14 +237,17 @@ func (r *WorkflowStepPreviewTemplateResponseTemplateUnionSettings) UnmarshalJSON
 }
 
 type WorkflowStepPreviewTemplateParams struct {
-	WorkflowKey string `path:"workflow_key,required" json:"-"`
+	WorkflowKey string `path:"workflow_key" api:"required" json:"-"`
 	// The environment slug.
-	Environment string `query:"environment,required" json:"-"`
+	Environment string `query:"environment" api:"required" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
-	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero,required"`
+	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero" api:"required"`
 	// The tenant to associate the workflow with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
 	Actor WorkflowStepPreviewTemplateParamsActorUnion `json:"actor,omitzero"`
@@ -295,9 +303,9 @@ func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
 // The properties ID, Collection are required.
 type WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference struct {
 	// The ID of the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The collection of the object.
-	Collection string `json:"collection,required"`
+	Collection string `json:"collection" api:"required"`
 	paramObj
 }
 
@@ -339,9 +347,9 @@ func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
 // The properties ID, Collection are required.
 type WorkflowStepPreviewTemplateParamsActorObjectRecipientReference struct {
 	// The ID of the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The collection of the object.
-	Collection string `json:"collection,required"`
+	Collection string `json:"collection" api:"required"`
 	paramObj
 }
 

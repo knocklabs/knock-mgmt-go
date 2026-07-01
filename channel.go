@@ -5,6 +5,8 @@ package knockmapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -38,6 +40,20 @@ func NewChannelService(opts ...option.RequestOption) (r ChannelService) {
 	return
 }
 
+// Returns a channel with all environment-specific settings. Secret values in
+// provider settings are obfuscated unless they are Liquid templates (e.g.,
+// `{{ vars.api_key }}`).
+func (r *ChannelService) Get(ctx context.Context, channelKey string, opts ...option.RequestOption) (res *Channel, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if channelKey == "" {
+		err = errors.New("missing required channel_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/channels/%s", channelKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Returns a paginated list of channels. Note: the list of channels is across the
 // entire account, not scoped to an environment.
 func (r *ChannelService) List(ctx context.Context, query ChannelListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Channel], err error) {
@@ -66,45 +82,56 @@ func (r *ChannelService) ListAutoPaging(ctx context.Context, query ChannelListPa
 // A configured channel, which is a way to route messages to a provider.
 type Channel struct {
 	// The unique identifier for the channel.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The timestamp of when the channel was created.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Unique identifier for the channel within a project (immutable once created).
-	Key string `json:"key,required"`
+	Key string `json:"key" api:"required"`
 	// The human-readable name of the channel.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The ID of the provider that this channel uses to deliver messages. Learn more
 	// about the providers available
 	// [in our documentation](https://docs.knock.app/integrations/overview).
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// The type of channel, determining what kind of messages it can send.
 	//
 	// Any of "email", "in_app", "in_app_feed", "in_app_guide", "sms", "push", "chat",
 	// "http".
-	Type ChannelType `json:"type,required"`
+	Type ChannelType `json:"type" api:"required"`
 	// The timestamp of when the channel was last updated.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The timestamp of when the channel was deleted.
-	ArchivedAt time.Time `json:"archived_at,nullable" format:"date-time"`
+	ArchivedAt time.Time `json:"archived_at" api:"nullable" format:"date-time"`
 	// Optional URL to a custom icon for the channel. Only used for display purposes in
 	// the dashboard.
-	CustomIconURL string `json:"custom_icon_url,nullable"`
+	CustomIconURL string `json:"custom_icon_url" api:"nullable"`
 	// Optional description of the channel's purpose or usage.
-	Description string `json:"description,nullable"`
+	Description string `json:"description" api:"nullable"`
+	// Per-environment settings for this channel, keyed by environment slug (e.g.,
+	// 'development', 'production'). Only included when requested via the `include`
+	// parameter or when retrieving a single channel.
+	EnvironmentSettings map[string]ChannelEnvironmentSettings `json:"environment_settings" api:"nullable"`
+	// The resources where this channel is visible as a step destination (e.g.
+	// workflow, broadcast).
+	//
+	// Any of "workflow", "broadcast".
+	VisibleIn []string `json:"visible_in"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		CreatedAt     respjson.Field
-		Key           respjson.Field
-		Name          respjson.Field
-		Provider      respjson.Field
-		Type          respjson.Field
-		UpdatedAt     respjson.Field
-		ArchivedAt    respjson.Field
-		CustomIconURL respjson.Field
-		Description   respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                  respjson.Field
+		CreatedAt           respjson.Field
+		Key                 respjson.Field
+		Name                respjson.Field
+		Provider            respjson.Field
+		Type                respjson.Field
+		UpdatedAt           respjson.Field
+		ArchivedAt          respjson.Field
+		CustomIconURL       respjson.Field
+		Description         respjson.Field
+		EnvironmentSettings respjson.Field
+		VisibleIn           respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
 	} `json:"-"`
 }
 
@@ -127,6 +154,40 @@ const (
 	ChannelTypeChat       ChannelType = "chat"
 	ChannelTypeHTTP       ChannelType = "http"
 )
+
+// Environment-specific settings for a channel.
+type ChannelEnvironmentSettings struct {
+	// The unique identifier for these environment settings.
+	ID string `json:"id" api:"required" format:"uuid"`
+	// Whether the channel is in sandbox mode for this environment. Sandbox mode may
+	// prevent actual message delivery.
+	IsSandbox bool `json:"is_sandbox" api:"required"`
+	// Whether the channel configuration is valid and ready to send messages in this
+	// environment.
+	IsValid bool `json:"is_valid" api:"required"`
+	// Channel-type-specific settings (e.g., from_address for email). Structure varies
+	// by channel type.
+	ChannelSettings map[string]any `json:"channel_settings" api:"nullable"`
+	// Provider-specific settings (e.g., API keys, credentials). Structure varies by
+	// provider. Secret values are obfuscated unless they are Liquid templates.
+	ProviderSettings map[string]any `json:"provider_settings" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		IsSandbox        respjson.Field
+		IsValid          respjson.Field
+		ChannelSettings  respjson.Field
+		ProviderSettings respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChannelEnvironmentSettings) RawJSON() string { return r.JSON.raw }
+func (r *ChannelEnvironmentSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Chat channel settings. Only used as configuration as part of a workflow channel
 // step.
@@ -183,22 +244,22 @@ func (r *ChatChannelSettingsParam) UnmarshalJSON(data []byte) error {
 // step.
 type EmailChannelSettings struct {
 	// The BCC address on email notifications. Supports liquid.
-	BccAddress string `json:"bcc_address,nullable"`
+	BccAddress string `json:"bcc_address" api:"nullable"`
 	// The CC address on email notifications. Supports liquid.
-	CcAddress string `json:"cc_address,nullable"`
+	CcAddress string `json:"cc_address" api:"nullable"`
 	// The email address from which this channel will send. Supports liquid.
-	FromAddress string `json:"from_address,nullable"`
+	FromAddress string `json:"from_address" api:"nullable"`
 	// The name from which this channel will send. Supports liquid.
-	FromName string `json:"from_name,nullable"`
+	FromName string `json:"from_name" api:"nullable"`
 	// A JSON template for any custom overrides to merge into the API payload that is
 	// sent to the email provider. Supports liquid.
-	JsonOverrides string `json:"json_overrides,nullable"`
+	JsonOverrides string `json:"json_overrides" api:"nullable"`
 	// Whether to track link clicks on email notifications.
 	LinkTracking bool `json:"link_tracking"`
 	// Whether to track opens on email notifications.
 	OpenTracking bool `json:"open_tracking"`
 	// The Reply-to address on email notifications. Supports liquid.
-	ReplyToAddress string `json:"reply_to_address,nullable"`
+	ReplyToAddress string `json:"reply_to_address" api:"nullable"`
 	// The email address to which this channel will send. Defaults to
 	// `recipient.email`. Supports liquid.
 	ToAddress string `json:"to_address"`
@@ -411,6 +472,11 @@ type ChannelListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Associated resources to include in the response. Accepts `environment_settings`
+	// to include per-environment channel configuration.
+	//
+	// Any of "environment_settings".
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 
