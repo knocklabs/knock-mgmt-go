@@ -176,7 +176,7 @@ const (
 // PartialInputSchemaUnion contains all possible properties and values from
 // [PartialInputSchemaMessageTypeListField], [shared.MessageTypeSelectField],
 // [shared.MessageTypeBooleanField], [shared.MessageTypeJsonField],
-// [PartialInputSchemaMessageTypeNumberField], [MessageTypeTextField],
+// [PartialInputSchemaMessageTypeNumberField], [shared.MessageTypeTextField],
 // [shared.MessageTypeImageField], [PartialInputSchemaMessageTypeColorField],
 // [shared.MessageTypeURLField], [shared.MessageTypeMarkdownField],
 // [shared.MessageTypeMultiSelectField], [shared.MessageTypeButtonField],
@@ -191,7 +191,7 @@ type PartialInputSchemaUnion struct {
 	// [shared.MessageTypeSelectFieldSettings],
 	// [shared.MessageTypeBooleanFieldSettings], [shared.MessageTypeJsonFieldSettings],
 	// [PartialInputSchemaMessageTypeNumberFieldSettings],
-	// [MessageTypeTextFieldSettings], [shared.MessageTypeImageFieldSettings],
+	// [shared.MessageTypeTextFieldSettings], [shared.MessageTypeImageFieldSettings],
 	// [PartialInputSchemaMessageTypeColorFieldSettings],
 	// [shared.MessageTypeURLFieldSettings], [shared.MessageTypeMarkdownFieldSettings],
 	// [shared.MessageTypeMultiSelectFieldSettings],
@@ -199,13 +199,13 @@ type PartialInputSchemaUnion struct {
 	// [shared.MessageTypeTextareaFieldSettings]
 	Settings PartialInputSchemaUnionSettings `json:"settings"`
 	// This field is from variant [shared.MessageTypeImageField].
-	Action MessageTypeTextField `json:"action"`
+	Action shared.MessageTypeTextField `json:"action"`
 	// This field is from variant [shared.MessageTypeImageField].
-	Alt MessageTypeTextField `json:"alt"`
+	Alt shared.MessageTypeTextField `json:"alt"`
 	// This field is from variant [shared.MessageTypeImageField].
 	URL shared.MessageTypeURLField `json:"url"`
 	// This field is from variant [shared.MessageTypeButtonField].
-	Text MessageTypeTextField `json:"text"`
+	Text shared.MessageTypeTextField `json:"text"`
 	JSON struct {
 		Key      respjson.Field
 		Label    respjson.Field
@@ -244,7 +244,7 @@ func (u PartialInputSchemaUnion) AsMessageTypeNumberField() (v PartialInputSchem
 	return
 }
 
-func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
+func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v shared.MessageTypeTextField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -754,7 +754,7 @@ type PartialUpsertParamsPartialInputSchemaUnion struct {
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam                         `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam                            `json:",omitzero,inline"`
 	OfMessageTypeNumberField      *PartialUpsertParamsPartialInputSchemaMessageTypeNumberField `json:",omitzero,inline"`
-	OfMessageTypeTextField        *MessageTypeTextFieldParam                                   `json:",omitzero,inline"`
+	OfMessageTypeTextField        *shared.MessageTypeTextFieldParam                            `json:",omitzero,inline"`
 	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam                           `json:",omitzero,inline"`
 	OfMessageTypeColorField       *PartialUpsertParamsPartialInputSchemaMessageTypeColorField  `json:",omitzero,inline"`
 	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam                             `json:",omitzero,inline"`
@@ -816,7 +816,7 @@ func (u *PartialUpsertParamsPartialInputSchemaUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u PartialUpsertParamsPartialInputSchemaUnion) GetAlt() *MessageTypeTextFieldParam {
+func (u PartialUpsertParamsPartialInputSchemaUnion) GetAlt() *shared.MessageTypeTextFieldParam {
 	if vt := u.OfMessageTypeImageField; vt != nil {
 		return &vt.Alt
 	}
@@ -832,7 +832,7 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetURL() *shared.MessageType
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u PartialUpsertParamsPartialInputSchemaUnion) GetText() *MessageTypeTextFieldParam {
+func (u PartialUpsertParamsPartialInputSchemaUnion) GetText() *shared.MessageTypeTextFieldParam {
 	if vt := u.OfMessageTypeButtonField; vt != nil {
 		return &vt.Text
 	}
@@ -975,7 +975,7 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetSettings() (res partialUp
 // [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings],
-// [*MessageTypeTextFieldSettingsParam],
+// [*shared.MessageTypeTextFieldSettingsParam],
 // [*shared.MessageTypeImageFieldSettingsParam],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeColorFieldSettings],
 // [*shared.MessageTypeURLFieldSettingsParam],
@@ -993,7 +993,7 @@ type partialUpsertParamsPartialInputSchemaUnionSettings struct{ any }
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-//	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *shared.MessageTypeTextFieldSettingsParam:
 //	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeColorFieldSettings:
 //	case *shared.MessageTypeURLFieldSettingsParam:
@@ -1064,7 +1064,7 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *st
 		return paramutil.AddrIfPresent(vt.Description)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -1097,7 +1097,7 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetPlaceholder() *st
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
@@ -1130,7 +1130,7 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetRequired() *bool 
 		return paramutil.AddrIfPresent(vt.Required)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -1153,7 +1153,7 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetRequired() *bool 
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetMaxLength() *int64 {
 	switch vt := u.any.(type) {
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MaxLength)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MaxLength)
@@ -1164,7 +1164,7 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetMaxLength() *int6
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetMinLength() *int64 {
 	switch vt := u.any.(type) {
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MinLength)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MinLength)
@@ -1187,7 +1187,7 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDefault() (res pa
 		res.any = &vt.Default
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeColorFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
@@ -1250,7 +1250,7 @@ type partialUpsertParamsPartialInputSchemaUnionSettingsOptions struct{ any }
 func (u partialUpsertParamsPartialInputSchemaUnionSettingsOptions) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's Action property, if present.
-func (u PartialUpsertParamsPartialInputSchemaUnion) GetAction() *MessageTypeTextFieldParam {
+func (u PartialUpsertParamsPartialInputSchemaUnion) GetAction() *shared.MessageTypeTextFieldParam {
 	if vt := u.OfMessageTypeImageField; vt != nil {
 		return &vt.Action
 	} else if vt := u.OfMessageTypeButtonField; vt != nil {
@@ -1495,7 +1495,7 @@ type PartialValidateParamsPartialInputSchemaUnion struct {
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam                           `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam                              `json:",omitzero,inline"`
 	OfMessageTypeNumberField      *PartialValidateParamsPartialInputSchemaMessageTypeNumberField `json:",omitzero,inline"`
-	OfMessageTypeTextField        *MessageTypeTextFieldParam                                     `json:",omitzero,inline"`
+	OfMessageTypeTextField        *shared.MessageTypeTextFieldParam                              `json:",omitzero,inline"`
 	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam                             `json:",omitzero,inline"`
 	OfMessageTypeColorField       *PartialValidateParamsPartialInputSchemaMessageTypeColorField  `json:",omitzero,inline"`
 	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam                               `json:",omitzero,inline"`
@@ -1557,7 +1557,7 @@ func (u *PartialValidateParamsPartialInputSchemaUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u PartialValidateParamsPartialInputSchemaUnion) GetAlt() *MessageTypeTextFieldParam {
+func (u PartialValidateParamsPartialInputSchemaUnion) GetAlt() *shared.MessageTypeTextFieldParam {
 	if vt := u.OfMessageTypeImageField; vt != nil {
 		return &vt.Alt
 	}
@@ -1573,7 +1573,7 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetURL() *shared.MessageTy
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u PartialValidateParamsPartialInputSchemaUnion) GetText() *MessageTypeTextFieldParam {
+func (u PartialValidateParamsPartialInputSchemaUnion) GetText() *shared.MessageTypeTextFieldParam {
 	if vt := u.OfMessageTypeButtonField; vt != nil {
 		return &vt.Text
 	}
@@ -1716,7 +1716,7 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetSettings() (res partial
 // [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings],
-// [*MessageTypeTextFieldSettingsParam],
+// [*shared.MessageTypeTextFieldSettingsParam],
 // [*shared.MessageTypeImageFieldSettingsParam],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeColorFieldSettings],
 // [*shared.MessageTypeURLFieldSettingsParam],
@@ -1734,7 +1734,7 @@ type partialValidateParamsPartialInputSchemaUnionSettings struct{ any }
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-//	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *shared.MessageTypeTextFieldSettingsParam:
 //	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeColorFieldSettings:
 //	case *shared.MessageTypeURLFieldSettingsParam:
@@ -1805,7 +1805,7 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *
 		return paramutil.AddrIfPresent(vt.Description)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -1838,7 +1838,7 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetPlaceholder() *
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
@@ -1871,7 +1871,7 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetRequired() *boo
 		return paramutil.AddrIfPresent(vt.Required)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -1894,7 +1894,7 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetRequired() *boo
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetMaxLength() *int64 {
 	switch vt := u.any.(type) {
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MaxLength)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MaxLength)
@@ -1905,7 +1905,7 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetMaxLength() *in
 // Returns a pointer to the underlying variant's property, if present.
 func (u partialValidateParamsPartialInputSchemaUnionSettings) GetMinLength() *int64 {
 	switch vt := u.any.(type) {
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MinLength)
 	case *shared.MessageTypeTextareaFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.MinLength)
@@ -1928,7 +1928,7 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDefault() (res 
 		res.any = &vt.Default
 	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
-	case *MessageTypeTextFieldSettingsParam:
+	case *shared.MessageTypeTextFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeColorFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
@@ -1991,7 +1991,7 @@ type partialValidateParamsPartialInputSchemaUnionSettingsOptions struct{ any }
 func (u partialValidateParamsPartialInputSchemaUnionSettingsOptions) AsAny() any { return u.any }
 
 // Returns a pointer to the underlying variant's Action property, if present.
-func (u PartialValidateParamsPartialInputSchemaUnion) GetAction() *MessageTypeTextFieldParam {
+func (u PartialValidateParamsPartialInputSchemaUnion) GetAction() *shared.MessageTypeTextFieldParam {
 	if vt := u.OfMessageTypeImageField; vt != nil {
 		return &vt.Action
 	} else if vt := u.OfMessageTypeButtonField; vt != nil {

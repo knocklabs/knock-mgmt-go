@@ -5,7 +5,6 @@ package shared
 import (
 	"encoding/json"
 
-	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/apijson"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
@@ -134,13 +133,13 @@ func (r *MessageTypeBooleanFieldSettingsParam) UnmarshalJSON(data []byte) error 
 // A button field used in a message type.
 type MessageTypeButtonField struct {
 	// A text field used in a message type.
-	Action knockmapi.MessageTypeTextField `json:"action" api:"required"`
+	Action MessageTypeTextField `json:"action" api:"required"`
 	// The unique key of the field.
 	Key string `json:"key" api:"required"`
 	// The label of the field.
 	Label string `json:"label" api:"required"`
 	// A text field used in a message type.
-	Text knockmapi.MessageTypeTextField `json:"text" api:"required"`
+	Text MessageTypeTextField `json:"text" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
@@ -211,11 +210,11 @@ type MessageTypeButtonFieldParam struct {
 	// The label of the field.
 	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action knockmapi.MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// The unique key of the field.
 	Key string `json:"key" api:"required"`
 	// A text field used in a message type.
-	Text knockmapi.MessageTypeTextFieldParam `json:"text,omitzero" api:"required"`
+	Text MessageTypeTextFieldParam `json:"text,omitzero" api:"required"`
 	// The type of the field.
 	//
 	// Any of "button".
@@ -253,9 +252,9 @@ func (r *MessageTypeButtonFieldSettingsParam) UnmarshalJSON(data []byte) error {
 // An image field used in a message type.
 type MessageTypeImageField struct {
 	// A text field used in a message type.
-	Action knockmapi.MessageTypeTextField `json:"action" api:"required"`
+	Action MessageTypeTextField `json:"action" api:"required"`
 	// A text field used in a message type.
-	Alt knockmapi.MessageTypeTextField `json:"alt" api:"required"`
+	Alt MessageTypeTextField `json:"alt" api:"required"`
 	// The unique key of the field.
 	Key string `json:"key" api:"required"`
 	// The label of the field.
@@ -333,9 +332,9 @@ type MessageTypeImageFieldParam struct {
 	// The label of the field.
 	Label param.Opt[string] `json:"label,omitzero" api:"required"`
 	// A text field used in a message type.
-	Action knockmapi.MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
+	Action MessageTypeTextFieldParam `json:"action,omitzero" api:"required"`
 	// A text field used in a message type.
-	Alt knockmapi.MessageTypeTextFieldParam `json:"alt,omitzero" api:"required"`
+	Alt MessageTypeTextFieldParam `json:"alt,omitzero" api:"required"`
 	// The unique key of the field.
 	Key string `json:"key" api:"required"`
 	// The type of the field.
@@ -920,6 +919,126 @@ func (r MessageTypeSelectFieldSettingsOptionParam) MarshalJSON() (data []byte, e
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *MessageTypeSelectFieldSettingsOptionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A text field used in a message type.
+type MessageTypeTextField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "text".
+	Type MessageTypeTextFieldType `json:"type" api:"required"`
+	// Settings for the text field.
+	Settings MessageTypeTextFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeTextField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeTextField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageTypeTextField to a MessageTypeTextFieldParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageTypeTextFieldParam.Overrides()
+func (r MessageTypeTextField) ToParam() MessageTypeTextFieldParam {
+	return param.Override[MessageTypeTextFieldParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of the field.
+type MessageTypeTextFieldType string
+
+const (
+	MessageTypeTextFieldTypeText MessageTypeTextFieldType = "text"
+)
+
+// Settings for the text field.
+type MessageTypeTextFieldSettings struct {
+	// The default value of the text field.
+	Default     string `json:"default" api:"nullable"`
+	Description string `json:"description" api:"nullable"`
+	MaxLength   int64  `json:"max_length"`
+	MinLength   int64  `json:"min_length"`
+	Placeholder string `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeTextFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeTextFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A text field used in a message type.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeTextFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "text".
+	Type MessageTypeTextFieldType `json:"type,omitzero" api:"required"`
+	// Settings for the text field.
+	Settings MessageTypeTextFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeTextFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeTextFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeTextFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the text field.
+type MessageTypeTextFieldSettingsParam struct {
+	// The default value of the text field.
+	Default     param.Opt[string] `json:"default,omitzero"`
+	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	MaxLength   param.Opt[int64]  `json:"max_length,omitzero"`
+	MinLength   param.Opt[int64]  `json:"min_length,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeTextFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeTextFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeTextFieldSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

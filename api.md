@@ -7,6 +7,7 @@
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMarkdownFieldParam">MessageTypeMarkdownFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMultiSelectFieldParam">MessageTypeMultiSelectFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeSelectFieldParam">MessageTypeSelectFieldParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextFieldParam">MessageTypeTextFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextareaFieldParam">MessageTypeTextareaFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeURLFieldParam">MessageTypeURLFieldParam</a>
 
@@ -19,6 +20,7 @@
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMarkdownField">MessageTypeMarkdownField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMultiSelectField">MessageTypeMultiSelectField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeSelectField">MessageTypeSelectField</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextField">MessageTypeTextField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextareaField">MessageTypeTextareaField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeURLField">MessageTypeURLField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#PageInfo">PageInfo</a>
@@ -191,13 +193,11 @@ Methods:
 
 Params Types:
 
-- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeTextFieldParam">MessageTypeTextFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeVariantParam">MessageTypeVariantParam</a>
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageType">MessageType</a>
-- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeTextField">MessageTypeTextField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeVariant">MessageTypeVariant</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeUpsertResponse">MessageTypeUpsertResponse</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeValidateResponse">MessageTypeValidateResponse</a>
