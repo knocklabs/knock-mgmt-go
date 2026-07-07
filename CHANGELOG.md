@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 (2026-07-07)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **api:** api update ([2e60a45](https://github.com/knocklabs/knock-mgmt-go/commit/2e60a453811fd7b38e50ec03f7663c6e689c52b1))
+
 ## 0.1.0 (2026-07-01)
 
 Full Changelog: [v0.0.1-alpha.0...v0.1.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.0.1-alpha.0...v0.1.0)
