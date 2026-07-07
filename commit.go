@@ -308,6 +308,9 @@ const (
 type CommitCommitAllParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
+	// When used with a single resource_type and resource_id, creates a new version
+	// with identical content and commits it if there are no unpublished changes.
+	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
