@@ -1421,6 +1421,9 @@ type MessageTypeUpsertParams struct {
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create a message type.
 	MessageType MessageTypeUpsertParamsMessageType `json:"message_type,omitzero" api:"required"`
+	// When used with commit, creates a new version with identical content and commits
+	// it if there are no unpublished changes.
+	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The slug of a branch to use. This option can only be used when `environment` is
