@@ -120,6 +120,7 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 					Name: "Default",
 				}},
 			},
+			AllowEmpty:    knockmapi.Bool(true),
 			Annotate:      knockmapi.Bool(true),
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),

@@ -85,6 +85,7 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Commits.CommitAll(context.TODO(), knockmapi.CommitCommitAllParams{
 		Environment:   "development",
+		AllowEmpty:    knockmapi.Bool(true),
 		Branch:        knockmapi.String("feature-branch"),
 		CommitMessage: knockmapi.String("commit_message"),
 		ResourceID:    knockmapi.String("resource_id"),
