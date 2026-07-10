@@ -1383,7 +1383,7 @@ type MessageTypeGetParams struct {
 // URLQuery serializes [MessageTypeGetParams]'s query parameters as `url.Values`.
 func (r MessageTypeGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1411,7 +1411,7 @@ type MessageTypeListParams struct {
 // URLQuery serializes [MessageTypeListParams]'s query parameters as `url.Values`.
 func (r MessageTypeListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1452,7 +1452,7 @@ func (r *MessageTypeUpsertParams) UnmarshalJSON(data []byte) error {
 // `url.Values`.
 func (r MessageTypeUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1508,7 +1508,7 @@ func (r *MessageTypeValidateParams) UnmarshalJSON(data []byte) error {
 // `url.Values`.
 func (r MessageTypeValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

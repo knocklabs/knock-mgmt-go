@@ -268,7 +268,7 @@ func (r *WorkflowStepPreviewTemplateParams) UnmarshalJSON(data []byte) error {
 // `url.Values`.
 func (r WorkflowStepPreviewTemplateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

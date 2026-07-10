@@ -486,7 +486,7 @@ type AudienceGetParams struct {
 // URLQuery serializes [AudienceGetParams]'s query parameters as `url.Values`.
 func (r AudienceGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -514,7 +514,7 @@ type AudienceListParams struct {
 // URLQuery serializes [AudienceListParams]'s query parameters as `url.Values`.
 func (r AudienceListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -528,7 +528,7 @@ type AudienceArchiveParams struct {
 // URLQuery serializes [AudienceArchiveParams]'s query parameters as `url.Values`.
 func (r AudienceArchiveParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -570,7 +570,7 @@ func (r *AudienceUpsertParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [AudienceUpsertParams]'s query parameters as `url.Values`.
 func (r AudienceUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -735,7 +735,7 @@ func (r *AudienceValidateParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [AudienceValidateParams]'s query parameters as `url.Values`.
 func (r AudienceValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

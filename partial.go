@@ -636,7 +636,7 @@ type PartialGetParams struct {
 // URLQuery serializes [PartialGetParams]'s query parameters as `url.Values`.
 func (r PartialGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -664,7 +664,7 @@ type PartialListParams struct {
 // URLQuery serializes [PartialListParams]'s query parameters as `url.Values`.
 func (r PartialListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -704,7 +704,7 @@ func (r *PartialUpsertParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [PartialUpsertParams]'s query parameters as `url.Values`.
 func (r PartialUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1445,7 +1445,7 @@ func (r *PartialValidateParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [PartialValidateParams]'s query parameters as `url.Values`.
 func (r PartialValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

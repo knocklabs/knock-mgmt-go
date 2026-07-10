@@ -310,7 +310,7 @@ type ChannelGroupListParams struct {
 // URLQuery serializes [ChannelGroupListParams]'s query parameters as `url.Values`.
 func (r ChannelGroupListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

@@ -142,7 +142,7 @@ type BranchNewParams struct {
 // URLQuery serializes [BranchNewParams]'s query parameters as `url.Values`.
 func (r BranchNewParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -156,7 +156,7 @@ type BranchGetParams struct {
 // URLQuery serializes [BranchGetParams]'s query parameters as `url.Values`.
 func (r BranchGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -176,7 +176,7 @@ type BranchListParams struct {
 // URLQuery serializes [BranchListParams]'s query parameters as `url.Values`.
 func (r BranchListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -190,7 +190,7 @@ type BranchDeleteParams struct {
 // URLQuery serializes [BranchDeleteParams]'s query parameters as `url.Values`.
 func (r BranchDeleteParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

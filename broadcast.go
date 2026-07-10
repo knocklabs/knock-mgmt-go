@@ -1307,7 +1307,7 @@ type BroadcastGetParams struct {
 // URLQuery serializes [BroadcastGetParams]'s query parameters as `url.Values`.
 func (r BroadcastGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1335,7 +1335,7 @@ type BroadcastListParams struct {
 // URLQuery serializes [BroadcastListParams]'s query parameters as `url.Values`.
 func (r BroadcastListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1352,7 +1352,7 @@ type BroadcastCancelParams struct {
 // URLQuery serializes [BroadcastCancelParams]'s query parameters as `url.Values`.
 func (r BroadcastCancelParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1381,7 +1381,7 @@ func (r *BroadcastSendParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [BroadcastSendParams]'s query parameters as `url.Values`.
 func (r BroadcastSendParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1410,7 +1410,7 @@ func (r *BroadcastUpsertParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [BroadcastUpsertParams]'s query parameters as `url.Values`.
 func (r BroadcastUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -1438,7 +1438,7 @@ func (r *BroadcastValidateParams) UnmarshalJSON(data []byte) error {
 // `url.Values`.
 func (r BroadcastValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

@@ -447,7 +447,7 @@ type GuideGetParams struct {
 // URLQuery serializes [GuideGetParams]'s query parameters as `url.Values`.
 func (r GuideGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -475,7 +475,7 @@ type GuideListParams struct {
 // URLQuery serializes [GuideListParams]'s query parameters as `url.Values`.
 func (r GuideListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -512,7 +512,7 @@ func (r *GuideActivateParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [GuideActivateParams]'s query parameters as `url.Values`.
 func (r GuideActivateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -589,7 +589,7 @@ func (r *GuideUpsertParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [GuideUpsertParams]'s query parameters as `url.Values`.
 func (r GuideUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -654,7 +654,7 @@ func (r *GuideValidateParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [GuideValidateParams]'s query parameters as `url.Values`.
 func (r GuideValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

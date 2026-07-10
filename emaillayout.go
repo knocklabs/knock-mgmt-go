@@ -273,7 +273,7 @@ type EmailLayoutGetParams struct {
 // URLQuery serializes [EmailLayoutGetParams]'s query parameters as `url.Values`.
 func (r EmailLayoutGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -301,7 +301,7 @@ type EmailLayoutListParams struct {
 // URLQuery serializes [EmailLayoutListParams]'s query parameters as `url.Values`.
 func (r EmailLayoutListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -342,7 +342,7 @@ func (r *EmailLayoutUpsertParams) UnmarshalJSON(data []byte) error {
 // `url.Values`.
 func (r EmailLayoutUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -450,7 +450,7 @@ func (r *EmailLayoutValidateParams) UnmarshalJSON(data []byte) error {
 // `url.Values`.
 func (r EmailLayoutValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }

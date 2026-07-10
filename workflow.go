@@ -5478,7 +5478,7 @@ type WorkflowGetParams struct {
 // URLQuery serializes [WorkflowGetParams]'s query parameters as `url.Values`.
 func (r WorkflowGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -5506,7 +5506,7 @@ type WorkflowListParams struct {
 // URLQuery serializes [WorkflowListParams]'s query parameters as `url.Values`.
 func (r WorkflowListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -5534,7 +5534,7 @@ func (r *WorkflowActivateParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [WorkflowActivateParams]'s query parameters as `url.Values`.
 func (r WorkflowActivateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -5573,7 +5573,7 @@ func (r *WorkflowRunParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [WorkflowRunParams]'s query parameters as `url.Values`.
 func (r WorkflowRunParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -5701,7 +5701,7 @@ func (r *WorkflowUpsertParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [WorkflowUpsertParams]'s query parameters as `url.Values`.
 func (r WorkflowUpsertParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
@@ -5798,7 +5798,7 @@ func (r *WorkflowValidateParams) UnmarshalJSON(data []byte) error {
 // URLQuery serializes [WorkflowValidateParams]'s query parameters as `url.Values`.
 func (r WorkflowValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
