@@ -11,6 +11,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestPartialGetWithOptionalParams(t *testing.T) {
@@ -101,11 +102,11 @@ func TestPartialUpsertWithOptionalParams(t *testing.T) {
 				Description: knockmapi.String("This is a test partial"),
 				IconName:    knockmapi.String("icon_name"),
 				InputSchema: []knockmapi.PartialUpsertParamsPartialInputSchemaUnion{{
-					OfMessageTypeTextField: &knockmapi.MessageTypeTextFieldParam{
+					OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
 						Key:   "text_field",
 						Label: knockmapi.String("My text field"),
-						Type:  knockmapi.MessageTypeTextFieldTypeText,
-						Settings: knockmapi.MessageTypeTextFieldSettingsParam{
+						Type:  shared.MessageTypeTextFieldTypeText,
+						Settings: shared.MessageTypeTextFieldSettingsParam{
 							Default:     knockmapi.String("A placeholder"),
 							Description: knockmapi.String("A description of the text field"),
 							MaxLength:   knockmapi.Int(100),
@@ -159,11 +160,11 @@ func TestPartialValidateWithOptionalParams(t *testing.T) {
 				Description: knockmapi.String("This is a test partial"),
 				IconName:    knockmapi.String("icon_name"),
 				InputSchema: []knockmapi.PartialValidateParamsPartialInputSchemaUnion{{
-					OfMessageTypeTextField: &knockmapi.MessageTypeTextFieldParam{
+					OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
 						Key:   "text_field",
 						Label: knockmapi.String("My text field"),
-						Type:  knockmapi.MessageTypeTextFieldTypeText,
-						Settings: knockmapi.MessageTypeTextFieldSettingsParam{
+						Type:  shared.MessageTypeTextFieldTypeText,
+						Settings: shared.MessageTypeTextFieldSettingsParam{
 							Default:     knockmapi.String("A placeholder"),
 							Description: knockmapi.String("A description of the text field"),
 							MaxLength:   knockmapi.Int(100),

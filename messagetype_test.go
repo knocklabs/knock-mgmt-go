@@ -11,6 +11,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestMessageTypeGetWithOptionalParams(t *testing.T) {
@@ -102,11 +103,11 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 				Semver:      knockmapi.String("1.0.0"),
 				Variants: []knockmapi.MessageTypeVariantParam{{
 					Fields: []knockmapi.MessageTypeVariantFieldUnionParam{{
-						OfMessageTypeTextField: &knockmapi.MessageTypeTextFieldParam{
+						OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
 							Key:   "text_field",
 							Label: knockmapi.String("My text field"),
-							Type:  knockmapi.MessageTypeTextFieldTypeText,
-							Settings: knockmapi.MessageTypeTextFieldSettingsParam{
+							Type:  shared.MessageTypeTextFieldTypeText,
+							Settings: shared.MessageTypeTextFieldSettingsParam{
 								Default:     knockmapi.String("A placeholder"),
 								Description: knockmapi.String("A description of the text field"),
 								MaxLength:   knockmapi.Int(100),
@@ -163,11 +164,11 @@ func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
 				Semver:      knockmapi.String("1.0.0"),
 				Variants: []knockmapi.MessageTypeVariantParam{{
 					Fields: []knockmapi.MessageTypeVariantFieldUnionParam{{
-						OfMessageTypeTextField: &knockmapi.MessageTypeTextFieldParam{
+						OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
 							Key:   "text_field",
 							Label: knockmapi.String("My text field"),
-							Type:  knockmapi.MessageTypeTextFieldTypeText,
-							Settings: knockmapi.MessageTypeTextFieldSettingsParam{
+							Type:  shared.MessageTypeTextFieldTypeText,
+							Settings: shared.MessageTypeTextFieldSettingsParam{
 								Default:     knockmapi.String("A placeholder"),
 								Description: knockmapi.String("A description of the text field"),
 								MaxLength:   knockmapi.Int(100),

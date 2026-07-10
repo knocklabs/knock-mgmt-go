@@ -561,9 +561,9 @@ type SendWindow struct {
 	// Any of "send", "do_not_send".
 	Type SendWindowType `json:"type" api:"required"`
 	// The start time of the send window.
-	From string `json:"from" api:"nullable" format:"time"`
+	From string `json:"from" api:"nullable"`
 	// The end time of the send window.
-	Until string `json:"until" api:"nullable" format:"time"`
+	Until string `json:"until" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Day         respjson.Field
@@ -625,9 +625,9 @@ type SendWindowParam struct {
 	// Any of "send", "do_not_send".
 	Type SendWindowType `json:"type,omitzero" api:"required"`
 	// The start time of the send window.
-	From param.Opt[string] `json:"from,omitzero" format:"time"`
+	From param.Opt[string] `json:"from,omitzero"`
 	// The end time of the send window.
-	Until param.Opt[string] `json:"until,omitzero" format:"time"`
+	Until param.Opt[string] `json:"until,omitzero"`
 	paramObj
 }
 
