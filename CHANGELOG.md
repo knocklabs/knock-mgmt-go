@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.2.0...v0.3.0) (2026-07-10)
+
+
+### Features
+
+* set publish release settings ([105f135](https://github.com/knocklabs/knock-mgmt-go/commit/105f1351589568708c17168469a752fe01c55ad2))
+
+
+### Chores
+
+* set the same query_settings from api ([bbeb36f](https://github.com/knocklabs/knock-mgmt-go/commit/bbeb36facd15a5528651e0e8ca3b669385a895e5))
+* trivial test changes ([b0467ec](https://github.com/knocklabs/knock-mgmt-go/commit/b0467ec931cccacfca77618ea7a05898b426e8c6))
+
 ## 0.2.0 (2026-07-09)
 
 Full Changelog: [v0.1.0...v0.2.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.1.0...v0.2.0)
