@@ -135,7 +135,7 @@ func (r *GuideService) Validate(ctx context.Context, guideKey string, params Gui
 }
 
 // A guide defines an in-app guide that can be displayed to users based on priority
-// and other targeting conditions.
+// and other conditions.
 type Guide struct {
 	// Whether the guide is active.
 	Active bool `json:"active" api:"required"`
@@ -358,7 +358,7 @@ func (r *GuideStepParam) UnmarshalJSON(data []byte) error {
 // Wraps the Guide response under the `guide` key.
 type GuideActivateResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
-	// and other targeting conditions.
+	// and other conditions.
 	Guide Guide `json:"guide" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -395,7 +395,7 @@ func (r *GuideArchiveResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Guide response under the `guide` key.
 type GuideUpsertResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
-	// and other targeting conditions.
+	// and other conditions.
 	Guide Guide `json:"guide" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -414,7 +414,7 @@ func (r *GuideUpsertResponse) UnmarshalJSON(data []byte) error {
 // Wraps the Guide response under the `guide` key.
 type GuideValidateResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
-	// and other targeting conditions.
+	// and other conditions.
 	Guide Guide `json:"guide" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
