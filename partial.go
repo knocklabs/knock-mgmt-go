@@ -176,7 +176,7 @@ const (
 // PartialInputSchemaUnion contains all possible properties and values from
 // [PartialInputSchemaMessageTypeListField], [shared.MessageTypeSelectField],
 // [shared.MessageTypeBooleanField], [shared.MessageTypeJsonField],
-// [PartialInputSchemaMessageTypeNumberField], [MessageTypeTextField],
+// [MessageTypeTextField], [PartialInputSchemaMessageTypeNumberField],
 // [shared.MessageTypeImageField], [PartialInputSchemaMessageTypeColorField],
 // [shared.MessageTypeURLField], [shared.MessageTypeMarkdownField],
 // [shared.MessageTypeMultiSelectField], [shared.MessageTypeButtonField],
@@ -190,8 +190,9 @@ type PartialInputSchemaUnion struct {
 	// This field is a union of [PartialInputSchemaMessageTypeListFieldSettings],
 	// [shared.MessageTypeSelectFieldSettings],
 	// [shared.MessageTypeBooleanFieldSettings], [shared.MessageTypeJsonFieldSettings],
+	// [MessageTypeTextFieldSettings],
 	// [PartialInputSchemaMessageTypeNumberFieldSettings],
-	// [MessageTypeTextFieldSettings], [shared.MessageTypeImageFieldSettings],
+	// [shared.MessageTypeImageFieldSettings],
 	// [PartialInputSchemaMessageTypeColorFieldSettings],
 	// [shared.MessageTypeURLFieldSettings], [shared.MessageTypeMarkdownFieldSettings],
 	// [shared.MessageTypeMultiSelectFieldSettings],
@@ -239,12 +240,12 @@ func (u PartialInputSchemaUnion) AsMessageTypeJsonField() (v shared.MessageTypeJ
 	return
 }
 
-func (u PartialInputSchemaUnion) AsMessageTypeNumberField() (v PartialInputSchemaMessageTypeNumberField) {
+func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u PartialInputSchemaUnion) AsMessageTypeTextField() (v MessageTypeTextField) {
+func (u PartialInputSchemaUnion) AsMessageTypeNumberField() (v PartialInputSchemaMessageTypeNumberField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -298,7 +299,7 @@ func (r *PartialInputSchemaUnion) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [PartialInputSchemaUnion].
 type PartialInputSchemaUnionSettings struct {
-	// This field is a union of [[]any], [string], [bool], [any], [float64], [string],
+	// This field is a union of [[]any], [string], [bool], [any], [string], [float64],
 	// [string], [string], [string], [[]string], [string]
 	Default     PartialInputSchemaUnionSettingsDefault `json:"default"`
 	Description string                                 `json:"description"`
@@ -310,15 +311,15 @@ type PartialInputSchemaUnionSettings struct {
 	// [[]shared.MessageTypeMultiSelectFieldSettingsOption]
 	Options PartialInputSchemaUnionSettingsOptions `json:"options"`
 	// This field is from variant [shared.MessageTypeJsonFieldSettings].
-	Schema any `json:"schema"`
+	Schema    any   `json:"schema"`
+	MaxLength int64 `json:"max_length"`
+	MinLength int64 `json:"min_length"`
 	// This field is from variant [PartialInputSchemaMessageTypeNumberFieldSettings].
 	Max float64 `json:"max"`
 	// This field is from variant [PartialInputSchemaMessageTypeNumberFieldSettings].
 	Min float64 `json:"min"`
 	// This field is from variant [PartialInputSchemaMessageTypeNumberFieldSettings].
 	UnitLabel string `json:"unit_label"`
-	MaxLength int64  `json:"max_length"`
-	MinLength int64  `json:"min_length"`
 	JSON      struct {
 		Default     respjson.Field
 		Description respjson.Field
@@ -327,11 +328,11 @@ type PartialInputSchemaUnionSettings struct {
 		Required    respjson.Field
 		Options     respjson.Field
 		Schema      respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
 		Max         respjson.Field
 		Min         respjson.Field
 		UnitLabel   respjson.Field
-		MaxLength   respjson.Field
-		MinLength   respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -756,8 +757,8 @@ type PartialUpsertParamsPartialInputSchemaUnion struct {
 	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam                          `json:",omitzero,inline"`
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam                         `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam                            `json:",omitzero,inline"`
-	OfMessageTypeNumberField      *PartialUpsertParamsPartialInputSchemaMessageTypeNumberField `json:",omitzero,inline"`
 	OfMessageTypeTextField        *MessageTypeTextFieldParam                                   `json:",omitzero,inline"`
+	OfMessageTypeNumberField      *PartialUpsertParamsPartialInputSchemaMessageTypeNumberField `json:",omitzero,inline"`
 	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam                           `json:",omitzero,inline"`
 	OfMessageTypeColorField       *PartialUpsertParamsPartialInputSchemaMessageTypeColorField  `json:",omitzero,inline"`
 	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam                             `json:",omitzero,inline"`
@@ -773,8 +774,8 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) MarshalJSON() ([]byte, error
 		u.OfMessageTypeSelectField,
 		u.OfMessageTypeBooleanField,
 		u.OfMessageTypeJsonField,
-		u.OfMessageTypeNumberField,
 		u.OfMessageTypeTextField,
+		u.OfMessageTypeNumberField,
 		u.OfMessageTypeImageField,
 		u.OfMessageTypeColorField,
 		u.OfMessageTypeURLField,
@@ -796,10 +797,10 @@ func (u *PartialUpsertParamsPartialInputSchemaUnion) asAny() any {
 		return u.OfMessageTypeBooleanField
 	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
 		return u.OfMessageTypeJsonField
-	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
-		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
 		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
+		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
 		return u.OfMessageTypeImageField
 	} else if !param.IsOmitted(u.OfMessageTypeColorField) {
@@ -852,9 +853,9 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetKey() *string {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
@@ -884,9 +885,9 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetLabel() *string {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
@@ -916,9 +917,9 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Type)
@@ -950,9 +951,9 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetSettings() (res partialUp
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
@@ -977,8 +978,8 @@ func (u PartialUpsertParamsPartialInputSchemaUnion) GetSettings() (res partialUp
 // [*shared.MessageTypeSelectFieldSettingsParam],
 // [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
-// [*PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings],
 // [*MessageTypeTextFieldSettingsParam],
+// [*PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings],
 // [*shared.MessageTypeImageFieldSettingsParam],
 // [*PartialUpsertParamsPartialInputSchemaMessageTypeColorFieldSettings],
 // [*shared.MessageTypeURLFieldSettingsParam],
@@ -995,8 +996,8 @@ type partialUpsertParamsPartialInputSchemaUnionSettings struct{ any }
 //	case *shared.MessageTypeSelectFieldSettingsParam:
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
-//	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 //	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 //	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *knockmapi.PartialUpsertParamsPartialInputSchemaMessageTypeColorFieldSettings:
 //	case *shared.MessageTypeURLFieldSettingsParam:
@@ -1065,9 +1066,9 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDescription() *st
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		return paramutil.AddrIfPresent(vt.Description)
 	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -1098,9 +1099,9 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetPlaceholder() *st
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
@@ -1131,9 +1132,9 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetRequired() *bool 
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		return paramutil.AddrIfPresent(vt.Required)
 	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -1188,9 +1189,9 @@ func (u partialUpsertParamsPartialInputSchemaUnionSettings) GetDefault() (res pa
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		res.any = &vt.Default
-	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *PartialUpsertParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *PartialUpsertParamsPartialInputSchemaMessageTypeColorFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
@@ -1497,8 +1498,8 @@ type PartialValidateParamsPartialInputSchemaUnion struct {
 	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam                            `json:",omitzero,inline"`
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam                           `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam                              `json:",omitzero,inline"`
-	OfMessageTypeNumberField      *PartialValidateParamsPartialInputSchemaMessageTypeNumberField `json:",omitzero,inline"`
 	OfMessageTypeTextField        *MessageTypeTextFieldParam                                     `json:",omitzero,inline"`
+	OfMessageTypeNumberField      *PartialValidateParamsPartialInputSchemaMessageTypeNumberField `json:",omitzero,inline"`
 	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam                             `json:",omitzero,inline"`
 	OfMessageTypeColorField       *PartialValidateParamsPartialInputSchemaMessageTypeColorField  `json:",omitzero,inline"`
 	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam                               `json:",omitzero,inline"`
@@ -1514,8 +1515,8 @@ func (u PartialValidateParamsPartialInputSchemaUnion) MarshalJSON() ([]byte, err
 		u.OfMessageTypeSelectField,
 		u.OfMessageTypeBooleanField,
 		u.OfMessageTypeJsonField,
-		u.OfMessageTypeNumberField,
 		u.OfMessageTypeTextField,
+		u.OfMessageTypeNumberField,
 		u.OfMessageTypeImageField,
 		u.OfMessageTypeColorField,
 		u.OfMessageTypeURLField,
@@ -1537,10 +1538,10 @@ func (u *PartialValidateParamsPartialInputSchemaUnion) asAny() any {
 		return u.OfMessageTypeBooleanField
 	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
 		return u.OfMessageTypeJsonField
-	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
-		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
 		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
+		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
 		return u.OfMessageTypeImageField
 	} else if !param.IsOmitted(u.OfMessageTypeColorField) {
@@ -1593,9 +1594,9 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetKey() *string {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
@@ -1625,9 +1626,9 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetLabel() *string {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
@@ -1657,9 +1658,9 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Type)
@@ -1691,9 +1692,9 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetSettings() (res partial
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
@@ -1718,8 +1719,8 @@ func (u PartialValidateParamsPartialInputSchemaUnion) GetSettings() (res partial
 // [*shared.MessageTypeSelectFieldSettingsParam],
 // [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
-// [*PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings],
 // [*MessageTypeTextFieldSettingsParam],
+// [*PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings],
 // [*shared.MessageTypeImageFieldSettingsParam],
 // [*PartialValidateParamsPartialInputSchemaMessageTypeColorFieldSettings],
 // [*shared.MessageTypeURLFieldSettingsParam],
@@ -1736,8 +1737,8 @@ type partialValidateParamsPartialInputSchemaUnionSettings struct{ any }
 //	case *shared.MessageTypeSelectFieldSettingsParam:
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
-//	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 //	case *knockmapi.MessageTypeTextFieldSettingsParam:
+//	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 //	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *knockmapi.PartialValidateParamsPartialInputSchemaMessageTypeColorFieldSettings:
 //	case *shared.MessageTypeURLFieldSettingsParam:
@@ -1806,9 +1807,9 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDescription() *
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		return paramutil.AddrIfPresent(vt.Description)
 	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -1839,9 +1840,9 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetPlaceholder() *
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
@@ -1872,9 +1873,9 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetRequired() *boo
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		return paramutil.AddrIfPresent(vt.Required)
 	case *MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -1929,9 +1930,9 @@ func (u partialValidateParamsPartialInputSchemaUnionSettings) GetDefault() (res 
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		res.any = &vt.Default
-	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
-		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *PartialValidateParamsPartialInputSchemaMessageTypeNumberFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *PartialValidateParamsPartialInputSchemaMessageTypeColorFieldSettings:
 		res.any = paramutil.AddrIfPresent(vt.Default)
