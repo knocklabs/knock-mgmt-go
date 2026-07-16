@@ -2236,7 +2236,8 @@ type WorkflowStepUnion struct {
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
 	// This field is a union of [WorkflowAIAgentStepSettings],
-	// [WorkflowDelayStepSettings], [WorkflowStepWorkflowWaitForEventStepSettings],
+	// [WorkflowDelayStepSettings],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsUnion],
 	// [WorkflowBatchStepSettings], [RequestTemplate],
 	// [WorkflowUpdateDataStepSettings], [WorkflowUpdateObjectStepSettings],
 	// [WorkflowUpdateTenantStepSettings], [WorkflowUpdateUserStepSettings],
@@ -2540,16 +2541,24 @@ type WorkflowStepUnionSettings struct {
 	DelayFor Duration `json:"delay_for"`
 	// This field is from variant [WorkflowDelayStepSettings].
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
-	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
-	Event WorkflowStepWorkflowWaitForEventStepSettingsEvent `json:"event"`
-	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
+	// This field is a union of
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject3Event],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject5Event]
+	Event WorkflowStepUnionSettingsEvent `json:"event"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettingsUnion].
 	ExpiresAfter Duration `json:"expires_after"`
-	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
-	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition `json:"match_conditions"`
-	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
-	OnMatch string `json:"on_match"`
-	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettings].
-	OnTimeout string `json:"on_timeout"`
+	// This field is a union of
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition]
+	MatchConditions WorkflowStepUnionSettingsMatchConditions `json:"match_conditions"`
+	OnMatch         string                                   `json:"on_match"`
+	OnTimeout       string                                   `json:"on_timeout"`
 	// This field is from variant [WorkflowBatchStepSettings].
 	BatchExecutionMode string `json:"batch_execution_mode"`
 	// This field is from variant [WorkflowBatchStepSettings].
@@ -2649,6 +2658,89 @@ func (r *WorkflowStepUnionSettings) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// WorkflowStepUnionSettingsEvent is an implicit subunion of [WorkflowStepUnion].
+// WorkflowStepUnionSettingsEvent provides convenient access to the sub-properties
+// of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepUnion].
+type WorkflowStepUnionSettingsEvent struct {
+	EventKey  string `json:"event_key"`
+	EventType string `json:"event_type"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent].
+	IntegrationSourceKey string `json:"integration_source_key"`
+	SourceKey            string `json:"source_key"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event].
+	SourceType string `json:"source_type"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event].
+	AudienceKey string `json:"audience_key"`
+	JSON        struct {
+		EventKey             respjson.Field
+		EventType            respjson.Field
+		IntegrationSourceKey respjson.Field
+		SourceKey            respjson.Field
+		SourceType           respjson.Field
+		AudienceKey          respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepUnionSettingsEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// WorkflowStepUnionSettingsMatchConditions is an implicit subunion of
+// [WorkflowStepUnion]. WorkflowStepUnionSettingsMatchConditions provides
+// convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid:
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditions]
+type WorkflowStepUnionSettingsMatchConditions struct {
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition `json:",inline"`
+	JSON                                                                 struct {
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditions  respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditions respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditions respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditions respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditions respjson.Field
+		raw                                                                  string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepUnionSettingsMatchConditions) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // ToParam converts this WorkflowStepUnion to a WorkflowStepUnionParam.
 //
 // Warning: the fields of the param type will not be present. ToParam should only
@@ -2663,8 +2755,9 @@ func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 type WorkflowStepWorkflowWaitForEventStep struct {
 	// The reference key of the workflow step. Must be unique per workflow.
 	Ref string `json:"ref" api:"required"`
-	// The settings for the wait for event step.
-	Settings WorkflowStepWorkflowWaitForEventStepSettings `json:"settings" api:"required"`
+	// The settings for the wait for event step. When `event.event_type` is `message`
+	// or `workflow`, `match_conditions` is required.
+	Settings WorkflowStepWorkflowWaitForEventStepSettingsUnion `json:"settings" api:"required"`
 	// The type of the workflow step.
 	//
 	// Any of "wait_for_event".
@@ -2695,14 +2788,168 @@ func (r *WorkflowStepWorkflowWaitForEventStep) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The settings for the wait for event step.
-type WorkflowStepWorkflowWaitForEventStepSettings struct {
+// WorkflowStepWorkflowWaitForEventStepSettingsUnion contains all possible
+// properties and values from [WorkflowStepWorkflowWaitForEventStepSettingsObject],
+// [WorkflowStepWorkflowWaitForEventStepSettingsObject2],
+// [WorkflowStepWorkflowWaitForEventStepSettingsObject3],
+// [WorkflowStepWorkflowWaitForEventStepSettingsObject4],
+// [WorkflowStepWorkflowWaitForEventStepSettingsObject5].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type WorkflowStepWorkflowWaitForEventStepSettingsUnion struct {
+	// This field is a union of
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject3Event],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event],
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject5Event]
+	Event WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent `json:"event"`
+	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettingsObject].
+	ExpiresAfter Duration `json:"expires_after"`
+	// This field is a union of
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition],
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition]
+	MatchConditions WorkflowStepWorkflowWaitForEventStepSettingsUnionMatchConditions `json:"match_conditions"`
+	OnMatch         string                                                           `json:"on_match"`
+	OnTimeout       string                                                           `json:"on_timeout"`
+	JSON            struct {
+		Event           respjson.Field
+		ExpiresAfter    respjson.Field
+		MatchConditions respjson.Field
+		OnMatch         respjson.Field
+		OnTimeout       respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnion) AsWorkflowStepWorkflowWaitForEventStepSettingsObject() (v WorkflowStepWorkflowWaitForEventStepSettingsObject) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnion) AsWorkflowStepWorkflowWaitForEventStepSettingsObject2() (v WorkflowStepWorkflowWaitForEventStepSettingsObject2) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnion) AsWorkflowStepWorkflowWaitForEventStepSettingsObject3() (v WorkflowStepWorkflowWaitForEventStepSettingsObject3) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnion) AsWorkflowStepWorkflowWaitForEventStepSettingsObject4() (v WorkflowStepWorkflowWaitForEventStepSettingsObject4) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnion) AsWorkflowStepWorkflowWaitForEventStepSettingsObject5() (v WorkflowStepWorkflowWaitForEventStepSettingsObject5) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent is an implicit subunion
+// of [WorkflowStepWorkflowWaitForEventStepSettingsUnion].
+// WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepWorkflowWaitForEventStepSettingsUnion].
+type WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent struct {
+	EventKey  string `json:"event_key"`
+	EventType string `json:"event_type"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent].
+	IntegrationSourceKey string `json:"integration_source_key"`
+	SourceKey            string `json:"source_key"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event].
+	SourceType string `json:"source_type"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event].
+	AudienceKey string `json:"audience_key"`
+	JSON        struct {
+		EventKey             respjson.Field
+		EventType            respjson.Field
+		IntegrationSourceKey respjson.Field
+		SourceKey            respjson.Field
+		SourceType           respjson.Field
+		AudienceKey          respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// WorkflowStepWorkflowWaitForEventStepSettingsUnionMatchConditions is an implicit
+// subunion of [WorkflowStepWorkflowWaitForEventStepSettingsUnion].
+// WorkflowStepWorkflowWaitForEventStepSettingsUnionMatchConditions provides
+// convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [WorkflowStepWorkflowWaitForEventStepSettingsUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid:
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditions
+// OfWorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditions]
+type WorkflowStepWorkflowWaitForEventStepSettingsUnionMatchConditions struct {
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition `json:",inline"`
+	// This field will be present if the value is a
+	// [[]WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition] instead of
+	// an object.
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition `json:",inline"`
+	JSON                                                                 struct {
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditions  respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditions respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditions respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditions respjson.Field
+		OfWorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditions respjson.Field
+		raw                                                                  string
+	} `json:"-"`
+}
+
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsUnionMatchConditions) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for waiting on an integration source event.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject struct {
 	// An integration source event to wait for.
-	Event WorkflowStepWorkflowWaitForEventStepSettingsEvent `json:"event" api:"required"`
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent `json:"event" api:"required"`
 	// A duration of time, represented as a unit and a value.
 	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
 	// A list of condition groups the incoming event must match to resolve the wait.
-	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition `json:"match_conditions"`
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition `json:"match_conditions"`
 	// The action to take when a matching event is received.
 	//
 	// Any of "continue", "halt".
@@ -2724,13 +2971,13 @@ type WorkflowStepWorkflowWaitForEventStepSettings struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowWaitForEventStepSettings) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowWaitForEventStepSettings) UnmarshalJSON(data []byte) error {
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // An integration source event to wait for.
-type WorkflowStepWorkflowWaitForEventStepSettingsEvent struct {
+type WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent struct {
 	// The name of the event to wait for.
 	EventKey string `json:"event_key" api:"required"`
 	// The type of event to wait for.
@@ -2750,12 +2997,12 @@ type WorkflowStepWorkflowWaitForEventStepSettingsEvent struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowWaitForEventStepSettingsEvent) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsEvent) UnmarshalJSON(data []byte) error {
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition struct {
+type WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition struct {
 	// A list of conditions.
 	Conditions []Condition `json:"conditions"`
 	// The operator used to join the conditions in the group.
@@ -2772,10 +3019,364 @@ type WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition) RawJSON() string {
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsMatchCondition) UnmarshalJSON(data []byte) error {
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for waiting on a message event.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject2 struct {
+	// A message event to wait for from a message source.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject2Event `json:"event" api:"required"`
+	// Required when waiting for a message event. A list of condition groups the
+	// incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition `json:"match_conditions" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event           respjson.Field
+		MatchConditions respjson.Field
+		ExpiresAfter    respjson.Field
+		OnMatch         respjson.Field
+		OnTimeout       respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject2) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A message event to wait for from a message source.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject2Event struct {
+	// The message lifecycle event to wait for.
+	//
+	// Any of "created", "queued", "sent", "not_sent", "delivered",
+	// "delivery_attempted", "undelivered", "bounced", "read", "unread", "seen",
+	// "unseen", "archived", "unarchived", "interacted", "link_clicked".
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "message".
+	EventType string `json:"event_type" api:"required"`
+	// The key of the message source to scope the wait to.
+	SourceKey string `json:"source_key" api:"required"`
+	// The type of message source to scope the wait to.
+	//
+	// Any of "workflow", "broadcast", "guide".
+	SourceType string `json:"source_type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventKey    respjson.Field
+		EventType   respjson.Field
+		SourceKey   respjson.Field
+		SourceType  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject2Event) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2Event) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition struct {
+	// A list of conditions.
+	Conditions []Condition `json:"conditions"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		Operator    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for waiting on a workflow event.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject3 struct {
+	// A workflow lifecycle event to wait for from a child workflow run for the same
+	// recipient.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject3Event `json:"event" api:"required"`
+	// Required when waiting for a workflow event. A list of condition groups the
+	// incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition `json:"match_conditions" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event           respjson.Field
+		MatchConditions respjson.Field
+		ExpiresAfter    respjson.Field
+		OnMatch         respjson.Field
+		OnTimeout       respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject3) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A workflow lifecycle event to wait for from a child workflow run for the same
+// recipient.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject3Event struct {
+	// The workflow lifecycle event to wait for.
+	//
+	// Any of "started", "completed".
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "workflow".
+	EventType string `json:"event_type" api:"required"`
+	// The key of the workflow whose lifecycle event should match this wait.
+	SourceKey string `json:"source_key" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventKey    respjson.Field
+		EventType   respjson.Field
+		SourceKey   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject3Event) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3Event) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition struct {
+	// A list of conditions.
+	Conditions []Condition `json:"conditions"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		Operator    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for waiting on an audience membership event.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject4 struct {
+	// An audience membership event to wait for when a recipient enters or exits an
+	// audience.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject4Event `json:"event" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
+	// A list of condition groups the incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition `json:"match_conditions"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event           respjson.Field
+		ExpiresAfter    respjson.Field
+		MatchConditions respjson.Field
+		OnMatch         respjson.Field
+		OnTimeout       respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An audience membership event to wait for when a recipient enters or exits an
+// audience.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject4Event struct {
+	// The key of the audience to wait for membership changes.
+	AudienceKey string `json:"audience_key" api:"required"`
+	// The audience membership transition to wait for.
+	//
+	// Any of "enter", "exit".
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "audience".
+	EventType string `json:"event_type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AudienceKey respjson.Field
+		EventKey    respjson.Field
+		EventType   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4Event) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4Event) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition struct {
+	// A list of conditions.
+	Conditions []Condition `json:"conditions"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		Operator    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchCondition) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for waiting on a recipient change event.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject5 struct {
+	// A recipient updated event to wait for from the workflow recipient.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject5Event `json:"event" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
+	// A list of condition groups the incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition `json:"match_conditions"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event           respjson.Field
+		ExpiresAfter    respjson.Field
+		MatchConditions respjson.Field
+		OnMatch         respjson.Field
+		OnTimeout       respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject5) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject5) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A recipient updated event to wait for from the workflow recipient.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject5Event struct {
+	// The type of event to wait for.
+	//
+	// Any of "recipient".
+	EventType string `json:"event_type" api:"required"`
+	// Recipient lifecycle event to wait for. Always "updated" today.
+	//
+	// Any of "updated".
+	EventKey string `json:"event_key"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		EventKey    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject5Event) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject5Event) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition struct {
+	// A list of conditions.
+	Conditions []Condition `json:"conditions"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Conditions  respjson.Field
+		Operator    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchCondition) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2843,10 +3444,23 @@ func WorkflowStepParamOfWorkflowDelayStep(ref string, settings WorkflowDelayStep
 	return WorkflowStepUnionParam{OfWorkflowDelayStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowWaitForEventStep(ref string, settings WorkflowStepWorkflowWaitForEventStepSettingsParam, type_ string) WorkflowStepUnionParam {
+func WorkflowStepParamOfWorkflowWaitForEventStep[
+	T WorkflowStepWorkflowWaitForEventStepSettingsObjectParam | WorkflowStepWorkflowWaitForEventStepSettingsObject2Param | WorkflowStepWorkflowWaitForEventStepSettingsObject3Param | WorkflowStepWorkflowWaitForEventStepSettingsObject4Param | WorkflowStepWorkflowWaitForEventStepSettingsObject5Param,
+](ref string, settings T, type_ string) WorkflowStepUnionParam {
 	var variant WorkflowStepWorkflowWaitForEventStepParam
 	variant.Ref = ref
-	variant.Settings = settings
+	switch v := any(settings).(type) {
+	case WorkflowStepWorkflowWaitForEventStepSettingsObjectParam:
+		variant.Settings.OfWorkflowStepWorkflowWaitForEventStepSettingsObject = &v
+	case WorkflowStepWorkflowWaitForEventStepSettingsObject2Param:
+		variant.Settings.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2 = &v
+	case WorkflowStepWorkflowWaitForEventStepSettingsObject3Param:
+		variant.Settings.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3 = &v
+	case WorkflowStepWorkflowWaitForEventStepSettingsObject4Param:
+		variant.Settings.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4 = &v
+	case WorkflowStepWorkflowWaitForEventStepSettingsObject5Param:
+		variant.Settings.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5 = &v
+	}
 	variant.Type = type_
 	return WorkflowStepUnionParam{OfWorkflowWaitForEventStep: &variant}
 }
@@ -3760,7 +4374,7 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 	} else if vt := u.OfWorkflowDelayStep; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowWaitForEventStep; vt != nil {
-		res.any = &vt.Settings
+		res.any = vt.Settings.asAny()
 	} else if vt := u.OfWorkflowBatchStep; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfWorkflowFetchStep; vt != nil {
@@ -3783,7 +4397,11 @@ func (u WorkflowStepUnionParam) GetSettings() (res workflowStepUnionParamSetting
 
 // Can have the runtime types [*WorkflowAIAgentStepSettingsParam],
 // [*WorkflowDelayStepSettingsParam],
-// [*WorkflowStepWorkflowWaitForEventStepSettingsParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObjectParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject2Param],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject3Param],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject4Param],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject5Param],
 // [*WorkflowBatchStepSettingsParam], [*RequestTemplateParam],
 // [*WorkflowUpdateDataStepSettingsParam],
 // [*WorkflowUpdateObjectStepSettingsParam],
@@ -3797,7 +4415,11 @@ type workflowStepUnionParamSettings struct{ any }
 //	switch u.AsAny().(type) {
 //	case *knockmapi.WorkflowAIAgentStepSettingsParam:
 //	case *knockmapi.WorkflowDelayStepSettingsParam:
-//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2Param:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3Param:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4Param:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5Param:
 //	case *knockmapi.WorkflowBatchStepSettingsParam:
 //	case *knockmapi.RequestTemplateParam:
 //	case *knockmapi.WorkflowUpdateDataStepSettingsParam:
@@ -3879,51 +4501,6 @@ func (u workflowStepUnionParamSettings) GetDelayUntilFieldPath() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowDelayStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.DelayUntilFieldPath)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetEvent() *WorkflowStepWorkflowWaitForEventStepSettingsEventParam {
-	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
-		return &vt.Event
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetExpiresAfter() *DurationParam {
-	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
-		return &vt.ExpiresAfter
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetMatchConditions() []WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam {
-	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
-		return vt.MatchConditions
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetOnMatch() *string {
-	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
-		return &vt.OnMatch
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetOnTimeout() *string {
-	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsParam:
-		return &vt.OnTimeout
 	}
 	return nil
 }
@@ -4136,6 +4713,24 @@ func (u workflowStepUnionParamSettings) GetWorkflowKey() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetOnMatch() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam:
+		return vt.GetOnMatch()
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetOnTimeout() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam:
+		return vt.GetOnTimeout()
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetData() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowUpdateDataStepSettingsParam:
@@ -4183,6 +4778,151 @@ func (u workflowStepUnionParamSettings) GetRecipientMode() *string {
 	return nil
 }
 
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u workflowStepUnionParamSettings) GetEvent() (res workflowStepUnionParamSettingsEvent) {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam:
+		res.any = vt.GetEvent()
+	}
+	return res
+}
+
+// Can have the runtime types
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam]
+type workflowStepUnionParamSettingsEvent struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepUnionParamSettingsEvent) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetIntegrationSourceKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return &vt.IntegrationSourceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetSourceType() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return &vt.SourceType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetAudienceKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+		return &vt.AudienceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetEventKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
+		return (*string)(&vt.EventKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetEventType() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
+		return (*string)(&vt.EventType)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetSourceKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return (*string)(&vt.SourceKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+		return (*string)(&vt.SourceKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's ExpiresAfter property, if present.
+func (u workflowStepUnionParamSettings) GetExpiresAfter() *DurationParam {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam:
+		return vt.GetExpiresAfter()
+	}
+	return nil
+}
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u workflowStepUnionParamSettings) GetMatchConditions() (res workflowStepUnionParamSettingsMatchConditions) {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam:
+		res.any = vt.GetMatchConditions()
+	}
+	return res
+}
+
+// Can have the runtime types
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam],
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam],
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam],
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam],
+// [\*[]WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam]
+type workflowStepUnionParamSettingsMatchConditions struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepUnionParamSettingsMatchConditions) AsAny() any { return u.any }
+
 // A wait for event function step that pauses a workflow until a matching event is
 // received.
 //
@@ -4190,8 +4930,9 @@ func (u workflowStepUnionParamSettings) GetRecipientMode() *string {
 type WorkflowStepWorkflowWaitForEventStepParam struct {
 	// The reference key of the workflow step. Must be unique per workflow.
 	Ref string `json:"ref" api:"required"`
-	// The settings for the wait for event step.
-	Settings WorkflowStepWorkflowWaitForEventStepSettingsParam `json:"settings,omitzero" api:"required"`
+	// The settings for the wait for event step. When `event.event_type` is `message`
+	// or `workflow`, `match_conditions` is required.
+	Settings WorkflowStepWorkflowWaitForEventStepSettingsUnionParam `json:"settings,omitzero" api:"required"`
 	// The type of the workflow step.
 	//
 	// Any of "wait_for_event".
@@ -4220,16 +4961,254 @@ func init() {
 	)
 }
 
-// The settings for the wait for event step.
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type WorkflowStepWorkflowWaitForEventStepSettingsUnionParam struct {
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject  *WorkflowStepWorkflowWaitForEventStepSettingsObjectParam  `json:",omitzero,inline"`
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject2 *WorkflowStepWorkflowWaitForEventStepSettingsObject2Param `json:",omitzero,inline"`
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject3 *WorkflowStepWorkflowWaitForEventStepSettingsObject3Param `json:",omitzero,inline"`
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject4 *WorkflowStepWorkflowWaitForEventStepSettingsObject4Param `json:",omitzero,inline"`
+	OfWorkflowStepWorkflowWaitForEventStepSettingsObject5 *WorkflowStepWorkflowWaitForEventStepSettingsObject5Param `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject,
+		u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2,
+		u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3,
+		u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4,
+		u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5)
+}
+func (u *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject) {
+		return u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject
+	} else if !param.IsOmitted(u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2) {
+		return u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2
+	} else if !param.IsOmitted(u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3) {
+		return u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3
+	} else if !param.IsOmitted(u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4) {
+		return u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4
+	} else if !param.IsOmitted(u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5) {
+		return u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) GetOnMatch() *string {
+	if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject; vt != nil {
+		return (*string)(&vt.OnMatch)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2; vt != nil {
+		return (*string)(&vt.OnMatch)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3; vt != nil {
+		return (*string)(&vt.OnMatch)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4; vt != nil {
+		return (*string)(&vt.OnMatch)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5; vt != nil {
+		return (*string)(&vt.OnMatch)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) GetOnTimeout() *string {
+	if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject; vt != nil {
+		return (*string)(&vt.OnTimeout)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2; vt != nil {
+		return (*string)(&vt.OnTimeout)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3; vt != nil {
+		return (*string)(&vt.OnTimeout)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4; vt != nil {
+		return (*string)(&vt.OnTimeout)
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5; vt != nil {
+		return (*string)(&vt.OnTimeout)
+	}
+	return nil
+}
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) GetEvent() (res workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) {
+	if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject; vt != nil {
+		res.any = &vt.Event
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2; vt != nil {
+		res.any = &vt.Event
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3; vt != nil {
+		res.any = &vt.Event
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4; vt != nil {
+		res.any = &vt.Event
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5; vt != nil {
+		res.any = &vt.Event
+	}
+	return
+}
+
+// Can have the runtime types
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam],
+// [*WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam]
+type workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) AsAny() any { return u.any }
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetIntegrationSourceKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return &vt.IntegrationSourceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetSourceType() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return &vt.SourceType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetAudienceKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+		return &vt.AudienceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetEventKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+		return (*string)(&vt.EventKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
+		return (*string)(&vt.EventKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetEventType() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+		return (*string)(&vt.EventType)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
+		return (*string)(&vt.EventType)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetSourceKey() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
+		return (*string)(&vt.SourceKey)
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
+		return (*string)(&vt.SourceKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's ExpiresAfter property, if present.
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) GetExpiresAfter() *DurationParam {
+	if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject; vt != nil {
+		return &vt.ExpiresAfter
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2; vt != nil {
+		return &vt.ExpiresAfter
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3; vt != nil {
+		return &vt.ExpiresAfter
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4; vt != nil {
+		return &vt.ExpiresAfter
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5; vt != nil {
+		return &vt.ExpiresAfter
+	}
+	return nil
+}
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) GetMatchConditions() (res workflowStepWorkflowWaitForEventStepSettingsUnionParamMatchConditions) {
+	if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject; vt != nil {
+		res.any = &vt.MatchConditions
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject2; vt != nil {
+		res.any = &vt.MatchConditions
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject3; vt != nil {
+		res.any = &vt.MatchConditions
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject4; vt != nil {
+		res.any = &vt.MatchConditions
+	} else if vt := u.OfWorkflowStepWorkflowWaitForEventStepSettingsObject5; vt != nil {
+		res.any = &vt.MatchConditions
+	}
+	return
+}
+
+// Can have the runtime types
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam],
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam],
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam],
+// [_[]WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam],
+// [\*[]WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam]
+type workflowStepWorkflowWaitForEventStepSettingsUnionParamMatchConditions struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam:
+//	case *[]knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamMatchConditions) AsAny() any {
+	return u.any
+}
+
+// Settings for waiting on an integration source event.
 //
 // The property Event is required.
-type WorkflowStepWorkflowWaitForEventStepSettingsParam struct {
+type WorkflowStepWorkflowWaitForEventStepSettingsObjectParam struct {
 	// An integration source event to wait for.
-	Event WorkflowStepWorkflowWaitForEventStepSettingsEventParam `json:"event,omitzero" api:"required"`
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam `json:"event,omitzero" api:"required"`
 	// A duration of time, represented as a unit and a value.
 	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
 	// A list of condition groups the incoming event must match to resolve the wait.
-	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam `json:"match_conditions,omitzero"`
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam `json:"match_conditions,omitzero"`
 	// The action to take when a matching event is received.
 	//
 	// Any of "continue", "halt".
@@ -4241,19 +5220,19 @@ type WorkflowStepWorkflowWaitForEventStepSettingsParam struct {
 	paramObj
 }
 
-func (r WorkflowStepWorkflowWaitForEventStepSettingsParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowWaitForEventStepSettingsParam
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObjectParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObjectParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsParam) UnmarshalJSON(data []byte) error {
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObjectParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsParam](
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObjectParam](
 		"on_match", "continue", "halt",
 	)
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsParam](
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObjectParam](
 		"on_timeout", "continue", "halt",
 	)
 }
@@ -4261,7 +5240,7 @@ func init() {
 // An integration source event to wait for.
 //
 // The properties EventKey, EventType, IntegrationSourceKey are required.
-type WorkflowStepWorkflowWaitForEventStepSettingsEventParam struct {
+type WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam struct {
 	// The name of the event to wait for.
 	EventKey string `json:"event_key" api:"required"`
 	// The type of event to wait for.
@@ -4273,21 +5252,21 @@ type WorkflowStepWorkflowWaitForEventStepSettingsEventParam struct {
 	paramObj
 }
 
-func (r WorkflowStepWorkflowWaitForEventStepSettingsEventParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowWaitForEventStepSettingsEventParam
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsEventParam) UnmarshalJSON(data []byte) error {
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsEventParam](
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam](
 		"event_type", "integration_source",
 	)
 }
 
-type WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam struct {
+type WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam struct {
 	// A list of conditions.
 	Conditions []ConditionParam `json:"conditions,omitzero"`
 	// The operator used to join the conditions in the group.
@@ -4297,16 +5276,413 @@ type WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam struct {
 	paramObj
 }
 
-func (r WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam) UnmarshalJSON(data []byte) error {
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsMatchConditionParam](
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObjectMatchConditionParam](
+		"operator", "and",
+	)
+}
+
+// Settings for waiting on a message event.
+//
+// The properties Event, MatchConditions are required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject2Param struct {
+	// A message event to wait for from a message source.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam `json:"event,omitzero" api:"required"`
+	// Required when waiting for a message event. A list of condition groups the
+	// incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam `json:"match_conditions,omitzero" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match,omitzero"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject2Param) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject2Param
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2Param) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2Param](
+		"on_match", "continue", "halt",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2Param](
+		"on_timeout", "continue", "halt",
+	)
+}
+
+// A message event to wait for from a message source.
+//
+// The properties EventKey, EventType, SourceKey, SourceType are required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam struct {
+	// The message lifecycle event to wait for.
+	//
+	// Any of "created", "queued", "sent", "not_sent", "delivered",
+	// "delivery_attempted", "undelivered", "bounced", "read", "unread", "seen",
+	// "unseen", "archived", "unarchived", "interacted", "link_clicked".
+	EventKey string `json:"event_key,omitzero" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "message".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	// The key of the message source to scope the wait to.
+	SourceKey string `json:"source_key" api:"required"`
+	// The type of message source to scope the wait to.
+	//
+	// Any of "workflow", "broadcast", "guide".
+	SourceType string `json:"source_type,omitzero" api:"required"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam](
+		"event_key", "created", "queued", "sent", "not_sent", "delivered", "delivery_attempted", "undelivered", "bounced", "read", "unread", "seen", "unseen", "archived", "unarchived", "interacted", "link_clicked",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam](
+		"event_type", "message",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam](
+		"source_type", "workflow", "broadcast", "guide",
+	)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam struct {
+	// A list of conditions.
+	Conditions []ConditionParam `json:"conditions,omitzero"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2MatchConditionParam](
+		"operator", "and",
+	)
+}
+
+// Settings for waiting on a workflow event.
+//
+// The properties Event, MatchConditions are required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject3Param struct {
+	// A workflow lifecycle event to wait for from a child workflow run for the same
+	// recipient.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam `json:"event,omitzero" api:"required"`
+	// Required when waiting for a workflow event. A list of condition groups the
+	// incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam `json:"match_conditions,omitzero" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match,omitzero"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject3Param) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject3Param
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3Param) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject3Param](
+		"on_match", "continue", "halt",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject3Param](
+		"on_timeout", "continue", "halt",
+	)
+}
+
+// A workflow lifecycle event to wait for from a child workflow run for the same
+// recipient.
+//
+// The properties EventKey, EventType, SourceKey are required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam struct {
+	// The workflow lifecycle event to wait for.
+	//
+	// Any of "started", "completed".
+	EventKey string `json:"event_key,omitzero" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "workflow".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	// The key of the workflow whose lifecycle event should match this wait.
+	SourceKey string `json:"source_key" api:"required"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam](
+		"event_key", "started", "completed",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam](
+		"event_type", "workflow",
+	)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam struct {
+	// A list of conditions.
+	Conditions []ConditionParam `json:"conditions,omitzero"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchConditionParam](
+		"operator", "and",
+	)
+}
+
+// Settings for waiting on an audience membership event.
+//
+// The property Event is required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject4Param struct {
+	// An audience membership event to wait for when a recipient enters or exits an
+	// audience.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam `json:"event,omitzero" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
+	// A list of condition groups the incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam `json:"match_conditions,omitzero"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match,omitzero"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4Param) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject4Param
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4Param) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4Param](
+		"on_match", "continue", "halt",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4Param](
+		"on_timeout", "continue", "halt",
+	)
+}
+
+// An audience membership event to wait for when a recipient enters or exits an
+// audience.
+//
+// The properties AudienceKey, EventKey, EventType are required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam struct {
+	// The key of the audience to wait for membership changes.
+	AudienceKey string `json:"audience_key" api:"required"`
+	// The audience membership transition to wait for.
+	//
+	// Any of "enter", "exit".
+	EventKey string `json:"event_key,omitzero" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "audience".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam](
+		"event_key", "enter", "exit",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam](
+		"event_type", "audience",
+	)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam struct {
+	// A list of conditions.
+	Conditions []ConditionParam `json:"conditions,omitzero"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4MatchConditionParam](
+		"operator", "and",
+	)
+}
+
+// Settings for waiting on a recipient change event.
+//
+// The property Event is required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject5Param struct {
+	// A recipient updated event to wait for from the workflow recipient.
+	Event WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam `json:"event,omitzero" api:"required"`
+	// A duration of time, represented as a unit and a value.
+	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
+	// A list of condition groups the incoming event must match to resolve the wait.
+	MatchConditions []WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam `json:"match_conditions,omitzero"`
+	// The action to take when a matching event is received.
+	//
+	// Any of "continue", "halt".
+	OnMatch string `json:"on_match,omitzero"`
+	// The action to take when the wait expires before a match.
+	//
+	// Any of "continue", "halt".
+	OnTimeout string `json:"on_timeout,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject5Param) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject5Param
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject5Param) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject5Param](
+		"on_match", "continue", "halt",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject5Param](
+		"on_timeout", "continue", "halt",
+	)
+}
+
+// A recipient updated event to wait for from the workflow recipient.
+//
+// The property EventType is required.
+type WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam struct {
+	// The type of event to wait for.
+	//
+	// Any of "recipient".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	// Recipient lifecycle event to wait for. Always "updated" today.
+	//
+	// Any of "updated".
+	EventKey string `json:"event_key,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam](
+		"event_type", "recipient",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam](
+		"event_key", "updated",
+	)
+}
+
+type WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam struct {
+	// A list of conditions.
+	Conditions []ConditionParam `json:"conditions,omitzero"`
+	// The operator used to join the conditions in the group.
+	//
+	// Any of "and".
+	Operator string `json:"operator,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject5MatchConditionParam](
 		"operator", "and",
 	)
 }
