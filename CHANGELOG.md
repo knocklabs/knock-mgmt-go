@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.1](https://github.com/knocklabs/knock-mgmt-go/compare/v0.3.0...v0.3.1) (2026-07-22)
+
+
+### Chores
+
+* add CODEOWNERS with @knocklabs/product as default owner ([3c4cf77](https://github.com/knocklabs/knock-mgmt-go/commit/3c4cf77569fd5753cc83ee54f6e465855edc0f7b))
+* forward SDK_WRITE_TOKEN to the back-sync workflow ([62d15cb](https://github.com/knocklabs/knock-mgmt-go/commit/62d15cb9e4f927da54004d445dd04ec9c5385732))
+* reconcile orphaned sealed commit after release back-sync ([82b5318](https://github.com/knocklabs/knock-mgmt-go/commit/82b5318d80b770425c6f6773ae9536990a1ab790))
+
 ## [0.3.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.2.0...v0.3.0) (2026-07-16)
 
 
