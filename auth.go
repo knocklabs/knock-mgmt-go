@@ -59,9 +59,15 @@ type AuthVerifyResponse struct {
 	// The name of the service token if authenticated via service token, null for OAuth
 	// contexts.
 	ServiceTokenName string `json:"service_token_name" api:"nullable"`
+	// The email of the authenticated user if in OAuth context, null for service token
+	// contexts.
+	UserEmail string `json:"user_email" api:"nullable"`
 	// The ID of the authenticated user if in OAuth context, null for service token
 	// contexts.
 	UserID string `json:"user_id" api:"nullable"`
+	// The name of the authenticated user if in OAuth context, null for service token
+	// contexts.
+	UserName string `json:"user_name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountFeatures  respjson.Field
@@ -69,7 +75,9 @@ type AuthVerifyResponse struct {
 		AccountSlug      respjson.Field
 		Type             respjson.Field
 		ServiceTokenName respjson.Field
+		UserEmail        respjson.Field
 		UserID           respjson.Field
+		UserName         respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
