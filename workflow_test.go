@@ -127,14 +127,15 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 		knockmapi.WorkflowRunParams{
 			Environment: "development",
 			Recipients: []knockmapi.WorkflowRunParamsRecipientUnion{{
-				OfString: knockmapi.String("dnedry"),
+				OfInlineIdentifyUserRequest: &knockmapi.WorkflowRunParamsRecipientInlineIdentifyUserRequest{
+					ID:    "user_1",
+					Email: knockmapi.String("jane@example.com"),
+					Name:  knockmapi.String("Jane Doe"),
+				},
 			}},
 			Branch: knockmapi.String("feature-branch"),
 			Actor: knockmapi.WorkflowRunParamsActorUnion{
-				OfObjectRecipientReference: &knockmapi.WorkflowRunParamsActorObjectRecipientReference{
-					ID:         "project_1",
-					Collection: "projects",
-				},
+				OfString: knockmapi.String("user_1"),
 			},
 			CancellationKey: knockmapi.String("cancellation_key"),
 			Data: map[string]any{

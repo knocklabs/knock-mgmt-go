@@ -6918,7 +6918,8 @@ func (r WorkflowActivateParams) URLQuery() (v url.Values, err error) {
 type WorkflowRunParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
-	// A list of recipients to run the workflow for.
+	// A list of recipients to run the workflow for. Supports user IDs, object
+	// references, or inline identify user objects (id + optional email/name).
 	Recipients []WorkflowRunParamsRecipientUnion `json:"recipients,omitzero" api:"required"`
 	// A key to cancel the workflow run.
 	CancellationKey param.Opt[string] `json:"cancellation_key,omitzero"`
@@ -6927,8 +6928,7 @@ type WorkflowRunParams struct {
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The tenant to associate the workflow run with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
-	// A recipient reference, used when referencing a recipient by either their ID (for
-	// a user), or by a reference for an object.
+	// The actor to reference in the the workflow run.
 	Actor WorkflowRunParamsActorUnion `json:"actor,omitzero"`
 	// A map of data to be used in the workflow run. The structure should conform to
 	// the workflow's `trigger_data_json_schema` if one is defined. Available in
@@ -6958,13 +6958,14 @@ func (r WorkflowRunParams) URLQuery() (v url.Values, err error) {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowRunParamsRecipientUnion struct {
-	OfString                   param.Opt[string]                                   `json:",omitzero,inline"`
-	OfObjectRecipientReference *WorkflowRunParamsRecipientObjectRecipientReference `json:",omitzero,inline"`
+	OfString                    param.Opt[string]                                    `json:",omitzero,inline"`
+	OfObjectRecipientReference  *WorkflowRunParamsRecipientObjectRecipientReference  `json:",omitzero,inline"`
+	OfInlineIdentifyUserRequest *WorkflowRunParamsRecipientInlineIdentifyUserRequest `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u WorkflowRunParamsRecipientUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
+	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference, u.OfInlineIdentifyUserRequest)
 }
 func (u *WorkflowRunParamsRecipientUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -6975,6 +6976,42 @@ func (u *WorkflowRunParamsRecipientUnion) asAny() any {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
 		return u.OfObjectRecipientReference
+	} else if !param.IsOmitted(u.OfInlineIdentifyUserRequest) {
+		return u.OfInlineIdentifyUserRequest
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsRecipientUnion) GetCollection() *string {
+	if vt := u.OfObjectRecipientReference; vt != nil {
+		return &vt.Collection
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsRecipientUnion) GetEmail() *string {
+	if vt := u.OfInlineIdentifyUserRequest; vt != nil && vt.Email.Valid() {
+		return &vt.Email.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsRecipientUnion) GetName() *string {
+	if vt := u.OfInlineIdentifyUserRequest; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsRecipientUnion) GetID() *string {
+	if vt := u.OfObjectRecipientReference; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfInlineIdentifyUserRequest; vt != nil {
+		return (*string)(&vt.ID)
 	}
 	return nil
 }
@@ -6998,17 +7035,41 @@ func (r *WorkflowRunParamsRecipientObjectRecipientReference) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A user recipient with optional identify properties. When email or name are
+// provided, the user is created or updated as part of the workflow run. The
+// collection is always `$users` and should not be sent.
+//
+// The property ID is required.
+type WorkflowRunParamsRecipientInlineIdentifyUserRequest struct {
+	// The ID of the user.
+	ID string `json:"id" api:"required"`
+	// The email address to set on the user.
+	Email param.Opt[string] `json:"email,omitzero"`
+	// The display name to set on the user.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r WorkflowRunParamsRecipientInlineIdentifyUserRequest) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRunParamsRecipientInlineIdentifyUserRequest
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowRunParamsRecipientInlineIdentifyUserRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowRunParamsActorUnion struct {
-	OfString                   param.Opt[string]                               `json:",omitzero,inline"`
-	OfObjectRecipientReference *WorkflowRunParamsActorObjectRecipientReference `json:",omitzero,inline"`
+	OfString                    param.Opt[string]                                `json:",omitzero,inline"`
+	OfObjectRecipientReference  *WorkflowRunParamsActorObjectRecipientReference  `json:",omitzero,inline"`
+	OfInlineIdentifyUserRequest *WorkflowRunParamsActorInlineIdentifyUserRequest `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u WorkflowRunParamsActorUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
+	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference, u.OfInlineIdentifyUserRequest)
 }
 func (u *WorkflowRunParamsActorUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -7019,6 +7080,42 @@ func (u *WorkflowRunParamsActorUnion) asAny() any {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
 		return u.OfObjectRecipientReference
+	} else if !param.IsOmitted(u.OfInlineIdentifyUserRequest) {
+		return u.OfInlineIdentifyUserRequest
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsActorUnion) GetCollection() *string {
+	if vt := u.OfObjectRecipientReference; vt != nil {
+		return &vt.Collection
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsActorUnion) GetEmail() *string {
+	if vt := u.OfInlineIdentifyUserRequest; vt != nil && vt.Email.Valid() {
+		return &vt.Email.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsActorUnion) GetName() *string {
+	if vt := u.OfInlineIdentifyUserRequest; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowRunParamsActorUnion) GetID() *string {
+	if vt := u.OfObjectRecipientReference; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfInlineIdentifyUserRequest; vt != nil {
+		return (*string)(&vt.ID)
 	}
 	return nil
 }
@@ -7039,6 +7136,29 @@ func (r WorkflowRunParamsActorObjectRecipientReference) MarshalJSON() (data []by
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *WorkflowRunParamsActorObjectRecipientReference) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A user recipient with optional identify properties. When email or name are
+// provided, the user is created or updated as part of the workflow run. The
+// collection is always `$users` and should not be sent.
+//
+// The property ID is required.
+type WorkflowRunParamsActorInlineIdentifyUserRequest struct {
+	// The ID of the user.
+	ID string `json:"id" api:"required"`
+	// The email address to set on the user.
+	Email param.Opt[string] `json:"email,omitzero"`
+	// The display name to set on the user.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r WorkflowRunParamsActorInlineIdentifyUserRequest) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRunParamsActorInlineIdentifyUserRequest
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowRunParamsActorInlineIdentifyUserRequest) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
