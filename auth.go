@@ -117,6 +117,8 @@ type AuthVerifyResponseAccountFeatures struct {
 	MessageSentLimit int64 `json:"message_sent_limit" api:"nullable"`
 	// Whether New Relic integration extension is available.
 	NewRelicExtensionAllowed bool `json:"new_relic_extension_allowed"`
+	// Whether custom permission groups can be created.
+	PermissionGroupsAllowed bool `json:"permission_groups_allowed"`
 	// Whether Segment integration extension is available.
 	SegmentExtensionAllowed bool `json:"segment_extension_allowed"`
 	// Whether self-service account management features are available.
@@ -142,6 +144,7 @@ type AuthVerifyResponseAccountFeatures struct {
 		LitmusEmailPreviewAllowed            respjson.Field
 		MessageSentLimit                     respjson.Field
 		NewRelicExtensionAllowed             respjson.Field
+		PermissionGroupsAllowed              respjson.Field
 		SegmentExtensionAllowed              respjson.Field
 		SelfServeAllowed                     respjson.Field
 		SSOAllowed                           respjson.Field

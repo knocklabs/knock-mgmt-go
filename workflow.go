@@ -2209,13 +2209,14 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 }
 
 // WorkflowStepUnion contains all possible properties and values from
-// [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowChatStep],
-// [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
-// [WorkflowAIAgentStep], [WorkflowDelayStep],
-// [WorkflowStepWorkflowWaitForEventStep], [WorkflowBatchStep],
-// [WorkflowFetchStep], [WorkflowUpdateDataStep], [WorkflowUpdateObjectStep],
-// [WorkflowUpdateTenantStep], [WorkflowUpdateUserStep], [WorkflowThrottleStep],
-// [WorkflowBranchStep], [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
+// [WorkflowWebhookStep], [WorkflowInAppFeedStep],
+// [WorkflowStepWorkflowInAppGuideStep], [WorkflowChatStep], [WorkflowSMSStep],
+// [WorkflowPushStep], [WorkflowEmailStep], [WorkflowAIAgentStep],
+// [WorkflowDelayStep], [WorkflowStepWorkflowWaitForEventStep],
+// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowUpdateDataStep],
+// [WorkflowUpdateObjectStep], [WorkflowUpdateTenantStep],
+// [WorkflowUpdateUserStep], [WorkflowThrottleStep], [WorkflowBranchStep],
+// [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepUnion struct {
@@ -2235,6 +2236,8 @@ type WorkflowStepUnion struct {
 	// This field is a union of [InAppFeedChannelSettings], [ChatChannelSettings],
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
+	// This field is from variant [WorkflowStepWorkflowInAppGuideStep].
+	GuideKey string `json:"guide_key"`
 	// This field is a union of [WorkflowAIAgentStepSettings],
 	// [WorkflowDelayStepSettings],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsUnion],
@@ -2261,6 +2264,7 @@ type WorkflowStepUnion struct {
 		Name             respjson.Field
 		SendWindows      respjson.Field
 		ChannelOverrides respjson.Field
+		GuideKey         respjson.Field
 		Settings         respjson.Field
 		Branches         respjson.Field
 		CohortBranches   respjson.Field
@@ -2275,6 +2279,11 @@ func (u WorkflowStepUnion) AsWorkflowWebhookStep() (v WorkflowWebhookStep) {
 }
 
 func (u WorkflowStepUnion) AsWorkflowInAppFeedStep() (v WorkflowInAppFeedStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowStepUnion) AsWorkflowInAppGuideStep() (v WorkflowStepWorkflowInAppGuideStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2748,6 +2757,64 @@ func (r *WorkflowStepUnionSettingsMatchConditions) UnmarshalJSON(data []byte) er
 // WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// An in-app guide step within a workflow. References a guide that will be shown to
+// recipients who execute this step. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowStepWorkflowInAppGuideStep struct {
+	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
+	//
+	// Any of "in_app_guide".
+	ChannelType string `json:"channel_type" api:"required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type" api:"required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
+	ChannelGroupKey string `json:"channel_group_key" api:"nullable"`
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
+	ChannelKey string `json:"channel_key" api:"nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// The key of the guide to reference. When a recipient executes this step they are
+	// added to the managed audience that backs the guide's workflow-derived targeting.
+	GuideKey string `json:"guide_key" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChannelType     respjson.Field
+		Ref             respjson.Field
+		Type            respjson.Field
+		ChannelGroupKey respjson.Field
+		ChannelKey      respjson.Field
+		Conditions      respjson.Field
+		Description     respjson.Field
+		GuideKey        respjson.Field
+		Name            respjson.Field
+		SendWindows     respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowStepWorkflowInAppGuideStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowStepWorkflowInAppGuideStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A wait for event function step that pauses a workflow until a matching event is
@@ -3396,6 +3463,14 @@ func WorkflowStepParamOfWorkflowInAppFeedStep(ref string, template InAppFeedTemp
 	return WorkflowStepUnionParam{OfWorkflowInAppFeedStep: &variant}
 }
 
+func WorkflowStepParamOfWorkflowInAppGuideStep(channelType string, ref string, type_ string) WorkflowStepUnionParam {
+	var variant WorkflowStepWorkflowInAppGuideStepParam
+	variant.ChannelType = channelType
+	variant.Ref = ref
+	variant.Type = type_
+	return WorkflowStepUnionParam{OfWorkflowInAppGuideStep: &variant}
+}
+
 func WorkflowStepParamOfWorkflowChatStep(ref string, template ChatTemplateParam, type_ WorkflowChatStepType) WorkflowStepUnionParam {
 	var variant WorkflowChatStepParam
 	variant.Ref = ref
@@ -3551,6 +3626,7 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 type WorkflowStepUnionParam struct {
 	OfWorkflowWebhookStep         *WorkflowWebhookStepParam                  `json:",omitzero,inline"`
 	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam                `json:",omitzero,inline"`
+	OfWorkflowInAppGuideStep      *WorkflowStepWorkflowInAppGuideStepParam   `json:",omitzero,inline"`
 	OfWorkflowChatStep            *WorkflowChatStepParam                     `json:",omitzero,inline"`
 	OfWorkflowSMSStep             *WorkflowSMSStepParam                      `json:",omitzero,inline"`
 	OfWorkflowPushStep            *WorkflowPushStepParam                     `json:",omitzero,inline"`
@@ -3574,6 +3650,7 @@ type WorkflowStepUnionParam struct {
 func (u WorkflowStepUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfWorkflowWebhookStep,
 		u.OfWorkflowInAppFeedStep,
+		u.OfWorkflowInAppGuideStep,
 		u.OfWorkflowChatStep,
 		u.OfWorkflowSMSStep,
 		u.OfWorkflowPushStep,
@@ -3601,6 +3678,8 @@ func (u *WorkflowStepUnionParam) asAny() any {
 		return u.OfWorkflowWebhookStep
 	} else if !param.IsOmitted(u.OfWorkflowInAppFeedStep) {
 		return u.OfWorkflowInAppFeedStep
+	} else if !param.IsOmitted(u.OfWorkflowInAppGuideStep) {
+		return u.OfWorkflowInAppGuideStep
 	} else if !param.IsOmitted(u.OfWorkflowChatStep) {
 		return u.OfWorkflowChatStep
 	} else if !param.IsOmitted(u.OfWorkflowSMSStep) {
@@ -3640,6 +3719,14 @@ func (u *WorkflowStepUnionParam) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowStepUnionParam) GetGuideKey() *string {
+	if vt := u.OfWorkflowInAppGuideStep; vt != nil && vt.GuideKey.Valid() {
+		return &vt.GuideKey.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u WorkflowStepUnionParam) GetBranches() []WorkflowBranchStepBranchParam {
 	if vt := u.OfWorkflowBranchStep; vt != nil {
 		return vt.Branches
@@ -3668,6 +3755,8 @@ func (u WorkflowStepUnionParam) GetRef() *string {
 	if vt := u.OfWorkflowWebhookStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return (*string)(&vt.Ref)
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil {
 		return (*string)(&vt.Ref)
 	} else if vt := u.OfWorkflowChatStep; vt != nil {
 		return (*string)(&vt.Ref)
@@ -3713,6 +3802,8 @@ func (u WorkflowStepUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
 		return (*string)(&vt.Type)
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil {
+		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowChatStep; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfWorkflowSMSStep; vt != nil {
@@ -3757,6 +3848,8 @@ func (u WorkflowStepUnionParam) GetChannelGroupKey() *string {
 		return &vt.ChannelGroupKey.Value
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.ChannelGroupKey.Valid() {
 		return &vt.ChannelGroupKey.Value
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil && vt.ChannelGroupKey.Valid() {
+		return &vt.ChannelGroupKey.Value
 	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.ChannelGroupKey.Valid() {
 		return &vt.ChannelGroupKey.Value
 	} else if vt := u.OfWorkflowSMSStep; vt != nil && vt.ChannelGroupKey.Valid() {
@@ -3774,6 +3867,8 @@ func (u WorkflowStepUnionParam) GetChannelKey() *string {
 	if vt := u.OfWorkflowWebhookStep; vt != nil && vt.ChannelKey.Valid() {
 		return &vt.ChannelKey.Value
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.ChannelKey.Valid() {
+		return &vt.ChannelKey.Value
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil && vt.ChannelKey.Valid() {
 		return &vt.ChannelKey.Value
 	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.ChannelKey.Valid() {
 		return &vt.ChannelKey.Value
@@ -3793,6 +3888,8 @@ func (u WorkflowStepUnionParam) GetChannelType() *string {
 		return (*string)(&vt.ChannelType)
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
 		return (*string)(&vt.ChannelType)
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil {
+		return (*string)(&vt.ChannelType)
 	} else if vt := u.OfWorkflowChatStep; vt != nil {
 		return (*string)(&vt.ChannelType)
 	} else if vt := u.OfWorkflowSMSStep; vt != nil {
@@ -3810,6 +3907,8 @@ func (u WorkflowStepUnionParam) GetDescription() *string {
 	if vt := u.OfWorkflowWebhookStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.Description.Valid() {
+		return &vt.Description.Value
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
 	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.Description.Valid() {
 		return &vt.Description.Value
@@ -3854,6 +3953,8 @@ func (u WorkflowStepUnionParam) GetName() *string {
 	if vt := u.OfWorkflowWebhookStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
 	} else if vt := u.OfWorkflowChatStep; vt != nil && vt.Name.Valid() {
 		return &vt.Name.Value
@@ -4174,6 +4275,8 @@ func (u WorkflowStepUnionParam) GetConditions() *ConditionGroupUnionParam {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
 		return &vt.Conditions
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil {
+		return &vt.Conditions
 	} else if vt := u.OfWorkflowChatStep; vt != nil {
 		return &vt.Conditions
 	} else if vt := u.OfWorkflowSMSStep; vt != nil {
@@ -4211,6 +4314,8 @@ func (u WorkflowStepUnionParam) GetSendWindows() []SendWindowParam {
 	if vt := u.OfWorkflowWebhookStep; vt != nil {
 		return vt.SendWindows
 	} else if vt := u.OfWorkflowInAppFeedStep; vt != nil {
+		return vt.SendWindows
+	} else if vt := u.OfWorkflowInAppGuideStep; vt != nil {
 		return vt.SendWindows
 	} else if vt := u.OfWorkflowChatStep; vt != nil {
 		return vt.SendWindows
@@ -4922,6 +5027,63 @@ type workflowStepUnionParamSettingsMatchConditions struct{ any }
 //	    fmt.Errorf("not present")
 //	}
 func (u workflowStepUnionParamSettingsMatchConditions) AsAny() any { return u.any }
+
+// An in-app guide step within a workflow. References a guide that will be shown to
+// recipients who execute this step. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties ChannelType, Ref, Type are required.
+type WorkflowStepWorkflowInAppGuideStepParam struct {
+	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
+	//
+	// Any of "in_app_guide".
+	ChannelType string `json:"channel_type,omitzero" api:"required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type string `json:"type,omitzero" api:"required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// The key of the guide to reference. When a recipient executes this step they are
+	// added to the managed audience that backs the guide's workflow-derived targeting.
+	GuideKey param.Opt[string] `json:"guide_key,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowStepWorkflowInAppGuideStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowStepWorkflowInAppGuideStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowStepWorkflowInAppGuideStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowInAppGuideStepParam](
+		"channel_type", "in_app_guide",
+	)
+	apijson.RegisterFieldValidator[WorkflowStepWorkflowInAppGuideStepParam](
+		"type", "channel",
+	)
+}
 
 // A wait for event function step that pauses a workflow until a matching event is
 // received.

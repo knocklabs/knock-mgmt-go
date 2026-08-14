@@ -163,6 +163,8 @@ type Guide struct {
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description" api:"nullable"`
+	// A group of conditions to be evaluated.
+	GuideAudienceConditions ConditionGroupUnion `json:"guide_audience_conditions" api:"nullable"`
 	// The semver of the guide.
 	Semver string `json:"semver"`
 	// A list of guide step objects in the guide.
@@ -193,6 +195,7 @@ type Guide struct {
 		ChannelKey               respjson.Field
 		DeletedAt                respjson.Field
 		Description              respjson.Field
+		GuideAudienceConditions  respjson.Field
 		Semver                   respjson.Field
 		Steps                    respjson.Field
 		Tags                     respjson.Field
@@ -616,6 +619,8 @@ type GuideUpsertParamsGuide struct {
 	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
+	// A group of conditions to be evaluated.
+	GuideAudienceConditions ConditionGroupUnionParam `json:"guide_audience_conditions,omitzero"`
 	// Use tags to organize resources internally within your account. For example, by
 	// team or product area.
 	Tags []string `json:"tags,omitzero"`
@@ -681,6 +686,8 @@ type GuideValidateParamsGuide struct {
 	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
+	// A group of conditions to be evaluated.
+	GuideAudienceConditions ConditionGroupUnionParam `json:"guide_audience_conditions,omitzero"`
 	// Use tags to organize resources internally within your account. For example, by
 	// team or product area.
 	Tags []string `json:"tags,omitzero"`

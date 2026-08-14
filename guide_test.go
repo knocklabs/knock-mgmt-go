@@ -170,9 +170,18 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 					Pathname:  knockmapi.String("/dashboard/*"),
 					Search:    knockmapi.String("tab=settings"),
 				}},
-				ArchivedAt:        knockmapi.Time(time.Now()),
-				DeletedAt:         knockmapi.Time(time.Now()),
-				Description:       knockmapi.String("A guide to help users get started with the application"),
+				ArchivedAt:  knockmapi.Time(time.Now()),
+				DeletedAt:   knockmapi.Time(time.Now()),
+				Description: knockmapi.String("A guide to help users get started with the application"),
+				GuideAudienceConditions: knockmapi.ConditionGroupUnionParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+						All: []knockmapi.ConditionParam{{
+							Operator: knockmapi.ConditionOperatorEqualTo,
+							Variable: "recipient.property",
+							Argument: knockmapi.String("some_property"),
+						}},
+					},
+				},
 				Tags:              []string{"string"},
 				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
@@ -238,9 +247,18 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 					Pathname:  knockmapi.String("/dashboard/*"),
 					Search:    knockmapi.String("tab=settings"),
 				}},
-				ArchivedAt:        knockmapi.Time(time.Now()),
-				DeletedAt:         knockmapi.Time(time.Now()),
-				Description:       knockmapi.String("A guide to help users get started with the application"),
+				ArchivedAt:  knockmapi.Time(time.Now()),
+				DeletedAt:   knockmapi.Time(time.Now()),
+				Description: knockmapi.String("A guide to help users get started with the application"),
+				GuideAudienceConditions: knockmapi.ConditionGroupUnionParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+						All: []knockmapi.ConditionParam{{
+							Operator: knockmapi.ConditionOperatorEqualTo,
+							Variable: "recipient.property",
+							Argument: knockmapi.String("some_property"),
+						}},
+					},
+				},
 				Tags:              []string{"string"},
 				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
