@@ -220,7 +220,7 @@ func (r MessageTypeVariant) ToParam() MessageTypeVariantParam {
 // MessageTypeVariantFieldUnion contains all possible properties and values from
 // [MessageTypeVariantFieldMessageTypeListField], [shared.MessageTypeSelectField],
 // [shared.MessageTypeBooleanField], [shared.MessageTypeJsonField],
-// [MessageTypeVariantFieldMessageTypeNumberField], [shared.MessageTypeTextField],
+// [shared.MessageTypeTextField], [MessageTypeVariantFieldMessageTypeNumberField],
 // [shared.MessageTypeImageField], [MessageTypeVariantFieldMessageTypeColorField],
 // [shared.MessageTypeURLField], [shared.MessageTypeMarkdownField],
 // [shared.MessageTypeMultiSelectField], [shared.MessageTypeButtonField],
@@ -234,8 +234,9 @@ type MessageTypeVariantFieldUnion struct {
 	// This field is a union of [MessageTypeVariantFieldMessageTypeListFieldSettings],
 	// [shared.MessageTypeSelectFieldSettings],
 	// [shared.MessageTypeBooleanFieldSettings], [shared.MessageTypeJsonFieldSettings],
+	// [shared.MessageTypeTextFieldSettings],
 	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings],
-	// [shared.MessageTypeTextFieldSettings], [shared.MessageTypeImageFieldSettings],
+	// [shared.MessageTypeImageFieldSettings],
 	// [MessageTypeVariantFieldMessageTypeColorFieldSettings],
 	// [shared.MessageTypeURLFieldSettings], [shared.MessageTypeMarkdownFieldSettings],
 	// [shared.MessageTypeMultiSelectFieldSettings],
@@ -283,12 +284,12 @@ func (u MessageTypeVariantFieldUnion) AsMessageTypeJsonField() (v shared.Message
 	return
 }
 
-func (u MessageTypeVariantFieldUnion) AsMessageTypeNumberField() (v MessageTypeVariantFieldMessageTypeNumberField) {
+func (u MessageTypeVariantFieldUnion) AsMessageTypeTextField() (v shared.MessageTypeTextField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u MessageTypeVariantFieldUnion) AsMessageTypeTextField() (v shared.MessageTypeTextField) {
+func (u MessageTypeVariantFieldUnion) AsMessageTypeNumberField() (v MessageTypeVariantFieldMessageTypeNumberField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -342,7 +343,7 @@ func (r *MessageTypeVariantFieldUnion) UnmarshalJSON(data []byte) error {
 // For type safety it is recommended to directly use a variant of the
 // [MessageTypeVariantFieldUnion].
 type MessageTypeVariantFieldUnionSettings struct {
-	// This field is a union of [[]any], [string], [bool], [any], [float64], [string],
+	// This field is a union of [[]any], [string], [bool], [any], [string], [float64],
 	// [string], [string], [string], [[]string], [string]
 	Default     MessageTypeVariantFieldUnionSettingsDefault `json:"default"`
 	Description string                                      `json:"description"`
@@ -355,7 +356,9 @@ type MessageTypeVariantFieldUnionSettings struct {
 	// [[]shared.MessageTypeMultiSelectFieldSettingsOption]
 	Options MessageTypeVariantFieldUnionSettingsOptions `json:"options"`
 	// This field is from variant [shared.MessageTypeJsonFieldSettings].
-	Schema any `json:"schema"`
+	Schema    any   `json:"schema"`
+	MaxLength int64 `json:"max_length"`
+	MinLength int64 `json:"min_length"`
 	// This field is from variant
 	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings].
 	Max float64 `json:"max"`
@@ -365,8 +368,6 @@ type MessageTypeVariantFieldUnionSettings struct {
 	// This field is from variant
 	// [MessageTypeVariantFieldMessageTypeNumberFieldSettings].
 	UnitLabel string `json:"unit_label"`
-	MaxLength int64  `json:"max_length"`
-	MinLength int64  `json:"min_length"`
 	JSON      struct {
 		Default     respjson.Field
 		Description respjson.Field
@@ -375,11 +376,11 @@ type MessageTypeVariantFieldUnionSettings struct {
 		Required    respjson.Field
 		Options     respjson.Field
 		Schema      respjson.Field
+		MaxLength   respjson.Field
+		MinLength   respjson.Field
 		Max         respjson.Field
 		Min         respjson.Field
 		UnitLabel   respjson.Field
-		MaxLength   respjson.Field
-		MinLength   respjson.Field
 		raw         string
 	} `json:"-"`
 }
@@ -661,8 +662,8 @@ type MessageTypeVariantFieldUnionParam struct {
 	OfMessageTypeSelectField      *shared.MessageTypeSelectFieldParam                 `json:",omitzero,inline"`
 	OfMessageTypeBooleanField     *shared.MessageTypeBooleanFieldParam                `json:",omitzero,inline"`
 	OfMessageTypeJsonField        *shared.MessageTypeJsonFieldParam                   `json:",omitzero,inline"`
-	OfMessageTypeNumberField      *MessageTypeVariantFieldMessageTypeNumberFieldParam `json:",omitzero,inline"`
 	OfMessageTypeTextField        *shared.MessageTypeTextFieldParam                   `json:",omitzero,inline"`
+	OfMessageTypeNumberField      *MessageTypeVariantFieldMessageTypeNumberFieldParam `json:",omitzero,inline"`
 	OfMessageTypeImageField       *shared.MessageTypeImageFieldParam                  `json:",omitzero,inline"`
 	OfMessageTypeColorField       *MessageTypeVariantFieldMessageTypeColorFieldParam  `json:",omitzero,inline"`
 	OfMessageTypeURLField         *shared.MessageTypeURLFieldParam                    `json:",omitzero,inline"`
@@ -678,8 +679,8 @@ func (u MessageTypeVariantFieldUnionParam) MarshalJSON() ([]byte, error) {
 		u.OfMessageTypeSelectField,
 		u.OfMessageTypeBooleanField,
 		u.OfMessageTypeJsonField,
-		u.OfMessageTypeNumberField,
 		u.OfMessageTypeTextField,
+		u.OfMessageTypeNumberField,
 		u.OfMessageTypeImageField,
 		u.OfMessageTypeColorField,
 		u.OfMessageTypeURLField,
@@ -701,10 +702,10 @@ func (u *MessageTypeVariantFieldUnionParam) asAny() any {
 		return u.OfMessageTypeBooleanField
 	} else if !param.IsOmitted(u.OfMessageTypeJsonField) {
 		return u.OfMessageTypeJsonField
-	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
-		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeTextField) {
 		return u.OfMessageTypeTextField
+	} else if !param.IsOmitted(u.OfMessageTypeNumberField) {
+		return u.OfMessageTypeNumberField
 	} else if !param.IsOmitted(u.OfMessageTypeImageField) {
 		return u.OfMessageTypeImageField
 	} else if !param.IsOmitted(u.OfMessageTypeColorField) {
@@ -757,9 +758,9 @@ func (u MessageTypeVariantFieldUnionParam) GetKey() *string {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Key)
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		return (*string)(&vt.Key)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		return (*string)(&vt.Key)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Key)
@@ -789,9 +790,9 @@ func (u MessageTypeVariantFieldUnionParam) GetLabel() *string {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeJsonField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
-	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
-		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeTextField; vt != nil && vt.Label.Valid() {
+		return &vt.Label.Value
+	} else if vt := u.OfMessageTypeNumberField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
 	} else if vt := u.OfMessageTypeImageField; vt != nil && vt.Label.Valid() {
 		return &vt.Label.Value
@@ -821,9 +822,9 @@ func (u MessageTypeVariantFieldUnionParam) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		return (*string)(&vt.Type)
@@ -855,9 +856,9 @@ func (u MessageTypeVariantFieldUnionParam) GetSettings() (res messageTypeVariant
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeJsonField; vt != nil {
 		res.any = &vt.Settings
-	} else if vt := u.OfMessageTypeNumberField; vt != nil {
-		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeTextField; vt != nil {
+		res.any = &vt.Settings
+	} else if vt := u.OfMessageTypeNumberField; vt != nil {
 		res.any = &vt.Settings
 	} else if vt := u.OfMessageTypeImageField; vt != nil {
 		res.any = &vt.Settings
@@ -882,8 +883,8 @@ func (u MessageTypeVariantFieldUnionParam) GetSettings() (res messageTypeVariant
 // [*shared.MessageTypeSelectFieldSettingsParam],
 // [*shared.MessageTypeBooleanFieldSettingsParam],
 // [*shared.MessageTypeJsonFieldSettingsParam],
-// [*MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam],
 // [*shared.MessageTypeTextFieldSettingsParam],
+// [*MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam],
 // [*shared.MessageTypeImageFieldSettingsParam],
 // [*MessageTypeVariantFieldMessageTypeColorFieldSettingsParam],
 // [*shared.MessageTypeURLFieldSettingsParam],
@@ -900,8 +901,8 @@ type messageTypeVariantFieldUnionParamSettings struct{ any }
 //	case *shared.MessageTypeSelectFieldSettingsParam:
 //	case *shared.MessageTypeBooleanFieldSettingsParam:
 //	case *shared.MessageTypeJsonFieldSettingsParam:
-//	case *knockmapi.MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 //	case *shared.MessageTypeTextFieldSettingsParam:
+//	case *knockmapi.MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 //	case *shared.MessageTypeImageFieldSettingsParam:
 //	case *knockmapi.MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 //	case *shared.MessageTypeURLFieldSettingsParam:
@@ -970,9 +971,9 @@ func (u messageTypeVariantFieldUnionParamSettings) GetDescription() *string {
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
-	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Description)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Description)
@@ -1003,9 +1004,9 @@ func (u messageTypeVariantFieldUnionParamSettings) GetPlaceholder() *string {
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
-	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Placeholder)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Placeholder)
@@ -1036,9 +1037,9 @@ func (u messageTypeVariantFieldUnionParamSettings) GetRequired() *bool {
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
-	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
-		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeTextFieldSettingsParam:
+		return paramutil.AddrIfPresent(vt.Required)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
 	case *shared.MessageTypeImageFieldSettingsParam:
 		return paramutil.AddrIfPresent(vt.Required)
@@ -1093,9 +1094,9 @@ func (u messageTypeVariantFieldUnionParamSettings) GetDefault() (res messageType
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeJsonFieldSettingsParam:
 		res.any = &vt.Default
-	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
-		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *shared.MessageTypeTextFieldSettingsParam:
+		res.any = paramutil.AddrIfPresent(vt.Default)
+	case *MessageTypeVariantFieldMessageTypeNumberFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
 	case *MessageTypeVariantFieldMessageTypeColorFieldSettingsParam:
 		res.any = paramutil.AddrIfPresent(vt.Default)
