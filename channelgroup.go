@@ -206,18 +206,22 @@ type ChannelGroupRule struct {
 	RuleType ChannelGroupRuleRuleType `json:"rule_type" api:"required"`
 	// The timestamp of when the rule was last updated.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
-	// For conditional rules, the value to compare against.
+	// For conditional rules, the value to compare against. For `is_in_random_cohort`,
+	// a 0–100 percentage with at most one decimal place.
 	Argument string `json:"argument" api:"nullable"`
-	// For conditional rules, the operator to apply.
+	// For conditional rules, the operator to apply. For `is_in_random_cohort`,
+	// `variable` must be `recipient.id` and `argument` is a 0–100 percentage.
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
 	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
-	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member",
+	// "is_in_random_cohort".
 	Operator ChannelGroupRuleOperator `json:"operator" api:"nullable"`
-	// For conditional rules, the variable to evaluate.
+	// For conditional rules, the variable to evaluate. For `is_in_random_cohort`, must
+	// be `recipient.id`.
 	Variable string `json:"variable" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -250,7 +254,8 @@ const (
 	ChannelGroupRuleRuleTypeAlways ChannelGroupRuleRuleType = "always"
 )
 
-// For conditional rules, the operator to apply.
+// For conditional rules, the operator to apply. For `is_in_random_cohort`,
+// `variable` must be `recipient.id` and `argument` is a 0–100 percentage.
 type ChannelGroupRuleOperator string
 
 const (
@@ -277,6 +282,7 @@ const (
 	ChannelGroupRuleOperatorIsTimestampOnOrAfterNow ChannelGroupRuleOperator = "is_timestamp_on_or_after_now"
 	ChannelGroupRuleOperatorIsAudienceMember        ChannelGroupRuleOperator = "is_audience_member"
 	ChannelGroupRuleOperatorIsNotAudienceMember     ChannelGroupRuleOperator = "is_not_audience_member"
+	ChannelGroupRuleOperatorIsInRandomCohort        ChannelGroupRuleOperator = "is_in_random_cohort"
 )
 
 // Wraps the ChannelGroup response under the `channel_group` key.
@@ -385,20 +391,24 @@ type ChannelGroupUpsertParamsChannelGroupChannelRule struct {
 	//
 	// Any of "if", "unless", "always".
 	RuleType string `json:"rule_type,omitzero" api:"required"`
-	// For conditional rules, the value to compare against.
+	// For conditional rules, the value to compare against. For `is_in_random_cohort`,
+	// a 0–100 percentage with at most one decimal place.
 	Argument param.Opt[string] `json:"argument,omitzero"`
-	// For conditional rules, the variable to evaluate.
+	// For conditional rules, the variable to evaluate. For `is_in_random_cohort`, must
+	// be `recipient.id`.
 	Variable param.Opt[string] `json:"variable,omitzero"`
 	// The order index of this rule within the channel group.
 	Index param.Opt[int64] `json:"index,omitzero"`
-	// For conditional rules, the operator to apply.
+	// For conditional rules, the operator to apply. For `is_in_random_cohort`,
+	// `variable` must be `recipient.id` and `argument` is a 0–100 percentage.
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",
 	// "contains_all", "not_contains_all", "is_timestamp_before",
 	// "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty",
 	// "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now",
-	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member".
+	// "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member",
+	// "is_in_random_cohort".
 	Operator string `json:"operator,omitzero"`
 	paramObj
 }
@@ -416,6 +426,6 @@ func init() {
 		"rule_type", "if", "unless", "always",
 	)
 	apijson.RegisterFieldValidator[ChannelGroupUpsertParamsChannelGroupChannelRule](
-		"operator", "equal_to", "not_equal_to", "greater_than", "less_than", "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains", "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty", "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now", "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member",
+		"operator", "equal_to", "not_equal_to", "greater_than", "less_than", "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains", "contains_all", "not_contains_all", "is_timestamp_before", "is_timestamp_on_or_after", "is_timestamp_between", "is_between", "empty", "not_empty", "exists", "not_exists", "is_timestamp", "is_timestamp_before_now", "is_timestamp_on_or_after_now", "is_audience_member", "is_not_audience_member", "is_in_random_cohort",
 	)
 }
