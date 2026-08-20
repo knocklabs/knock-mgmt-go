@@ -159,6 +159,8 @@ type Broadcast struct {
 	// An arbitrary string attached to a broadcast object. Useful for adding notes
 	// about the broadcast for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment BroadcastGoalAttachment `json:"goal_attachment" api:"nullable"`
 	// The timestamp of when the broadcast is scheduled to be sent.
 	ScheduledAt time.Time `json:"scheduled_at" api:"nullable" format:"date-time"`
 	// The timestamp of when the broadcast was sent. (read-only).
@@ -181,6 +183,7 @@ type Broadcast struct {
 		ArchivedAt        respjson.Field
 		Categories        respjson.Field
 		Description       respjson.Field
+		GoalAttachment    respjson.Field
 		ScheduledAt       respjson.Field
 		SentAt            respjson.Field
 		Settings          respjson.Field
@@ -522,6 +525,28 @@ func (r *BroadcastStepWorkflowInAppGuideStep) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+type BroadcastGoalAttachment struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays int64 `json:"attribution_window_days"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		GoalKey               respjson.Field
+		AttributionWindowDays respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BroadcastGoalAttachment) RawJSON() string { return r.JSON.raw }
+func (r *BroadcastGoalAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A map of broadcast settings.
 type BroadcastSettings struct {
 	// Whether the broadcast is commercial. Defaults to true.
@@ -561,6 +586,8 @@ type BroadcastRequestParam struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The key of the audience to target for this broadcast.
 	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment BroadcastRequestGoalAttachmentParam `json:"goal_attachment,omitzero"`
 	// A list of categories that the broadcast belongs to.
 	Categories []string `json:"categories,omitzero"`
 	// A map of broadcast settings.
@@ -1351,6 +1378,26 @@ func init() {
 	apijson.RegisterFieldValidator[BroadcastRequestStepWorkflowInAppGuideStepParam](
 		"type", "channel",
 	)
+}
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+//
+// The property GoalKey is required.
+type BroadcastRequestGoalAttachmentParam struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
+	paramObj
+}
+
+func (r BroadcastRequestGoalAttachmentParam) MarshalJSON() (data []byte, err error) {
+	type shadow BroadcastRequestGoalAttachmentParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BroadcastRequestGoalAttachmentParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A map of broadcast settings.

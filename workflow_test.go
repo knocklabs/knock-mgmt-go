@@ -221,6 +221,10 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
+				GoalAttachment: knockmapi.WorkflowUpsertParamsWorkflowGoalAttachment{
+					GoalKey:               "trial-conversion",
+					AttributionWindowDays: knockmapi.Int(7),
+				},
 				Settings: knockmapi.WorkflowUpsertParamsWorkflowSettings{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
@@ -316,6 +320,10 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
+				GoalAttachment: knockmapi.WorkflowValidateParamsWorkflowGoalAttachment{
+					GoalKey:               "trial-conversion",
+					AttributionWindowDays: knockmapi.Int(7),
+				},
 				Settings: knockmapi.WorkflowValidateParamsWorkflowSettings{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),

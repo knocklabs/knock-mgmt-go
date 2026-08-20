@@ -198,6 +198,10 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 				}},
 				Categories:  []string{"announcement"},
 				Description: knockmapi.String("A broadcast to all users"),
+				GoalAttachment: knockmapi.BroadcastRequestGoalAttachmentParam{
+					GoalKey:               "trial-conversion",
+					AttributionWindowDays: knockmapi.Int(7),
+				},
 				ScheduledAt: knockmapi.Time(time.Now()),
 				Settings: knockmapi.BroadcastRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(true),
@@ -277,6 +281,10 @@ func TestBroadcastValidateWithOptionalParams(t *testing.T) {
 				}},
 				Categories:  []string{"announcement"},
 				Description: knockmapi.String("A broadcast to all users"),
+				GoalAttachment: knockmapi.BroadcastRequestGoalAttachmentParam{
+					GoalKey:               "trial-conversion",
+					AttributionWindowDays: knockmapi.Int(7),
+				},
 				ScheduledAt: knockmapi.Time(time.Now()),
 				Settings: knockmapi.BroadcastRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(true),

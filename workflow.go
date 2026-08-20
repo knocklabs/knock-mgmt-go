@@ -674,6 +674,8 @@ type Workflow struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment WorkflowGoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -706,6 +708,7 @@ type Workflow struct {
 		Conditions            respjson.Field
 		DeletedAt             respjson.Field
 		Description           respjson.Field
+		GoalAttachment        respjson.Field
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
@@ -718,6 +721,28 @@ type Workflow struct {
 // Returns the unmodified JSON received from the API
 func (r Workflow) RawJSON() string { return r.JSON.raw }
 func (r *Workflow) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+type WorkflowGoalAttachment struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays int64 `json:"attribution_window_days"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		GoalKey               respjson.Field
+		AttributionWindowDays respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowGoalAttachment) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowGoalAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -996,6 +1021,14 @@ type WorkflowBatchStepSettings struct {
 	//
 	// Any of "fixed", "sliding".
 	BatchWindowType string `json:"batch_window_type" api:"nullable"`
+	// Whether the batch is pinned to the opening workflow version or continues on the
+	// latest compatible version. One of: `pinned` or `latest`. New batch steps default
+	// to `latest`. Configs that omit the field hydrate as `pinned`. When set to
+	// `latest`, compatible triggers share a cross-version batch and resume on the
+	// latest published workflow after close.
+	//
+	// Any of "pinned", "latest".
+	WorkflowVersionMode string `json:"workflow_version_mode" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BatchExecutionMode        respjson.Field
@@ -1007,6 +1040,7 @@ type WorkflowBatchStepSettings struct {
 		BatchWindow               respjson.Field
 		BatchWindowExtensionLimit respjson.Field
 		BatchWindowType           respjson.Field
+		WorkflowVersionMode       respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
 	} `json:"-"`
@@ -1083,6 +1117,14 @@ type WorkflowBatchStepSettingsParam struct {
 	//
 	// Any of "fixed", "sliding".
 	BatchWindowType string `json:"batch_window_type,omitzero"`
+	// Whether the batch is pinned to the opening workflow version or continues on the
+	// latest compatible version. One of: `pinned` or `latest`. New batch steps default
+	// to `latest`. Configs that omit the field hydrate as `pinned`. When set to
+	// `latest`, compatible triggers share a cross-version batch and resume on the
+	// latest published workflow after close.
+	//
+	// Any of "pinned", "latest".
+	WorkflowVersionMode string `json:"workflow_version_mode,omitzero"`
 	// A duration of time, represented as a unit and a value.
 	BatchWindow DurationParam `json:"batch_window,omitzero"`
 	// A duration of time, represented as a unit and a value.
@@ -1107,6 +1149,9 @@ func init() {
 	)
 	apijson.RegisterFieldValidator[WorkflowBatchStepSettingsParam](
 		"batch_window_type", "fixed", "sliding",
+	)
+	apijson.RegisterFieldValidator[WorkflowBatchStepSettingsParam](
+		"workflow_version_mode", "pinned", "latest",
 	)
 }
 
@@ -2586,6 +2631,8 @@ type WorkflowStepUnionSettings struct {
 	BatchWindowExtensionLimit Duration `json:"batch_window_extension_limit"`
 	// This field is from variant [WorkflowBatchStepSettings].
 	BatchWindowType string `json:"batch_window_type"`
+	// This field is from variant [WorkflowBatchStepSettings].
+	WorkflowVersionMode string `json:"workflow_version_mode"`
 	// This field is from variant [RequestTemplate].
 	Method RequestTemplateMethod `json:"method"`
 	// This field is from variant [RequestTemplate].
@@ -2641,6 +2688,7 @@ type WorkflowStepUnionSettings struct {
 		BatchWindow               respjson.Field
 		BatchWindowExtensionLimit respjson.Field
 		BatchWindowType           respjson.Field
+		WorkflowVersionMode       respjson.Field
 		Method                    respjson.Field
 		URL                       respjson.Field
 		Body                      respjson.Field
@@ -4687,6 +4735,15 @@ func (u workflowStepUnionParamSettings) GetBatchWindowType() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowBatchStepSettingsParam:
 		return &vt.BatchWindowType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetWorkflowVersionMode() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowBatchStepSettingsParam:
+		return &vt.WorkflowVersionMode
 	}
 	return nil
 }
@@ -6837,6 +6894,8 @@ type WorkflowGetResponse struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment WorkflowGetResponseGoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -6873,6 +6932,7 @@ type WorkflowGetResponse struct {
 		CreatedBy             respjson.Field
 		DeletedAt             respjson.Field
 		Description           respjson.Field
+		GoalAttachment        respjson.Field
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
@@ -6886,6 +6946,28 @@ type WorkflowGetResponse struct {
 // Returns the unmodified JSON received from the API
 func (r WorkflowGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *WorkflowGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+type WorkflowGetResponseGoalAttachment struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays int64 `json:"attribution_window_days"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		GoalKey               respjson.Field
+		AttributionWindowDays respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowGetResponseGoalAttachment) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowGetResponseGoalAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -7375,6 +7457,8 @@ type WorkflowUpsertParamsWorkflow struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment WorkflowUpsertParamsWorkflowGoalAttachment `json:"goal_attachment,omitzero"`
 	// A list of
 	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
 	// the workflow belongs to.
@@ -7413,6 +7497,26 @@ func init() {
 	apijson.RegisterFieldValidator[WorkflowUpsertParamsWorkflow](
 		"trigger_frequency", "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
 	)
+}
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+//
+// The property GoalKey is required.
+type WorkflowUpsertParamsWorkflowGoalAttachment struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
+	paramObj
+}
+
+func (r WorkflowUpsertParamsWorkflowGoalAttachment) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowUpsertParamsWorkflowGoalAttachment
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowUpsertParamsWorkflowGoalAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A map of workflow settings.
@@ -7472,6 +7576,8 @@ type WorkflowValidateParamsWorkflow struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment WorkflowValidateParamsWorkflowGoalAttachment `json:"goal_attachment,omitzero"`
 	// A list of
 	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
 	// the workflow belongs to.
@@ -7510,6 +7616,26 @@ func init() {
 	apijson.RegisterFieldValidator[WorkflowValidateParamsWorkflow](
 		"trigger_frequency", "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
 	)
+}
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+//
+// The property GoalKey is required.
+type WorkflowValidateParamsWorkflowGoalAttachment struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
+	paramObj
+}
+
+func (r WorkflowValidateParamsWorkflowGoalAttachment) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowValidateParamsWorkflowGoalAttachment
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowValidateParamsWorkflowGoalAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A map of workflow settings.
