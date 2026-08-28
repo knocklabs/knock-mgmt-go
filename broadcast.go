@@ -167,6 +167,9 @@ type Broadcast struct {
 	SentAt time.Time `json:"sent_at" api:"nullable" format:"date-time"`
 	// A map of broadcast settings.
 	Settings BroadcastSettings `json:"settings"`
+	// A list of resource tags attached to the broadcast. Tags must exist in the
+	// project's tag catalog.
+	Tags []string `json:"tags"`
 	// The key of the audience to target for this broadcast.
 	TargetAudienceKey string `json:"target_audience_key"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -187,6 +190,7 @@ type Broadcast struct {
 		ScheduledAt       respjson.Field
 		SentAt            respjson.Field
 		Settings          respjson.Field
+		Tags              respjson.Field
 		TargetAudienceKey respjson.Field
 		ExtraFields       map[string]respjson.Field
 		raw               string
@@ -592,6 +596,9 @@ type BroadcastRequestParam struct {
 	Categories []string `json:"categories,omitzero"`
 	// A map of broadcast settings.
 	Settings BroadcastRequestSettingsParam `json:"settings,omitzero"`
+	// A list of resource tags attached to the broadcast. Tags must exist in the
+	// project's tag catalog.
+	Tags []string `json:"tags,omitzero"`
 	paramObj
 }
 
