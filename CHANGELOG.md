@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.4.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.3.0...v0.4.0) (2026-09-03)
+
+
+### Features
+
+* **stlc:** refresh MAPI stainless config with stlc autoconfig ([8beaa20](https://github.com/knocklabs/knock-mgmt-go/commit/8beaa203f2e3fc65c9126a788fc8c51b0fdf5f84))
+* update mapi spec to v0.1.1545 ([9ab2356](https://github.com/knocklabs/knock-mgmt-go/commit/9ab2356f7b81442202e9bd740083f1ce0e5ad157))
+* update mapi spec to v0.1.1546 ([95fbe10](https://github.com/knocklabs/knock-mgmt-go/commit/95fbe1011a73f412cb1d10f98c732b3f82bfcb6a))
+* update mapi spec to v0.1.1548 ([8421bb7](https://github.com/knocklabs/knock-mgmt-go/commit/8421bb76798ae8c0752b86b7235282d526d2a3a6))
+* update mapi spec to v0.1.1551 ([34eb12d](https://github.com/knocklabs/knock-mgmt-go/commit/34eb12d1eeb8390924e6f228d37242bd4a4ce858))
+* update mapi spec to v0.1.1581 ([dee1f00](https://github.com/knocklabs/knock-mgmt-go/commit/dee1f00a1774d42eb434ca312ad4d357cc0b8de2))
+* update mapi spec to v0.1.1586 ([6fff4dc](https://github.com/knocklabs/knock-mgmt-go/commit/6fff4dc78ab2bc9f3b5f83d2876ecb0f560122fb))
+* update mapi spec to v0.1.1588 ([2663d69](https://github.com/knocklabs/knock-mgmt-go/commit/2663d69cb43cda239aed6497bddca5cd3fb73566))
+* update mapi spec to v0.1.1593 ([0530ac1](https://github.com/knocklabs/knock-mgmt-go/commit/0530ac188a7d61743713700894b3e5f73a4546dc))
+* update mapi spec to v0.1.1595 ([49fbbc5](https://github.com/knocklabs/knock-mgmt-go/commit/49fbbc584f9159dd7686c368e0b9f35c0d846a74))
+* update mapi spec to v0.1.1596 ([72c0e96](https://github.com/knocklabs/knock-mgmt-go/commit/72c0e96f059a999791993b5ef6e492a13feae87f))
+* update mapi spec to v0.1.1607 ([c86a32e](https://github.com/knocklabs/knock-mgmt-go/commit/c86a32e639f452d02208cc0f8cffb726a82c0da2))
+* update mapi spec to v0.1.1616 ([6a6cd21](https://github.com/knocklabs/knock-mgmt-go/commit/6a6cd21b4f68ab4f0d4c2d4a09b8a0bc2e6ea91e))
+* update mapi spec to v0.1.1617 ([095b845](https://github.com/knocklabs/knock-mgmt-go/commit/095b845e762aa9f04e53a68ec6d980ab140d2669))
+
+
+### Chores
+
+* add CODEOWNERS with @knocklabs/product as default owner ([3c4cf77](https://github.com/knocklabs/knock-mgmt-go/commit/3c4cf77569fd5753cc83ee54f6e465855edc0f7b))
+* forward SDK_WRITE_TOKEN to the back-sync workflow ([62d15cb](https://github.com/knocklabs/knock-mgmt-go/commit/62d15cb9e4f927da54004d445dd04ec9c5385732))
+* reconcile orphaned sealed commit after release back-sync ([82b5318](https://github.com/knocklabs/knock-mgmt-go/commit/82b5318d80b770425c6f6773ae9536990a1ab790))
+
 ## [0.3.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.2.0...v0.3.0) (2026-07-16)
 
 
