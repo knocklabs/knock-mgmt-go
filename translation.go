@@ -158,6 +158,39 @@ const (
 	TranslationFormatPo   TranslationFormat = "po"
 )
 
+// A translation object with a content attribute used to update or create a
+// translation.
+//
+// The properties Content, Format are required.
+type TranslationRequestParam struct {
+	// A JSON encoded string containing the key-value pairs of translation references
+	// and translation strings.
+	Content string `json:"content" api:"required"`
+	// Indicates whether content is a JSON encoded object string or a string in the PO
+	// format.
+	//
+	// Any of "json", "po".
+	Format TranslationRequestFormat `json:"format,omitzero" api:"required"`
+	paramObj
+}
+
+func (r TranslationRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow TranslationRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TranslationRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Indicates whether content is a JSON encoded object string or a string in the PO
+// format.
+type TranslationRequestFormat string
+
+const (
+	TranslationRequestFormatJson TranslationRequestFormat = "json"
+	TranslationRequestFormatPo   TranslationRequestFormat = "po"
+)
+
 // Wraps the Translation response under the `translation` key.
 type TranslationGetResponse struct {
 	// A translation object.
@@ -307,7 +340,7 @@ type TranslationUpsertParams struct {
 	Namespace string `query:"namespace" api:"required" json:"-"`
 	// A translation object with a content attribute used to update or create a
 	// translation.
-	Translation TranslationUpsertParamsTranslation `json:"translation,omitzero" api:"required"`
+	Translation TranslationRequestParam `json:"translation,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
 	// it if there are no unpublished changes.
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
@@ -351,36 +384,6 @@ func (r TranslationUpsertParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// A translation object with a content attribute used to update or create a
-// translation.
-//
-// The properties Content, Format are required.
-type TranslationUpsertParamsTranslation struct {
-	// A JSON encoded string containing the key-value pairs of translation references
-	// and translation strings.
-	Content string `json:"content" api:"required"`
-	// Indicates whether content is a JSON encoded object string or a string in the PO
-	// format.
-	//
-	// Any of "json", "po".
-	Format string `json:"format,omitzero" api:"required"`
-	paramObj
-}
-
-func (r TranslationUpsertParamsTranslation) MarshalJSON() (data []byte, err error) {
-	type shadow TranslationUpsertParamsTranslation
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TranslationUpsertParamsTranslation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[TranslationUpsertParamsTranslation](
-		"format", "json", "po",
-	)
-}
-
 // Optionally specify the returned content format. Supports 'json' and 'po'.
 // Defaults to 'json'.
 type TranslationUpsertParamsFormat string
@@ -395,7 +398,7 @@ type TranslationValidateParams struct {
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A translation object with a content attribute used to update or create a
 	// translation.
-	Translation TranslationValidateParamsTranslation `json:"translation,omitzero" api:"required"`
+	Translation TranslationRequestParam `json:"translation,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -417,34 +420,4 @@ func (r TranslationValidateParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
-}
-
-// A translation object with a content attribute used to update or create a
-// translation.
-//
-// The properties Content, Format are required.
-type TranslationValidateParamsTranslation struct {
-	// A JSON encoded string containing the key-value pairs of translation references
-	// and translation strings.
-	Content string `json:"content" api:"required"`
-	// Indicates whether content is a JSON encoded object string or a string in the PO
-	// format.
-	//
-	// Any of "json", "po".
-	Format string `json:"format,omitzero" api:"required"`
-	paramObj
-}
-
-func (r TranslationValidateParamsTranslation) MarshalJSON() (data []byte, err error) {
-	type shadow TranslationValidateParamsTranslation
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *TranslationValidateParamsTranslation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[TranslationValidateParamsTranslation](
-		"format", "json", "po",
-	)
 }

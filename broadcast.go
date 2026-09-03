@@ -20,6 +20,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/pagination"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 // BroadcastService contains methods and other services that help with interacting
@@ -160,7 +161,7 @@ type Broadcast struct {
 	// about the broadcast for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
 	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment BroadcastGoalAttachment `json:"goal_attachment" api:"nullable"`
+	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// The timestamp of when the broadcast is scheduled to be sent.
 	ScheduledAt time.Time `json:"scheduled_at" api:"nullable" format:"date-time"`
 	// The timestamp of when the broadcast was sent. (read-only).
@@ -213,10 +214,9 @@ const (
 )
 
 // BroadcastStepUnion contains all possible properties and values from
-// [WorkflowWebhookStep], [WorkflowInAppFeedStep],
-// [BroadcastStepWorkflowInAppGuideStep], [WorkflowChatStep], [WorkflowSMSStep],
-// [WorkflowPushStep], [WorkflowEmailStep], [WorkflowBranchStep],
-// [WorkflowDelayStep], [WorkflowRandomCohortStep].
+// [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowInAppGuideStep],
+// [WorkflowChatStep], [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
+// [WorkflowBranchStep], [WorkflowDelayStep], [WorkflowRandomCohortStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type BroadcastStepUnion struct {
@@ -236,14 +236,14 @@ type BroadcastStepUnion struct {
 	// This field is a union of [InAppFeedChannelSettings], [ChatChannelSettings],
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides BroadcastStepUnionChannelOverrides `json:"channel_overrides"`
-	// This field is from variant [BroadcastStepWorkflowInAppGuideStep].
+	// This field is from variant [WorkflowInAppGuideStep].
 	GuideKey string `json:"guide_key"`
 	// This field is from variant [WorkflowBranchStep].
 	Branches []WorkflowBranchStepBranch `json:"branches"`
 	// This field is from variant [WorkflowDelayStep].
 	Settings WorkflowDelayStepSettings `json:"settings"`
 	// This field is from variant [WorkflowRandomCohortStep].
-	CohortBranches []any `json:"cohort_branches"`
+	CohortBranches []WorkflowRandomCohortStepBranch `json:"cohort_branches"`
 	// This field is from variant [WorkflowRandomCohortStep].
 	CohortKey string `json:"cohort_key"`
 	JSON      struct {
@@ -277,7 +277,7 @@ func (u BroadcastStepUnion) AsWorkflowInAppFeedStep() (v WorkflowInAppFeedStep) 
 	return
 }
 
-func (u BroadcastStepUnion) AsWorkflowInAppGuideStep() (v BroadcastStepWorkflowInAppGuideStep) {
+func (u BroadcastStepUnion) AsWorkflowInAppGuideStep() (v WorkflowInAppGuideStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -471,86 +471,6 @@ func (r *BroadcastStepUnionChannelOverrides) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// An in-app guide step within a workflow. References a guide that will be shown to
-// recipients who execute this step. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-type BroadcastStepWorkflowInAppGuideStep struct {
-	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
-	//
-	// Any of "in_app_guide".
-	ChannelType string `json:"channel_type" api:"required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type string `json:"type" api:"required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. Either `channel_key` or `channel_group_key` must be provided, but
-	// not both.
-	ChannelGroupKey string `json:"channel_group_key" api:"nullable"`
-	// The key of a specific configured channel instance (e.g., 'knock-email',
-	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
-	// `channel_key` or `channel_group_key` must be provided, but not both.
-	ChannelKey string `json:"channel_key" api:"nullable"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// The key of the guide to reference. When a recipient executes this step they are
-	// added to the managed audience that backs the guide's workflow-derived targeting.
-	GuideKey string `json:"guide_key" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindow `json:"send_windows" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ChannelType     respjson.Field
-		Ref             respjson.Field
-		Type            respjson.Field
-		ChannelGroupKey respjson.Field
-		ChannelKey      respjson.Field
-		Conditions      respjson.Field
-		Description     respjson.Field
-		GuideKey        respjson.Field
-		Name            respjson.Field
-		SendWindows     respjson.Field
-		ExtraFields     map[string]respjson.Field
-		raw             string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BroadcastStepWorkflowInAppGuideStep) RawJSON() string { return r.JSON.raw }
-func (r *BroadcastStepWorkflowInAppGuideStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-type BroadcastGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays int64 `json:"attribution_window_days"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		GoalKey               respjson.Field
-		AttributionWindowDays respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BroadcastGoalAttachment) RawJSON() string { return r.JSON.raw }
-func (r *BroadcastGoalAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A map of broadcast settings.
 type BroadcastSettings struct {
 	// Whether the broadcast is commercial. Defaults to true.
@@ -591,7 +511,7 @@ type BroadcastRequestParam struct {
 	// The key of the audience to target for this broadcast.
 	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
 	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment BroadcastRequestGoalAttachmentParam `json:"goal_attachment,omitzero"`
+	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
 	// A list of categories that the broadcast belongs to.
 	Categories []string `json:"categories,omitzero"`
 	// A map of broadcast settings.
@@ -614,16 +534,16 @@ func (r *BroadcastRequestParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type BroadcastRequestStepUnionParam struct {
-	OfWorkflowWebhookStep      *WorkflowWebhookStepParam                        `json:",omitzero,inline"`
-	OfWorkflowInAppFeedStep    *WorkflowInAppFeedStepParam                      `json:",omitzero,inline"`
-	OfWorkflowInAppGuideStep   *BroadcastRequestStepWorkflowInAppGuideStepParam `json:",omitzero,inline"`
-	OfWorkflowChatStep         *WorkflowChatStepParam                           `json:",omitzero,inline"`
-	OfWorkflowSMSStep          *WorkflowSMSStepParam                            `json:",omitzero,inline"`
-	OfWorkflowPushStep         *WorkflowPushStepParam                           `json:",omitzero,inline"`
-	OfWorkflowEmailStep        *WorkflowEmailStepParam                          `json:",omitzero,inline"`
-	OfWorkflowBranchStep       *WorkflowBranchStepParam                         `json:",omitzero,inline"`
-	OfWorkflowDelayStep        *WorkflowDelayStepParam                          `json:",omitzero,inline"`
-	OfWorkflowRandomCohortStep *WorkflowRandomCohortStepParam                   `json:",omitzero,inline"`
+	OfWorkflowWebhookStep      *WorkflowWebhookStepParam      `json:",omitzero,inline"`
+	OfWorkflowInAppFeedStep    *WorkflowInAppFeedStepParam    `json:",omitzero,inline"`
+	OfWorkflowInAppGuideStep   *WorkflowInAppGuideStepParam   `json:",omitzero,inline"`
+	OfWorkflowChatStep         *WorkflowChatStepParam         `json:",omitzero,inline"`
+	OfWorkflowSMSStep          *WorkflowSMSStepParam          `json:",omitzero,inline"`
+	OfWorkflowPushStep         *WorkflowPushStepParam         `json:",omitzero,inline"`
+	OfWorkflowEmailStep        *WorkflowEmailStepParam        `json:",omitzero,inline"`
+	OfWorkflowBranchStep       *WorkflowBranchStepParam       `json:",omitzero,inline"`
+	OfWorkflowDelayStep        *WorkflowDelayStepParam        `json:",omitzero,inline"`
+	OfWorkflowRandomCohortStep *WorkflowRandomCohortStepParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -693,7 +613,7 @@ func (u BroadcastRequestStepUnionParam) GetSettings() *WorkflowDelayStepSettings
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u BroadcastRequestStepUnionParam) GetCohortBranches() []any {
+func (u BroadcastRequestStepUnionParam) GetCohortBranches() []WorkflowRandomCohortStepBranchParam {
 	if vt := u.OfWorkflowRandomCohortStep; vt != nil {
 		return vt.CohortBranches
 	}
@@ -1328,83 +1248,6 @@ func (u broadcastRequestStepUnionParamChannelOverrides) GetLinkTracking() *bool 
 		return paramutil.AddrIfPresent(vt.LinkTracking)
 	}
 	return nil
-}
-
-// An in-app guide step within a workflow. References a guide that will be shown to
-// recipients who execute this step. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-//
-// The properties ChannelType, Ref, Type are required.
-type BroadcastRequestStepWorkflowInAppGuideStepParam struct {
-	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
-	//
-	// Any of "in_app_guide".
-	ChannelType string `json:"channel_type,omitzero" api:"required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type string `json:"type,omitzero" api:"required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. Either `channel_key` or `channel_group_key` must be provided, but
-	// not both.
-	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of a specific configured channel instance (e.g., 'knock-email',
-	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
-	// `channel_key` or `channel_group_key` must be provided, but not both.
-	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// The key of the guide to reference. When a recipient executes this step they are
-	// added to the managed audience that backs the guide's workflow-derived targeting.
-	GuideKey param.Opt[string] `json:"guide_key,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r BroadcastRequestStepWorkflowInAppGuideStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow BroadcastRequestStepWorkflowInAppGuideStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BroadcastRequestStepWorkflowInAppGuideStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[BroadcastRequestStepWorkflowInAppGuideStepParam](
-		"channel_type", "in_app_guide",
-	)
-	apijson.RegisterFieldValidator[BroadcastRequestStepWorkflowInAppGuideStepParam](
-		"type", "channel",
-	)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-//
-// The property GoalKey is required.
-type BroadcastRequestGoalAttachmentParam struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
-	paramObj
-}
-
-func (r BroadcastRequestGoalAttachmentParam) MarshalJSON() (data []byte, err error) {
-	type shadow BroadcastRequestGoalAttachmentParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BroadcastRequestGoalAttachmentParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // A map of broadcast settings.

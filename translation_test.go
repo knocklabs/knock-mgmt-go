@@ -102,9 +102,9 @@ func TestTranslationUpsertWithOptionalParams(t *testing.T) {
 		knockmapi.TranslationUpsertParams{
 			Environment: "development",
 			Namespace:   "namespace",
-			Translation: knockmapi.TranslationUpsertParamsTranslation{
+			Translation: knockmapi.TranslationRequestParam{
 				Content: `{"hello":"Hello, world!"}`,
-				Format:  "json",
+				Format:  knockmapi.TranslationRequestFormatJson,
 			},
 			AllowEmpty:    knockmapi.Bool(true),
 			Annotate:      knockmapi.Bool(true),
@@ -143,9 +143,9 @@ func TestTranslationValidateWithOptionalParams(t *testing.T) {
 		"locale_code",
 		knockmapi.TranslationValidateParams{
 			Environment: "development",
-			Translation: knockmapi.TranslationValidateParamsTranslation{
+			Translation: knockmapi.TranslationRequestParam{
 				Content: `{"hello":"Hello, world!"}`,
-				Format:  "json",
+				Format:  knockmapi.TranslationRequestFormatJson,
 			},
 			Branch: knockmapi.String("feature-branch"),
 		},

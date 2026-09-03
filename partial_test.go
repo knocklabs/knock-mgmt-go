@@ -77,6 +77,61 @@ func TestPartialListWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestPartialPreviewWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Partials.Preview(context.TODO(), knockmapi.PartialPreviewParams{
+		Environment: "development",
+		Partial: knockmapi.PartialRequestParam{
+			Content:     "<p>Hello, {{ name }}!</p>",
+			Name:        "My Partial",
+			Type:        knockmapi.PartialRequestTypeHTML,
+			Description: knockmapi.String("This is a test partial"),
+			IconName:    knockmapi.String("icon_name"),
+			InputSchema: []knockmapi.PartialRequestInputSchemaUnionParam{{
+				OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
+					Key:   "text_field",
+					Label: knockmapi.String("My text field"),
+					Type:  shared.MessageTypeTextFieldTypeText,
+					Settings: shared.MessageTypeTextFieldSettingsParam{
+						Default:     knockmapi.String("A placeholder"),
+						Description: knockmapi.String("A description of the text field"),
+						MaxLength:   knockmapi.Int(100),
+						MinLength:   knockmapi.Int(10),
+						Placeholder: knockmapi.String("A placeholder for the field."),
+						Required:    knockmapi.Bool(true),
+					},
+				},
+			}},
+			VisualBlockEnabled: knockmapi.Bool(true),
+		},
+		Branch: knockmapi.String("feature-branch"),
+		Data: map[string]any{
+			"name": "bar",
+		},
+		Layout: knockmapi.PartialPreviewParamsLayout{
+			Key: knockmapi.String("key"),
+		},
+	})
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestPartialUpsertWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -95,13 +150,13 @@ func TestPartialUpsertWithOptionalParams(t *testing.T) {
 		"partial_key",
 		knockmapi.PartialUpsertParams{
 			Environment: "development",
-			Partial: knockmapi.PartialUpsertParamsPartial{
+			Partial: knockmapi.PartialRequestParam{
 				Content:     "<p>Hello, world!</p>",
 				Name:        "My Partial",
-				Type:        "html",
+				Type:        knockmapi.PartialRequestTypeHTML,
 				Description: knockmapi.String("This is a test partial"),
 				IconName:    knockmapi.String("icon_name"),
-				InputSchema: []knockmapi.PartialUpsertParamsPartialInputSchemaUnion{{
+				InputSchema: []knockmapi.PartialRequestInputSchemaUnionParam{{
 					OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
 						Key:   "text_field",
 						Label: knockmapi.String("My text field"),
@@ -153,13 +208,13 @@ func TestPartialValidateWithOptionalParams(t *testing.T) {
 		"partial_key",
 		knockmapi.PartialValidateParams{
 			Environment: "development",
-			Partial: knockmapi.PartialValidateParamsPartial{
+			Partial: knockmapi.PartialRequestParam{
 				Content:     "<p>Hello, world!</p>",
 				Name:        "My Partial",
-				Type:        "html",
+				Type:        knockmapi.PartialRequestTypeHTML,
 				Description: knockmapi.String("This is a test partial"),
 				IconName:    knockmapi.String("icon_name"),
-				InputSchema: []knockmapi.PartialValidateParamsPartialInputSchemaUnion{{
+				InputSchema: []knockmapi.PartialRequestInputSchemaUnionParam{{
 					OfMessageTypeTextField: &shared.MessageTypeTextFieldParam{
 						Key:   "text_field",
 						Label: knockmapi.String("My text field"),

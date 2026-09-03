@@ -16,6 +16,16 @@ type paramObj = param.APIObject
 
 type Error = apierror.Error
 
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+//
+// This is an alias to an internal type.
+type GoalAttachment = shared.GoalAttachment
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+//
+// This is an alias to an internal type.
+type GoalAttachmentParam = shared.GoalAttachmentParam
+
 // A boolean field used in a message type.
 //
 // This is an alias to an internal type.
@@ -72,6 +82,36 @@ type MessageTypeButtonFieldParam = shared.MessageTypeButtonFieldParam
 // This is an alias to an internal type.
 type MessageTypeButtonFieldSettingsParam = shared.MessageTypeButtonFieldSettingsParam
 
+// A hex color field (#RGB or #RRGGBB) used in a message type or partial input
+// schema.
+//
+// This is an alias to an internal type.
+type MessageTypeColorField = shared.MessageTypeColorField
+
+// The type of the field.
+//
+// This is an alias to an internal type.
+type MessageTypeColorFieldType = shared.MessageTypeColorFieldType
+
+// Equals "color"
+const MessageTypeColorFieldTypeColor = shared.MessageTypeColorFieldTypeColor
+
+// Settings for the color field.
+//
+// This is an alias to an internal type.
+type MessageTypeColorFieldSettings = shared.MessageTypeColorFieldSettings
+
+// A hex color field (#RGB or #RRGGBB) used in a message type or partial input
+// schema.
+//
+// This is an alias to an internal type.
+type MessageTypeColorFieldParam = shared.MessageTypeColorFieldParam
+
+// Settings for the color field.
+//
+// This is an alias to an internal type.
+type MessageTypeColorFieldSettingsParam = shared.MessageTypeColorFieldSettingsParam
+
 // An image field used in a message type.
 //
 // This is an alias to an internal type.
@@ -127,6 +167,34 @@ type MessageTypeJsonFieldParam = shared.MessageTypeJsonFieldParam
 //
 // This is an alias to an internal type.
 type MessageTypeJsonFieldSettingsParam = shared.MessageTypeJsonFieldSettingsParam
+
+// A list field used in a message type.
+//
+// This is an alias to an internal type.
+type MessageTypeListField = shared.MessageTypeListField
+
+// The type of the field.
+//
+// This is an alias to an internal type.
+type MessageTypeListFieldType = shared.MessageTypeListFieldType
+
+// Equals "list"
+const MessageTypeListFieldTypeList = shared.MessageTypeListFieldTypeList
+
+// Settings for the list field.
+//
+// This is an alias to an internal type.
+type MessageTypeListFieldSettings = shared.MessageTypeListFieldSettings
+
+// A list field used in a message type.
+//
+// This is an alias to an internal type.
+type MessageTypeListFieldParam = shared.MessageTypeListFieldParam
+
+// Settings for the list field.
+//
+// This is an alias to an internal type.
+type MessageTypeListFieldSettingsParam = shared.MessageTypeListFieldSettingsParam
 
 // A markdown field used in a message type.
 //
@@ -189,6 +257,36 @@ type MessageTypeMultiSelectFieldSettingsParam = shared.MessageTypeMultiSelectFie
 
 // This is an alias to an internal type.
 type MessageTypeMultiSelectFieldSettingsOptionParam = shared.MessageTypeMultiSelectFieldSettingsOptionParam
+
+// A numeric field used in a message type or partial input schema, with optional
+// min/max bounds and a unit label for display.
+//
+// This is an alias to an internal type.
+type MessageTypeNumberField = shared.MessageTypeNumberField
+
+// The type of the field.
+//
+// This is an alias to an internal type.
+type MessageTypeNumberFieldType = shared.MessageTypeNumberFieldType
+
+// Equals "number"
+const MessageTypeNumberFieldTypeNumber = shared.MessageTypeNumberFieldTypeNumber
+
+// Settings for the number field.
+//
+// This is an alias to an internal type.
+type MessageTypeNumberFieldSettings = shared.MessageTypeNumberFieldSettings
+
+// A numeric field used in a message type or partial input schema, with optional
+// min/max bounds and a unit label for display.
+//
+// This is an alias to an internal type.
+type MessageTypeNumberFieldParam = shared.MessageTypeNumberFieldParam
+
+// Settings for the number field.
+//
+// This is an alias to an internal type.
+type MessageTypeNumberFieldSettingsParam = shared.MessageTypeNumberFieldSettingsParam
 
 // A select field used in a message type.
 //
@@ -312,3 +410,14 @@ type MessageTypeURLFieldSettingsParam = shared.MessageTypeURLFieldSettingsParam
 //
 // This is an alias to an internal type.
 type PageInfo = shared.PageInfo
+
+// A recipient reference, used when referencing a recipient by either their ID (for
+// a user), or by a reference for an object.
+//
+// This is an alias to an internal type.
+type RecipientReferenceUnionParam = shared.RecipientReferenceUnionParam
+
+// An object reference.
+//
+// This is an alias to an internal type.
+type RecipientReferenceObjectRecipientReferenceParam = shared.RecipientReferenceObjectRecipientReferenceParam

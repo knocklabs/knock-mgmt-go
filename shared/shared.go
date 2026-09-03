@@ -16,6 +16,57 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+type GoalAttachment struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays int64 `json:"attribution_window_days"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		GoalKey               respjson.Field
+		AttributionWindowDays respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r GoalAttachment) RawJSON() string { return r.JSON.raw }
+func (r *GoalAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this GoalAttachment to a GoalAttachmentParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// GoalAttachmentParam.Overrides()
+func (r GoalAttachment) ToParam() GoalAttachmentParam {
+	return param.Override[GoalAttachmentParam](json.RawMessage(r.RawJSON()))
+}
+
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+//
+// The property GoalKey is required.
+type GoalAttachmentParam struct {
+	// The key of the goal to attach.
+	GoalKey string `json:"goal_key" api:"required"`
+	// The number of days to attribute conversions after the notification is sent. Must
+	// be between 1 and 30. Defaults to 7.
+	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
+	paramObj
+}
+
+func (r GoalAttachmentParam) MarshalJSON() (data []byte, err error) {
+	type shadow GoalAttachmentParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *GoalAttachmentParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A boolean field used in a message type.
 type MessageTypeBooleanField struct {
 	// The unique key of the field.
@@ -246,6 +297,122 @@ func (r MessageTypeButtonFieldSettingsParam) MarshalJSON() (data []byte, err err
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *MessageTypeButtonFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A hex color field (#RGB or #RRGGBB) used in a message type or partial input
+// schema.
+type MessageTypeColorField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "color".
+	Type MessageTypeColorFieldType `json:"type" api:"required"`
+	// Settings for the color field.
+	Settings MessageTypeColorFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeColorField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeColorField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageTypeColorField to a MessageTypeColorFieldParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageTypeColorFieldParam.Overrides()
+func (r MessageTypeColorField) ToParam() MessageTypeColorFieldParam {
+	return param.Override[MessageTypeColorFieldParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of the field.
+type MessageTypeColorFieldType string
+
+const (
+	MessageTypeColorFieldTypeColor MessageTypeColorFieldType = "color"
+)
+
+// Settings for the color field.
+type MessageTypeColorFieldSettings struct {
+	// The default hex color value.
+	Default     string `json:"default" api:"nullable"`
+	Description string `json:"description" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeColorFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeColorFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A hex color field (#RGB or #RRGGBB) used in a message type or partial input
+// schema.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeColorFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "color".
+	Type MessageTypeColorFieldType `json:"type,omitzero" api:"required"`
+	// Settings for the color field.
+	Settings MessageTypeColorFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeColorFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeColorFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeColorFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the color field.
+type MessageTypeColorFieldSettingsParam struct {
+	// The default hex color value.
+	Default     param.Opt[string] `json:"default,omitzero"`
+	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeColorFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeColorFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeColorFieldSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -491,6 +658,127 @@ func (r MessageTypeJsonFieldSettingsParam) MarshalJSON() (data []byte, err error
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *MessageTypeJsonFieldSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A list field used in a message type.
+type MessageTypeListField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "list".
+	Type MessageTypeListFieldType `json:"type" api:"required"`
+	// Settings for the list field.
+	Settings MessageTypeListFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeListField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeListField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageTypeListField to a MessageTypeListFieldParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageTypeListFieldParam.Overrides()
+func (r MessageTypeListField) ToParam() MessageTypeListFieldParam {
+	return param.Override[MessageTypeListFieldParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of the field.
+type MessageTypeListFieldType string
+
+const (
+	MessageTypeListFieldTypeList MessageTypeListFieldType = "list"
+)
+
+// Settings for the list field.
+type MessageTypeListFieldSettings struct {
+	// The default value of the list field.
+	Default     []any  `json:"default" api:"nullable"`
+	Description string `json:"description" api:"nullable"`
+	// A JSON schema used to validate the structure of each item in the list. Must be a
+	// valid JSON schema.
+	ItemSchema  any    `json:"item_schema" api:"nullable"`
+	Placeholder string `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		ItemSchema  respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeListFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeListFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A list field used in a message type.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeListFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "list".
+	Type MessageTypeListFieldType `json:"type,omitzero" api:"required"`
+	// Settings for the list field.
+	Settings MessageTypeListFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeListFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeListFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeListFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the list field.
+type MessageTypeListFieldSettingsParam struct {
+	Description param.Opt[string] `json:"description,omitzero"`
+	Placeholder param.Opt[string] `json:"placeholder,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	// The default value of the list field.
+	Default []any `json:"default,omitzero"`
+	// A JSON schema used to validate the structure of each item in the list. Must be a
+	// valid JSON schema.
+	ItemSchema any `json:"item_schema,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeListFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeListFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeListFieldSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -763,6 +1051,137 @@ func (r MessageTypeMultiSelectFieldSettingsOptionParam) MarshalJSON() (data []by
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *MessageTypeMultiSelectFieldSettingsOptionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A numeric field used in a message type or partial input schema, with optional
+// min/max bounds and a unit label for display.
+type MessageTypeNumberField struct {
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The label of the field.
+	Label string `json:"label" api:"required"`
+	// The type of the field.
+	//
+	// Any of "number".
+	Type MessageTypeNumberFieldType `json:"type" api:"required"`
+	// Settings for the number field.
+	Settings MessageTypeNumberFieldSettings `json:"settings"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Key         respjson.Field
+		Label       respjson.Field
+		Type        respjson.Field
+		Settings    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeNumberField) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeNumberField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MessageTypeNumberField to a MessageTypeNumberFieldParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MessageTypeNumberFieldParam.Overrides()
+func (r MessageTypeNumberField) ToParam() MessageTypeNumberFieldParam {
+	return param.Override[MessageTypeNumberFieldParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of the field.
+type MessageTypeNumberFieldType string
+
+const (
+	MessageTypeNumberFieldTypeNumber MessageTypeNumberFieldType = "number"
+)
+
+// Settings for the number field.
+type MessageTypeNumberFieldSettings struct {
+	// The default numeric value.
+	Default     float64 `json:"default" api:"nullable"`
+	Description string  `json:"description" api:"nullable"`
+	// Optional inclusive maximum allowed value.
+	Max float64 `json:"max" api:"nullable"`
+	// Optional inclusive minimum allowed value.
+	Min         float64 `json:"min" api:"nullable"`
+	Placeholder string  `json:"placeholder" api:"nullable"`
+	// Whether the field is required.
+	Required bool `json:"required"`
+	// Optional short label shown after the input (e.g. px, kg).
+	UnitLabel string `json:"unit_label" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Default     respjson.Field
+		Description respjson.Field
+		Max         respjson.Field
+		Min         respjson.Field
+		Placeholder respjson.Field
+		Required    respjson.Field
+		UnitLabel   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MessageTypeNumberFieldSettings) RawJSON() string { return r.JSON.raw }
+func (r *MessageTypeNumberFieldSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A numeric field used in a message type or partial input schema, with optional
+// min/max bounds and a unit label for display.
+//
+// The properties Key, Label, Type are required.
+type MessageTypeNumberFieldParam struct {
+	// The label of the field.
+	Label param.Opt[string] `json:"label,omitzero" api:"required"`
+	// The unique key of the field.
+	Key string `json:"key" api:"required"`
+	// The type of the field.
+	//
+	// Any of "number".
+	Type MessageTypeNumberFieldType `json:"type,omitzero" api:"required"`
+	// Settings for the number field.
+	Settings MessageTypeNumberFieldSettingsParam `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeNumberFieldParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeNumberFieldParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeNumberFieldParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings for the number field.
+type MessageTypeNumberFieldSettingsParam struct {
+	// The default numeric value.
+	Default     param.Opt[float64] `json:"default,omitzero"`
+	Description param.Opt[string]  `json:"description,omitzero"`
+	// Optional inclusive maximum allowed value.
+	Max param.Opt[float64] `json:"max,omitzero"`
+	// Optional inclusive minimum allowed value.
+	Min         param.Opt[float64] `json:"min,omitzero"`
+	Placeholder param.Opt[string]  `json:"placeholder,omitzero"`
+	// Optional short label shown after the input (e.g. px, kg).
+	UnitLabel param.Opt[string] `json:"unit_label,omitzero"`
+	// Whether the field is required.
+	Required param.Opt[bool] `json:"required,omitzero"`
+	paramObj
+}
+
+func (r MessageTypeNumberFieldSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow MessageTypeNumberFieldSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MessageTypeNumberFieldSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1300,5 +1719,56 @@ type PageInfo struct {
 // Returns the unmodified JSON received from the API
 func (r PageInfo) RawJSON() string { return r.JSON.raw }
 func (r *PageInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func RecipientReferenceParamOfObjectRecipientReference(collection string, id string) RecipientReferenceUnionParam {
+	var variant RecipientReferenceObjectRecipientReferenceParam
+	variant.Collection = collection
+	variant.ID = id
+	return RecipientReferenceUnionParam{OfObjectRecipientReference: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type RecipientReferenceUnionParam struct {
+	OfString                   param.Opt[string]                                `json:",omitzero,inline"`
+	OfObjectRecipientReference *RecipientReferenceObjectRecipientReferenceParam `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u RecipientReferenceUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
+}
+func (u *RecipientReferenceUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *RecipientReferenceUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
+		return u.OfObjectRecipientReference
+	}
+	return nil
+}
+
+// An object reference.
+//
+// The properties ID, Collection are required.
+type RecipientReferenceObjectRecipientReferenceParam struct {
+	// The ID of the object.
+	ID string `json:"id" api:"required"`
+	// The collection of the object.
+	Collection string `json:"collection" api:"required"`
+	paramObj
+}
+
+func (r RecipientReferenceObjectRecipientReferenceParam) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientReferenceObjectRecipientReferenceParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientReferenceObjectRecipientReferenceParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

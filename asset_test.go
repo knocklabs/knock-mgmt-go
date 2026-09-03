@@ -11,10 +11,9 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
-	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
-func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
+func TestAssetListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,25 +26,11 @@ func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.Workflows.Steps.PreviewTemplate(
-		context.TODO(),
-		"step_ref",
-		knockmapi.WorkflowStepPreviewTemplateParams{
-			WorkflowKey: "workflow_key",
-			Environment: "development",
-			Recipient: shared.RecipientReferenceUnionParam{
-				OfString: knockmapi.String("dnedry"),
-			},
-			Branch: knockmapi.String("feature-branch"),
-			Actor: shared.RecipientReferenceUnionParam{
-				OfString: knockmapi.String("dnedry"),
-			},
-			Data: map[string]any{
-				"park_id": "bar",
-			},
-			Tenant: knockmapi.String("acme-corp"),
-		},
-	)
+	_, err := client.Assets.List(context.TODO(), knockmapi.AssetListParams{
+		After:  knockmapi.String("after"),
+		Before: knockmapi.String("before"),
+		Limit:  knockmapi.Int(0),
+	})
 	if err != nil {
 		var apierr *knockmapi.Error
 		if errors.As(err, &apierr) {

@@ -13,7 +13,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/option"
 )
 
-func TestBranchNew(t *testing.T) {
+func TestSchemaGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,11 +26,13 @@ func TestBranchNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.Branches.New(
+	_, err := client.Schemas.Get(
 		context.TODO(),
-		"feature-branch",
-		knockmapi.BranchNewParams{
+		"item_type",
+		knockmapi.SchemaGetParams{
 			Environment: "development",
+			Branch:      knockmapi.String("feature-branch"),
+			Collection:  knockmapi.String("collection"),
 		},
 	)
 	if err != nil {
@@ -42,7 +44,7 @@ func TestBranchNew(t *testing.T) {
 	}
 }
 
-func TestBranchGet(t *testing.T) {
+func TestSchemaListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -55,40 +57,10 @@ func TestBranchGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.Branches.Get(
-		context.TODO(),
-		"feature-branch",
-		knockmapi.BranchGetParams{
-			Environment: "development",
-		},
-	)
-	if err != nil {
-		var apierr *knockmapi.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestBranchListWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := knockmapi.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithServiceToken("My Service Token"),
-	)
-	_, err := client.Branches.List(context.TODO(), knockmapi.BranchListParams{
+	_, err := client.Schemas.List(context.TODO(), knockmapi.SchemaListParams{
 		Environment: "development",
-		After:       knockmapi.String("after"),
-		Before:      knockmapi.String("before"),
-		Limit:       knockmapi.Int(0),
+		Branch:      knockmapi.String("feature-branch"),
+		ItemType:    knockmapi.String("item_type"),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -99,7 +71,7 @@ func TestBranchListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestBranchDelete(t *testing.T) {
+func TestSchemaUpsertWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -112,11 +84,14 @@ func TestBranchDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	err := client.Branches.Delete(
+	_, err := client.Schemas.Upsert(
 		context.TODO(),
-		"feature-branch",
-		knockmapi.BranchDeleteParams{
+		"item_type",
+		knockmapi.SchemaUpsertParams{
 			Environment: "development",
+			Branch:      knockmapi.String("feature-branch"),
+			Collection:  knockmapi.String("collection"),
+			Body:        map[string]any{},
 		},
 	)
 	if err != nil {
@@ -128,7 +103,7 @@ func TestBranchDelete(t *testing.T) {
 	}
 }
 
-func TestBranchRebase(t *testing.T) {
+func TestSchemaValidateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -141,11 +116,14 @@ func TestBranchRebase(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.Branches.Rebase(
+	_, err := client.Schemas.Validate(
 		context.TODO(),
-		"feature-branch",
-		knockmapi.BranchRebaseParams{
+		"item_type",
+		knockmapi.SchemaValidateParams{
 			Environment: "development",
+			Branch:      knockmapi.String("feature-branch"),
+			Collection:  knockmapi.String("collection"),
+			Body:        map[string]any{},
 		},
 	)
 	if err != nil {

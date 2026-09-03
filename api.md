@@ -1,24 +1,33 @@
 # Shared Params Types
 
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#GoalAttachmentParam">GoalAttachmentParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeBooleanFieldParam">MessageTypeBooleanFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeButtonFieldParam">MessageTypeButtonFieldParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeColorFieldParam">MessageTypeColorFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeImageFieldParam">MessageTypeImageFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeJsonFieldParam">MessageTypeJsonFieldParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeListFieldParam">MessageTypeListFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMarkdownFieldParam">MessageTypeMarkdownFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMultiSelectFieldParam">MessageTypeMultiSelectFieldParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeNumberFieldParam">MessageTypeNumberFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeSelectFieldParam">MessageTypeSelectFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextFieldParam">MessageTypeTextFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextareaFieldParam">MessageTypeTextareaFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeURLFieldParam">MessageTypeURLFieldParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#RecipientReferenceUnionParam">RecipientReferenceUnionParam</a>
 
 # Shared Response Types
 
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#GoalAttachment">GoalAttachment</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeBooleanField">MessageTypeBooleanField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeButtonField">MessageTypeButtonField</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeColorField">MessageTypeColorField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeImageField">MessageTypeImageField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeJsonField">MessageTypeJsonField</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeListField">MessageTypeListField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMarkdownField">MessageTypeMarkdownField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeMultiSelectField">MessageTypeMultiSelectField</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeNumberField">MessageTypeNumberField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeSelectField">MessageTypeSelectField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextField">MessageTypeTextField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeTextareaField">MessageTypeTextareaField</a>
@@ -46,12 +55,24 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#RequestTemplate">RequestTemplate</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SMSTemplate">SMSTemplate</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WebhookTemplate">WebhookTemplate</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplatePreviewResponse">TemplatePreviewResponse</a>
+
+Methods:
+
+- <code title="post /v1/templates/preview">client.Templates.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplateService.Preview">Preview</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplatePreviewParams">TemplatePreviewParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TemplatePreviewResponse">TemplatePreviewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # EmailLayouts
 
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BrandingOverridesParam">BrandingOverridesParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutRequestParam">EmailLayoutRequestParam</a>
+
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BrandingOverrides">BrandingOverrides</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayout">EmailLayout</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutPreviewResponse">EmailLayoutPreviewResponse</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutUpsertResponse">EmailLayoutUpsertResponse</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutValidateResponse">EmailLayoutValidateResponse</a>
 
@@ -59,6 +80,7 @@ Methods:
 
 - <code title="get /v1/email_layouts/{email_layout_key}">client.EmailLayouts.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, emailLayoutKey <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutGetParams">EmailLayoutGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayout">EmailLayout</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/email_layouts">client.EmailLayouts.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutListParams">EmailLayoutListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayout">EmailLayout</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /v1/email_layouts/preview">client.EmailLayouts.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutService.Preview">Preview</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutPreviewParams">EmailLayoutPreviewParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutPreviewResponse">EmailLayoutPreviewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /v1/email_layouts/{email_layout_key}">client.EmailLayouts.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, emailLayoutKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutUpsertParams">EmailLayoutUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutUpsertResponse">EmailLayoutUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /v1/email_layouts/{email_layout_key}/validate">client.EmailLayouts.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, emailLayoutKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutValidateParams">EmailLayoutValidateParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EmailLayoutValidateResponse">EmailLayoutValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
@@ -81,9 +103,14 @@ Methods:
 
 # Partials
 
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialRequestParam">PartialRequestParam</a>
+
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Partial">Partial</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialPreviewResponse">PartialPreviewResponse</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialUpsertResponse">PartialUpsertResponse</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialValidateResponse">PartialValidateResponse</a>
 
@@ -91,10 +118,15 @@ Methods:
 
 - <code title="get /v1/partials/{partial_key}">client.Partials.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, partialKey <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialGetParams">PartialGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Partial">Partial</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/partials">client.Partials.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialListParams">PartialListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Partial">Partial</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /v1/partials/preview">client.Partials.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialService.Preview">Preview</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialPreviewParams">PartialPreviewParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialPreviewResponse">PartialPreviewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /v1/partials/{partial_key}">client.Partials.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, partialKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialUpsertParams">PartialUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialUpsertResponse">PartialUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /v1/partials/{partial_key}/validate">client.Partials.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, partialKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialValidateParams">PartialValidateParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PartialValidateResponse">PartialValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Translations
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TranslationRequestParam">TranslationRequestParam</a>
 
 Response Types:
 
@@ -116,7 +148,9 @@ Params Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ConditionParam">ConditionParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ConditionGroupUnionParam">ConditionGroupUnionParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ConditionGroupAllMatchParam">ConditionGroupAllMatchParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#DurationParam">DurationParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#InlineIdentifyUserRequestParam">InlineIdentifyUserRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SendWindowParam">SendWindowParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowAIAgentStepParam">WorkflowAIAgentStepParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowBatchStepParam">WorkflowBatchStepParam</a>
@@ -126,8 +160,11 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowEmailStepParam">WorkflowEmailStepParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowFetchStepParam">WorkflowFetchStepParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowInAppFeedStepParam">WorkflowInAppFeedStepParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowInAppGuideStepParam">WorkflowInAppGuideStepParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowPushStepParam">WorkflowPushStepParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowRandomCohortStepParam">WorkflowRandomCohortStepParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowRandomCohortStepBranchParam">WorkflowRandomCohortStepBranchParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowRequestParam">WorkflowRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowSMSStepParam">WorkflowSMSStepParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowStepUnionParam">WorkflowStepUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowThrottleStepParam">WorkflowThrottleStepParam</a>
@@ -142,6 +179,7 @@ Response Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Condition">Condition</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ConditionGroupUnion">ConditionGroupUnion</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ConditionGroupAllMatch">ConditionGroupAllMatch</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Duration">Duration</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SendWindow">SendWindow</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Workflow">Workflow</a>
@@ -153,8 +191,10 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowEmailStep">WorkflowEmailStep</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowFetchStep">WorkflowFetchStep</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowInAppFeedStep">WorkflowInAppFeedStep</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowInAppGuideStep">WorkflowInAppGuideStep</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowPushStep">WorkflowPushStep</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowRandomCohortStep">WorkflowRandomCohortStep</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowRandomCohortStepBranch">WorkflowRandomCohortStepBranch</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowSMSStep">WorkflowSMSStep</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowStepUnion">WorkflowStepUnion</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WorkflowThrottleStep">WorkflowThrottleStep</a>
@@ -193,6 +233,7 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeRequestParam">MessageTypeRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#MessageTypeVariantParam">MessageTypeVariantParam</a>
 
 Response Types:
@@ -347,6 +388,7 @@ Methods:
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GuideActivationURLPatternParam">GuideActivationURLPatternParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GuideRequestParam">GuideRequestParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GuideStepParam">GuideStepParam</a>
 
 Response Types:
@@ -380,6 +422,7 @@ Methods:
 - <code title="get /v1/branches/{branch_slug}">client.Branches.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, branchSlug <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchGetParams">BranchGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Branch">Branch</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/branches">client.Branches.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchListParams">BranchListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Branch">Branch</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /v1/branches/{branch_slug}">client.Branches.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, branchSlug <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchDeleteParams">BranchDeleteParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="put /v1/branches/{branch_slug}/rebase">client.Branches.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchService.Rebase">Rebase</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, branchSlug <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BranchRebaseParams">BranchRebaseParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Branch">Branch</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Broadcasts
 
@@ -409,6 +452,7 @@ Methods:
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceConditionParam">AudienceConditionParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceRequestUnionParam">AudienceRequestUnionParam</a>
 
 Response Types:
 
@@ -427,3 +471,107 @@ Methods:
 - <code title="delete /v1/audiences/{audience_key}">client.Audiences.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceService.Archive">Archive</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, audienceKey <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceArchiveParams">AudienceArchiveParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceArchiveResponse">AudienceArchiveResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /v1/audiences/{audience_key}">client.Audiences.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, audienceKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceUpsertParams">AudienceUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceUpsertResponse">AudienceUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="put /v1/audiences/{audience_key}/validate">client.Audiences.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, audienceKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceValidateParams">AudienceValidateParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AudienceValidateResponse">AudienceValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Goals
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalConditionParam">GoalConditionParam</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalRequestParam">GoalRequestParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Goal">Goal</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalCondition">GoalCondition</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalArchiveResponse">GoalArchiveResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalCloneResponse">GoalCloneResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalUpsertResponse">GoalUpsertResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalValidateResponse">GoalValidateResponse</a>
+
+Methods:
+
+- <code title="get /v1/goals/{goal_key}">client.Goals.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, goalKey <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalGetParams">GoalGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Goal">Goal</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/goals">client.Goals.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalListParams">GoalListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Goal">Goal</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /v1/goals/{goal_key}">client.Goals.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalService.Archive">Archive</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, goalKey <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalArchiveParams">GoalArchiveParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalArchiveResponse">GoalArchiveResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /v1/goals/{goal_key}/clone">client.Goals.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalService.Clone">Clone</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, goalKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalCloneParams">GoalCloneParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalCloneResponse">GoalCloneResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /v1/goals/{goal_key}">client.Goals.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, goalKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalUpsertParams">GoalUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalUpsertResponse">GoalUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /v1/goals/{goal_key}/validate">client.Goals.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, goalKey <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalValidateParams">GoalValidateParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#GoalValidateResponse">GoalValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Assets
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Asset">Asset</a>
+
+Methods:
+
+- <code title="get /v1/assets">client.Assets.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AssetService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#AssetListParams">AssetListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Asset">Asset</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Tags
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Tag">Tag</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagListResponse">TagListResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagUpsertResponse">TagUpsertResponse</a>
+
+Methods:
+
+- <code title="get /v1/tags">client.Tags.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagListResponse">TagListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /v1/tags/{name}">client.Tags.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, name <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="put /v1/tags/{name}">client.Tags.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, name <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagUpsertParams">TagUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#TagUpsertResponse">TagUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Schemas
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#ItemSchema">ItemSchema</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaGetResponse">SchemaGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaListResponse">SchemaListResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaUpsertResponse">SchemaUpsertResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaValidateResponse">SchemaValidateResponse</a>
+
+Methods:
+
+- <code title="get /v1/schemas/{item_type}">client.Schemas.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, itemType <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaGetParams">SchemaGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaGetResponse">SchemaGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/schemas">client.Schemas.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaListParams">SchemaListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaListResponse">SchemaListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /v1/schemas/{item_type}">client.Schemas.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, itemType <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaUpsertParams">SchemaUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaUpsertResponse">SchemaUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /v1/schemas/{item_type}/validate">client.Schemas.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, itemType <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaValidateParams">SchemaValidateParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#SchemaValidateResponse">SchemaValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# PreferenceCenter
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterGetResponse">PreferenceCenterGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterResetResponse">PreferenceCenterResetResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterUpsertResponse">PreferenceCenterUpsertResponse</a>
+
+Methods:
+
+- <code title="get /v1/preference_center">client.PreferenceCenter.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterGetParams">PreferenceCenterGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterGetResponse">PreferenceCenterGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /v1/preference_center/reset">client.PreferenceCenter.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterService.Reset">Reset</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterResetParams">PreferenceCenterResetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterResetResponse">PreferenceCenterResetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /v1/preference_center">client.PreferenceCenter.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterUpsertParams">PreferenceCenterUpsertParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCenterUpsertResponse">PreferenceCenterUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Billing
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BillingSummary">BillingSummary</a>
+
+Methods:
+
+- <code title="get /v1/billing/summary">client.Billing.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BillingService.GetSummary">GetSummary</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#BillingSummary">BillingSummary</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# PreferenceCategories
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategory">PreferenceCategory</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryListResponse">PreferenceCategoryListResponse</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryUpsertResponse">PreferenceCategoryUpsertResponse</a>
+
+Methods:
+
+- <code title="get /v1/preference_categories">client.PreferenceCategories.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryListResponse">PreferenceCategoryListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /v1/preference_categories/{name}">client.PreferenceCategories.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, name <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="put /v1/preference_categories/{name}">client.PreferenceCategories.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, name <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#PreferenceCategoryUpsertResponse">PreferenceCategoryUpsertResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>

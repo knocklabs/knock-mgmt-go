@@ -13,6 +13,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestBroadcastGetWithOptionalParams(t *testing.T) {
@@ -178,7 +179,7 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 						},
 						ChannelType: knockmapi.WorkflowInAppFeedStepChannelTypeInAppFeed,
 						Conditions: knockmapi.ConditionGroupUnionParam{
-							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+							OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
 									Operator: knockmapi.ConditionOperatorEqualTo,
 									Variable: "recipient.property",
@@ -198,7 +199,7 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 				}},
 				Categories:  []string{"announcement"},
 				Description: knockmapi.String("A broadcast to all users"),
-				GoalAttachment: knockmapi.BroadcastRequestGoalAttachmentParam{
+				GoalAttachment: shared.GoalAttachmentParam{
 					GoalKey:               "trial-conversion",
 					AttributionWindowDays: knockmapi.Int(7),
 				},
@@ -262,7 +263,7 @@ func TestBroadcastValidateWithOptionalParams(t *testing.T) {
 						},
 						ChannelType: knockmapi.WorkflowInAppFeedStepChannelTypeInAppFeed,
 						Conditions: knockmapi.ConditionGroupUnionParam{
-							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+							OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
 									Operator: knockmapi.ConditionOperatorEqualTo,
 									Variable: "recipient.property",
@@ -282,7 +283,7 @@ func TestBroadcastValidateWithOptionalParams(t *testing.T) {
 				}},
 				Categories:  []string{"announcement"},
 				Description: knockmapi.String("A broadcast to all users"),
-				GoalAttachment: knockmapi.BroadcastRequestGoalAttachmentParam{
+				GoalAttachment: shared.GoalAttachmentParam{
 					GoalKey:               "trial-conversion",
 					AttributionWindowDays: knockmapi.Int(7),
 				},

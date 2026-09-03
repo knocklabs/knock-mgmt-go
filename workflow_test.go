@@ -12,6 +12,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestWorkflowGetWithOptionalParams(t *testing.T) {
@@ -127,7 +128,7 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 		knockmapi.WorkflowRunParams{
 			Environment: "development",
 			Recipients: []knockmapi.WorkflowRunParamsRecipientUnion{{
-				OfInlineIdentifyUserRequest: &knockmapi.WorkflowRunParamsRecipientInlineIdentifyUserRequest{
+				OfInlineIdentifyUserRequest: &knockmapi.InlineIdentifyUserRequestParam{
 					ID:    "user_1",
 					Email: knockmapi.String("jane@example.com"),
 					Name:  knockmapi.String("Jane Doe"),
@@ -171,7 +172,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 		"workflow_key",
 		knockmapi.WorkflowUpsertParams{
 			Environment: "development",
-			Workflow: knockmapi.WorkflowUpsertParamsWorkflow{
+			Workflow: knockmapi.WorkflowRequestParam{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
 					OfWorkflowInAppFeedStep: &knockmapi.WorkflowInAppFeedStepParam{
@@ -192,7 +193,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 						},
 						ChannelType: knockmapi.WorkflowInAppFeedStepChannelTypeInAppFeed,
 						Conditions: knockmapi.ConditionGroupUnionParam{
-							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+							OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
 									Operator: knockmapi.ConditionOperatorEqualTo,
 									Variable: "recipient.property",
@@ -212,7 +213,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 				}},
 				Categories: []string{"string"},
 				Conditions: knockmapi.ConditionGroupUnionParam{
-					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
 							Operator: knockmapi.ConditionOperatorEqualTo,
 							Variable: "recipient.property",
@@ -221,11 +222,11 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
-				GoalAttachment: knockmapi.WorkflowUpsertParamsWorkflowGoalAttachment{
+				GoalAttachment: shared.GoalAttachmentParam{
 					GoalKey:               "trial-conversion",
 					AttributionWindowDays: knockmapi.Int(7),
 				},
-				Settings: knockmapi.WorkflowUpsertParamsWorkflowSettings{
+				Settings: knockmapi.WorkflowRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
@@ -233,7 +234,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
-				TriggerFrequency: "every_trigger",
+				TriggerFrequency: knockmapi.WorkflowRequestTriggerFrequencyEveryTrigger,
 			},
 			AllowEmpty:    knockmapi.Bool(true),
 			Annotate:      knockmapi.Bool(true),
@@ -270,7 +271,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 		"workflow_key",
 		knockmapi.WorkflowValidateParams{
 			Environment: "development",
-			Workflow: knockmapi.WorkflowValidateParamsWorkflow{
+			Workflow: knockmapi.WorkflowRequestParam{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
 					OfWorkflowInAppFeedStep: &knockmapi.WorkflowInAppFeedStepParam{
@@ -291,7 +292,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 						},
 						ChannelType: knockmapi.WorkflowInAppFeedStepChannelTypeInAppFeed,
 						Conditions: knockmapi.ConditionGroupUnionParam{
-							OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+							OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 								All: []knockmapi.ConditionParam{{
 									Operator: knockmapi.ConditionOperatorEqualTo,
 									Variable: "recipient.property",
@@ -311,7 +312,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 				}},
 				Categories: []string{"string"},
 				Conditions: knockmapi.ConditionGroupUnionParam{
-					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
 							Operator: knockmapi.ConditionOperatorEqualTo,
 							Variable: "recipient.property",
@@ -320,11 +321,11 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
-				GoalAttachment: knockmapi.WorkflowValidateParamsWorkflowGoalAttachment{
+				GoalAttachment: shared.GoalAttachmentParam{
 					GoalKey:               "trial-conversion",
 					AttributionWindowDays: knockmapi.Int(7),
 				},
-				Settings: knockmapi.WorkflowValidateParamsWorkflowSettings{
+				Settings: knockmapi.WorkflowRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
 				},
@@ -332,7 +333,7 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
-				TriggerFrequency: "every_trigger",
+				TriggerFrequency: knockmapi.WorkflowRequestTriggerFrequencyEveryTrigger,
 			},
 			Branch: knockmapi.String("feature-branch"),
 		},

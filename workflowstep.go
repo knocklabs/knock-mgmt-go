@@ -17,6 +17,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/option"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 // Workflows let you express your cross-channel notification logic.
@@ -242,7 +243,7 @@ type WorkflowStepPreviewTemplateParams struct {
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
-	Recipient WorkflowStepPreviewTemplateParamsRecipientUnion `json:"recipient,omitzero" api:"required"`
+	Recipient shared.RecipientReferenceUnionParam `json:"recipient,omitzero" api:"required"`
 	// The tenant to associate the workflow with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// The slug of a branch to use. This option can only be used when `environment` is
@@ -250,7 +251,7 @@ type WorkflowStepPreviewTemplateParams struct {
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
 	// a user), or by a reference for an object.
-	Actor WorkflowStepPreviewTemplateParamsActorUnion `json:"actor,omitzero"`
+	Actor shared.RecipientReferenceUnionParam `json:"actor,omitzero"`
 	// The data to pass to the workflow template for rendering.
 	Data map[string]any `json:"data,omitzero"`
 	paramObj
@@ -271,92 +272,4 @@ func (r WorkflowStepPreviewTemplateParams) URLQuery() (v url.Values, err error) 
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type WorkflowStepPreviewTemplateParamsRecipientUnion struct {
-	OfString                   param.Opt[string]                                                   `json:",omitzero,inline"`
-	OfObjectRecipientReference *WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u WorkflowStepPreviewTemplateParamsRecipientUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
-}
-func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *WorkflowStepPreviewTemplateParamsRecipientUnion) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
-		return u.OfObjectRecipientReference
-	}
-	return nil
-}
-
-// An object reference.
-//
-// The properties ID, Collection are required.
-type WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference struct {
-	// The ID of the object.
-	ID string `json:"id" api:"required"`
-	// The collection of the object.
-	Collection string `json:"collection" api:"required"`
-	paramObj
-}
-
-func (r WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepPreviewTemplateParamsRecipientObjectRecipientReference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type WorkflowStepPreviewTemplateParamsActorUnion struct {
-	OfString                   param.Opt[string]                                               `json:",omitzero,inline"`
-	OfObjectRecipientReference *WorkflowStepPreviewTemplateParamsActorObjectRecipientReference `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u WorkflowStepPreviewTemplateParamsActorUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfObjectRecipientReference)
-}
-func (u *WorkflowStepPreviewTemplateParamsActorUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *WorkflowStepPreviewTemplateParamsActorUnion) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfObjectRecipientReference) {
-		return u.OfObjectRecipientReference
-	}
-	return nil
-}
-
-// An object reference.
-//
-// The properties ID, Collection are required.
-type WorkflowStepPreviewTemplateParamsActorObjectRecipientReference struct {
-	// The ID of the object.
-	ID string `json:"id" api:"required"`
-	// The collection of the object.
-	Collection string `json:"collection" api:"required"`
-	paramObj
-}
-
-func (r WorkflowStepPreviewTemplateParamsActorObjectRecipientReference) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepPreviewTemplateParamsActorObjectRecipientReference
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepPreviewTemplateParamsActorObjectRecipientReference) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }

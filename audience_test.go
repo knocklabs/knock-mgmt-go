@@ -123,11 +123,11 @@ func TestAudienceUpsertWithOptionalParams(t *testing.T) {
 		"audience_key",
 		knockmapi.AudienceUpsertParams{
 			Environment: "development",
-			Audience: knockmapi.AudienceUpsertParamsAudienceUnion{
-				OfDynamic: &knockmapi.AudienceUpsertParamsAudienceDynamic{
+			Audience: knockmapi.AudienceRequestUnionParam{
+				OfDynamic: &knockmapi.AudienceRequestDynamicParam{
 					Name:        "Premium users",
 					Description: knockmapi.String("Users on the premium plan"),
-					Segments: []knockmapi.AudienceUpsertParamsAudienceDynamicSegment{{
+					Segments: []knockmapi.AudienceRequestDynamicSegmentParam{{
 						Conditions: []knockmapi.AudienceConditionParam{{
 							Operator: knockmapi.AudienceConditionOperatorEqualTo,
 							Property: "recipient.plan",
@@ -171,11 +171,11 @@ func TestAudienceValidateWithOptionalParams(t *testing.T) {
 		"audience_key",
 		knockmapi.AudienceValidateParams{
 			Environment: "development",
-			Audience: knockmapi.AudienceValidateParamsAudienceUnion{
-				OfDynamic: &knockmapi.AudienceValidateParamsAudienceDynamic{
+			Audience: knockmapi.AudienceRequestUnionParam{
+				OfDynamic: &knockmapi.AudienceRequestDynamicParam{
 					Name:        "Premium users",
 					Description: knockmapi.String("Users on the premium plan"),
-					Segments: []knockmapi.AudienceValidateParamsAudienceDynamicSegment{{
+					Segments: []knockmapi.AudienceRequestDynamicSegmentParam{{
 						Conditions: []knockmapi.AudienceConditionParam{{
 							Operator: knockmapi.AudienceConditionOperatorEqualTo,
 							Property: "recipient.plan",

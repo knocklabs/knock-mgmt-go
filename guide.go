@@ -19,6 +19,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/pagination"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 // Guides let you define in-app guides that can be displayed to users based on
@@ -164,7 +165,7 @@ type Guide struct {
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description" api:"nullable"`
 	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment GuideGoalAttachment `json:"goal_attachment" api:"nullable"`
+	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A group of conditions to be evaluated.
 	GuideAudienceConditions ConditionGroupUnion `json:"guide_audience_conditions" api:"nullable"`
 	// The semver of the guide.
@@ -214,28 +215,6 @@ type Guide struct {
 // Returns the unmodified JSON received from the API
 func (r Guide) RawJSON() string { return r.JSON.raw }
 func (r *Guide) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-type GuideGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays int64 `json:"attribution_window_days"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		GoalKey               respjson.Field
-		AttributionWindowDays respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r GuideGoalAttachment) RawJSON() string { return r.JSON.raw }
-func (r *GuideGoalAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -307,6 +286,48 @@ func (r GuideActivationURLPatternParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *GuideActivationURLPatternParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request to create or update a guide.
+//
+// The properties ChannelKey, Name, Steps are required.
+type GuideRequestParam struct {
+	// The key of the channel in which the guide exists.
+	ChannelKey string `json:"channel_key" api:"required"`
+	// A name for the guide. Must be at maximum 255 characters in length.
+	Name string `json:"name" api:"required"`
+	// A list of guide step objects in the guide.
+	Steps []GuideStepParam `json:"steps,omitzero" api:"required"`
+	// The timestamp of when the guide was archived.
+	ArchivedAt param.Opt[time.Time] `json:"archived_at,omitzero" format:"date-time"`
+	// The timestamp of when the guide was deleted.
+	DeletedAt param.Opt[time.Time] `json:"deleted_at,omitzero" format:"date-time"`
+	// An arbitrary string attached to a guide object. Useful for adding notes about
+	// the guide for internal purposes. Maximum of 280 characters allowed.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// The key of the target audience for the guide. When not set, will default to
+	// targeting all users.
+	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
+	// A list of activation url patterns that describe when the guide should be shown.
+	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
+	// A group of conditions to be evaluated.
+	GuideAudienceConditions ConditionGroupUnionParam `json:"guide_audience_conditions,omitzero"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags,omitzero"`
+	// A group of conditions to be evaluated.
+	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
+	paramObj
+}
+
+func (r GuideRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow GuideRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *GuideRequestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -586,7 +607,7 @@ type GuideUpsertParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create or update a guide.
-	Guide GuideUpsertParamsGuide `json:"guide,omitzero" api:"required"`
+	Guide GuideRequestParam `json:"guide,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
 	// it if there are no unpublished changes.
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
@@ -622,73 +643,11 @@ func (r GuideUpsertParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// A request to create or update a guide.
-//
-// The properties ChannelKey, Name, Steps are required.
-type GuideUpsertParamsGuide struct {
-	// The key of the channel in which the guide exists.
-	ChannelKey string `json:"channel_key" api:"required"`
-	// A name for the guide. Must be at maximum 255 characters in length.
-	Name string `json:"name" api:"required"`
-	// A list of guide step objects in the guide.
-	Steps []GuideStepParam `json:"steps,omitzero" api:"required"`
-	// The timestamp of when the guide was archived.
-	ArchivedAt param.Opt[time.Time] `json:"archived_at,omitzero" format:"date-time"`
-	// The timestamp of when the guide was deleted.
-	DeletedAt param.Opt[time.Time] `json:"deleted_at,omitzero" format:"date-time"`
-	// An arbitrary string attached to a guide object. Useful for adding notes about
-	// the guide for internal purposes. Maximum of 280 characters allowed.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// The key of the target audience for the guide. When not set, will default to
-	// targeting all users.
-	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment GuideUpsertParamsGuideGoalAttachment `json:"goal_attachment,omitzero"`
-	// A list of activation url patterns that describe when the guide should be shown.
-	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
-	// A group of conditions to be evaluated.
-	GuideAudienceConditions ConditionGroupUnionParam `json:"guide_audience_conditions,omitzero"`
-	// Use tags to organize resources internally within your account. For example, by
-	// team or product area.
-	Tags []string `json:"tags,omitzero"`
-	// A group of conditions to be evaluated.
-	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
-	paramObj
-}
-
-func (r GuideUpsertParamsGuide) MarshalJSON() (data []byte, err error) {
-	type shadow GuideUpsertParamsGuide
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GuideUpsertParamsGuide) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-//
-// The property GoalKey is required.
-type GuideUpsertParamsGuideGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
-	paramObj
-}
-
-func (r GuideUpsertParamsGuideGoalAttachment) MarshalJSON() (data []byte, err error) {
-	type shadow GuideUpsertParamsGuideGoalAttachment
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GuideUpsertParamsGuideGoalAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type GuideValidateParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create or update a guide.
-	Guide GuideValidateParamsGuide `json:"guide,omitzero" api:"required"`
+	Guide GuideRequestParam `json:"guide,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -709,66 +668,4 @@ func (r GuideValidateParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
-}
-
-// A request to create or update a guide.
-//
-// The properties ChannelKey, Name, Steps are required.
-type GuideValidateParamsGuide struct {
-	// The key of the channel in which the guide exists.
-	ChannelKey string `json:"channel_key" api:"required"`
-	// A name for the guide. Must be at maximum 255 characters in length.
-	Name string `json:"name" api:"required"`
-	// A list of guide step objects in the guide.
-	Steps []GuideStepParam `json:"steps,omitzero" api:"required"`
-	// The timestamp of when the guide was archived.
-	ArchivedAt param.Opt[time.Time] `json:"archived_at,omitzero" format:"date-time"`
-	// The timestamp of when the guide was deleted.
-	DeletedAt param.Opt[time.Time] `json:"deleted_at,omitzero" format:"date-time"`
-	// An arbitrary string attached to a guide object. Useful for adding notes about
-	// the guide for internal purposes. Maximum of 280 characters allowed.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// The key of the target audience for the guide. When not set, will default to
-	// targeting all users.
-	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment GuideValidateParamsGuideGoalAttachment `json:"goal_attachment,omitzero"`
-	// A list of activation url patterns that describe when the guide should be shown.
-	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`
-	// A group of conditions to be evaluated.
-	GuideAudienceConditions ConditionGroupUnionParam `json:"guide_audience_conditions,omitzero"`
-	// Use tags to organize resources internally within your account. For example, by
-	// team or product area.
-	Tags []string `json:"tags,omitzero"`
-	// A group of conditions to be evaluated.
-	TargetPropertyConditions ConditionGroupUnionParam `json:"target_property_conditions,omitzero"`
-	paramObj
-}
-
-func (r GuideValidateParamsGuide) MarshalJSON() (data []byte, err error) {
-	type shadow GuideValidateParamsGuide
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GuideValidateParamsGuide) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-//
-// The property GoalKey is required.
-type GuideValidateParamsGuideGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
-	paramObj
-}
-
-func (r GuideValidateParamsGuideGoalAttachment) MarshalJSON() (data []byte, err error) {
-	type shadow GuideValidateParamsGuideGoalAttachment
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GuideValidateParamsGuideGoalAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }

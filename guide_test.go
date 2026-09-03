@@ -12,6 +12,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestGuideGetWithOptionalParams(t *testing.T) {
@@ -152,7 +153,7 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 		"guide_key",
 		knockmapi.GuideUpsertParams{
 			Environment: "development",
-			Guide: knockmapi.GuideUpsertParamsGuide{
+			Guide: knockmapi.GuideRequestParam{
 				ChannelKey: "in-app-guide",
 				Name:       "Getting Started Guide",
 				Steps: []knockmapi.GuideStepParam{{
@@ -173,12 +174,12 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				ArchivedAt:  knockmapi.Time(time.Now()),
 				DeletedAt:   knockmapi.Time(time.Now()),
 				Description: knockmapi.String("A guide to help users get started with the application"),
-				GoalAttachment: knockmapi.GuideUpsertParamsGuideGoalAttachment{
+				GoalAttachment: shared.GoalAttachmentParam{
 					GoalKey:               "trial-conversion",
 					AttributionWindowDays: knockmapi.Int(7),
 				},
 				GuideAudienceConditions: knockmapi.ConditionGroupUnionParam{
-					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
 							Operator: knockmapi.ConditionOperatorEqualTo,
 							Variable: "recipient.property",
@@ -189,7 +190,7 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				Tags:              []string{"string"},
 				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
-					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
 							Operator: knockmapi.ConditionOperatorEqualTo,
 							Variable: "recipient.property",
@@ -233,7 +234,7 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 		"guide_key",
 		knockmapi.GuideValidateParams{
 			Environment: "development",
-			Guide: knockmapi.GuideValidateParamsGuide{
+			Guide: knockmapi.GuideRequestParam{
 				ChannelKey: "in-app-guide",
 				Name:       "Getting Started Guide",
 				Steps: []knockmapi.GuideStepParam{{
@@ -254,12 +255,12 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 				ArchivedAt:  knockmapi.Time(time.Now()),
 				DeletedAt:   knockmapi.Time(time.Now()),
 				Description: knockmapi.String("A guide to help users get started with the application"),
-				GoalAttachment: knockmapi.GuideValidateParamsGuideGoalAttachment{
+				GoalAttachment: shared.GoalAttachmentParam{
 					GoalKey:               "trial-conversion",
 					AttributionWindowDays: knockmapi.Int(7),
 				},
 				GuideAudienceConditions: knockmapi.ConditionGroupUnionParam{
-					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
 							Operator: knockmapi.ConditionOperatorEqualTo,
 							Variable: "recipient.property",
@@ -270,7 +271,7 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 				Tags:              []string{"string"},
 				TargetAudienceKey: knockmapi.String("target_audience_key"),
 				TargetPropertyConditions: knockmapi.ConditionGroupUnionParam{
-					OfConditionGroupAllMatch: &knockmapi.ConditionGroupConditionGroupAllMatchParam{
+					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
 							Operator: knockmapi.ConditionOperatorEqualTo,
 							Variable: "recipient.property",

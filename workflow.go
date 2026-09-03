@@ -20,6 +20,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/pagination"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 // Workflows let you express your cross-channel notification logic.
@@ -252,11 +253,11 @@ func (r *ConditionParam) UnmarshalJSON(data []byte) error {
 }
 
 // ConditionGroupUnion contains all possible properties and values from
-// [ConditionGroupConditionGroupAllMatch], [ConditionGroupConditionGroupAnyMatch].
+// [ConditionGroupAllMatch], [ConditionGroupConditionGroupAnyMatch].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ConditionGroupUnion struct {
-	// This field is from variant [ConditionGroupConditionGroupAllMatch].
+	// This field is from variant [ConditionGroupAllMatch].
 	All []Condition `json:"all"`
 	// This field is from variant [ConditionGroupConditionGroupAnyMatch].
 	Any  []ConditionGroupConditionGroupAnyMatchAnyUnion `json:"any"`
@@ -267,7 +268,7 @@ type ConditionGroupUnion struct {
 	} `json:"-"`
 }
 
-func (u ConditionGroupUnion) AsConditionGroupAllMatch() (v ConditionGroupConditionGroupAllMatch) {
+func (u ConditionGroupUnion) AsConditionGroupAllMatch() (v ConditionGroupAllMatch) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -293,24 +294,6 @@ func (r ConditionGroupUnion) ToParam() ConditionGroupUnionParam {
 	return param.Override[ConditionGroupUnionParam](json.RawMessage(r.RawJSON()))
 }
 
-// A group of conditions that must all be met.
-type ConditionGroupConditionGroupAllMatch struct {
-	// A list of conditions.
-	All []Condition `json:"all"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		All         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ConditionGroupConditionGroupAllMatch) RawJSON() string { return r.JSON.raw }
-func (r *ConditionGroupConditionGroupAllMatch) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A group of conditions that any must be met. Can contain nested alls.
 type ConditionGroupConditionGroupAnyMatch struct {
 	// An array of conditions or nested condition groups to evaluate.
@@ -330,8 +313,7 @@ func (r *ConditionGroupConditionGroupAnyMatch) UnmarshalJSON(data []byte) error 
 }
 
 // ConditionGroupConditionGroupAnyMatchAnyUnion contains all possible properties
-// and values from [Condition],
-// [ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch].
+// and values from [Condition], [ConditionGroupAllMatch].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ConditionGroupConditionGroupAnyMatchAnyUnion struct {
@@ -341,8 +323,7 @@ type ConditionGroupConditionGroupAnyMatchAnyUnion struct {
 	Variable string `json:"variable"`
 	// This field is from variant [Condition].
 	Argument string `json:"argument"`
-	// This field is from variant
-	// [ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch].
+	// This field is from variant [ConditionGroupAllMatch].
 	All  []Condition `json:"all"`
 	JSON struct {
 		Operator respjson.Field
@@ -358,7 +339,7 @@ func (u ConditionGroupConditionGroupAnyMatchAnyUnion) AsCondition() (v Condition
 	return
 }
 
-func (u ConditionGroupConditionGroupAnyMatchAnyUnion) AsConditionGroupAllMatch() (v ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch) {
+func (u ConditionGroupConditionGroupAnyMatchAnyUnion) AsConditionGroupAllMatch() (v ConditionGroupAllMatch) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -370,31 +351,11 @@ func (r *ConditionGroupConditionGroupAnyMatchAnyUnion) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A group of conditions that must all be met.
-type ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch struct {
-	// A list of conditions.
-	All []Condition `json:"all"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		All         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatch) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ConditionGroupUnionParam struct {
-	OfConditionGroupAllMatch *ConditionGroupConditionGroupAllMatchParam `json:",omitzero,inline"`
+	OfConditionGroupAllMatch *ConditionGroupAllMatchParam               `json:",omitzero,inline"`
 	OfConditionGroupAnyMatch *ConditionGroupConditionGroupAnyMatchParam `json:",omitzero,inline"`
 	paramUnion
 }
@@ -413,21 +374,6 @@ func (u *ConditionGroupUnionParam) asAny() any {
 		return u.OfConditionGroupAnyMatch
 	}
 	return nil
-}
-
-// A group of conditions that must all be met.
-type ConditionGroupConditionGroupAllMatchParam struct {
-	// A list of conditions.
-	All []ConditionParam `json:"all,omitzero"`
-	paramObj
-}
-
-func (r ConditionGroupConditionGroupAllMatchParam) MarshalJSON() (data []byte, err error) {
-	type shadow ConditionGroupConditionGroupAllMatchParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ConditionGroupConditionGroupAllMatchParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // A group of conditions that any must be met. Can contain nested alls.
@@ -449,8 +395,8 @@ func (r *ConditionGroupConditionGroupAnyMatchParam) UnmarshalJSON(data []byte) e
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ConditionGroupConditionGroupAnyMatchAnyUnionParam struct {
-	OfCondition              *ConditionParam                                                     `json:",omitzero,inline"`
-	OfConditionGroupAllMatch *ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam `json:",omitzero,inline"`
+	OfCondition              *ConditionParam              `json:",omitzero,inline"`
+	OfConditionGroupAllMatch *ConditionGroupAllMatchParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -471,17 +417,44 @@ func (u *ConditionGroupConditionGroupAnyMatchAnyUnionParam) asAny() any {
 }
 
 // A group of conditions that must all be met.
-type ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam struct {
+type ConditionGroupAllMatch struct {
+	// A list of conditions.
+	All []Condition `json:"all"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		All         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConditionGroupAllMatch) RawJSON() string { return r.JSON.raw }
+func (r *ConditionGroupAllMatch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ConditionGroupAllMatch to a ConditionGroupAllMatchParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ConditionGroupAllMatchParam.Overrides()
+func (r ConditionGroupAllMatch) ToParam() ConditionGroupAllMatchParam {
+	return param.Override[ConditionGroupAllMatchParam](json.RawMessage(r.RawJSON()))
+}
+
+// A group of conditions that must all be met.
+type ConditionGroupAllMatchParam struct {
 	// A list of conditions.
 	All []ConditionParam `json:"all,omitzero"`
 	paramObj
 }
 
-func (r ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam) MarshalJSON() (data []byte, err error) {
-	type shadow ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam
+func (r ConditionGroupAllMatchParam) MarshalJSON() (data []byte, err error) {
+	type shadow ConditionGroupAllMatchParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ConditionGroupConditionGroupAnyMatchAnyConditionGroupAllMatchParam) UnmarshalJSON(data []byte) error {
+func (r *ConditionGroupAllMatchParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -546,6 +519,29 @@ func (r DurationParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *DurationParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A user recipient with optional identify properties. When email or name are
+// provided, the user is created or updated as part of the workflow run. The
+// collection is always `$users` and should not be sent.
+//
+// The property ID is required.
+type InlineIdentifyUserRequestParam struct {
+	// The ID of the user.
+	ID string `json:"id" api:"required"`
+	// The email address to set on the user.
+	Email param.Opt[string] `json:"email,omitzero"`
+	// The display name to set on the user.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InlineIdentifyUserRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow InlineIdentifyUserRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InlineIdentifyUserRequestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -675,7 +671,7 @@ type Workflow struct {
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
 	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment WorkflowGoalAttachment `json:"goal_attachment" api:"nullable"`
+	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -721,28 +717,6 @@ type Workflow struct {
 // Returns the unmodified JSON received from the API
 func (r Workflow) RawJSON() string { return r.JSON.raw }
 func (r *Workflow) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-type WorkflowGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays int64 `json:"attribution_window_days"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		GoalKey               respjson.Field
-		AttributionWindowDays respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowGoalAttachment) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowGoalAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1900,6 +1874,135 @@ func (r *WorkflowInAppFeedStepParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// An in-app guide step within a workflow. References a guide that will be shown to
+// recipients who execute this step. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+type WorkflowInAppGuideStep struct {
+	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
+	//
+	// Any of "in_app_guide".
+	ChannelType WorkflowInAppGuideStepChannelType `json:"channel_type" api:"required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type WorkflowInAppGuideStepType `json:"type" api:"required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
+	ChannelGroupKey string `json:"channel_group_key" api:"nullable"`
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
+	ChannelKey string `json:"channel_key" api:"nullable"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description string `json:"description" api:"nullable"`
+	// The key of the guide to reference. When a recipient executes this step they are
+	// added to the managed audience that backs the guide's workflow-derived targeting.
+	GuideKey string `json:"guide_key" api:"nullable"`
+	// A name for the workflow step.
+	Name string `json:"name" api:"nullable"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindow `json:"send_windows" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChannelType     respjson.Field
+		Ref             respjson.Field
+		Type            respjson.Field
+		ChannelGroupKey respjson.Field
+		ChannelKey      respjson.Field
+		Conditions      respjson.Field
+		Description     respjson.Field
+		GuideKey        respjson.Field
+		Name            respjson.Field
+		SendWindows     respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowInAppGuideStep) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowInAppGuideStep) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowInAppGuideStep to a WorkflowInAppGuideStepParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowInAppGuideStepParam.Overrides()
+func (r WorkflowInAppGuideStep) ToParam() WorkflowInAppGuideStepParam {
+	return param.Override[WorkflowInAppGuideStepParam](json.RawMessage(r.RawJSON()))
+}
+
+// The type of the channel step. Always `in_app_guide` for in-app guide steps.
+type WorkflowInAppGuideStepChannelType string
+
+const (
+	WorkflowInAppGuideStepChannelTypeInAppGuide WorkflowInAppGuideStepChannelType = "in_app_guide"
+)
+
+// The type of the workflow step.
+type WorkflowInAppGuideStepType string
+
+const (
+	WorkflowInAppGuideStepTypeChannel WorkflowInAppGuideStepType = "channel"
+)
+
+// An in-app guide step within a workflow. References a guide that will be shown to
+// recipients who execute this step. Read more in the
+// [docs](https://docs.knock.app/designing-workflows/channel-step).
+//
+// The properties ChannelType, Ref, Type are required.
+type WorkflowInAppGuideStepParam struct {
+	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
+	//
+	// Any of "in_app_guide".
+	ChannelType WorkflowInAppGuideStepChannelType `json:"channel_type,omitzero" api:"required"`
+	// The reference key of the workflow step. Must be unique per workflow.
+	Ref string `json:"ref" api:"required"`
+	// The type of the workflow step.
+	//
+	// Any of "channel".
+	Type WorkflowInAppGuideStepType `json:"type,omitzero" api:"required"`
+	// The key of the channel group to which the channel step will be sending a
+	// notification. Either `channel_key` or `channel_group_key` must be provided, but
+	// not both.
+	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
+	// The key of a specific configured channel instance (e.g., 'knock-email',
+	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
+	// `channel_key` or `channel_group_key` must be provided, but not both.
+	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
+	// An arbitrary string attached to a workflow step. Useful for adding notes about
+	// the workflow for internal purposes.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// The key of the guide to reference. When a recipient executes this step they are
+	// added to the managed audience that backs the guide's workflow-derived targeting.
+	GuideKey param.Opt[string] `json:"guide_key,omitzero"`
+	// A name for the workflow step.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// A list of send window objects. Must include one send window object per day of
+	// the week.
+	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	paramObj
+}
+
+func (r WorkflowInAppGuideStepParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowInAppGuideStepParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowInAppGuideStepParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A push step within a workflow. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
 type WorkflowPushStep struct {
@@ -2037,7 +2140,7 @@ func (r *WorkflowPushStepParam) UnmarshalJSON(data []byte) error {
 type WorkflowRandomCohortStep struct {
 	// A list of cohort branches. Must have between 2 and 10 branches, and percentages
 	// must sum to 100.
-	CohortBranches []any `json:"cohort_branches" api:"required"`
+	CohortBranches []WorkflowRandomCohortStepBranch `json:"cohort_branches" api:"required"`
 	// The reference key of the workflow step. Must be unique per workflow.
 	Ref string `json:"ref" api:"required"`
 	// The type of step.
@@ -2095,7 +2198,7 @@ const (
 type WorkflowRandomCohortStepParam struct {
 	// A list of cohort branches. Must have between 2 and 10 branches, and percentages
 	// must sum to 100.
-	CohortBranches []any `json:"cohort_branches,omitzero" api:"required"`
+	CohortBranches []WorkflowRandomCohortStepBranchParam `json:"cohort_branches,omitzero" api:"required"`
 	// The reference key of the workflow step. Must be unique per workflow.
 	Ref string `json:"ref" api:"required"`
 	// The type of step.
@@ -2120,6 +2223,152 @@ func (r WorkflowRandomCohortStepParam) MarshalJSON() (data []byte, err error) {
 func (r *WorkflowRandomCohortStepParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// A cohort branch in an experiment step.
+type WorkflowRandomCohortStepBranch struct {
+	// The percentage of recipients to assign to this cohort. Must be between 0 and 100
+	// with at most 1 decimal place. All branch percentages must sum to 100. Sent as a
+	// number in requests; returned as a decimal string in responses (e.g. "50",
+	// "33.3").
+	Percentage string `json:"percentage" api:"required"`
+	// The name of the cohort branch.
+	Name string `json:"name"`
+	// A list of steps that will be executed for recipients assigned to this cohort.
+	Steps []WorkflowStepUnion `json:"steps"`
+	// If the workflow should halt at the end of the branch. Defaults to false if not
+	// provided.
+	Terminates bool `json:"terminates"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Percentage  respjson.Field
+		Name        respjson.Field
+		Steps       respjson.Field
+		Terminates  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowRandomCohortStepBranch) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowRandomCohortStepBranch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowRandomCohortStepBranch to a
+// WorkflowRandomCohortStepBranchParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowRandomCohortStepBranchParam.Overrides()
+func (r WorkflowRandomCohortStepBranch) ToParam() WorkflowRandomCohortStepBranchParam {
+	return param.Override[WorkflowRandomCohortStepBranchParam](json.RawMessage(r.RawJSON()))
+}
+
+// A cohort branch in an experiment step.
+//
+// The property Percentage is required.
+type WorkflowRandomCohortStepBranchParam struct {
+	// The percentage of recipients to assign to this cohort. Must be between 0 and 100
+	// with at most 1 decimal place. All branch percentages must sum to 100. Sent as a
+	// number in requests; returned as a decimal string in responses (e.g. "50",
+	// "33.3").
+	Percentage string `json:"percentage" api:"required"`
+	// The name of the cohort branch.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// If the workflow should halt at the end of the branch. Defaults to false if not
+	// provided.
+	Terminates param.Opt[bool] `json:"terminates,omitzero"`
+	// A list of steps that will be executed for recipients assigned to this cohort.
+	Steps []WorkflowStepUnionParam `json:"steps,omitzero"`
+	paramObj
+}
+
+func (r WorkflowRandomCohortStepBranchParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRandomCohortStepBranchParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowRandomCohortStepBranchParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A workflow request for upserting a workflow.
+//
+// The properties Name, Steps are required.
+type WorkflowRequestParam struct {
+	// A name for the workflow. Must be at maximum 255 characters in length.
+	Name string `json:"name" api:"required"`
+	// A list of workflow step objects in the workflow.
+	Steps []WorkflowStepUnionParam `json:"steps,omitzero" api:"required"`
+	// An arbitrary string attached to a workflow object. Useful for adding notes about
+	// the workflow for internal purposes. Maximum of 280 characters allowed.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
+	// A list of
+	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
+	// the workflow belongs to.
+	Categories []string `json:"categories,omitzero"`
+	// A group of conditions to be evaluated.
+	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
+	// A map of workflow settings.
+	Settings WorkflowRequestSettingsParam `json:"settings,omitzero"`
+	// Use tags to organize resources internally within your account. For example, by
+	// team or product area.
+	Tags []string `json:"tags,omitzero"`
+	// A JSON schema for the expected structure of the workflow trigger's `data`
+	// payload (available in templates as `{{ data.field_name }}`). Used to validate
+	// trigger requests. Read more in the
+	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
+	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
+	// The frequency at which the workflow should be triggered. One of:
+	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
+	// to `every_trigger`. Read more in
+	// [docs](https://docs.knock.app/send-notifications/triggering-workflows/overview#controlling-workflow-trigger-frequency).
+	//
+	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
+	TriggerFrequency WorkflowRequestTriggerFrequency `json:"trigger_frequency,omitzero"`
+	paramObj
+}
+
+func (r WorkflowRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A map of workflow settings.
+type WorkflowRequestSettingsParam struct {
+	// Whether the workflow is commercial. Defaults to false.
+	IsCommercial param.Opt[bool] `json:"is_commercial,omitzero"`
+	// Whether to ignore recipient preferences for a given type of notification. If
+	// true, will send for every channel in the workflow even if the recipient has
+	// opted out of a certain kind. Defaults to false.
+	OverridePreferences param.Opt[bool] `json:"override_preferences,omitzero"`
+	paramObj
+}
+
+func (r WorkflowRequestSettingsParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowRequestSettingsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowRequestSettingsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The frequency at which the workflow should be triggered. One of:
+// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
+// to `every_trigger`. Read more in
+// [docs](https://docs.knock.app/send-notifications/triggering-workflows/overview#controlling-workflow-trigger-frequency).
+type WorkflowRequestTriggerFrequency string
+
+const (
+	WorkflowRequestTriggerFrequencyEveryTrigger              WorkflowRequestTriggerFrequency = "every_trigger"
+	WorkflowRequestTriggerFrequencyOncePerRecipient          WorkflowRequestTriggerFrequency = "once_per_recipient"
+	WorkflowRequestTriggerFrequencyOncePerRecipientPerTenant WorkflowRequestTriggerFrequency = "once_per_recipient_per_tenant"
+)
 
 // A SMS step within a workflow. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/channel-step).
@@ -2254,14 +2503,13 @@ func (r *WorkflowSMSStepParam) UnmarshalJSON(data []byte) error {
 }
 
 // WorkflowStepUnion contains all possible properties and values from
-// [WorkflowWebhookStep], [WorkflowInAppFeedStep],
-// [WorkflowStepWorkflowInAppGuideStep], [WorkflowChatStep], [WorkflowSMSStep],
-// [WorkflowPushStep], [WorkflowEmailStep], [WorkflowAIAgentStep],
-// [WorkflowDelayStep], [WorkflowStepWorkflowWaitForEventStep],
-// [WorkflowBatchStep], [WorkflowFetchStep], [WorkflowUpdateDataStep],
-// [WorkflowUpdateObjectStep], [WorkflowUpdateTenantStep],
-// [WorkflowUpdateUserStep], [WorkflowThrottleStep], [WorkflowBranchStep],
-// [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
+// [WorkflowWebhookStep], [WorkflowInAppFeedStep], [WorkflowInAppGuideStep],
+// [WorkflowChatStep], [WorkflowSMSStep], [WorkflowPushStep], [WorkflowEmailStep],
+// [WorkflowAIAgentStep], [WorkflowDelayStep],
+// [WorkflowStepWorkflowWaitForEventStep], [WorkflowBatchStep],
+// [WorkflowFetchStep], [WorkflowUpdateDataStep], [WorkflowUpdateObjectStep],
+// [WorkflowUpdateTenantStep], [WorkflowUpdateUserStep], [WorkflowThrottleStep],
+// [WorkflowBranchStep], [WorkflowRandomCohortStep], [WorkflowTriggerWorkflowStep].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type WorkflowStepUnion struct {
@@ -2281,7 +2529,7 @@ type WorkflowStepUnion struct {
 	// This field is a union of [InAppFeedChannelSettings], [ChatChannelSettings],
 	// [SMSChannelSettings], [PushChannelSettings], [EmailChannelSettings]
 	ChannelOverrides WorkflowStepUnionChannelOverrides `json:"channel_overrides"`
-	// This field is from variant [WorkflowStepWorkflowInAppGuideStep].
+	// This field is from variant [WorkflowInAppGuideStep].
 	GuideKey string `json:"guide_key"`
 	// This field is a union of [WorkflowAIAgentStepSettings],
 	// [WorkflowDelayStepSettings],
@@ -2294,7 +2542,7 @@ type WorkflowStepUnion struct {
 	// This field is from variant [WorkflowBranchStep].
 	Branches []WorkflowBranchStepBranch `json:"branches"`
 	// This field is from variant [WorkflowRandomCohortStep].
-	CohortBranches []any `json:"cohort_branches"`
+	CohortBranches []WorkflowRandomCohortStepBranch `json:"cohort_branches"`
 	// This field is from variant [WorkflowRandomCohortStep].
 	CohortKey string `json:"cohort_key"`
 	JSON      struct {
@@ -2328,7 +2576,7 @@ func (u WorkflowStepUnion) AsWorkflowInAppFeedStep() (v WorkflowInAppFeedStep) {
 	return
 }
 
-func (u WorkflowStepUnion) AsWorkflowInAppGuideStep() (v WorkflowStepWorkflowInAppGuideStep) {
+func (u WorkflowStepUnion) AsWorkflowInAppGuideStep() (v WorkflowInAppGuideStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2805,64 +3053,6 @@ func (r *WorkflowStepUnionSettingsMatchConditions) UnmarshalJSON(data []byte) er
 // WorkflowStepUnionParam.Overrides()
 func (r WorkflowStepUnion) ToParam() WorkflowStepUnionParam {
 	return param.Override[WorkflowStepUnionParam](json.RawMessage(r.RawJSON()))
-}
-
-// An in-app guide step within a workflow. References a guide that will be shown to
-// recipients who execute this step. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-type WorkflowStepWorkflowInAppGuideStep struct {
-	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
-	//
-	// Any of "in_app_guide".
-	ChannelType string `json:"channel_type" api:"required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type string `json:"type" api:"required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. Either `channel_key` or `channel_group_key` must be provided, but
-	// not both.
-	ChannelGroupKey string `json:"channel_group_key" api:"nullable"`
-	// The key of a specific configured channel instance (e.g., 'knock-email',
-	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
-	// `channel_key` or `channel_group_key` must be provided, but not both.
-	ChannelKey string `json:"channel_key" api:"nullable"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnion `json:"conditions" api:"nullable"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description string `json:"description" api:"nullable"`
-	// The key of the guide to reference. When a recipient executes this step they are
-	// added to the managed audience that backs the guide's workflow-derived targeting.
-	GuideKey string `json:"guide_key" api:"nullable"`
-	// A name for the workflow step.
-	Name string `json:"name" api:"nullable"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindow `json:"send_windows" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ChannelType     respjson.Field
-		Ref             respjson.Field
-		Type            respjson.Field
-		ChannelGroupKey respjson.Field
-		ChannelKey      respjson.Field
-		Conditions      respjson.Field
-		Description     respjson.Field
-		GuideKey        respjson.Field
-		Name            respjson.Field
-		SendWindows     respjson.Field
-		ExtraFields     map[string]respjson.Field
-		raw             string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowInAppGuideStep) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowInAppGuideStep) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // A wait for event function step that pauses a workflow until a matching event is
@@ -3511,8 +3701,8 @@ func WorkflowStepParamOfWorkflowInAppFeedStep(ref string, template InAppFeedTemp
 	return WorkflowStepUnionParam{OfWorkflowInAppFeedStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowInAppGuideStep(channelType string, ref string, type_ string) WorkflowStepUnionParam {
-	var variant WorkflowStepWorkflowInAppGuideStepParam
+func WorkflowStepParamOfWorkflowInAppGuideStep(channelType WorkflowInAppGuideStepChannelType, ref string, type_ WorkflowInAppGuideStepType) WorkflowStepUnionParam {
+	var variant WorkflowInAppGuideStepParam
 	variant.ChannelType = channelType
 	variant.Ref = ref
 	variant.Type = type_
@@ -3652,7 +3842,7 @@ func WorkflowStepParamOfWorkflowBranchStep(branches []WorkflowBranchStepBranchPa
 	return WorkflowStepUnionParam{OfWorkflowBranchStep: &variant}
 }
 
-func WorkflowStepParamOfWorkflowRandomCohortStep(cohortBranches []any, ref string, type_ WorkflowRandomCohortStepType) WorkflowStepUnionParam {
+func WorkflowStepParamOfWorkflowRandomCohortStep(cohortBranches []WorkflowRandomCohortStepBranchParam, ref string, type_ WorkflowRandomCohortStepType) WorkflowStepUnionParam {
 	var variant WorkflowRandomCohortStepParam
 	variant.CohortBranches = cohortBranches
 	variant.Ref = ref
@@ -3674,7 +3864,7 @@ func WorkflowStepParamOfWorkflowTriggerWorkflowStep(ref string, settings Workflo
 type WorkflowStepUnionParam struct {
 	OfWorkflowWebhookStep         *WorkflowWebhookStepParam                  `json:",omitzero,inline"`
 	OfWorkflowInAppFeedStep       *WorkflowInAppFeedStepParam                `json:",omitzero,inline"`
-	OfWorkflowInAppGuideStep      *WorkflowStepWorkflowInAppGuideStepParam   `json:",omitzero,inline"`
+	OfWorkflowInAppGuideStep      *WorkflowInAppGuideStepParam               `json:",omitzero,inline"`
 	OfWorkflowChatStep            *WorkflowChatStepParam                     `json:",omitzero,inline"`
 	OfWorkflowSMSStep             *WorkflowSMSStepParam                      `json:",omitzero,inline"`
 	OfWorkflowPushStep            *WorkflowPushStepParam                     `json:",omitzero,inline"`
@@ -3783,7 +3973,7 @@ func (u WorkflowStepUnionParam) GetBranches() []WorkflowBranchStepBranchParam {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u WorkflowStepUnionParam) GetCohortBranches() []any {
+func (u WorkflowStepUnionParam) GetCohortBranches() []WorkflowRandomCohortStepBranchParam {
 	if vt := u.OfWorkflowRandomCohortStep; vt != nil {
 		return vt.CohortBranches
 	}
@@ -5084,63 +5274,6 @@ type workflowStepUnionParamSettingsMatchConditions struct{ any }
 //	    fmt.Errorf("not present")
 //	}
 func (u workflowStepUnionParamSettingsMatchConditions) AsAny() any { return u.any }
-
-// An in-app guide step within a workflow. References a guide that will be shown to
-// recipients who execute this step. Read more in the
-// [docs](https://docs.knock.app/designing-workflows/channel-step).
-//
-// The properties ChannelType, Ref, Type are required.
-type WorkflowStepWorkflowInAppGuideStepParam struct {
-	// The type of the channel step. Always `in_app_guide` for in-app guide steps.
-	//
-	// Any of "in_app_guide".
-	ChannelType string `json:"channel_type,omitzero" api:"required"`
-	// The reference key of the workflow step. Must be unique per workflow.
-	Ref string `json:"ref" api:"required"`
-	// The type of the workflow step.
-	//
-	// Any of "channel".
-	Type string `json:"type,omitzero" api:"required"`
-	// The key of the channel group to which the channel step will be sending a
-	// notification. Either `channel_key` or `channel_group_key` must be provided, but
-	// not both.
-	ChannelGroupKey param.Opt[string] `json:"channel_group_key,omitzero"`
-	// The key of a specific configured channel instance (e.g., 'knock-email',
-	// 'postmark', 'sendgrid-marketing') to send the notification through. Either
-	// `channel_key` or `channel_group_key` must be provided, but not both.
-	ChannelKey param.Opt[string] `json:"channel_key,omitzero"`
-	// An arbitrary string attached to a workflow step. Useful for adding notes about
-	// the workflow for internal purposes.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// The key of the guide to reference. When a recipient executes this step they are
-	// added to the managed audience that backs the guide's workflow-derived targeting.
-	GuideKey param.Opt[string] `json:"guide_key,omitzero"`
-	// A name for the workflow step.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// A list of send window objects. Must include one send window object per day of
-	// the week.
-	SendWindows []SendWindowParam `json:"send_windows,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowInAppGuideStepParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowInAppGuideStepParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowInAppGuideStepParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowInAppGuideStepParam](
-		"channel_type", "in_app_guide",
-	)
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowInAppGuideStepParam](
-		"type", "channel",
-	)
-}
 
 // A wait for event function step that pauses a workflow until a matching event is
 // received.
@@ -6895,7 +7028,7 @@ type WorkflowGetResponse struct {
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
 	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment WorkflowGetResponseGoalAttachment `json:"goal_attachment" api:"nullable"`
+	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -6946,28 +7079,6 @@ type WorkflowGetResponse struct {
 // Returns the unmodified JSON received from the API
 func (r WorkflowGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *WorkflowGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-type WorkflowGetResponseGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays int64 `json:"attribution_window_days"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		GoalKey               respjson.Field
-		AttributionWindowDays respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowGetResponseGoalAttachment) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowGetResponseGoalAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -7202,9 +7313,9 @@ func (r WorkflowRunParams) URLQuery() (v url.Values, err error) {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowRunParamsRecipientUnion struct {
-	OfString                    param.Opt[string]                                    `json:",omitzero,inline"`
-	OfObjectRecipientReference  *WorkflowRunParamsRecipientObjectRecipientReference  `json:",omitzero,inline"`
-	OfInlineIdentifyUserRequest *WorkflowRunParamsRecipientInlineIdentifyUserRequest `json:",omitzero,inline"`
+	OfString                    param.Opt[string]                                   `json:",omitzero,inline"`
+	OfObjectRecipientReference  *WorkflowRunParamsRecipientObjectRecipientReference `json:",omitzero,inline"`
+	OfInlineIdentifyUserRequest *InlineIdentifyUserRequestParam                     `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -7279,36 +7390,13 @@ func (r *WorkflowRunParamsRecipientObjectRecipientReference) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A user recipient with optional identify properties. When email or name are
-// provided, the user is created or updated as part of the workflow run. The
-// collection is always `$users` and should not be sent.
-//
-// The property ID is required.
-type WorkflowRunParamsRecipientInlineIdentifyUserRequest struct {
-	// The ID of the user.
-	ID string `json:"id" api:"required"`
-	// The email address to set on the user.
-	Email param.Opt[string] `json:"email,omitzero"`
-	// The display name to set on the user.
-	Name param.Opt[string] `json:"name,omitzero"`
-	paramObj
-}
-
-func (r WorkflowRunParamsRecipientInlineIdentifyUserRequest) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowRunParamsRecipientInlineIdentifyUserRequest
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowRunParamsRecipientInlineIdentifyUserRequest) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type WorkflowRunParamsActorUnion struct {
-	OfString                    param.Opt[string]                                `json:",omitzero,inline"`
-	OfObjectRecipientReference  *WorkflowRunParamsActorObjectRecipientReference  `json:",omitzero,inline"`
-	OfInlineIdentifyUserRequest *WorkflowRunParamsActorInlineIdentifyUserRequest `json:",omitzero,inline"`
+	OfString                    param.Opt[string]                               `json:",omitzero,inline"`
+	OfObjectRecipientReference  *WorkflowRunParamsActorObjectRecipientReference `json:",omitzero,inline"`
+	OfInlineIdentifyUserRequest *InlineIdentifyUserRequestParam                 `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -7383,34 +7471,11 @@ func (r *WorkflowRunParamsActorObjectRecipientReference) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A user recipient with optional identify properties. When email or name are
-// provided, the user is created or updated as part of the workflow run. The
-// collection is always `$users` and should not be sent.
-//
-// The property ID is required.
-type WorkflowRunParamsActorInlineIdentifyUserRequest struct {
-	// The ID of the user.
-	ID string `json:"id" api:"required"`
-	// The email address to set on the user.
-	Email param.Opt[string] `json:"email,omitzero"`
-	// The display name to set on the user.
-	Name param.Opt[string] `json:"name,omitzero"`
-	paramObj
-}
-
-func (r WorkflowRunParamsActorInlineIdentifyUserRequest) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowRunParamsActorInlineIdentifyUserRequest
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowRunParamsActorInlineIdentifyUserRequest) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type WorkflowUpsertParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A workflow request for upserting a workflow.
-	Workflow WorkflowUpsertParamsWorkflow `json:"workflow,omitzero" api:"required"`
+	Workflow WorkflowRequestParam `json:"workflow,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
 	// it if there are no unpublished changes.
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
@@ -7446,103 +7511,11 @@ func (r WorkflowUpsertParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// A workflow request for upserting a workflow.
-//
-// The properties Name, Steps are required.
-type WorkflowUpsertParamsWorkflow struct {
-	// A name for the workflow. Must be at maximum 255 characters in length.
-	Name string `json:"name" api:"required"`
-	// A list of workflow step objects in the workflow.
-	Steps []WorkflowStepUnionParam `json:"steps,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow object. Useful for adding notes about
-	// the workflow for internal purposes. Maximum of 280 characters allowed.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment WorkflowUpsertParamsWorkflowGoalAttachment `json:"goal_attachment,omitzero"`
-	// A list of
-	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
-	// the workflow belongs to.
-	Categories []string `json:"categories,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	// A map of workflow settings.
-	Settings WorkflowUpsertParamsWorkflowSettings `json:"settings,omitzero"`
-	// Use tags to organize resources internally within your account. For example, by
-	// team or product area.
-	Tags []string `json:"tags,omitzero"`
-	// A JSON schema for the expected structure of the workflow trigger's `data`
-	// payload (available in templates as `{{ data.field_name }}`). Used to validate
-	// trigger requests. Read more in the
-	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
-	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
-	// The frequency at which the workflow should be triggered. One of:
-	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
-	// to `every_trigger`. Read more in
-	// [docs](https://docs.knock.app/send-notifications/triggering-workflows/overview#controlling-workflow-trigger-frequency).
-	//
-	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
-	TriggerFrequency string `json:"trigger_frequency,omitzero"`
-	paramObj
-}
-
-func (r WorkflowUpsertParamsWorkflow) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowUpsertParamsWorkflow
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowUpsertParamsWorkflow) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowUpsertParamsWorkflow](
-		"trigger_frequency", "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
-	)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-//
-// The property GoalKey is required.
-type WorkflowUpsertParamsWorkflowGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
-	paramObj
-}
-
-func (r WorkflowUpsertParamsWorkflowGoalAttachment) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowUpsertParamsWorkflowGoalAttachment
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowUpsertParamsWorkflowGoalAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A map of workflow settings.
-type WorkflowUpsertParamsWorkflowSettings struct {
-	// Whether the workflow is commercial. Defaults to false.
-	IsCommercial param.Opt[bool] `json:"is_commercial,omitzero"`
-	// Whether to ignore recipient preferences for a given type of notification. If
-	// true, will send for every channel in the workflow even if the recipient has
-	// opted out of a certain kind. Defaults to false.
-	OverridePreferences param.Opt[bool] `json:"override_preferences,omitzero"`
-	paramObj
-}
-
-func (r WorkflowUpsertParamsWorkflowSettings) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowUpsertParamsWorkflowSettings
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowUpsertParamsWorkflowSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type WorkflowValidateParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A workflow request for upserting a workflow.
-	Workflow WorkflowValidateParamsWorkflow `json:"workflow,omitzero" api:"required"`
+	Workflow WorkflowRequestParam `json:"workflow,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -7563,96 +7536,4 @@ func (r WorkflowValidateParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
-}
-
-// A workflow request for upserting a workflow.
-//
-// The properties Name, Steps are required.
-type WorkflowValidateParamsWorkflow struct {
-	// A name for the workflow. Must be at maximum 255 characters in length.
-	Name string `json:"name" api:"required"`
-	// A list of workflow step objects in the workflow.
-	Steps []WorkflowStepUnionParam `json:"steps,omitzero" api:"required"`
-	// An arbitrary string attached to a workflow object. Useful for adding notes about
-	// the workflow for internal purposes. Maximum of 280 characters allowed.
-	Description param.Opt[string] `json:"description,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-	GoalAttachment WorkflowValidateParamsWorkflowGoalAttachment `json:"goal_attachment,omitzero"`
-	// A list of
-	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
-	// the workflow belongs to.
-	Categories []string `json:"categories,omitzero"`
-	// A group of conditions to be evaluated.
-	Conditions ConditionGroupUnionParam `json:"conditions,omitzero"`
-	// A map of workflow settings.
-	Settings WorkflowValidateParamsWorkflowSettings `json:"settings,omitzero"`
-	// Use tags to organize resources internally within your account. For example, by
-	// team or product area.
-	Tags []string `json:"tags,omitzero"`
-	// A JSON schema for the expected structure of the workflow trigger's `data`
-	// payload (available in templates as `{{ data.field_name }}`). Used to validate
-	// trigger requests. Read more in the
-	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
-	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
-	// The frequency at which the workflow should be triggered. One of:
-	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
-	// to `every_trigger`. Read more in
-	// [docs](https://docs.knock.app/send-notifications/triggering-workflows/overview#controlling-workflow-trigger-frequency).
-	//
-	// Any of "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant".
-	TriggerFrequency string `json:"trigger_frequency,omitzero"`
-	paramObj
-}
-
-func (r WorkflowValidateParamsWorkflow) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowValidateParamsWorkflow
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowValidateParamsWorkflow) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowValidateParamsWorkflow](
-		"trigger_frequency", "every_trigger", "once_per_recipient", "once_per_recipient_per_tenant",
-	)
-}
-
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
-//
-// The property GoalKey is required.
-type WorkflowValidateParamsWorkflowGoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
-	paramObj
-}
-
-func (r WorkflowValidateParamsWorkflowGoalAttachment) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowValidateParamsWorkflowGoalAttachment
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowValidateParamsWorkflowGoalAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A map of workflow settings.
-type WorkflowValidateParamsWorkflowSettings struct {
-	// Whether the workflow is commercial. Defaults to false.
-	IsCommercial param.Opt[bool] `json:"is_commercial,omitzero"`
-	// Whether to ignore recipient preferences for a given type of notification. If
-	// true, will send for every channel in the workflow even if the recipient has
-	// opted out of a certain kind. Defaults to false.
-	OverridePreferences param.Opt[bool] `json:"override_preferences,omitzero"`
-	paramObj
-}
-
-func (r WorkflowValidateParamsWorkflowSettings) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowValidateParamsWorkflowSettings
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowValidateParamsWorkflowSettings) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }

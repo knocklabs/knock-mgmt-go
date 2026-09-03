@@ -52,6 +52,21 @@ type Client struct {
 	Broadcasts BroadcastService
 	// Audiences define sets of users that can be targeted for notifications.
 	Audiences AudienceService
+	// Goals define event conditions that are tracked and attributed to messaging
+	// resources.
+	Goals GoalService
+	// Assets are uploaded files available to your Knock account.
+	Assets AssetService
+	// Tags are a project-level catalog of labels that can be applied to workflows,
+	// partials, guides, and broadcasts.
+	Tags             TagService
+	Schemas          SchemaService
+	PreferenceCenter PreferenceCenterService
+	// Resources for managing your Knock account.
+	Billing BillingService
+	// Preference categories are a project-level catalog of categories that can be
+	// applied to workflows and broadcasts.
+	PreferenceCategories PreferenceCategoryService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -103,6 +118,13 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Branches = NewBranchService(opts...)
 	r.Broadcasts = NewBroadcastService(opts...)
 	r.Audiences = NewAudienceService(opts...)
+	r.Goals = NewGoalService(opts...)
+	r.Assets = NewAssetService(opts...)
+	r.Tags = NewTagService(opts...)
+	r.Schemas = NewSchemaService(opts...)
+	r.PreferenceCenter = NewPreferenceCenterService(opts...)
+	r.Billing = NewBillingService(opts...)
+	r.PreferenceCategories = NewPreferenceCategoryService(opts...)
 
 	return
 }

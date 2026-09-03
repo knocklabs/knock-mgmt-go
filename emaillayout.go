@@ -4,6 +4,7 @@ package knockmapi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/pagination"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
+	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 // Email layouts wrap your email templates and provide a consistent look and feel.
@@ -76,6 +78,16 @@ func (r *EmailLayoutService) ListAutoPaging(ctx context.Context, query EmailLayo
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
+// Renders an email layout preview, without requiring a layout to be persisted
+// within Knock. This is useful for previewing layouts in isolation, before saving
+// them.
+func (r *EmailLayoutService) Preview(ctx context.Context, params EmailLayoutPreviewParams, opts ...option.RequestOption) (res *EmailLayoutPreviewResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "v1/email_layouts/preview"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return res, err
+}
+
 // Updates an email layout, or creates a new one if it does not yet exist.
 //
 // Note: this endpoint only operates in the "development" environment.
@@ -104,59 +116,9 @@ func (r *EmailLayoutService) Validate(ctx context.Context, emailLayoutKey string
 	return res, err
 }
 
-// A versioned email layout used within an environment.
-type EmailLayout struct {
-	// The timestamp of when the email layout was created.
-	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
-	// The complete HTML or MJML content of the email layout.
-	HTMLLayout string `json:"html_layout" api:"required"`
-	// The unique key for this email layout.
-	Key string `json:"key" api:"required"`
-	// The human-readable name of this email layout.
-	Name string `json:"name" api:"required"`
-	// The SHA of the email layout.
-	Sha string `json:"sha" api:"required"`
-	// The complete plaintext content of the email layout.
-	TextLayout string `json:"text_layout" api:"required"`
-	// Overrides to apply against account branding variables in an email layout,
-	// including dark mode-specific values.
-	BrandingOverrides EmailLayoutBrandingOverrides `json:"branding_overrides" api:"nullable"`
-	// The environment of the email layout.
-	Environment string `json:"environment"`
-	// A list of one or more items to show in the footer of the email layout.
-	FooterLinks []EmailLayoutFooterLink `json:"footer_links"`
-	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
-	// tags.
-	IsMjml bool `json:"is_mjml"`
-	// The timestamp of when the email layout was last updated.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CreatedAt         respjson.Field
-		HTMLLayout        respjson.Field
-		Key               respjson.Field
-		Name              respjson.Field
-		Sha               respjson.Field
-		TextLayout        respjson.Field
-		BrandingOverrides respjson.Field
-		Environment       respjson.Field
-		FooterLinks       respjson.Field
-		IsMjml            respjson.Field
-		UpdatedAt         respjson.Field
-		ExtraFields       map[string]respjson.Field
-		raw               string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r EmailLayout) RawJSON() string { return r.JSON.raw }
-func (r *EmailLayout) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Overrides to apply against account branding variables in an email layout,
 // including dark mode-specific values.
-type EmailLayoutBrandingOverrides struct {
+type BrandingOverrides struct {
 	// A URL for a dark mode icon override.
 	DarkIconURL string `json:"dark_icon_url" api:"nullable"`
 	// A URL for a dark mode logo override.
@@ -195,8 +157,101 @@ type EmailLayoutBrandingOverrides struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r EmailLayoutBrandingOverrides) RawJSON() string { return r.JSON.raw }
-func (r *EmailLayoutBrandingOverrides) UnmarshalJSON(data []byte) error {
+func (r BrandingOverrides) RawJSON() string { return r.JSON.raw }
+func (r *BrandingOverrides) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this BrandingOverrides to a BrandingOverridesParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// BrandingOverridesParam.Overrides()
+func (r BrandingOverrides) ToParam() BrandingOverridesParam {
+	return param.Override[BrandingOverridesParam](json.RawMessage(r.RawJSON()))
+}
+
+// Overrides to apply against account branding variables in an email layout,
+// including dark mode-specific values.
+type BrandingOverridesParam struct {
+	// A URL for a dark mode icon override.
+	DarkIconURL param.Opt[string] `json:"dark_icon_url,omitzero"`
+	// A URL for a dark mode logo override.
+	DarkLogoURL param.Opt[string] `json:"dark_logo_url,omitzero"`
+	// The dark mode primary brand color in hex format.
+	DarkPrimaryColor param.Opt[string] `json:"dark_primary_color,omitzero"`
+	// The dark mode contrast color for the primary brand color in hex format.
+	DarkPrimaryColorContrast param.Opt[string] `json:"dark_primary_color_contrast,omitzero"`
+	// A URL for a light mode icon override.
+	IconURL param.Opt[string] `json:"icon_url,omitzero"`
+	// A URL for a light mode logo override.
+	LogoURL param.Opt[string] `json:"logo_url,omitzero"`
+	// The light mode primary brand color in hex format.
+	PrimaryColor param.Opt[string] `json:"primary_color,omitzero"`
+	// The light mode contrast color for the primary brand color in hex format.
+	PrimaryColorContrast param.Opt[string] `json:"primary_color_contrast,omitzero"`
+	// The light mode primary text color in hex format.
+	PrimaryTextColor param.Opt[string] `json:"primary_text_color,omitzero"`
+	// The light mode secondary text color in hex format.
+	SecondaryTextColor param.Opt[string] `json:"secondary_text_color,omitzero"`
+	paramObj
+}
+
+func (r BrandingOverridesParam) MarshalJSON() (data []byte, err error) {
+	type shadow BrandingOverridesParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BrandingOverridesParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A versioned email layout used within an environment.
+type EmailLayout struct {
+	// The timestamp of when the email layout was created.
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// The complete HTML or MJML content of the email layout.
+	HTMLLayout string `json:"html_layout" api:"required"`
+	// The unique key for this email layout.
+	Key string `json:"key" api:"required"`
+	// The human-readable name of this email layout.
+	Name string `json:"name" api:"required"`
+	// The SHA of the email layout.
+	Sha string `json:"sha" api:"required"`
+	// The complete plaintext content of the email layout.
+	TextLayout string `json:"text_layout" api:"required"`
+	// Overrides to apply against account branding variables in an email layout,
+	// including dark mode-specific values.
+	BrandingOverrides BrandingOverrides `json:"branding_overrides" api:"nullable"`
+	// The environment of the email layout.
+	Environment string `json:"environment"`
+	// A list of one or more items to show in the footer of the email layout.
+	FooterLinks []EmailLayoutFooterLink `json:"footer_links"`
+	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
+	// tags.
+	IsMjml bool `json:"is_mjml"`
+	// The timestamp of when the email layout was last updated.
+	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CreatedAt         respjson.Field
+		HTMLLayout        respjson.Field
+		Key               respjson.Field
+		Name              respjson.Field
+		Sha               respjson.Field
+		TextLayout        respjson.Field
+		BrandingOverrides respjson.Field
+		Environment       respjson.Field
+		FooterLinks       respjson.Field
+		IsMjml            respjson.Field
+		UpdatedAt         respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailLayout) RawJSON() string { return r.JSON.raw }
+func (r *EmailLayout) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -217,6 +272,131 @@ type EmailLayoutFooterLink struct {
 // Returns the unmodified JSON received from the API
 func (r EmailLayoutFooterLink) RawJSON() string { return r.JSON.raw }
 func (r *EmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request to update or create an email layout.
+//
+// The properties HTMLLayout, Name, TextLayout are required.
+type EmailLayoutRequestParam struct {
+	// The complete HTML or MJML content of the email layout.
+	HTMLLayout string `json:"html_layout" api:"required"`
+	// The friendly name of this email layout.
+	Name string `json:"name" api:"required"`
+	// The complete plain text content of the email layout.
+	TextLayout string `json:"text_layout" api:"required"`
+	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
+	// tags.
+	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
+	// Overrides to apply against account branding variables in an email layout,
+	// including dark mode-specific values.
+	BrandingOverrides BrandingOverridesParam `json:"branding_overrides,omitzero"`
+	// A list of one or more items to show in the footer of the email layout.
+	FooterLinks []EmailLayoutRequestFooterLinkParam `json:"footer_links,omitzero"`
+	paramObj
+}
+
+func (r EmailLayoutRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailLayoutRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Text, URL are required.
+type EmailLayoutRequestFooterLinkParam struct {
+	// The text to display as the link.
+	Text string `json:"text" api:"required"`
+	// The URL to link to.
+	URL string `json:"url" api:"required"`
+	paramObj
+}
+
+func (r EmailLayoutRequestFooterLinkParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmailLayoutRequestFooterLinkParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutRequestFooterLinkParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A response to an email layout preview request.
+type EmailLayoutPreviewResponse struct {
+	// The result of the preview.
+	//
+	// Any of "success", "error".
+	Result EmailLayoutPreviewResponseResult `json:"result" api:"required"`
+	// A list of errors encountered during rendering. Present when result is "error".
+	Errors []EmailLayoutPreviewResponseError `json:"errors" api:"nullable"`
+	// The rendered email layout, ready to be previewed.
+	Layout EmailLayoutPreviewResponseLayout `json:"layout" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Result      respjson.Field
+		Errors      respjson.Field
+		Layout      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailLayoutPreviewResponse) RawJSON() string { return r.JSON.raw }
+func (r *EmailLayoutPreviewResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The result of the preview.
+type EmailLayoutPreviewResponseResult string
+
+const (
+	EmailLayoutPreviewResponseResultSuccess EmailLayoutPreviewResponseResult = "success"
+	EmailLayoutPreviewResponseResultError   EmailLayoutPreviewResponseResult = "error"
+)
+
+// A rendering error with optional location information.
+type EmailLayoutPreviewResponseError struct {
+	// A human-readable description of the error.
+	Message string `json:"message" api:"required"`
+	// The layout field that caused the error, if available.
+	Field string `json:"field" api:"nullable"`
+	// The line number where the error occurred, if available.
+	Line int64 `json:"line" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message     respjson.Field
+		Field       respjson.Field
+		Line        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailLayoutPreviewResponseError) RawJSON() string { return r.JSON.raw }
+func (r *EmailLayoutPreviewResponseError) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The rendered email layout, ready to be previewed.
+type EmailLayoutPreviewResponseLayout struct {
+	// The fully rendered HTML body of the email layout.
+	HTMLBody string `json:"html_body" api:"nullable"`
+	// The fully rendered plain text body of the email layout.
+	TextBody string `json:"text_body" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		HTMLBody    respjson.Field
+		TextBody    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r EmailLayoutPreviewResponseLayout) RawJSON() string { return r.JSON.raw }
+func (r *EmailLayoutPreviewResponseLayout) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -306,11 +486,72 @@ func (r EmailLayoutListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+type EmailLayoutPreviewParams struct {
+	// The environment slug.
+	Environment string `query:"environment" api:"required" json:"-"`
+	// A request to update or create an email layout.
+	EmailLayout EmailLayoutRequestParam `json:"email_layout,omitzero" api:"required"`
+	// A recipient reference, used when referencing a recipient by either their ID (for
+	// a user), or by a reference for an object.
+	Recipient shared.RecipientReferenceUnionParam `json:"recipient,omitzero" api:"required"`
+	// The tenant to associate with the preview. Must not contain whitespace.
+	Tenant param.Opt[string] `json:"tenant,omitzero"`
+	// The slug of a branch to use. This option can only be used when `environment` is
+	// `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// Optional workflow context for variable hydration. When provided,
+	// recipient/actor/tenant are resolved via Knock.
+	Workflow EmailLayoutPreviewParamsWorkflow `json:"workflow,omitzero"`
+	// A recipient reference, used when referencing a recipient by either their ID (for
+	// a user), or by a reference for an object.
+	Actor shared.RecipientReferenceUnionParam `json:"actor,omitzero"`
+	// The data to pass to the layout for rendering.
+	Data map[string]any `json:"data,omitzero"`
+	paramObj
+}
+
+func (r EmailLayoutPreviewParams) MarshalJSON() (data []byte, err error) {
+	type shadow EmailLayoutPreviewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutPreviewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URLQuery serializes [EmailLayoutPreviewParams]'s query parameters as
+// `url.Values`.
+func (r EmailLayoutPreviewParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Optional workflow context for variable hydration. When provided,
+// recipient/actor/tenant are resolved via Knock.
+//
+// The property Key is required.
+type EmailLayoutPreviewParamsWorkflow struct {
+	// The workflow key.
+	Key string `json:"key" api:"required"`
+	// Workflow categories.
+	Categories []string `json:"categories,omitzero"`
+	paramObj
+}
+
+func (r EmailLayoutPreviewParamsWorkflow) MarshalJSON() (data []byte, err error) {
+	type shadow EmailLayoutPreviewParamsWorkflow
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmailLayoutPreviewParamsWorkflow) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type EmailLayoutUpsertParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
-	EmailLayout EmailLayoutUpsertParamsEmailLayout `json:"email_layout,omitzero" api:"required"`
+	EmailLayout EmailLayoutRequestParam `json:"email_layout,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
 	// it if there are no unpublished changes.
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
@@ -347,91 +588,11 @@ func (r EmailLayoutUpsertParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// A request to update or create an email layout.
-//
-// The properties HTMLLayout, Name, TextLayout are required.
-type EmailLayoutUpsertParamsEmailLayout struct {
-	// The complete HTML or MJML content of the email layout.
-	HTMLLayout string `json:"html_layout" api:"required"`
-	// The friendly name of this email layout.
-	Name string `json:"name" api:"required"`
-	// The complete plain text content of the email layout.
-	TextLayout string `json:"text_layout" api:"required"`
-	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
-	// tags.
-	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
-	// Overrides to apply against account branding variables in an email layout,
-	// including dark mode-specific values.
-	BrandingOverrides EmailLayoutUpsertParamsEmailLayoutBrandingOverrides `json:"branding_overrides,omitzero"`
-	// A list of one or more items to show in the footer of the email layout.
-	FooterLinks []EmailLayoutUpsertParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
-	paramObj
-}
-
-func (r EmailLayoutUpsertParamsEmailLayout) MarshalJSON() (data []byte, err error) {
-	type shadow EmailLayoutUpsertParamsEmailLayout
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EmailLayoutUpsertParamsEmailLayout) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Overrides to apply against account branding variables in an email layout,
-// including dark mode-specific values.
-type EmailLayoutUpsertParamsEmailLayoutBrandingOverrides struct {
-	// A URL for a dark mode icon override.
-	DarkIconURL param.Opt[string] `json:"dark_icon_url,omitzero"`
-	// A URL for a dark mode logo override.
-	DarkLogoURL param.Opt[string] `json:"dark_logo_url,omitzero"`
-	// The dark mode primary brand color in hex format.
-	DarkPrimaryColor param.Opt[string] `json:"dark_primary_color,omitzero"`
-	// The dark mode contrast color for the primary brand color in hex format.
-	DarkPrimaryColorContrast param.Opt[string] `json:"dark_primary_color_contrast,omitzero"`
-	// A URL for a light mode icon override.
-	IconURL param.Opt[string] `json:"icon_url,omitzero"`
-	// A URL for a light mode logo override.
-	LogoURL param.Opt[string] `json:"logo_url,omitzero"`
-	// The light mode primary brand color in hex format.
-	PrimaryColor param.Opt[string] `json:"primary_color,omitzero"`
-	// The light mode contrast color for the primary brand color in hex format.
-	PrimaryColorContrast param.Opt[string] `json:"primary_color_contrast,omitzero"`
-	// The light mode primary text color in hex format.
-	PrimaryTextColor param.Opt[string] `json:"primary_text_color,omitzero"`
-	// The light mode secondary text color in hex format.
-	SecondaryTextColor param.Opt[string] `json:"secondary_text_color,omitzero"`
-	paramObj
-}
-
-func (r EmailLayoutUpsertParamsEmailLayoutBrandingOverrides) MarshalJSON() (data []byte, err error) {
-	type shadow EmailLayoutUpsertParamsEmailLayoutBrandingOverrides
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EmailLayoutUpsertParamsEmailLayoutBrandingOverrides) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The properties Text, URL are required.
-type EmailLayoutUpsertParamsEmailLayoutFooterLink struct {
-	// The text to display as the link.
-	Text string `json:"text" api:"required"`
-	// The URL to link to.
-	URL string `json:"url" api:"required"`
-	paramObj
-}
-
-func (r EmailLayoutUpsertParamsEmailLayoutFooterLink) MarshalJSON() (data []byte, err error) {
-	type shadow EmailLayoutUpsertParamsEmailLayoutFooterLink
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EmailLayoutUpsertParamsEmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type EmailLayoutValidateParams struct {
 	// The environment slug.
 	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
-	EmailLayout EmailLayoutValidateParamsEmailLayout `json:"email_layout,omitzero" api:"required"`
+	EmailLayout EmailLayoutRequestParam `json:"email_layout,omitzero" api:"required"`
 	// The slug of a branch to use. This option can only be used when `environment` is
 	// `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
@@ -453,84 +614,4 @@ func (r EmailLayoutValidateParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
-}
-
-// A request to update or create an email layout.
-//
-// The properties HTMLLayout, Name, TextLayout are required.
-type EmailLayoutValidateParamsEmailLayout struct {
-	// The complete HTML or MJML content of the email layout.
-	HTMLLayout string `json:"html_layout" api:"required"`
-	// The friendly name of this email layout.
-	Name string `json:"name" api:"required"`
-	// The complete plain text content of the email layout.
-	TextLayout string `json:"text_layout" api:"required"`
-	// Whether this layout uses MJML format. When true, html_layout must contain <mjml>
-	// tags.
-	IsMjml param.Opt[bool] `json:"is_mjml,omitzero"`
-	// Overrides to apply against account branding variables in an email layout,
-	// including dark mode-specific values.
-	BrandingOverrides EmailLayoutValidateParamsEmailLayoutBrandingOverrides `json:"branding_overrides,omitzero"`
-	// A list of one or more items to show in the footer of the email layout.
-	FooterLinks []EmailLayoutValidateParamsEmailLayoutFooterLink `json:"footer_links,omitzero"`
-	paramObj
-}
-
-func (r EmailLayoutValidateParamsEmailLayout) MarshalJSON() (data []byte, err error) {
-	type shadow EmailLayoutValidateParamsEmailLayout
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EmailLayoutValidateParamsEmailLayout) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Overrides to apply against account branding variables in an email layout,
-// including dark mode-specific values.
-type EmailLayoutValidateParamsEmailLayoutBrandingOverrides struct {
-	// A URL for a dark mode icon override.
-	DarkIconURL param.Opt[string] `json:"dark_icon_url,omitzero"`
-	// A URL for a dark mode logo override.
-	DarkLogoURL param.Opt[string] `json:"dark_logo_url,omitzero"`
-	// The dark mode primary brand color in hex format.
-	DarkPrimaryColor param.Opt[string] `json:"dark_primary_color,omitzero"`
-	// The dark mode contrast color for the primary brand color in hex format.
-	DarkPrimaryColorContrast param.Opt[string] `json:"dark_primary_color_contrast,omitzero"`
-	// A URL for a light mode icon override.
-	IconURL param.Opt[string] `json:"icon_url,omitzero"`
-	// A URL for a light mode logo override.
-	LogoURL param.Opt[string] `json:"logo_url,omitzero"`
-	// The light mode primary brand color in hex format.
-	PrimaryColor param.Opt[string] `json:"primary_color,omitzero"`
-	// The light mode contrast color for the primary brand color in hex format.
-	PrimaryColorContrast param.Opt[string] `json:"primary_color_contrast,omitzero"`
-	// The light mode primary text color in hex format.
-	PrimaryTextColor param.Opt[string] `json:"primary_text_color,omitzero"`
-	// The light mode secondary text color in hex format.
-	SecondaryTextColor param.Opt[string] `json:"secondary_text_color,omitzero"`
-	paramObj
-}
-
-func (r EmailLayoutValidateParamsEmailLayoutBrandingOverrides) MarshalJSON() (data []byte, err error) {
-	type shadow EmailLayoutValidateParamsEmailLayoutBrandingOverrides
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EmailLayoutValidateParamsEmailLayoutBrandingOverrides) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The properties Text, URL are required.
-type EmailLayoutValidateParamsEmailLayoutFooterLink struct {
-	// The text to display as the link.
-	Text string `json:"text" api:"required"`
-	// The URL to link to.
-	URL string `json:"url" api:"required"`
-	paramObj
-}
-
-func (r EmailLayoutValidateParamsEmailLayoutFooterLink) MarshalJSON() (data []byte, err error) {
-	type shadow EmailLayoutValidateParamsEmailLayoutFooterLink
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *EmailLayoutValidateParamsEmailLayoutFooterLink) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }

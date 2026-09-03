@@ -103,6 +103,19 @@ func (r *BranchService) Delete(ctx context.Context, branchSlug string, body Bran
 	return err
 }
 
+// Rebases a branch onto the development environment, bringing in new and updated
+// resources while preserving commits made on the branch.
+func (r *BranchService) Rebase(ctx context.Context, branchSlug string, body BranchRebaseParams, opts ...option.RequestOption) (res *Branch, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if branchSlug == "" {
+		err = errors.New("missing required branch_slug parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/branches/%s/rebase", branchSlug)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // A branch object.
 type Branch struct {
 	// The timestamp of when the branch was created.
@@ -189,6 +202,20 @@ type BranchDeleteParams struct {
 
 // URLQuery serializes [BranchDeleteParams]'s query parameters as `url.Values`.
 func (r BranchDeleteParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type BranchRebaseParams struct {
+	// The environment slug.
+	Environment string `query:"environment" api:"required" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [BranchRebaseParams]'s query parameters as `url.Values`.
+func (r BranchRebaseParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

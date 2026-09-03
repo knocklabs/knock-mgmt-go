@@ -95,7 +95,7 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 		"email",
 		knockmapi.MessageTypeUpsertParams{
 			Environment: "development",
-			MessageType: knockmapi.MessageTypeUpsertParamsMessageType{
+			MessageType: knockmapi.MessageTypeRequestParam{
 				Description: knockmapi.String("This is a message type"),
 				Name:        "My Message Type",
 				Preview:     "<div>Hello, world!</div>",
@@ -156,7 +156,7 @@ func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
 		"email",
 		knockmapi.MessageTypeValidateParams{
 			Environment: "development",
-			MessageType: knockmapi.MessageTypeValidateParamsMessageType{
+			MessageType: knockmapi.MessageTypeRequestParam{
 				Description: knockmapi.String("This is a message type"),
 				Name:        "My Message Type",
 				Preview:     "<div>Hello, world!</div>",
