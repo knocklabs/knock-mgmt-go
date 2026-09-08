@@ -125,8 +125,8 @@ func (r *PreferenceCenterUpsertResponse) UnmarshalJSON(data []byte) error {
 }
 
 type PreferenceCenterGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -140,8 +140,8 @@ func (r PreferenceCenterGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type PreferenceCenterResetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -155,10 +155,10 @@ func (r PreferenceCenterResetParams) URLQuery() (v url.Values, err error) {
 }
 
 type PreferenceCenterUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The preference center configuration document.
 	Config any `json:"config,omitzero" api:"required"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether the preference center is enabled for recipients.
 	Enabled param.Opt[bool] `json:"enabled,omitzero"`
 	paramObj

@@ -50,10 +50,10 @@ func TestVariableListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Variables.List(context.TODO(), knockmapi.VariableListParams{
-		Environment: "development",
 		After:       knockmapi.String("after"),
 		Before:      knockmapi.String("before"),
 		Branch:      knockmapi.String("feature-branch"),
+		Environment: knockmapi.String("development"),
 		Limit:       knockmapi.Int(0),
 		Type:        knockmapi.VariableListParamsTypePublic,
 	})

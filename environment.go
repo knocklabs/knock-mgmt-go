@@ -54,8 +54,7 @@ func (r *EnvironmentService) Get(ctx context.Context, environmentSlug string, op
 	return res, err
 }
 
-// Returns a paginated list of environments. The environments will be returned in
-// order of their index, with the `development` environment first.
+// Returns a paginated list of visible environments in catalog order.
 func (r *EnvironmentService) List(ctx context.Context, query EnvironmentListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Environment], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -73,8 +72,7 @@ func (r *EnvironmentService) List(ctx context.Context, query EnvironmentListPara
 	return res, nil
 }
 
-// Returns a paginated list of environments. The environments will be returned in
-// order of their index, with the `development` environment first.
+// Returns a paginated list of visible environments in catalog order.
 func (r *EnvironmentService) ListAutoPaging(ctx context.Context, query EnvironmentListParams, opts ...option.RequestOption) *pagination.EntriesCursorAutoPager[Environment] {
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
@@ -96,6 +94,10 @@ type Environment struct {
 	Slug string `json:"slug" api:"required"`
 	// The timestamp of when the environment was last updated.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// Whether the environment is part of the account catalog.
+	//
+	// Any of "visible", "hidden".
+	Visibility EnvironmentVisibility `json:"visibility" api:"required"`
 	// The timestamp of when the environment was deleted.
 	DeletedAt time.Time `json:"deleted_at" api:"nullable" format:"date-time"`
 	// Whether PII data is hidden from the environment. Read more in the
@@ -113,6 +115,7 @@ type Environment struct {
 		Owner        respjson.Field
 		Slug         respjson.Field
 		UpdatedAt    respjson.Field
+		Visibility   respjson.Field
 		DeletedAt    respjson.Field
 		HidePiiData  respjson.Field
 		LabelColor   respjson.Field
@@ -134,6 +137,14 @@ type EnvironmentOwner string
 const (
 	EnvironmentOwnerSystem EnvironmentOwner = "system"
 	EnvironmentOwnerUser   EnvironmentOwner = "user"
+)
+
+// Whether the environment is part of the account catalog.
+type EnvironmentVisibility string
+
+const (
+	EnvironmentVisibilityVisible EnvironmentVisibility = "visible"
+	EnvironmentVisibilityHidden  EnvironmentVisibility = "hidden"
 )
 
 type EnvironmentListParams struct {

@@ -246,13 +246,14 @@ func (r *TranslationValidateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type TranslationGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -286,17 +287,18 @@ const (
 )
 
 type TranslationListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -334,8 +336,6 @@ const (
 )
 
 type TranslationUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// An optional namespace that identifies the translation.
 	Namespace string `query:"namespace" api:"required" json:"-"`
 	// A translation object with a content attribute used to update or create a
@@ -346,13 +346,16 @@ type TranslationUpsertParams struct {
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to commit the resource at the same time as modifying it.
 	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
 	// The message to commit the resource with, only used if `commit` is `true`.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// When set to true, forces the upsert to override existing content regardless of
 	// environment restrictions. This bypasses the development-only environment check
 	// and origin environment checks.
@@ -394,14 +397,15 @@ const (
 )
 
 type TranslationValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A translation object with a content attribute used to update or create a
 	// translation.
 	Translation TranslationRequestParam `json:"translation,omitzero" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

@@ -13,7 +13,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/option"
 )
 
-func TestPreferenceCenterGet(t *testing.T) {
+func TestPreferenceCenterGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,7 @@ func TestPreferenceCenterGet(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.PreferenceCenter.Get(context.TODO(), knockmapi.PreferenceCenterGetParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -38,7 +38,7 @@ func TestPreferenceCenterGet(t *testing.T) {
 	}
 }
 
-func TestPreferenceCenterReset(t *testing.T) {
+func TestPreferenceCenterResetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -52,7 +52,7 @@ func TestPreferenceCenterReset(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.PreferenceCenter.Reset(context.TODO(), knockmapi.PreferenceCenterResetParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error
@@ -77,7 +77,6 @@ func TestPreferenceCenterUpsertWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.PreferenceCenter.Upsert(context.TODO(), knockmapi.PreferenceCenterUpsertParams{
-		Environment: "development",
 		Config: map[string]any{
 			"body": "Select which communications you’d like to receive from us.",
 			"rows": []any{
@@ -90,7 +89,8 @@ func TestPreferenceCenterUpsertWithOptionalParams(t *testing.T) {
 			"show_account_name": true,
 			"title":             "Manage preferences",
 		},
-		Enabled: knockmapi.Bool(true),
+		Environment: knockmapi.String("development"),
+		Enabled:     knockmapi.Bool(true),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error

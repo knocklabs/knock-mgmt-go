@@ -32,11 +32,11 @@ func TestWorkflowStepPreviewTemplateWithOptionalParams(t *testing.T) {
 		"step_ref",
 		knockmapi.WorkflowStepPreviewTemplateParams{
 			WorkflowKey: "workflow_key",
-			Environment: "development",
 			Recipient: shared.RecipientReferenceUnionParam{
 				OfString: knockmapi.String("dnedry"),
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 			Actor: shared.RecipientReferenceUnionParam{
 				OfString: knockmapi.String("dnedry"),
 			},

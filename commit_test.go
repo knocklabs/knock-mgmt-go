@@ -50,10 +50,10 @@ func TestCommitListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Commits.List(context.TODO(), knockmapi.CommitListParams{
-		Environment: "development",
 		After:       knockmapi.String("after"),
 		Before:      knockmapi.String("before"),
 		Branch:      knockmapi.String("feature-branch"),
+		Environment: knockmapi.String("development"),
 		Limit:       knockmapi.Int(0),
 		Promoted:    knockmapi.Bool(true),
 		ResourceID:  knockmapi.String("resource_id"),
@@ -84,10 +84,10 @@ func TestCommitCommitAllWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Commits.CommitAll(context.TODO(), knockmapi.CommitCommitAllParams{
-		Environment:   "development",
 		AllowEmpty:    knockmapi.Bool(true),
 		Branch:        knockmapi.String("feature-branch"),
 		CommitMessage: knockmapi.String("commit_message"),
+		Environment:   knockmapi.String("development"),
 		ResourceID:    knockmapi.String("resource_id"),
 		ResourceType: knockmapi.CommitCommitAllParamsResourceTypeUnion{
 			OfCommitCommitAllsResourceTypeString: knockmapi.String("audience"),

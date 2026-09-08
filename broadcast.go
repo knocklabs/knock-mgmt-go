@@ -1342,13 +1342,14 @@ func (r *BroadcastValidateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type BroadcastGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -1364,17 +1365,18 @@ func (r BroadcastGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type BroadcastListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -1392,11 +1394,12 @@ func (r BroadcastListParams) URLQuery() (v url.Values, err error) {
 }
 
 type BroadcastCancelParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1409,11 +1412,12 @@ func (r BroadcastCancelParams) URLQuery() (v url.Values, err error) {
 }
 
 type BroadcastSendParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// When to send the broadcast. If provided, the broadcast will be scheduled to send
 	// at this time. Must be in ISO 8601 UTC format. If not provided, the broadcast
 	// will be sent immediately.
@@ -1438,15 +1442,16 @@ func (r BroadcastSendParams) URLQuery() (v url.Values, err error) {
 }
 
 type BroadcastUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A broadcast request for upserting a broadcast.
 	Broadcast BroadcastRequestParam `json:"broadcast,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1467,13 +1472,14 @@ func (r BroadcastUpsertParams) URLQuery() (v url.Values, err error) {
 }
 
 type BroadcastValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A broadcast request for upserting a broadcast.
 	Broadcast BroadcastRequestParam `json:"broadcast,omitzero" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

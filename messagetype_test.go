@@ -31,9 +31,9 @@ func TestMessageTypeGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"email",
 		knockmapi.MessageTypeGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -60,11 +60,11 @@ func TestMessageTypeListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.MessageTypes.List(context.TODO(), knockmapi.MessageTypeListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -94,7 +94,6 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"email",
 		knockmapi.MessageTypeUpsertParams{
-			Environment: "development",
 			MessageType: knockmapi.MessageTypeRequestParam{
 				Description: knockmapi.String("This is a message type"),
 				Name:        "My Message Type",
@@ -126,6 +125,7 @@ func TestMessageTypeUpsertWithOptionalParams(t *testing.T) {
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Environment:   knockmapi.String("development"),
 			Force:         knockmapi.Bool(true),
 		},
 	)
@@ -155,7 +155,6 @@ func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"email",
 		knockmapi.MessageTypeValidateParams{
-			Environment: "development",
 			MessageType: knockmapi.MessageTypeRequestParam{
 				Description: knockmapi.String("This is a message type"),
 				Name:        "My Message Type",
@@ -182,7 +181,8 @@ func TestMessageTypeValidateWithOptionalParams(t *testing.T) {
 					Name: "Default",
 				}},
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

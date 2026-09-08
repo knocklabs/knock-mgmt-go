@@ -33,9 +33,9 @@ func TestBroadcastGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"broadcast_key",
 		knockmapi.BroadcastGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -62,11 +62,11 @@ func TestBroadcastListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Broadcasts.List(context.TODO(), knockmapi.BroadcastListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -96,8 +96,8 @@ func TestBroadcastCancelWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"broadcast_key",
 		knockmapi.BroadcastCancelParams{
-			Environment: "development",
 			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -126,8 +126,8 @@ func TestBroadcastSendWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"broadcast_key",
 		knockmapi.BroadcastSendParams{
-			Environment: "development",
 			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 			SendAt:      knockmapi.Time(time.Now()),
 		},
 	)
@@ -157,7 +157,6 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"broadcast_key",
 		knockmapi.BroadcastUpsertParams{
-			Environment: "development",
 			Broadcast: knockmapi.BroadcastRequestParam{
 				Name: "My Broadcast",
 				Steps: []knockmapi.BroadcastRequestStepUnionParam{{
@@ -211,8 +210,9 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 				Tags:              []string{"in-review"},
 				TargetAudienceKey: knockmapi.String("all-users"),
 			},
-			Annotate: knockmapi.Bool(true),
-			Branch:   knockmapi.String("feature-branch"),
+			Annotate:    knockmapi.Bool(true),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -241,7 +241,6 @@ func TestBroadcastValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"broadcast_key",
 		knockmapi.BroadcastValidateParams{
-			Environment: "development",
 			Broadcast: knockmapi.BroadcastRequestParam{
 				Name: "My Broadcast",
 				Steps: []knockmapi.BroadcastRequestStepUnionParam{{
@@ -295,7 +294,8 @@ func TestBroadcastValidateWithOptionalParams(t *testing.T) {
 				Tags:              []string{"in-review"},
 				TargetAudienceKey: knockmapi.String("all-users"),
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

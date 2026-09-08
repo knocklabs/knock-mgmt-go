@@ -32,9 +32,9 @@ func TestGuideGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"guide_key",
 		knockmapi.GuideGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -61,11 +61,11 @@ func TestGuideListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Guides.List(context.TODO(), knockmapi.GuideListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -95,8 +95,8 @@ func TestGuideActivateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"guide_key",
 		knockmapi.GuideActivateParams{
-			Environment: "development",
 			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 			OfGuideScheduledActivations: &knockmapi.GuideActivateParamsBodyGuideScheduledActivationParams{
 				From:  knockmapi.Time(time.Now()),
 				Until: knockmapi.Time(time.Now()),
@@ -152,7 +152,6 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"guide_key",
 		knockmapi.GuideUpsertParams{
-			Environment: "development",
 			Guide: knockmapi.GuideRequestParam{
 				ChannelKey: "in-app-guide",
 				Name:       "Getting Started Guide",
@@ -204,6 +203,7 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Environment:   knockmapi.String("development"),
 			Force:         knockmapi.Bool(true),
 		},
 	)
@@ -233,7 +233,6 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"guide_key",
 		knockmapi.GuideValidateParams{
-			Environment: "development",
 			Guide: knockmapi.GuideRequestParam{
 				ChannelKey: "in-app-guide",
 				Name:       "Getting Started Guide",
@@ -280,7 +279,8 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

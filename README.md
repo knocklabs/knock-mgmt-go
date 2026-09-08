@@ -57,7 +57,7 @@ func main() {
 		option.WithServiceToken("My Service Token"), // defaults to os.LookupEnv("KNOCK_SERVICE_TOKEN")
 	)
 	page, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	})
 	if err != nil {
 		panic(err.Error())
@@ -288,7 +288,7 @@ You can use `.ListAutoPaging()` methods to iterate through items across all page
 
 ```go
 iter := client.Workflows.ListAutoPaging(context.TODO(), knockmapi.WorkflowListParams{
-	Environment: "development",
+	Environment: knockmapi.String("development"),
 })
 // Automatically fetches more pages as needed.
 for iter.Next() {
@@ -305,7 +305,7 @@ with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
 page, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
-	Environment: "development",
+	Environment: knockmapi.String("development"),
 })
 for page != nil {
 	for _, workflow := range page.Entries {
@@ -329,7 +329,7 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
 _, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
-	Environment: "development",
+	Environment: knockmapi.String("development"),
 })
 if err != nil {
 	var apierr *knockmapi.Error
@@ -358,7 +358,7 @@ defer cancel()
 client.Workflows.List(
 	ctx,
 	knockmapi.WorkflowListParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -396,7 +396,7 @@ client := knockmapi.NewClient(
 client.Workflows.List(
 	context.TODO(),
 	knockmapi.WorkflowListParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	},
 	option.WithMaxRetries(5),
 )
@@ -413,7 +413,7 @@ var response *http.Response
 page, err := client.Workflows.List(
 	context.TODO(),
 	knockmapi.WorkflowListParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	},
 	option.WithResponseInto(&response),
 )

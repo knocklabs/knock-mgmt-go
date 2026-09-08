@@ -12,6 +12,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/internal/apiquery"
 	"github.com/knocklabs/knock-mgmt-go/internal/requestconfig"
 	"github.com/knocklabs/knock-mgmt-go/option"
+	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 )
 
@@ -34,9 +35,8 @@ func NewAPIKeyService(opts ...option.RequestOption) (r APIKeyService) {
 	return
 }
 
-// Given an authenticated service token and an environment, will exchange the
-// service token for a secret API key that can be used to make requests to the
-// public API.
+// Given an authenticated service token, exchanges it for a secret API key that can
+// be used to make requests to the public API.
 func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams, opts ...option.RequestOption) (res *APIKeyExchangeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/api_keys/exchange"
@@ -63,8 +63,8 @@ func (r *APIKeyExchangeResponse) UnmarshalJSON(data []byte) error {
 }
 
 type APIKeyExchangeParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

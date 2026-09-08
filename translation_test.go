@@ -30,9 +30,9 @@ func TestTranslationGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"locale_code",
 		knockmapi.TranslationGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			Format:                 knockmapi.TranslationGetParamsFormatJson,
 			HideUncommittedChanges: knockmapi.Bool(true),
 			Namespace:              knockmapi.String("namespace"),
@@ -62,11 +62,11 @@ func TestTranslationListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Translations.List(context.TODO(), knockmapi.TranslationListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		Format:                 knockmapi.TranslationListParamsFormatJson,
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
@@ -100,8 +100,7 @@ func TestTranslationUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"locale_code",
 		knockmapi.TranslationUpsertParams{
-			Environment: "development",
-			Namespace:   "namespace",
+			Namespace: "namespace",
 			Translation: knockmapi.TranslationRequestParam{
 				Content: `{"hello":"Hello, world!"}`,
 				Format:  knockmapi.TranslationRequestFormatJson,
@@ -111,6 +110,7 @@ func TestTranslationUpsertWithOptionalParams(t *testing.T) {
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Environment:   knockmapi.String("development"),
 			Force:         knockmapi.Bool(true),
 			Format:        knockmapi.TranslationUpsertParamsFormatJson,
 			Tenant:        knockmapi.String("tenant"),
@@ -142,12 +142,12 @@ func TestTranslationValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"locale_code",
 		knockmapi.TranslationValidateParams{
-			Environment: "development",
 			Translation: knockmapi.TranslationRequestParam{
 				Content: `{"hello":"Hello, world!"}`,
 				Format:  knockmapi.TranslationRequestFormatJson,
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

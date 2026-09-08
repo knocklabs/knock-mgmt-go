@@ -437,13 +437,14 @@ func (r *EmailLayoutValidateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type EmailLayoutGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -459,17 +460,18 @@ func (r EmailLayoutGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type EmailLayoutListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -487,8 +489,6 @@ func (r EmailLayoutListParams) URLQuery() (v url.Values, err error) {
 }
 
 type EmailLayoutPreviewParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
 	EmailLayout EmailLayoutRequestParam `json:"email_layout,omitzero" api:"required"`
 	// A recipient reference, used when referencing a recipient by either their ID (for
@@ -496,9 +496,12 @@ type EmailLayoutPreviewParams struct {
 	Recipient shared.RecipientReferenceUnionParam `json:"recipient,omitzero" api:"required"`
 	// The tenant to associate with the preview. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Optional workflow context for variable hydration. When provided,
 	// recipient/actor/tenant are resolved via Knock.
 	Workflow EmailLayoutPreviewParamsWorkflow `json:"workflow,omitzero"`
@@ -548,8 +551,6 @@ func (r *EmailLayoutPreviewParamsWorkflow) UnmarshalJSON(data []byte) error {
 }
 
 type EmailLayoutUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
 	EmailLayout EmailLayoutRequestParam `json:"email_layout,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
@@ -557,13 +558,16 @@ type EmailLayoutUpsertParams struct {
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to commit the resource at the same time as modifying it.
 	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
 	// The message to commit the resource with, only used if `commit` is `true`.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// When set to true, forces the upsert to override existing content regardless of
 	// environment restrictions. This bypasses the development-only environment check
 	// and origin environment checks.
@@ -589,13 +593,14 @@ func (r EmailLayoutUpsertParams) URLQuery() (v url.Values, err error) {
 }
 
 type EmailLayoutValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to update or create an email layout.
 	EmailLayout EmailLayoutRequestParam `json:"email_layout,omitzero" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

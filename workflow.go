@@ -7193,13 +7193,14 @@ func (r *WorkflowValidateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type WorkflowGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -7215,17 +7216,18 @@ func (r WorkflowGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type WorkflowListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -7243,14 +7245,15 @@ func (r WorkflowListParams) URLQuery() (v url.Values, err error) {
 }
 
 type WorkflowActivateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to activate or deactivate the workflow. Set to `true` by default, which
 	// will activate the workflow.
 	Status bool `json:"status" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -7271,16 +7274,17 @@ func (r WorkflowActivateParams) URLQuery() (v url.Values, err error) {
 }
 
 type WorkflowRunParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A list of recipients to run the workflow for. Supports user IDs, object
 	// references, or inline identify user objects (id + optional email/name).
 	Recipients []WorkflowRunParamsRecipientUnion `json:"recipients,omitzero" api:"required"`
 	// A key to cancel the workflow run.
 	CancellationKey param.Opt[string] `json:"cancellation_key,omitzero"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The tenant to associate the workflow run with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// The actor to reference in the the workflow run.
@@ -7472,8 +7476,6 @@ func (r *WorkflowRunParamsActorObjectRecipientReference) UnmarshalJSON(data []by
 }
 
 type WorkflowUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A workflow request for upserting a workflow.
 	Workflow WorkflowRequestParam `json:"workflow,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
@@ -7481,13 +7483,16 @@ type WorkflowUpsertParams struct {
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to commit the resource at the same time as modifying it.
 	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
 	// The message to commit the resource with, only used if `commit` is `true`.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// When set to true, forces the upsert to override existing content regardless of
 	// environment restrictions. This bypasses the development-only environment check
 	// and origin environment checks.
@@ -7512,13 +7517,14 @@ func (r WorkflowUpsertParams) URLQuery() (v url.Values, err error) {
 }
 
 type WorkflowValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A workflow request for upserting a workflow.
 	Workflow WorkflowRequestParam `json:"workflow,omitzero" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

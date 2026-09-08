@@ -126,15 +126,17 @@ const (
 )
 
 type VariableListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used
+	// for authorization while the response remains project-scoped.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Filter variables by type. Supports 'public' or 'secret'.

@@ -13,7 +13,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/option"
 )
 
-func TestAPIKeyExchange(t *testing.T) {
+func TestAPIKeyExchangeWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,7 @@ func TestAPIKeyExchange(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.APIKeys.Exchange(context.TODO(), knockmapi.APIKeyExchangeParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error

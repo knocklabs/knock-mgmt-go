@@ -26,7 +26,7 @@ func TestUsage(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	page, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())

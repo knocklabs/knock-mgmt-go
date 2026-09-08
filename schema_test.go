@@ -30,9 +30,9 @@ func TestSchemaGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"item_type",
 		knockmapi.SchemaGetParams{
-			Environment: "development",
 			Branch:      knockmapi.String("feature-branch"),
 			Collection:  knockmapi.String("collection"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -58,8 +58,8 @@ func TestSchemaListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Schemas.List(context.TODO(), knockmapi.SchemaListParams{
-		Environment: "development",
 		Branch:      knockmapi.String("feature-branch"),
+		Environment: knockmapi.String("development"),
 		ItemType:    knockmapi.String("item_type"),
 	})
 	if err != nil {
@@ -88,9 +88,9 @@ func TestSchemaUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"item_type",
 		knockmapi.SchemaUpsertParams{
-			Environment: "development",
 			Branch:      knockmapi.String("feature-branch"),
 			Collection:  knockmapi.String("collection"),
+			Environment: knockmapi.String("development"),
 			Body:        map[string]any{},
 		},
 	)
@@ -120,9 +120,9 @@ func TestSchemaValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"item_type",
 		knockmapi.SchemaValidateParams{
-			Environment: "development",
 			Branch:      knockmapi.String("feature-branch"),
 			Collection:  knockmapi.String("collection"),
+			Environment: knockmapi.String("development"),
 			Body:        map[string]any{},
 		},
 	)

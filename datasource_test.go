@@ -32,8 +32,8 @@ func TestDataSourceGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"key",
 		knockmapi.DataSourceGetParams{
-			Environment: "development",
 			Annotate:    knockmapi.Bool(true),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -91,12 +91,12 @@ func TestDataSourceListLogsWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"key",
 		knockmapi.DataSourceListLogsParams{
-			Environment: "development",
 			ID:          knockmapi.String("id"),
 			After:       knockmapi.String("after"),
 			Before:      knockmapi.String("before"),
 			Date:        knockmapi.String("date"),
 			EndingAt:    knockmapi.Time(time.Now()),
+			Environment: knockmapi.String("development"),
 			Event:       knockmapi.String("event"),
 			Include:     []string{"actions"},
 			Limit:       knockmapi.Int(0),
@@ -162,7 +162,7 @@ func TestDataSourceListSourcesWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestDataSourceRehearse(t *testing.T) {
+func TestDataSourceRehearseWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -179,13 +179,13 @@ func TestDataSourceRehearse(t *testing.T) {
 		context.TODO(),
 		"key",
 		knockmapi.DataSourceRehearseParams{
-			Environment: "development",
 			SourceRehearseRequest: knockmapi.SourceRehearseRequestParam{
 				Payload: map[string]any{
 					"body":    "bar",
 					"headers": "bar",
 				},
 			},
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -272,7 +272,6 @@ func TestDataSourceUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"key",
 		knockmapi.DataSourceUpsertParams{
-			Environment: "development",
 			Source: knockmapi.SourceRequestParam{
 				Name:           "Universal HTTP Source",
 				CustomImageURL: param.Null[string](),
@@ -302,7 +301,8 @@ func TestDataSourceUpsertWithOptionalParams(t *testing.T) {
 				},
 				PreconfiguredProvider: knockmapi.String("preconfigured_provider"),
 			},
-			Annotate: knockmapi.Bool(true),
+			Annotate:    knockmapi.Bool(true),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

@@ -618,13 +618,14 @@ func (r *GoalValidateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type GoalGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -637,17 +638,18 @@ func (r GoalGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type GoalListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
@@ -662,8 +664,8 @@ func (r GoalListParams) URLQuery() (v url.Values, err error) {
 }
 
 type GoalArchiveParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -676,10 +678,10 @@ func (r GoalArchiveParams) URLQuery() (v url.Values, err error) {
 }
 
 type GoalCloneParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The destination key, name, and environment for the cloned goal.
 	Clone GoalCloneParamsClone `json:"clone,omitzero" api:"required"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -721,12 +723,12 @@ func (r *GoalCloneParamsClone) UnmarshalJSON(data []byte) error {
 }
 
 type GoalUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A goal payload for upsert or validate.
 	Goal GoalRequestParam `json:"goal,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -747,13 +749,14 @@ func (r GoalUpsertParams) URLQuery() (v url.Values, err error) {
 }
 
 type GoalValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A goal payload for upsert or validate.
 	Goal GoalRequestParam `json:"goal,omitzero" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

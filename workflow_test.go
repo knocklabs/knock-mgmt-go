@@ -32,9 +32,9 @@ func TestWorkflowGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_key",
 		knockmapi.WorkflowGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -61,11 +61,11 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Workflows.List(context.TODO(), knockmapi.WorkflowListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -95,9 +95,9 @@ func TestWorkflowActivateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_key",
 		knockmapi.WorkflowActivateParams{
-			Environment: "development",
 			Status:      true,
 			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -126,7 +126,6 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_key",
 		knockmapi.WorkflowRunParams{
-			Environment: "development",
 			Recipients: []knockmapi.WorkflowRunParamsRecipientUnion{{
 				OfInlineIdentifyUserRequest: &knockmapi.InlineIdentifyUserRequestParam{
 					ID:    "user_1",
@@ -134,7 +133,8 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 					Name:  knockmapi.String("Jane Doe"),
 				},
 			}},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 			Actor: knockmapi.WorkflowRunParamsActorUnion{
 				OfString: knockmapi.String("user_1"),
 			},
@@ -171,7 +171,6 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_key",
 		knockmapi.WorkflowUpsertParams{
-			Environment: "development",
 			Workflow: knockmapi.WorkflowRequestParam{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
@@ -241,6 +240,7 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Environment:   knockmapi.String("development"),
 			Force:         knockmapi.Bool(true),
 		},
 	)
@@ -270,7 +270,6 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"workflow_key",
 		knockmapi.WorkflowValidateParams{
-			Environment: "development",
 			Workflow: knockmapi.WorkflowRequestParam{
 				Name: "My Workflow",
 				Steps: []knockmapi.WorkflowStepUnionParam{{
@@ -335,7 +334,8 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 				},
 				TriggerFrequency: knockmapi.WorkflowRequestTriggerFrequencyEveryTrigger,
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

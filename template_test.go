@@ -28,7 +28,6 @@ func TestTemplatePreviewWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Templates.Preview(context.TODO(), knockmapi.TemplatePreviewParams{
-		Environment: "development",
 		ChannelType: knockmapi.TemplatePreviewParamsChannelTypeEmail,
 		Recipient: shared.RecipientReferenceUnionParam{
 			OfString: knockmapi.String("user_123"),
@@ -152,7 +151,8 @@ func TestTemplatePreviewWithOptionalParams(t *testing.T) {
 				}},
 			},
 		},
-		Branch: knockmapi.String("feature-branch"),
+		Branch:      knockmapi.String("feature-branch"),
+		Environment: knockmapi.String("development"),
 		Actor: shared.RecipientReferenceUnionParam{
 			OfObjectRecipientReference: &shared.RecipientReferenceObjectRecipientReferenceParam{
 				ID:         "project_1",

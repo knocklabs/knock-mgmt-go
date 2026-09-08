@@ -1140,10 +1140,10 @@ func (r *DataSourceUpsertResponse) UnmarshalJSON(data []byte) error {
 }
 
 type DataSourceGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1156,7 +1156,7 @@ func (r DataSourceGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type DataSourceListEventsParams struct {
-	// The environment slug.
+	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
@@ -1171,8 +1171,6 @@ func (r DataSourceListEventsParams) URLQuery() (v url.Values, err error) {
 }
 
 type DataSourceListLogsParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The log ID to filter by.
 	ID param.Opt[string] `query:"id,omitzero" json:"-"`
 	// The cursor to fetch entries after.
@@ -1183,6 +1181,8 @@ type DataSourceListLogsParams struct {
 	Date param.Opt[string] `query:"date,omitzero" json:"-"`
 	// Only return source logs at or before this timestamp.
 	EndingAt param.Opt[time.Time] `query:"ending_at,omitzero" format:"date-time" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The event name to filter by.
 	Event param.Opt[string] `query:"event,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
@@ -1209,7 +1209,7 @@ func (r DataSourceListLogsParams) URLQuery() (v url.Values, err error) {
 type DataSourceListSourcesParams struct {
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The environment slug.
+	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Associated resources to include in each source. Accepts `environment_settings`.
 	//
@@ -1228,10 +1228,10 @@ func (r DataSourceListSourcesParams) URLQuery() (v url.Values, err error) {
 }
 
 type DataSourceRehearseParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Request body for rehearsing a source event.
 	SourceRehearseRequest SourceRehearseRequestParam
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -1272,7 +1272,7 @@ func (r DataSourceGetProviderParams) URLQuery() (v url.Values, err error) {
 }
 
 type DataSourceGetStatusParams struct {
-	// The environment slug.
+	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
@@ -1287,13 +1287,13 @@ func (r DataSourceGetStatusParams) URLQuery() (v url.Values, err error) {
 }
 
 type DataSourceUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A source request for setting a source and its environment-specific
 	// configuration.
 	Source SourceRequestParam `json:"source,omitzero" api:"required"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

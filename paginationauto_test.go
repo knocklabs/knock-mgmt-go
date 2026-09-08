@@ -26,7 +26,7 @@ func TestAutoPagination(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	iter := client.Workflows.ListAutoPaging(context.TODO(), knockmapi.WorkflowListParams{
-		Environment: "development",
+		Environment: knockmapi.String("development"),
 	})
 	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {

@@ -189,13 +189,14 @@ type SchemaUpsertResponse = any
 type SchemaValidateResponse = any
 
 type SchemaGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The object collection, required when `item_type` is `object`.
 	Collection param.Opt[string] `query:"collection,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -208,11 +209,12 @@ func (r SchemaGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type SchemaListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Filter schemas by item type (`user`, `tenant`, or `object`).
 	ItemType param.Opt[string] `query:"item_type,omitzero" json:"-"`
 	paramObj
@@ -227,14 +229,15 @@ func (r SchemaListParams) URLQuery() (v url.Values, err error) {
 }
 
 type SchemaUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The object collection, required when `item_type` is `object`.
 	Collection param.Opt[string] `query:"collection,omitzero" json:"-"`
-	Body       any
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	Body        any
 	paramObj
 }
 
@@ -254,14 +257,15 @@ func (r SchemaUpsertParams) URLQuery() (v url.Values, err error) {
 }
 
 type SchemaValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The object collection, required when `item_type` is `object`.
 	Collection param.Opt[string] `query:"collection,omitzero" json:"-"`
-	Body       any
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	Body        any
 	paramObj
 }
 

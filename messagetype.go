@@ -45,7 +45,8 @@ func NewMessageTypeService(opts ...option.RequestOption) (r MessageTypeService) 
 	return
 }
 
-// Retrieve a message type by its key, in a given environment.
+// Retrieve a message type by its key. When the environment is omitted, the account
+// default is used. Root environments share the Development catalog.
 func (r *MessageTypeService) Get(ctx context.Context, messageTypeKey string, query MessageTypeGetParams, opts ...option.RequestOption) (res *MessageType, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
@@ -57,7 +58,8 @@ func (r *MessageTypeService) Get(ctx context.Context, messageTypeKey string, que
 	return res, err
 }
 
-// Returns a paginated list of message types available in a given environment.
+// Returns a paginated list of message types. When the environment is omitted, the
+// account default is used. Root environments share the Development catalog.
 func (r *MessageTypeService) List(ctx context.Context, query MessageTypeListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[MessageType], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -75,14 +77,17 @@ func (r *MessageTypeService) List(ctx context.Context, query MessageTypeListPara
 	return res, nil
 }
 
-// Returns a paginated list of message types available in a given environment.
+// Returns a paginated list of message types. When the environment is omitted, the
+// account default is used. Root environments share the Development catalog.
 func (r *MessageTypeService) ListAutoPaging(ctx context.Context, query MessageTypeListParams, opts ...option.RequestOption) *pagination.EntriesCursorAutoPager[MessageType] {
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
 // Updates a message type, or creates a new one if it does not yet exist.
 //
-// Note: this endpoint only operates in the `development` environment.
+// When the environment is omitted, the account default is used. Message types are
+// an account-shared catalog stored in Development. Requests against other root
+// environments read and write that same catalog.
 func (r *MessageTypeService) Upsert(ctx context.Context, messageTypeKey string, params MessageTypeUpsertParams, opts ...option.RequestOption) (res *MessageTypeUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
@@ -96,8 +101,8 @@ func (r *MessageTypeService) Upsert(ctx context.Context, messageTypeKey string, 
 
 // Validates a message type payload without persisting it.
 //
-// Note: this endpoint only operates on message types in the `development`
-// environment.
+// When the environment is omitted, the account default is used. Message types are
+// an account-shared catalog stored in Development.
 func (r *MessageTypeService) Validate(ctx context.Context, messageTypeKey string, params MessageTypeValidateParams, opts ...option.RequestOption) (res *MessageTypeValidateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if messageTypeKey == "" {
@@ -1051,13 +1056,14 @@ func (r *MessageTypeValidateResponse) UnmarshalJSON(data []byte) error {
 }
 
 type MessageTypeGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -1073,17 +1079,18 @@ func (r MessageTypeGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type MessageTypeListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Whether to hide uncommitted changes. When true, only committed changes will be
 	// returned. When false, both committed and uncommitted changes will be returned.
 	HideUncommittedChanges param.Opt[bool] `query:"hide_uncommitted_changes,omitzero" json:"-"`
@@ -1101,8 +1108,6 @@ func (r MessageTypeListParams) URLQuery() (v url.Values, err error) {
 }
 
 type MessageTypeUpsertParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create a message type.
 	MessageType MessageTypeRequestParam `json:"message_type,omitzero" api:"required"`
 	// When used with commit, creates a new version with identical content and commits
@@ -1110,13 +1115,16 @@ type MessageTypeUpsertParams struct {
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
 	// Whether to annotate the resource. Only used in the Knock CLI.
 	Annotate param.Opt[bool] `query:"annotate,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// Whether to commit the resource at the same time as modifying it.
 	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
 	// The message to commit the resource with, only used if `commit` is `true`.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// When set to true, forces the upsert to override existing content regardless of
 	// environment restrictions. This bypasses the development-only environment check
 	// and origin environment checks.
@@ -1142,13 +1150,14 @@ func (r MessageTypeUpsertParams) URLQuery() (v url.Values, err error) {
 }
 
 type MessageTypeValidateParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// A request to create a message type.
 	MessageType MessageTypeRequestParam `json:"message_type,omitzero" api:"required"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

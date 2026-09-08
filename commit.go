@@ -240,15 +240,16 @@ func (r *CommitPromoteOneResponse) UnmarshalJSON(data []byte) error {
 }
 
 type CommitListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Whether to show commits in the given environment that have not been promoted to
@@ -306,16 +307,17 @@ const (
 )
 
 type CommitCommitAllParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// When used with a single resource_type and resource_id, creates a new version
 	// with identical content and commits it if there are no unpublished changes.
 	AllowEmpty param.Opt[bool] `query:"allow_empty,omitzero" json:"-"`
-	// The slug of a branch to use. This option can only be used when `environment` is
-	// `"development"`.
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
 	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// An optional message to include in a commit.
 	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// Filter changes to commit by resource identifier. Must be used together with
 	// resource_type.
 	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`

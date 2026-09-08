@@ -31,9 +31,9 @@ func TestEmailLayoutGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"email_layout_key",
 		knockmapi.EmailLayoutGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -60,11 +60,11 @@ func TestEmailLayoutListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.EmailLayouts.List(context.TODO(), knockmapi.EmailLayoutListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -91,7 +91,6 @@ func TestEmailLayoutPreviewWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.EmailLayouts.Preview(context.TODO(), knockmapi.EmailLayoutPreviewParams{
-		Environment: "development",
 		EmailLayout: knockmapi.EmailLayoutRequestParam{
 			HTMLLayout: "<html><body>Hello {{ recipient.name }}! {{ content }}</body></html>",
 			Name:       "Transactional",
@@ -117,7 +116,8 @@ func TestEmailLayoutPreviewWithOptionalParams(t *testing.T) {
 		Recipient: shared.RecipientReferenceUnionParam{
 			OfString: knockmapi.String("user_123"),
 		},
-		Branch: knockmapi.String("feature-branch"),
+		Branch:      knockmapi.String("feature-branch"),
+		Environment: knockmapi.String("development"),
 		Actor: shared.RecipientReferenceUnionParam{
 			OfObjectRecipientReference: &shared.RecipientReferenceObjectRecipientReferenceParam{
 				ID:         "project_1",
@@ -159,7 +159,6 @@ func TestEmailLayoutUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"email_layout_key",
 		knockmapi.EmailLayoutUpsertParams{
-			Environment: "development",
 			EmailLayout: knockmapi.EmailLayoutRequestParam{
 				HTMLLayout: "<html><body>Hello, world!</body></html>",
 				Name:       "Transactional",
@@ -187,6 +186,7 @@ func TestEmailLayoutUpsertWithOptionalParams(t *testing.T) {
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Environment:   knockmapi.String("development"),
 			Force:         knockmapi.Bool(true),
 		},
 	)
@@ -216,7 +216,6 @@ func TestEmailLayoutValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"email_layout_key",
 		knockmapi.EmailLayoutValidateParams{
-			Environment: "development",
 			EmailLayout: knockmapi.EmailLayoutRequestParam{
 				HTMLLayout: "<html><body>Hello, world!</body></html>",
 				Name:       "Transactional",
@@ -239,7 +238,8 @@ func TestEmailLayoutValidateWithOptionalParams(t *testing.T) {
 				}},
 				IsMjml: knockmapi.Bool(true),
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

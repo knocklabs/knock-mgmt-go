@@ -147,8 +147,8 @@ func (r *Branch) UnmarshalJSON(data []byte) error {
 }
 
 type BranchNewParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -161,8 +161,8 @@ func (r BranchNewParams) URLQuery() (v url.Values, err error) {
 }
 
 type BranchGetParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -175,12 +175,12 @@ func (r BranchGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type BranchListParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// The cursor to fetch entries before.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
@@ -195,8 +195,8 @@ func (r BranchListParams) URLQuery() (v url.Values, err error) {
 }
 
 type BranchDeleteParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
@@ -209,8 +209,8 @@ func (r BranchDeleteParams) URLQuery() (v url.Values, err error) {
 }
 
 type BranchRebaseParams struct {
-	// The environment slug.
-	Environment string `query:"environment" api:"required" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 

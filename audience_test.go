@@ -30,9 +30,9 @@ func TestAudienceGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"audience_key",
 		knockmapi.AudienceGetParams{
-			Environment:            "development",
 			Annotate:               knockmapi.Bool(true),
 			Branch:                 knockmapi.String("feature-branch"),
+			Environment:            knockmapi.String("development"),
 			HideUncommittedChanges: knockmapi.Bool(true),
 		},
 	)
@@ -59,11 +59,11 @@ func TestAudienceListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Audiences.List(context.TODO(), knockmapi.AudienceListParams{
-		Environment:            "development",
 		After:                  knockmapi.String("after"),
 		Annotate:               knockmapi.Bool(true),
 		Before:                 knockmapi.String("before"),
 		Branch:                 knockmapi.String("feature-branch"),
+		Environment:            knockmapi.String("development"),
 		HideUncommittedChanges: knockmapi.Bool(true),
 		Limit:                  knockmapi.Int(0),
 	})
@@ -76,7 +76,7 @@ func TestAudienceListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAudienceArchive(t *testing.T) {
+func TestAudienceArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -93,7 +93,7 @@ func TestAudienceArchive(t *testing.T) {
 		context.TODO(),
 		"audience_key",
 		knockmapi.AudienceArchiveParams{
-			Environment: "development",
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -122,7 +122,6 @@ func TestAudienceUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"audience_key",
 		knockmapi.AudienceUpsertParams{
-			Environment: "development",
 			Audience: knockmapi.AudienceRequestUnionParam{
 				OfDynamic: &knockmapi.AudienceRequestDynamicParam{
 					Name:        "Premium users",
@@ -141,6 +140,7 @@ func TestAudienceUpsertWithOptionalParams(t *testing.T) {
 			Branch:        knockmapi.String("feature-branch"),
 			Commit:        knockmapi.Bool(true),
 			CommitMessage: knockmapi.String("commit_message"),
+			Environment:   knockmapi.String("development"),
 			Force:         knockmapi.Bool(true),
 		},
 	)
@@ -170,7 +170,6 @@ func TestAudienceValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"audience_key",
 		knockmapi.AudienceValidateParams{
-			Environment: "development",
 			Audience: knockmapi.AudienceRequestUnionParam{
 				OfDynamic: &knockmapi.AudienceRequestDynamicParam{
 					Name:        "Premium users",
@@ -184,7 +183,8 @@ func TestAudienceValidateWithOptionalParams(t *testing.T) {
 					}},
 				},
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {

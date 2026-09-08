@@ -30,9 +30,9 @@ func TestGoalGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"goal_key",
 		knockmapi.GoalGetParams{
-			Environment: "development",
 			Annotate:    knockmapi.Bool(true),
 			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -58,11 +58,11 @@ func TestGoalListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Goals.List(context.TODO(), knockmapi.GoalListParams{
-		Environment: "development",
 		After:       knockmapi.String("after"),
 		Annotate:    knockmapi.Bool(true),
 		Before:      knockmapi.String("before"),
 		Branch:      knockmapi.String("feature-branch"),
+		Environment: knockmapi.String("development"),
 		Limit:       knockmapi.Int(0),
 	})
 	if err != nil {
@@ -74,7 +74,7 @@ func TestGoalListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestGoalArchive(t *testing.T) {
+func TestGoalArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -91,7 +91,7 @@ func TestGoalArchive(t *testing.T) {
 		context.TODO(),
 		"goal_key",
 		knockmapi.GoalArchiveParams{
-			Environment: "development",
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -103,7 +103,7 @@ func TestGoalArchive(t *testing.T) {
 	}
 }
 
-func TestGoalClone(t *testing.T) {
+func TestGoalCloneWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -120,12 +120,12 @@ func TestGoalClone(t *testing.T) {
 		context.TODO(),
 		"goal_key",
 		knockmapi.GoalCloneParams{
-			Environment: "development",
 			Clone: knockmapi.GoalCloneParamsClone{
 				Environment: "production",
 				Key:         "trial-conversion-copy",
 				Name:        "Trial Conversion Copy",
 			},
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -154,7 +154,6 @@ func TestGoalUpsertWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"goal_key",
 		knockmapi.GoalUpsertParams{
-			Environment: "development",
 			Goal: knockmapi.GoalRequestParam{
 				Condition: knockmapi.GoalConditionParam{
 					Event: knockmapi.GoalConditionEventUnionParam{
@@ -176,7 +175,8 @@ func TestGoalUpsertWithOptionalParams(t *testing.T) {
 				Name:        "Trial Conversion",
 				Description: knockmapi.String("Tracks when a trial user converts to paid"),
 			},
-			Annotate: knockmapi.Bool(true),
+			Annotate:    knockmapi.Bool(true),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -205,7 +205,6 @@ func TestGoalValidateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"goal_key",
 		knockmapi.GoalValidateParams{
-			Environment: "development",
 			Goal: knockmapi.GoalRequestParam{
 				Condition: knockmapi.GoalConditionParam{
 					Event: knockmapi.GoalConditionEventUnionParam{
@@ -227,7 +226,8 @@ func TestGoalValidateWithOptionalParams(t *testing.T) {
 				Name:        "Trial Conversion",
 				Description: knockmapi.String("Tracks when a trial user converts to paid"),
 			},
-			Branch: knockmapi.String("feature-branch"),
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
