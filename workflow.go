@@ -805,9 +805,14 @@ func (r WorkflowAIAgentStep) ToParam() WorkflowAIAgentStepParam {
 
 // The settings for the AI agent step.
 type WorkflowAIAgentStepSettings struct {
-	// The AI model to use in `provider:model` format (e.g.
-	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
-	// documentation for a list of supported models.
+	// The AI model to use in `provider:model` format.
+	//
+	// Any of "anthropic:claude-haiku-4-5", "anthropic:claude-sonnet-5",
+	// "anthropic:claude-opus-5", "anthropic:claude-sonnet-4-5",
+	// "anthropic:claude-sonnet-4-6", "anthropic:claude-opus-4-5",
+	// "anthropic:claude-opus-4-6", "openai:gpt-5.6-sol", "openai:gpt-5.6-terra",
+	// "openai:gpt-5.6-luna", "openai:gpt-5.2-chat-latest", "openai:gpt-5.2",
+	// "openai:gpt-5.2-pro".
 	Model string `json:"model" api:"required"`
 	// The prompt template for the AI request. Supports Liquid templating.
 	RequestPrompt string `json:"request_prompt" api:"required"`
@@ -885,10 +890,15 @@ func (r *WorkflowAIAgentStepParam) UnmarshalJSON(data []byte) error {
 //
 // The properties Model, RequestPrompt, ResponseType are required.
 type WorkflowAIAgentStepSettingsParam struct {
-	// The AI model to use in `provider:model` format (e.g.
-	// `anthropic:claude-haiku-4-5`, `openai:gpt-5.2-chat-latest`). See the
-	// documentation for a list of supported models.
-	Model string `json:"model" api:"required"`
+	// The AI model to use in `provider:model` format.
+	//
+	// Any of "anthropic:claude-haiku-4-5", "anthropic:claude-sonnet-5",
+	// "anthropic:claude-opus-5", "anthropic:claude-sonnet-4-5",
+	// "anthropic:claude-sonnet-4-6", "anthropic:claude-opus-4-5",
+	// "anthropic:claude-opus-4-6", "openai:gpt-5.6-sol", "openai:gpt-5.6-terra",
+	// "openai:gpt-5.6-luna", "openai:gpt-5.2-chat-latest", "openai:gpt-5.2",
+	// "openai:gpt-5.2-pro".
+	Model string `json:"model,omitzero" api:"required"`
 	// The prompt template for the AI request. Supports Liquid templating.
 	RequestPrompt string `json:"request_prompt" api:"required"`
 	// The type of response to expect from the AI model.
@@ -914,6 +924,9 @@ func (r *WorkflowAIAgentStepSettingsParam) UnmarshalJSON(data []byte) error {
 }
 
 func init() {
+	apijson.RegisterFieldValidator[WorkflowAIAgentStepSettingsParam](
+		"model", "anthropic:claude-haiku-4-5", "anthropic:claude-sonnet-5", "anthropic:claude-opus-5", "anthropic:claude-sonnet-4-5", "anthropic:claude-sonnet-4-6", "anthropic:claude-opus-4-5", "anthropic:claude-opus-4-6", "openai:gpt-5.6-sol", "openai:gpt-5.6-terra", "openai:gpt-5.6-luna", "openai:gpt-5.2-chat-latest", "openai:gpt-5.2", "openai:gpt-5.2-pro",
+	)
 	apijson.RegisterFieldValidator[WorkflowAIAgentStepSettingsParam](
 		"response_type", "text", "json",
 	)
