@@ -371,7 +371,8 @@ type SourceLog struct {
 	// The actions executed after receiving the source event. Only present when
 	// `include` contains `actions`.
 	Actions []SourceLogAction `json:"actions"`
-	// The data payload parsed by the source.
+	// The full event data sent from the source. For legacy sources, this is the
+	// properties or traits object.
 	Data map[string]any `json:"data" api:"nullable"`
 	// The timestamp of when the source log was created.
 	InsertedAt time.Time `json:"inserted_at" api:"nullable" format:"date-time"`

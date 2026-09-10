@@ -197,10 +197,15 @@ type ChatChannelSettings struct {
 	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
 	// Whether to track link clicks on chat notifications.
 	LinkTracking bool `json:"link_tracking"`
+	// Whether tracked chat links should use compact short URLs instead of long tracked
+	// links. Only applied when link tracking is enabled. Not used by WhatsApp, which
+	// already uses short links.
+	LinkTrackingUsesShortLinks bool `json:"link_tracking_uses_short_links"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmailBasedUserIDResolution respjson.Field
 		LinkTracking               respjson.Field
+		LinkTrackingUsesShortLinks respjson.Field
 		ExtraFields                map[string]respjson.Field
 		raw                        string
 	} `json:"-"`
@@ -229,6 +234,10 @@ type ChatChannelSettingsParam struct {
 	EmailBasedUserIDResolution param.Opt[bool] `json:"email_based_user_id_resolution,omitzero"`
 	// Whether to track link clicks on chat notifications.
 	LinkTracking param.Opt[bool] `json:"link_tracking,omitzero"`
+	// Whether tracked chat links should use compact short URLs instead of long tracked
+	// links. Only applied when link tracking is enabled. Not used by WhatsApp, which
+	// already uses short links.
+	LinkTrackingUsesShortLinks param.Opt[bool] `json:"link_tracking_uses_short_links,omitzero"`
 	paramObj
 }
 

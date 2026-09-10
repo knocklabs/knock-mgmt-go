@@ -109,6 +109,44 @@ func TestBroadcastCancelWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestBroadcastRunWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Broadcasts.Run(
+		context.TODO(),
+		"broadcast_key",
+		knockmapi.BroadcastRunParams{
+			Recipient: knockmapi.BroadcastRunParamsRecipient{
+				ID: "user_1",
+			},
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
+			Settings: knockmapi.BroadcastRunParamsSettings{
+				SandboxMode: knockmapi.Bool(true),
+				SkipDelay:   knockmapi.Bool(true),
+			},
+			Tenant: knockmapi.String("tenant_1"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestBroadcastSendWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"

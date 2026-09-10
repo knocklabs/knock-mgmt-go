@@ -92,6 +92,19 @@ func (r *BroadcastService) Cancel(ctx context.Context, broadcastKey string, body
 	return res, err
 }
 
+// Runs the current version of a broadcast for the provided recipient without
+// publishing the broadcast.
+func (r *BroadcastService) Run(ctx context.Context, broadcastKey string, params BroadcastRunParams, opts ...option.RequestOption) (res *BroadcastRunResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if broadcastKey == "" {
+		err = errors.New("missing required broadcast_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/broadcasts/%s/run", broadcastKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
 // Sends a broadcast immediately or schedules it to send at a future time.
 func (r *BroadcastService) Send(ctx context.Context, broadcastKey string, params BroadcastSendParams, opts ...option.RequestOption) (res *BroadcastSendResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -433,6 +446,8 @@ type BroadcastStepUnionChannelOverrides struct {
 	LinkTracking bool `json:"link_tracking"`
 	// This field is from variant [ChatChannelSettings].
 	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
+	// This field is from variant [ChatChannelSettings].
+	LinkTrackingUsesShortLinks bool `json:"link_tracking_uses_short_links"`
 	// This field is from variant [PushChannelSettings].
 	TokenDeregistration bool `json:"token_deregistration"`
 	// This field is from variant [EmailChannelSettings].
@@ -454,6 +469,7 @@ type BroadcastStepUnionChannelOverrides struct {
 	JSON      struct {
 		LinkTracking               respjson.Field
 		EmailBasedUserIDResolution respjson.Field
+		LinkTrackingUsesShortLinks respjson.Field
 		TokenDeregistration        respjson.Field
 		BccAddress                 respjson.Field
 		CcAddress                  respjson.Field
@@ -1155,6 +1171,15 @@ func (u broadcastRequestStepUnionParamChannelOverrides) GetEmailBasedUserIDResol
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u broadcastRequestStepUnionParamChannelOverrides) GetLinkTrackingUsesShortLinks() *bool {
+	switch vt := u.any.(type) {
+	case *ChatChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.LinkTrackingUsesShortLinks)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u broadcastRequestStepUnionParamChannelOverrides) GetTokenDeregistration() *bool {
 	switch vt := u.any.(type) {
 	case *PushChannelSettingsParam:
@@ -1287,6 +1312,27 @@ func (r *BroadcastCancelResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A response to a broadcast run request.
+type BroadcastRunResponse struct {
+	// The ID of the broadcast run.
+	BroadcastRunID string `json:"broadcast_run_id" api:"required" format:"uuid"`
+	// The ID of the run request.
+	RequestID string `json:"request_id" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		BroadcastRunID respjson.Field
+		RequestID      respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BroadcastRunResponse) RawJSON() string { return r.JSON.raw }
+func (r *BroadcastRunResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Wraps the Broadcast response under the `broadcast` key.
 type BroadcastSendResponse struct {
 	// A broadcast object.
@@ -1409,6 +1455,72 @@ func (r BroadcastCancelParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type BroadcastRunParams struct {
+	// The user to run the broadcast for.
+	Recipient BroadcastRunParamsRecipient `json:"recipient,omitzero" api:"required"`
+	// The tenant to associate the broadcast run with. Must not contain whitespace.
+	Tenant param.Opt[string] `json:"tenant,omitzero"`
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	// Settings that control how the broadcast run executes.
+	Settings BroadcastRunParamsSettings `json:"settings,omitzero"`
+	paramObj
+}
+
+func (r BroadcastRunParams) MarshalJSON() (data []byte, err error) {
+	type shadow BroadcastRunParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BroadcastRunParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URLQuery serializes [BroadcastRunParams]'s query parameters as `url.Values`.
+func (r BroadcastRunParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// The user to run the broadcast for.
+//
+// The property ID is required.
+type BroadcastRunParamsRecipient struct {
+	// The ID of the user.
+	ID string `json:"id" api:"required"`
+	paramObj
+}
+
+func (r BroadcastRunParamsRecipient) MarshalJSON() (data []byte, err error) {
+	type shadow BroadcastRunParamsRecipient
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BroadcastRunParamsRecipient) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Settings that control how the broadcast run executes.
+type BroadcastRunParamsSettings struct {
+	// Whether to generate messages without sending them to downstream providers.
+	SandboxMode param.Opt[bool] `json:"sandbox_mode,omitzero"`
+	// Whether to skip delay steps during the run.
+	SkipDelay param.Opt[bool] `json:"skip_delay,omitzero"`
+	paramObj
+}
+
+func (r BroadcastRunParamsSettings) MarshalJSON() (data []byte, err error) {
+	type shadow BroadcastRunParamsSettings
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BroadcastRunParamsSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type BroadcastSendParams struct {

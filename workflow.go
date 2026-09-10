@@ -2795,6 +2795,8 @@ type WorkflowStepUnionChannelOverrides struct {
 	LinkTracking bool `json:"link_tracking"`
 	// This field is from variant [ChatChannelSettings].
 	EmailBasedUserIDResolution bool `json:"email_based_user_id_resolution"`
+	// This field is from variant [ChatChannelSettings].
+	LinkTrackingUsesShortLinks bool `json:"link_tracking_uses_short_links"`
 	// This field is from variant [PushChannelSettings].
 	TokenDeregistration bool `json:"token_deregistration"`
 	// This field is from variant [EmailChannelSettings].
@@ -2816,6 +2818,7 @@ type WorkflowStepUnionChannelOverrides struct {
 	JSON      struct {
 		LinkTracking               respjson.Field
 		EmailBasedUserIDResolution respjson.Field
+		LinkTrackingUsesShortLinks respjson.Field
 		TokenDeregistration        respjson.Field
 		BccAddress                 respjson.Field
 		CcAddress                  respjson.Field
@@ -4621,6 +4624,15 @@ func (u workflowStepUnionParamChannelOverrides) GetEmailBasedUserIDResolution() 
 	switch vt := u.any.(type) {
 	case *ChatChannelSettingsParam:
 		return paramutil.AddrIfPresent(vt.EmailBasedUserIDResolution)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamChannelOverrides) GetLinkTrackingUsesShortLinks() *bool {
+	switch vt := u.any.(type) {
+	case *ChatChannelSettingsParam:
+		return paramutil.AddrIfPresent(vt.LinkTrackingUsesShortLinks)
 	}
 	return nil
 }
