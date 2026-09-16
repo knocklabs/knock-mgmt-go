@@ -2991,7 +2991,10 @@ type WorkflowStepUnionSettingsEvent struct {
 	// This field is from variant
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent].
 	IntegrationSourceKey string `json:"integration_source_key"`
-	SourceKey            string `json:"source_key"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent].
+	RecipientPath string `json:"recipient_path"`
+	SourceKey     string `json:"source_key"`
 	// This field is from variant
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event].
 	SourceType string `json:"source_type"`
@@ -3002,6 +3005,7 @@ type WorkflowStepUnionSettingsEvent struct {
 		EventKey             respjson.Field
 		EventType            respjson.Field
 		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
 		SourceKey            respjson.Field
 		SourceType           respjson.Field
 		AudienceKey          respjson.Field
@@ -3191,7 +3195,10 @@ type WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent struct {
 	// This field is from variant
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent].
 	IntegrationSourceKey string `json:"integration_source_key"`
-	SourceKey            string `json:"source_key"`
+	// This field is from variant
+	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent].
+	RecipientPath string `json:"recipient_path"`
+	SourceKey     string `json:"source_key"`
 	// This field is from variant
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event].
 	SourceType string `json:"source_type"`
@@ -3202,6 +3209,7 @@ type WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent struct {
 		EventKey             respjson.Field
 		EventType            respjson.Field
 		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
 		SourceKey            respjson.Field
 		SourceType           respjson.Field
 		AudienceKey          respjson.Field
@@ -3307,11 +3315,15 @@ type WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent struct {
 	EventType string `json:"event_type" api:"required"`
 	// The key of the integration source that emits the event to wait for.
 	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON path into the source event that yields the recipient user ID. Use userId
+	// for Segment events, or a body./headers. path for HTTP events (e.g. body.userId).
+	RecipientPath string `json:"recipient_path" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EventKey             respjson.Field
 		EventType            respjson.Field
 		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -3387,8 +3399,8 @@ type WorkflowStepWorkflowWaitForEventStepSettingsObject2Event struct {
 	// The message lifecycle event to wait for.
 	//
 	// Any of "created", "queued", "sent", "not_sent", "delivered",
-	// "delivery_attempted", "undelivered", "bounced", "read", "unread", "seen",
-	// "unseen", "archived", "unarchived", "interacted", "link_clicked".
+	// "delivery_attempted", "undelivered", "bounced", "complaint", "read", "unread",
+	// "seen", "unseen", "archived", "unarchived", "interacted", "link_clicked".
 	EventKey string `json:"event_key" api:"required"`
 	// The type of event to wait for.
 	//
@@ -5197,6 +5209,15 @@ func (u workflowStepUnionParamSettingsEvent) GetIntegrationSourceKey() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettingsEvent) GetRecipientPath() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return paramutil.AddrIfPresent(vt.RecipientPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettingsEvent) GetSourceType() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
@@ -5457,6 +5478,15 @@ func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetIntegrat
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetRecipientPath() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
+		return paramutil.AddrIfPresent(vt.RecipientPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetSourceType() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
@@ -5626,6 +5656,9 @@ type WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam struct {
 	EventType string `json:"event_type,omitzero" api:"required"`
 	// The key of the integration source that emits the event to wait for.
 	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON path into the source event that yields the recipient user ID. Use userId
+	// for Segment events, or a body./headers. path for HTTP events (e.g. body.userId).
+	RecipientPath param.Opt[string] `json:"recipient_path,omitzero"`
 	paramObj
 }
 
@@ -5713,8 +5746,8 @@ type WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam struct {
 	// The message lifecycle event to wait for.
 	//
 	// Any of "created", "queued", "sent", "not_sent", "delivered",
-	// "delivery_attempted", "undelivered", "bounced", "read", "unread", "seen",
-	// "unseen", "archived", "unarchived", "interacted", "link_clicked".
+	// "delivery_attempted", "undelivered", "bounced", "complaint", "read", "unread",
+	// "seen", "unseen", "archived", "unarchived", "interacted", "link_clicked".
 	EventKey string `json:"event_key,omitzero" api:"required"`
 	// The type of event to wait for.
 	//
@@ -5739,7 +5772,7 @@ func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam) Unmarsha
 
 func init() {
 	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam](
-		"event_key", "created", "queued", "sent", "not_sent", "delivered", "delivery_attempted", "undelivered", "bounced", "read", "unread", "seen", "unseen", "archived", "unarchived", "interacted", "link_clicked",
+		"event_key", "created", "queued", "sent", "not_sent", "delivered", "delivery_attempted", "undelivered", "bounced", "complaint", "read", "unread", "seen", "unseen", "archived", "unarchived", "interacted", "link_clicked",
 	)
 	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam](
 		"event_type", "message",

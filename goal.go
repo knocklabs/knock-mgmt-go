@@ -218,12 +218,16 @@ type GoalConditionEventUnion struct {
 	// [GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent].
 	IntegrationSourceKey string `json:"integration_source_key"`
 	// This field is from variant
+	// [GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent].
+	RecipientPath string `json:"recipient_path"`
+	// This field is from variant
 	// [GoalConditionEventWorkflowWaitForEventAudienceEvent].
 	AudienceKey string `json:"audience_key"`
 	JSON        struct {
 		EventType            respjson.Field
 		EventKey             respjson.Field
 		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
 		AudienceKey          respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -286,11 +290,15 @@ type GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent struct {
 	EventType string `json:"event_type" api:"required"`
 	// The key of the integration source that emits the event to wait for.
 	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON path into the source event that yields the recipient user ID. Use userId
+	// for Segment events, or a body./headers. path for HTTP events (e.g. body.userId).
+	RecipientPath string `json:"recipient_path" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EventKey             respjson.Field
 		EventType            respjson.Field
 		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
 		ExtraFields          map[string]respjson.Field
 		raw                  string
 	} `json:"-"`
@@ -392,6 +400,14 @@ func (u GoalConditionEventUnionParam) GetIntegrationSourceKey() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u GoalConditionEventUnionParam) GetRecipientPath() *string {
+	if vt := u.OfWorkflowWaitForEventIntegrationSourceEvent; vt != nil && vt.RecipientPath.Valid() {
+		return &vt.RecipientPath.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u GoalConditionEventUnionParam) GetAudienceKey() *string {
 	if vt := u.OfWorkflowWaitForEventAudienceEvent; vt != nil {
 		return &vt.AudienceKey
@@ -467,6 +483,9 @@ type GoalConditionEventWorkflowWaitForEventIntegrationSourceEventParam struct {
 	EventType string `json:"event_type,omitzero" api:"required"`
 	// The key of the integration source that emits the event to wait for.
 	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON path into the source event that yields the recipient user ID. Use userId
+	// for Segment events, or a body./headers. path for HTTP events (e.g. body.userId).
+	RecipientPath param.Opt[string] `json:"recipient_path,omitzero"`
 	paramObj
 }
 
