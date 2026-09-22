@@ -157,9 +157,11 @@ func TestGoalUpsertWithOptionalParams(t *testing.T) {
 			Goal: knockmapi.GoalRequestParam{
 				Condition: knockmapi.GoalConditionParam{
 					Event: knockmapi.GoalConditionEventUnionParam{
-						OfWorkflowWaitForEventRecipientEvent: &knockmapi.GoalConditionEventWorkflowWaitForEventRecipientEventParam{
-							EventType: "recipient",
-							EventKey:  "updated",
+						OfWorkflowWaitForEventIntegrationSourceEvent: &knockmapi.GoalConditionEventWorkflowWaitForEventIntegrationSourceEventParam{
+							EventKey:             "order.completed",
+							EventType:            "integration_source",
+							IntegrationSourceKey: "stripe",
+							RecipientPath:        knockmapi.String("body.userId"),
 						},
 					},
 					MatchConditions: []knockmapi.ConditionGroupUnionParam{{
@@ -208,9 +210,11 @@ func TestGoalValidateWithOptionalParams(t *testing.T) {
 			Goal: knockmapi.GoalRequestParam{
 				Condition: knockmapi.GoalConditionParam{
 					Event: knockmapi.GoalConditionEventUnionParam{
-						OfWorkflowWaitForEventRecipientEvent: &knockmapi.GoalConditionEventWorkflowWaitForEventRecipientEventParam{
-							EventType: "recipient",
-							EventKey:  "updated",
+						OfWorkflowWaitForEventIntegrationSourceEvent: &knockmapi.GoalConditionEventWorkflowWaitForEventIntegrationSourceEventParam{
+							EventKey:             "order.completed",
+							EventType:            "integration_source",
+							IntegrationSourceKey: "stripe",
+							RecipientPath:        knockmapi.String("body.userId"),
 						},
 					},
 					MatchConditions: []knockmapi.ConditionGroupUnionParam{{

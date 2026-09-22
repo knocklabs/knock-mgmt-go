@@ -175,11 +175,10 @@ func (r *Goal) UnmarshalJSON(data []byte) error {
 // A goal condition consisting of a polymorphic event and optional match
 // conditions.
 type GoalCondition struct {
-	// The event to track. Supports recipient, integration_source, and audience event
-	// types.
+	// The event to track. Supports integration_source and audience event types.
 	Event GoalConditionEventUnion `json:"event" api:"required"`
-	// A list of condition groups. Required for recipient events; each group uses an
-	// operator (and/or) with nested conditions.
+	// Optional list of condition groups; each group uses an operator (and/or) with
+	// nested conditions.
 	MatchConditions []ConditionGroupUnion `json:"match_conditions"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -206,14 +205,13 @@ func (r GoalCondition) ToParam() GoalConditionParam {
 }
 
 // GoalConditionEventUnion contains all possible properties and values from
-// [GoalConditionEventWorkflowWaitForEventRecipientEvent],
 // [GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent],
 // [GoalConditionEventWorkflowWaitForEventAudienceEvent].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type GoalConditionEventUnion struct {
-	EventType string `json:"event_type"`
 	EventKey  string `json:"event_key"`
+	EventType string `json:"event_type"`
 	// This field is from variant
 	// [GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent].
 	IntegrationSourceKey string `json:"integration_source_key"`
@@ -224,18 +222,13 @@ type GoalConditionEventUnion struct {
 	// [GoalConditionEventWorkflowWaitForEventAudienceEvent].
 	AudienceKey string `json:"audience_key"`
 	JSON        struct {
-		EventType            respjson.Field
 		EventKey             respjson.Field
+		EventType            respjson.Field
 		IntegrationSourceKey respjson.Field
 		RecipientPath        respjson.Field
 		AudienceKey          respjson.Field
 		raw                  string
 	} `json:"-"`
-}
-
-func (u GoalConditionEventUnion) AsWorkflowWaitForEventRecipientEvent() (v GoalConditionEventWorkflowWaitForEventRecipientEvent) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
 }
 
 func (u GoalConditionEventUnion) AsWorkflowWaitForEventIntegrationSourceEvent() (v GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent) {
@@ -252,31 +245,6 @@ func (u GoalConditionEventUnion) AsWorkflowWaitForEventAudienceEvent() (v GoalCo
 func (u GoalConditionEventUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *GoalConditionEventUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A recipient updated event to wait for from the workflow recipient.
-type GoalConditionEventWorkflowWaitForEventRecipientEvent struct {
-	// The type of event to wait for.
-	//
-	// Any of "recipient".
-	EventType string `json:"event_type" api:"required"`
-	// Recipient lifecycle event to wait for. Always "updated" today.
-	//
-	// Any of "updated".
-	EventKey string `json:"event_key"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		EventType   respjson.Field
-		EventKey    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r GoalConditionEventWorkflowWaitForEventRecipientEvent) RawJSON() string { return r.JSON.raw }
-func (r *GoalConditionEventWorkflowWaitForEventRecipientEvent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -346,11 +314,10 @@ func (r *GoalConditionEventWorkflowWaitForEventAudienceEvent) UnmarshalJSON(data
 //
 // The property Event is required.
 type GoalConditionParam struct {
-	// The event to track. Supports recipient, integration_source, and audience event
-	// types.
+	// The event to track. Supports integration_source and audience event types.
 	Event GoalConditionEventUnionParam `json:"event,omitzero" api:"required"`
-	// A list of condition groups. Required for recipient events; each group uses an
-	// operator (and/or) with nested conditions.
+	// Optional list of condition groups; each group uses an operator (and/or) with
+	// nested conditions.
 	MatchConditions []ConditionGroupUnionParam `json:"match_conditions,omitzero"`
 	paramObj
 }
@@ -367,23 +334,20 @@ func (r *GoalConditionParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type GoalConditionEventUnionParam struct {
-	OfWorkflowWaitForEventRecipientEvent         *GoalConditionEventWorkflowWaitForEventRecipientEventParam         `json:",omitzero,inline"`
 	OfWorkflowWaitForEventIntegrationSourceEvent *GoalConditionEventWorkflowWaitForEventIntegrationSourceEventParam `json:",omitzero,inline"`
 	OfWorkflowWaitForEventAudienceEvent          *GoalConditionEventWorkflowWaitForEventAudienceEventParam          `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u GoalConditionEventUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfWorkflowWaitForEventRecipientEvent, u.OfWorkflowWaitForEventIntegrationSourceEvent, u.OfWorkflowWaitForEventAudienceEvent)
+	return param.MarshalUnion(u, u.OfWorkflowWaitForEventIntegrationSourceEvent, u.OfWorkflowWaitForEventAudienceEvent)
 }
 func (u *GoalConditionEventUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *GoalConditionEventUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfWorkflowWaitForEventRecipientEvent) {
-		return u.OfWorkflowWaitForEventRecipientEvent
-	} else if !param.IsOmitted(u.OfWorkflowWaitForEventIntegrationSourceEvent) {
+	if !param.IsOmitted(u.OfWorkflowWaitForEventIntegrationSourceEvent) {
 		return u.OfWorkflowWaitForEventIntegrationSourceEvent
 	} else if !param.IsOmitted(u.OfWorkflowWaitForEventAudienceEvent) {
 		return u.OfWorkflowWaitForEventAudienceEvent
@@ -416,59 +380,23 @@ func (u GoalConditionEventUnionParam) GetAudienceKey() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u GoalConditionEventUnionParam) GetEventType() *string {
-	if vt := u.OfWorkflowWaitForEventRecipientEvent; vt != nil {
-		return (*string)(&vt.EventType)
-	} else if vt := u.OfWorkflowWaitForEventIntegrationSourceEvent; vt != nil {
-		return (*string)(&vt.EventType)
+func (u GoalConditionEventUnionParam) GetEventKey() *string {
+	if vt := u.OfWorkflowWaitForEventIntegrationSourceEvent; vt != nil {
+		return (*string)(&vt.EventKey)
 	} else if vt := u.OfWorkflowWaitForEventAudienceEvent; vt != nil {
-		return (*string)(&vt.EventType)
+		return (*string)(&vt.EventKey)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u GoalConditionEventUnionParam) GetEventKey() *string {
-	if vt := u.OfWorkflowWaitForEventRecipientEvent; vt != nil {
-		return (*string)(&vt.EventKey)
-	} else if vt := u.OfWorkflowWaitForEventIntegrationSourceEvent; vt != nil {
-		return (*string)(&vt.EventKey)
+func (u GoalConditionEventUnionParam) GetEventType() *string {
+	if vt := u.OfWorkflowWaitForEventIntegrationSourceEvent; vt != nil {
+		return (*string)(&vt.EventType)
 	} else if vt := u.OfWorkflowWaitForEventAudienceEvent; vt != nil {
-		return (*string)(&vt.EventKey)
+		return (*string)(&vt.EventType)
 	}
 	return nil
-}
-
-// A recipient updated event to wait for from the workflow recipient.
-//
-// The property EventType is required.
-type GoalConditionEventWorkflowWaitForEventRecipientEventParam struct {
-	// The type of event to wait for.
-	//
-	// Any of "recipient".
-	EventType string `json:"event_type,omitzero" api:"required"`
-	// Recipient lifecycle event to wait for. Always "updated" today.
-	//
-	// Any of "updated".
-	EventKey string `json:"event_key,omitzero"`
-	paramObj
-}
-
-func (r GoalConditionEventWorkflowWaitForEventRecipientEventParam) MarshalJSON() (data []byte, err error) {
-	type shadow GoalConditionEventWorkflowWaitForEventRecipientEventParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GoalConditionEventWorkflowWaitForEventRecipientEventParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[GoalConditionEventWorkflowWaitForEventRecipientEventParam](
-		"event_type", "recipient",
-	)
-	apijson.RegisterFieldValidator[GoalConditionEventWorkflowWaitForEventRecipientEventParam](
-		"event_key", "updated",
-	)
 }
 
 // An integration source event to wait for.
