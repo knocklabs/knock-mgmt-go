@@ -1458,10 +1458,17 @@ type WorkflowDelayStepSettings struct {
 	// When set will use the path to resolve the delay into a timestamp from the
 	// property referenced
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
+	// Whether the delay is pinned to the opening workflow version or continues on the
+	// latest compatible version when the delay elapses. One of: `pinned` or `latest`.
+	// Defaults to `pinned`. Configs that omit the field hydrate as `pinned`.
+	//
+	// Any of "pinned", "latest".
+	WorkflowVersionMode string `json:"workflow_version_mode" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DelayFor            respjson.Field
 		DelayUntilFieldPath respjson.Field
+		WorkflowVersionMode respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
@@ -1518,6 +1525,12 @@ type WorkflowDelayStepSettingsParam struct {
 	// When set will use the path to resolve the delay into a timestamp from the
 	// property referenced
 	DelayUntilFieldPath param.Opt[string] `json:"delay_until_field_path,omitzero"`
+	// Whether the delay is pinned to the opening workflow version or continues on the
+	// latest compatible version when the delay elapses. One of: `pinned` or `latest`.
+	// Defaults to `pinned`. Configs that omit the field hydrate as `pinned`.
+	//
+	// Any of "pinned", "latest".
+	WorkflowVersionMode string `json:"workflow_version_mode,omitzero"`
 	// A duration of time, represented as a unit and a value.
 	DelayFor DurationParam `json:"delay_for,omitzero"`
 	paramObj
@@ -1529,6 +1542,12 @@ func (r WorkflowDelayStepSettingsParam) MarshalJSON() (data []byte, err error) {
 }
 func (r *WorkflowDelayStepSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowDelayStepSettingsParam](
+		"workflow_version_mode", "pinned", "latest",
+	)
 }
 
 // An email step within a workflow. Read more in the
@@ -2859,6 +2878,7 @@ type WorkflowStepUnionSettings struct {
 	DelayFor Duration `json:"delay_for"`
 	// This field is from variant [WorkflowDelayStepSettings].
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
+	WorkflowVersionMode string `json:"workflow_version_mode"`
 	// This field is a union of
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event],
@@ -2895,8 +2915,6 @@ type WorkflowStepUnionSettings struct {
 	BatchWindowExtensionLimit Duration `json:"batch_window_extension_limit"`
 	// This field is from variant [WorkflowBatchStepSettings].
 	BatchWindowType string `json:"batch_window_type"`
-	// This field is from variant [WorkflowBatchStepSettings].
-	WorkflowVersionMode string `json:"workflow_version_mode"`
 	// This field is from variant [RequestTemplate].
 	Method RequestTemplateMethod `json:"method"`
 	// This field is from variant [RequestTemplate].
@@ -2938,6 +2956,7 @@ type WorkflowStepUnionSettings struct {
 		WebSearchEnabled          respjson.Field
 		DelayFor                  respjson.Field
 		DelayUntilFieldPath       respjson.Field
+		WorkflowVersionMode       respjson.Field
 		Event                     respjson.Field
 		ExpiresAfter              respjson.Field
 		MatchConditions           respjson.Field
@@ -2952,7 +2971,6 @@ type WorkflowStepUnionSettings struct {
 		BatchWindow               respjson.Field
 		BatchWindowExtensionLimit respjson.Field
 		BatchWindowType           respjson.Field
-		WorkflowVersionMode       respjson.Field
 		Method                    respjson.Field
 		URL                       respjson.Field
 		Body                      respjson.Field
@@ -4967,15 +4985,6 @@ func (u workflowStepUnionParamSettings) GetBatchWindowType() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u workflowStepUnionParamSettings) GetWorkflowVersionMode() *string {
-	switch vt := u.any.(type) {
-	case *WorkflowBatchStepSettingsParam:
-		return &vt.WorkflowVersionMode
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettings) GetMethod() *string {
 	switch vt := u.any.(type) {
 	case *RequestTemplateParam:
@@ -5097,6 +5106,17 @@ func (u workflowStepUnionParamSettings) GetWorkflowKey() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowTriggerWorkflowStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.WorkflowKey)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetWorkflowVersionMode() *string {
+	switch vt := u.any.(type) {
+	case *WorkflowDelayStepSettingsParam:
+		return (*string)(&vt.WorkflowVersionMode)
+	case *WorkflowBatchStepSettingsParam:
+		return (*string)(&vt.WorkflowVersionMode)
 	}
 	return nil
 }
