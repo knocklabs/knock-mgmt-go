@@ -1460,7 +1460,8 @@ type WorkflowDelayStepSettings struct {
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
 	// Whether the delay is pinned to the opening workflow version or continues on the
 	// latest compatible version when the delay elapses. One of: `pinned` or `latest`.
-	// Defaults to `pinned`. Configs that omit the field hydrate as `pinned`.
+	// New delay steps default to `latest`. Configs that omit the field hydrate as
+	// `pinned`.
 	//
 	// Any of "pinned", "latest".
 	WorkflowVersionMode string `json:"workflow_version_mode" api:"nullable"`
@@ -1527,7 +1528,8 @@ type WorkflowDelayStepSettingsParam struct {
 	DelayUntilFieldPath param.Opt[string] `json:"delay_until_field_path,omitzero"`
 	// Whether the delay is pinned to the opening workflow version or continues on the
 	// latest compatible version when the delay elapses. One of: `pinned` or `latest`.
-	// Defaults to `pinned`. Configs that omit the field hydrate as `pinned`.
+	// New delay steps default to `latest`. Configs that omit the field hydrate as
+	// `pinned`.
 	//
 	// Any of "pinned", "latest".
 	WorkflowVersionMode string `json:"workflow_version_mode,omitzero"`
