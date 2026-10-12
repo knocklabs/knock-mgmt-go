@@ -67,6 +67,9 @@ type Client struct {
 	// Preference categories are a project-level catalog of categories that can be
 	// applied to workflows and broadcasts.
 	PreferenceCategories PreferenceCategoryService
+	// Reusable requests are HTTP steps that workflows can link to and share across an
+	// account.
+	ReusableRequests ReusableRequestService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -125,6 +128,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.PreferenceCenter = NewPreferenceCenterService(opts...)
 	r.Billing = NewBillingService(opts...)
 	r.PreferenceCategories = NewPreferenceCategoryService(opts...)
+	r.ReusableRequests = NewReusableRequestService(opts...)
 
 	return
 }

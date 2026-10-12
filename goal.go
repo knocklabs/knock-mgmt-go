@@ -258,8 +258,9 @@ type GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent struct {
 	EventType string `json:"event_type" api:"required"`
 	// The key of the integration source that emits the event to wait for.
 	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
-	// JSON path into the source event that yields the recipient user ID. Use userId
-	// for Segment events, or a body./headers. path for HTTP events (e.g. body.userId).
+	// JSON path into the source event that yields the recipient user ID, for example,
+	// body.userId. For legacy sources, use the field name without prefixing body. When
+	// omitted, a default will be automatically set.
 	RecipientPath string `json:"recipient_path" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -411,8 +412,9 @@ type GoalConditionEventWorkflowWaitForEventIntegrationSourceEventParam struct {
 	EventType string `json:"event_type,omitzero" api:"required"`
 	// The key of the integration source that emits the event to wait for.
 	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
-	// JSON path into the source event that yields the recipient user ID. Use userId
-	// for Segment events, or a body./headers. path for HTTP events (e.g. body.userId).
+	// JSON path into the source event that yields the recipient user ID, for example,
+	// body.userId. For legacy sources, use the field name without prefixing body. When
+	// omitted, a default will be automatically set.
 	RecipientPath param.Opt[string] `json:"recipient_path,omitzero"`
 	paramObj
 }
