@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
@@ -50,16 +51,20 @@ func TestCommitListWithOptionalParams(t *testing.T) {
 		option.WithServiceToken("My Service Token"),
 	)
 	_, err := client.Commits.List(context.TODO(), knockmapi.CommitListParams{
-		After:       knockmapi.String("after"),
-		Before:      knockmapi.String("before"),
-		Branch:      knockmapi.String("feature-branch"),
-		Environment: knockmapi.String("development"),
-		Limit:       knockmapi.Int(0),
-		Promoted:    knockmapi.Bool(true),
-		ResourceID:  knockmapi.String("resource_id"),
+		After:                   knockmapi.String("after"),
+		Before:                  knockmapi.String("before"),
+		Branch:                  knockmapi.String("feature-branch"),
+		Environment:             knockmapi.String("development"),
+		Limit:                   knockmapi.Int(0),
+		PromoteGroupID:          knockmapi.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Promoted:                knockmapi.Bool(true),
+		PromotedFromEnvironment: knockmapi.String("promoted_from_environment"),
+		ResourceID:              knockmapi.String("resource_id"),
 		ResourceType: knockmapi.CommitListParamsResourceTypeUnion{
 			OfCommitListsResourceTypeString: knockmapi.String("audience"),
 		},
+		Since: knockmapi.Time(time.Now()),
+		Until: knockmapi.Time(time.Now()),
 	})
 	if err != nil {
 		var apierr *knockmapi.Error

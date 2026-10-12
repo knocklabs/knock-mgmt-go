@@ -117,20 +117,29 @@ type Commit struct {
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The environment of the commit.
 	Environment string `json:"environment" api:"required"`
+	// The identifier of the promote that created this commit, shared by every commit
+	// copied into the environment by the same promote. Null if the commit was not
+	// created by a promote.
+	PromoteGroupID string `json:"promote_group_id" api:"required" format:"uuid"`
+	// The ID of the commit this commit was promoted from. Null if the commit was not
+	// created by a promote.
+	PromotedFromCommitID string `json:"promoted_from_commit_id" api:"required" format:"uuid"`
 	// The resource object associated with the commit.
 	Resource CommitResource `json:"resource" api:"required"`
 	// The optional message about the commit.
 	CommitMessage string `json:"commit_message"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		Author        respjson.Field
-		CreatedAt     respjson.Field
-		Environment   respjson.Field
-		Resource      respjson.Field
-		CommitMessage respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                   respjson.Field
+		Author               respjson.Field
+		CreatedAt            respjson.Field
+		Environment          respjson.Field
+		PromoteGroupID       respjson.Field
+		PromotedFromCommitID respjson.Field
+		Resource             respjson.Field
+		CommitMessage        respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
 	} `json:"-"`
 }
 
@@ -185,6 +194,73 @@ func (r *CommitResource) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A summary of a promote. Every commit copied into the destination environment by
+// the same promote shares the group's ID, which you can use to list them with the
+// `promote_group_id` filter on the list commits endpoint.
+type PromoteGroup struct {
+	// The unique identifier for the promote group.
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The number of commits copied into the destination environment.
+	CommitCount int64 `json:"commit_count" api:"required"`
+	// The timestamp of when the promote happened.
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// The slug of the environment or branch the commits were promoted from.
+	Source string `json:"source" api:"required"`
+	// Whether the source is an environment or a branch.
+	//
+	// Any of "environment", "branch".
+	SourceType PromoteGroupSourceType `json:"source_type" api:"required"`
+	// The slug of the environment the commits were promoted to.
+	ToEnvironment string `json:"to_environment" api:"required"`
+	// The user who performed the promote.
+	Actor PromoteGroupActor `json:"actor" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID            respjson.Field
+		CommitCount   respjson.Field
+		CreatedAt     respjson.Field
+		Source        respjson.Field
+		SourceType    respjson.Field
+		ToEnvironment respjson.Field
+		Actor         respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PromoteGroup) RawJSON() string { return r.JSON.raw }
+func (r *PromoteGroup) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Whether the source is an environment or a branch.
+type PromoteGroupSourceType string
+
+const (
+	PromoteGroupSourceTypeEnvironment PromoteGroupSourceType = "environment"
+	PromoteGroupSourceTypeBranch      PromoteGroupSourceType = "branch"
+)
+
+// The user who performed the promote.
+type PromoteGroupActor struct {
+	Email string `json:"email"`
+	Name  string `json:"name" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Email       respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PromoteGroupActor) RawJSON() string { return r.JSON.raw }
+func (r *PromoteGroupActor) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // The response from committing all changes.
 type CommitCommitAllResponse struct {
 	// The result of the commit operation.
@@ -205,13 +281,18 @@ func (r *CommitCommitAllResponse) UnmarshalJSON(data []byte) error {
 
 // The response from promoting all changes.
 type CommitPromoteAllResponse struct {
+	// A summary of a promote. Every commit copied into the destination environment by
+	// the same promote shares the group's ID, which you can use to list them with the
+	// `promote_group_id` filter on the list commits endpoint.
+	PromoteGroup PromoteGroup `json:"promote_group" api:"required"`
 	// The result of the promote operation.
 	Result string `json:"result" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Result      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		PromoteGroup respjson.Field
+		Result       respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -225,11 +306,16 @@ func (r *CommitPromoteAllResponse) UnmarshalJSON(data []byte) error {
 type CommitPromoteOneResponse struct {
 	// A commit is a change to a resource within an environment, made by an author.
 	Commit Commit `json:"commit" api:"required"`
+	// A summary of a promote. Every commit copied into the destination environment by
+	// the same promote shares the group's ID, which you can use to list them with the
+	// `promote_group_id` filter on the list commits endpoint.
+	PromoteGroup PromoteGroup `json:"promote_group" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Commit      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Commit       respjson.Field
+		PromoteGroup respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -252,14 +338,25 @@ type CommitListParams struct {
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	// The number of entries to fetch per-page.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter commits to those created by a single promote. Every commit copied into an
+	// environment by the same promote shares one `promote_group_id`.
+	PromoteGroupID param.Opt[string] `query:"promote_group_id,omitzero" format:"uuid" json:"-"`
 	// Whether to show commits in the given environment that have not been promoted to
 	// the subsequent environment (false) or commits which have been promoted (true).
 	Promoted param.Opt[bool] `query:"promoted,omitzero" json:"-"`
+	// Filter promoted commits by the slug of the environment or branch they were
+	// promoted from.
+	PromotedFromEnvironment param.Opt[string] `query:"promoted_from_environment,omitzero" json:"-"`
 	// Filter commits by resource identifier. Must be used together with resource_type.
 	// For most resources, this will be the resource key. In the case of translations,
 	// this will be the locale code and namespace, separated by a `/`. For example,
 	// `en/courses` or `en`.
 	ResourceID param.Opt[string] `query:"resource_id,omitzero" json:"-"`
+	// Only return commits created at or after this RFC 3339 timestamp. Useful for
+	// catching up after missed webhooks.
+	Since param.Opt[time.Time] `query:"since,omitzero" format:"date-time" json:"-"`
+	// Only return commits created at or before this RFC 3339 timestamp.
+	Until param.Opt[time.Time] `query:"until,omitzero" format:"date-time" json:"-"`
 	// Filter commits by resource type(s). Accepts a single type or array of types. Can
 	// be combined with resource_id to filter for specific resources.
 	ResourceType CommitListParamsResourceTypeUnion `query:"resource_type,omitzero" json:"-"`
