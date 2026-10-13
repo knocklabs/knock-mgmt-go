@@ -78,6 +78,36 @@ func (r *VariableService) ListAutoPaging(ctx context.Context, query VariableList
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
+// Deletes a variable and all of its environment overrides. When an environment is
+// specified, only the override for that environment is cleared, so the default
+// value applies there.
+func (r *VariableService) Delete(ctx context.Context, key string, body VariableDeleteParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if key == "" {
+		err = errors.New("missing required key parameter")
+		return err
+	}
+	path := fmt.Sprintf("v1/variables/%s", key)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, nil, opts...)
+	return err
+}
+
+// Creates or updates a variable by key, along with its per-environment overrides.
+// On an update, any attribute or environment that is omitted or null is left
+// unchanged, and an empty string unsets it. The response never includes the value
+// of a secret variable.
+func (r *VariableService) Upsert(ctx context.Context, key string, body VariableUpsertParams, opts ...option.RequestOption) (res *Variable, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if key == "" {
+		err = errors.New("missing required key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/variables/%s", key)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // An environment variable object.
 type Variable struct {
 	// The timestamp of when the variable was created.
@@ -160,4 +190,57 @@ type VariableListParamsType string
 const (
 	VariableListParamsTypePublic VariableListParamsType = "public"
 	VariableListParamsTypeSecret VariableListParamsType = "secret"
+)
+
+type VariableDeleteParams struct {
+	// The environment slug. When provided, only the variable's override for this
+	// environment is cleared. When omitted, the whole variable is deleted and the
+	// account's default environment is used for authorization.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [VariableDeleteParams]'s query parameters as `url.Values`.
+func (r VariableDeleteParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type VariableUpsertParams struct {
+	// The type of the variable. Required, and it cannot be changed after the variable
+	// is created.
+	//
+	// Any of "public", "secret".
+	Type VariableUpsertParamsType `json:"type,omitzero" api:"required"`
+	// The description of the variable. When omitted or null on an update, the existing
+	// description is kept. An empty string clears it.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// The default value of the variable. Required when creating a variable. When
+	// omitted or null on an update, the existing value is kept. An empty string clears
+	// the default value.
+	Value param.Opt[string] `json:"value,omitzero"`
+	// A map of root environment slugs to override values. An environment that is
+	// omitted or null is left unchanged. An empty string clears the override, so the
+	// default value applies.
+	EnvironmentValues map[string]string `json:"environment_values,omitzero"`
+	paramObj
+}
+
+func (r VariableUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow VariableUpsertParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VariableUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of the variable. Required, and it cannot be changed after the variable
+// is created.
+type VariableUpsertParamsType string
+
+const (
+	VariableUpsertParamsTypePublic VariableUpsertParamsType = "public"
+	VariableUpsertParamsTypeSecret VariableUpsertParamsType = "secret"
 )
