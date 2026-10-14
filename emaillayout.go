@@ -90,7 +90,11 @@ func (r *EmailLayoutService) Preview(ctx context.Context, params EmailLayoutPrev
 
 // Updates an email layout, or creates a new one if it does not yet exist.
 //
-// Note: this endpoint only operates in the "development" environment.
+// The write targets the environment in the request. Accounts that allow writes in
+// every environment can create and update in that environment. Pass force to write
+// outside the request's origin environment. When writes are limited to
+// development, this endpoint accepts the development environment unless force is
+// set.
 func (r *EmailLayoutService) Upsert(ctx context.Context, emailLayoutKey string, params EmailLayoutUpsertParams, opts ...option.RequestOption) (res *EmailLayoutUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {
@@ -104,7 +108,9 @@ func (r *EmailLayoutService) Upsert(ctx context.Context, emailLayoutKey string, 
 
 // Validates an email layout payload without persisting it.
 //
-// Note: this endpoint only operates in the "development" environment.
+// Validation uses the environment in the request. Accounts that allow writes in
+// every environment can validate in that environment. When writes are limited to
+// development, this endpoint accepts the development environment.
 func (r *EmailLayoutService) Validate(ctx context.Context, emailLayoutKey string, params EmailLayoutValidateParams, opts ...option.RequestOption) (res *EmailLayoutValidateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if emailLayoutKey == "" {

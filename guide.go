@@ -109,7 +109,11 @@ func (r *GuideService) Archive(ctx context.Context, guideKey string, opts ...opt
 
 // Updates a guide of a given key, or creates a new one if it does not yet exist.
 //
-// Note: this endpoint only operates on guides in the "development" environment.
+// The write targets the environment in the request. Accounts that allow writes in
+// every environment can create and update in that environment. Pass force to write
+// outside the request's origin environment. When writes are limited to
+// development, this endpoint accepts the development environment unless force is
+// set.
 func (r *GuideService) Upsert(ctx context.Context, guideKey string, params GuideUpsertParams, opts ...option.RequestOption) (res *GuideUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
@@ -123,7 +127,9 @@ func (r *GuideService) Upsert(ctx context.Context, guideKey string, params Guide
 
 // Validates a guide payload without persisting it.
 //
-// Note: Validating a guide is only done in the development environment context.
+// Validation uses the environment in the request. Accounts that allow writes in
+// every environment can validate in that environment. When writes are limited to
+// development, this endpoint accepts the development environment.
 func (r *GuideService) Validate(ctx context.Context, guideKey string, params GuideValidateParams, opts ...option.RequestOption) (res *GuideValidateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {

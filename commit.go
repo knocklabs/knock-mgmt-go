@@ -78,7 +78,8 @@ func (r *CommitService) ListAutoPaging(ctx context.Context, query CommitListPara
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
-// Commit all changes across all resources in the development environment.
+// Commit all changes across all resources in the given environment. When writes
+// are limited to development, this endpoint accepts the development environment.
 func (r *CommitService) CommitAll(ctx context.Context, body CommitCommitAllParams, opts ...option.RequestOption) (res *CommitCommitAllResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/commits"

@@ -81,8 +81,11 @@ func (r *TranslationService) ListAutoPaging(ctx context.Context, query Translati
 // Updates a translation of a given locale code + namespace, or creates a new one
 // if it does not yet exist.
 //
-// Note: this endpoint only operates on translations in the "development"
-// environment.
+// The write targets the environment in the request. Accounts that allow writes in
+// every environment can create and update in that environment. Pass force to write
+// outside the request's origin environment. When writes are limited to
+// development, this endpoint accepts the development environment unless force is
+// set.
 func (r *TranslationService) Upsert(ctx context.Context, localeCode string, params TranslationUpsertParams, opts ...option.RequestOption) (res *TranslationUpsertResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
@@ -96,8 +99,9 @@ func (r *TranslationService) Upsert(ctx context.Context, localeCode string, para
 
 // Validates a translation payload without persisting it.
 //
-// Note: this endpoint only operates on translations in the "development"
-// environment.
+// Validation uses the environment in the request. Accounts that allow writes in
+// every environment can validate in that environment. When writes are limited to
+// development, this endpoint accepts the development environment.
 func (r *TranslationService) Validate(ctx context.Context, localeCode string, params TranslationValidateParams, opts ...option.RequestOption) (res *TranslationValidateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if localeCode == "" {
