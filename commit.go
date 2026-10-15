@@ -178,7 +178,7 @@ type CommitResource struct {
 	// The type of the resource object.
 	//
 	// Any of "audience", "email_layout", "guide", "message_type", "partial",
-	// "translation", "workflow".
+	// "reusable_request", "translation", "workflow".
 	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -395,13 +395,14 @@ func (u *CommitListParamsResourceTypeUnion) asAny() any {
 type CommitListParamsResourceTypeString string
 
 const (
-	CommitListParamsResourceTypeStringAudience    CommitListParamsResourceTypeString = "audience"
-	CommitListParamsResourceTypeStringEmailLayout CommitListParamsResourceTypeString = "email_layout"
-	CommitListParamsResourceTypeStringGuide       CommitListParamsResourceTypeString = "guide"
-	CommitListParamsResourceTypeStringMessageType CommitListParamsResourceTypeString = "message_type"
-	CommitListParamsResourceTypeStringPartial     CommitListParamsResourceTypeString = "partial"
-	CommitListParamsResourceTypeStringTranslation CommitListParamsResourceTypeString = "translation"
-	CommitListParamsResourceTypeStringWorkflow    CommitListParamsResourceTypeString = "workflow"
+	CommitListParamsResourceTypeStringAudience        CommitListParamsResourceTypeString = "audience"
+	CommitListParamsResourceTypeStringEmailLayout     CommitListParamsResourceTypeString = "email_layout"
+	CommitListParamsResourceTypeStringGuide           CommitListParamsResourceTypeString = "guide"
+	CommitListParamsResourceTypeStringMessageType     CommitListParamsResourceTypeString = "message_type"
+	CommitListParamsResourceTypeStringPartial         CommitListParamsResourceTypeString = "partial"
+	CommitListParamsResourceTypeStringReusableRequest CommitListParamsResourceTypeString = "reusable_request"
+	CommitListParamsResourceTypeStringTranslation     CommitListParamsResourceTypeString = "translation"
+	CommitListParamsResourceTypeStringWorkflow        CommitListParamsResourceTypeString = "workflow"
 )
 
 type CommitCommitAllParams struct {
@@ -456,13 +457,14 @@ func (u *CommitCommitAllParamsResourceTypeUnion) asAny() any {
 type CommitCommitAllParamsResourceTypeString string
 
 const (
-	CommitCommitAllParamsResourceTypeStringAudience    CommitCommitAllParamsResourceTypeString = "audience"
-	CommitCommitAllParamsResourceTypeStringEmailLayout CommitCommitAllParamsResourceTypeString = "email_layout"
-	CommitCommitAllParamsResourceTypeStringGuide       CommitCommitAllParamsResourceTypeString = "guide"
-	CommitCommitAllParamsResourceTypeStringMessageType CommitCommitAllParamsResourceTypeString = "message_type"
-	CommitCommitAllParamsResourceTypeStringPartial     CommitCommitAllParamsResourceTypeString = "partial"
-	CommitCommitAllParamsResourceTypeStringTranslation CommitCommitAllParamsResourceTypeString = "translation"
-	CommitCommitAllParamsResourceTypeStringWorkflow    CommitCommitAllParamsResourceTypeString = "workflow"
+	CommitCommitAllParamsResourceTypeStringAudience        CommitCommitAllParamsResourceTypeString = "audience"
+	CommitCommitAllParamsResourceTypeStringEmailLayout     CommitCommitAllParamsResourceTypeString = "email_layout"
+	CommitCommitAllParamsResourceTypeStringGuide           CommitCommitAllParamsResourceTypeString = "guide"
+	CommitCommitAllParamsResourceTypeStringMessageType     CommitCommitAllParamsResourceTypeString = "message_type"
+	CommitCommitAllParamsResourceTypeStringPartial         CommitCommitAllParamsResourceTypeString = "partial"
+	CommitCommitAllParamsResourceTypeStringReusableRequest CommitCommitAllParamsResourceTypeString = "reusable_request"
+	CommitCommitAllParamsResourceTypeStringTranslation     CommitCommitAllParamsResourceTypeString = "translation"
+	CommitCommitAllParamsResourceTypeStringWorkflow        CommitCommitAllParamsResourceTypeString = "workflow"
 )
 
 type CommitPromoteAllParams struct {
@@ -518,11 +520,12 @@ func (u *CommitPromoteAllParamsResourceTypeUnion) asAny() any {
 type CommitPromoteAllParamsResourceTypeString string
 
 const (
-	CommitPromoteAllParamsResourceTypeStringAudience    CommitPromoteAllParamsResourceTypeString = "audience"
-	CommitPromoteAllParamsResourceTypeStringEmailLayout CommitPromoteAllParamsResourceTypeString = "email_layout"
-	CommitPromoteAllParamsResourceTypeStringGuide       CommitPromoteAllParamsResourceTypeString = "guide"
-	CommitPromoteAllParamsResourceTypeStringMessageType CommitPromoteAllParamsResourceTypeString = "message_type"
-	CommitPromoteAllParamsResourceTypeStringPartial     CommitPromoteAllParamsResourceTypeString = "partial"
-	CommitPromoteAllParamsResourceTypeStringTranslation CommitPromoteAllParamsResourceTypeString = "translation"
-	CommitPromoteAllParamsResourceTypeStringWorkflow    CommitPromoteAllParamsResourceTypeString = "workflow"
+	CommitPromoteAllParamsResourceTypeStringAudience        CommitPromoteAllParamsResourceTypeString = "audience"
+	CommitPromoteAllParamsResourceTypeStringEmailLayout     CommitPromoteAllParamsResourceTypeString = "email_layout"
+	CommitPromoteAllParamsResourceTypeStringGuide           CommitPromoteAllParamsResourceTypeString = "guide"
+	CommitPromoteAllParamsResourceTypeStringMessageType     CommitPromoteAllParamsResourceTypeString = "message_type"
+	CommitPromoteAllParamsResourceTypeStringPartial         CommitPromoteAllParamsResourceTypeString = "partial"
+	CommitPromoteAllParamsResourceTypeStringReusableRequest CommitPromoteAllParamsResourceTypeString = "reusable_request"
+	CommitPromoteAllParamsResourceTypeStringTranslation     CommitPromoteAllParamsResourceTypeString = "translation"
+	CommitPromoteAllParamsResourceTypeStringWorkflow        CommitPromoteAllParamsResourceTypeString = "workflow"
 )
