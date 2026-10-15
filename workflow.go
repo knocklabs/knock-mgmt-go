@@ -1414,8 +1414,9 @@ func (r *WorkflowChatStepParam) UnmarshalJSON(data []byte) error {
 type WorkflowDelayStep struct {
 	// The reference key of the workflow step. Must be unique per workflow.
 	Ref string `json:"ref" api:"required"`
-	// The settings for the delay step. Both fields can be set to compute a delay where
-	// `delay_for` is an offset from the `delay_until_field_path`.
+	// The settings for the delay step. Set `delay_for` for a fixed delay,
+	// `delay_until_field_path` for a dynamic delay, both for a relative delay, or
+	// `delay_until_time_windows` to wait until a weekly schedule is open.
 	Settings WorkflowDelayStepSettings `json:"settings" api:"required"`
 	// The type of the workflow step.
 	//
@@ -1456,14 +1457,19 @@ func (r WorkflowDelayStep) ToParam() WorkflowDelayStepParam {
 	return param.Override[WorkflowDelayStepParam](json.RawMessage(r.RawJSON()))
 }
 
-// The settings for the delay step. Both fields can be set to compute a delay where
-// `delay_for` is an offset from the `delay_until_field_path`.
+// The settings for the delay step. Set `delay_for` for a fixed delay,
+// `delay_until_field_path` for a dynamic delay, both for a relative delay, or
+// `delay_until_time_windows` to wait until a weekly schedule is open.
 type WorkflowDelayStepSettings struct {
 	// A duration of time, represented as a unit and a value.
 	DelayFor Duration `json:"delay_for" api:"nullable"`
 	// When set will use the path to resolve the delay into a timestamp from the
 	// property referenced
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
+	// A weekly schedule of when the delay can resume. Must include one window per day,
+	// and at least one day must be open. Cannot be combined with `delay_for` or
+	// `delay_until_field_path`.
+	DelayUntilTimeWindows []WorkflowDelayStepSettingsDelayUntilTimeWindow `json:"delay_until_time_windows" api:"nullable"`
 	// Whether the delay is pinned to the opening workflow version or continues on the
 	// latest compatible version when the delay elapses. One of: `pinned` or `latest`.
 	// New delay steps default to `latest`. Configs that omit the field hydrate as
@@ -1473,17 +1479,53 @@ type WorkflowDelayStepSettings struct {
 	WorkflowVersionMode string `json:"workflow_version_mode" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		DelayFor            respjson.Field
-		DelayUntilFieldPath respjson.Field
-		WorkflowVersionMode respjson.Field
-		ExtraFields         map[string]respjson.Field
-		raw                 string
+		DelayFor              respjson.Field
+		DelayUntilFieldPath   respjson.Field
+		DelayUntilTimeWindows respjson.Field
+		WorkflowVersionMode   respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r WorkflowDelayStepSettings) RawJSON() string { return r.JSON.raw }
 func (r *WorkflowDelayStepSettings) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A time window for a delay step. Describes a single day and when the delay can
+// resume on it.
+type WorkflowDelayStepSettingsDelayUntilTimeWindow struct {
+	// The day of the week.
+	//
+	// Any of "monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
+	// "sunday".
+	Day string `json:"day" api:"required"`
+	// Whether the delay can resume on this day. A `closed` day does not support `from`
+	// and `until`.
+	//
+	// Any of "open", "closed".
+	Type string `json:"type" api:"required"`
+	// The time the window opens. When blank, the window is open all day.
+	From string `json:"from" api:"nullable"`
+	// The time the window closes. When blank, the window is open until the end of the
+	// day.
+	Until string `json:"until" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Day         respjson.Field
+		Type        respjson.Field
+		From        respjson.Field
+		Until       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowDelayStepSettingsDelayUntilTimeWindow) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowDelayStepSettingsDelayUntilTimeWindow) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1501,8 +1543,9 @@ const (
 type WorkflowDelayStepParam struct {
 	// The reference key of the workflow step. Must be unique per workflow.
 	Ref string `json:"ref" api:"required"`
-	// The settings for the delay step. Both fields can be set to compute a delay where
-	// `delay_for` is an offset from the `delay_until_field_path`.
+	// The settings for the delay step. Set `delay_for` for a fixed delay,
+	// `delay_until_field_path` for a dynamic delay, both for a relative delay, or
+	// `delay_until_time_windows` to wait until a weekly schedule is open.
 	Settings WorkflowDelayStepSettingsParam `json:"settings,omitzero" api:"required"`
 	// The type of the workflow step.
 	//
@@ -1526,12 +1569,17 @@ func (r *WorkflowDelayStepParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The settings for the delay step. Both fields can be set to compute a delay where
-// `delay_for` is an offset from the `delay_until_field_path`.
+// The settings for the delay step. Set `delay_for` for a fixed delay,
+// `delay_until_field_path` for a dynamic delay, both for a relative delay, or
+// `delay_until_time_windows` to wait until a weekly schedule is open.
 type WorkflowDelayStepSettingsParam struct {
 	// When set will use the path to resolve the delay into a timestamp from the
 	// property referenced
 	DelayUntilFieldPath param.Opt[string] `json:"delay_until_field_path,omitzero"`
+	// A weekly schedule of when the delay can resume. Must include one window per day,
+	// and at least one day must be open. Cannot be combined with `delay_for` or
+	// `delay_until_field_path`.
+	DelayUntilTimeWindows []WorkflowDelayStepSettingsDelayUntilTimeWindowParam `json:"delay_until_time_windows,omitzero"`
 	// Whether the delay is pinned to the opening workflow version or continues on the
 	// latest compatible version when the delay elapses. One of: `pinned` or `latest`.
 	// New delay steps default to `latest`. Configs that omit the field hydrate as
@@ -1555,6 +1603,46 @@ func (r *WorkflowDelayStepSettingsParam) UnmarshalJSON(data []byte) error {
 func init() {
 	apijson.RegisterFieldValidator[WorkflowDelayStepSettingsParam](
 		"workflow_version_mode", "pinned", "latest",
+	)
+}
+
+// A time window for a delay step. Describes a single day and when the delay can
+// resume on it.
+//
+// The properties Day, Type are required.
+type WorkflowDelayStepSettingsDelayUntilTimeWindowParam struct {
+	// The day of the week.
+	//
+	// Any of "monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
+	// "sunday".
+	Day string `json:"day,omitzero" api:"required"`
+	// Whether the delay can resume on this day. A `closed` day does not support `from`
+	// and `until`.
+	//
+	// Any of "open", "closed".
+	Type string `json:"type,omitzero" api:"required"`
+	// The time the window opens. When blank, the window is open all day.
+	From param.Opt[string] `json:"from,omitzero"`
+	// The time the window closes. When blank, the window is open until the end of the
+	// day.
+	Until param.Opt[string] `json:"until,omitzero"`
+	paramObj
+}
+
+func (r WorkflowDelayStepSettingsDelayUntilTimeWindowParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowDelayStepSettingsDelayUntilTimeWindowParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowDelayStepSettingsDelayUntilTimeWindowParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowDelayStepSettingsDelayUntilTimeWindowParam](
+		"day", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+	)
+	apijson.RegisterFieldValidator[WorkflowDelayStepSettingsDelayUntilTimeWindowParam](
+		"type", "open", "closed",
 	)
 }
 
@@ -2886,7 +2974,9 @@ type WorkflowStepUnionSettings struct {
 	DelayFor Duration `json:"delay_for"`
 	// This field is from variant [WorkflowDelayStepSettings].
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
-	WorkflowVersionMode string `json:"workflow_version_mode"`
+	// This field is from variant [WorkflowDelayStepSettings].
+	DelayUntilTimeWindows []WorkflowDelayStepSettingsDelayUntilTimeWindow `json:"delay_until_time_windows"`
+	WorkflowVersionMode   string                                          `json:"workflow_version_mode"`
 	// This field is a union of
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event],
@@ -2964,6 +3054,7 @@ type WorkflowStepUnionSettings struct {
 		WebSearchEnabled          respjson.Field
 		DelayFor                  respjson.Field
 		DelayUntilFieldPath       respjson.Field
+		DelayUntilTimeWindows     respjson.Field
 		WorkflowVersionMode       respjson.Field
 		Event                     respjson.Field
 		ExpiresAfter              respjson.Field
@@ -4908,6 +4999,15 @@ func (u workflowStepUnionParamSettings) GetDelayUntilFieldPath() *string {
 	switch vt := u.any.(type) {
 	case *WorkflowDelayStepSettingsParam:
 		return paramutil.AddrIfPresent(vt.DelayUntilFieldPath)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u workflowStepUnionParamSettings) GetDelayUntilTimeWindows() []WorkflowDelayStepSettingsDelayUntilTimeWindowParam {
+	switch vt := u.any.(type) {
+	case *WorkflowDelayStepSettingsParam:
+		return vt.DelayUntilTimeWindows
 	}
 	return nil
 }
