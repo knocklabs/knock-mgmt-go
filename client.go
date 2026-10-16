@@ -70,6 +70,7 @@ type Client struct {
 	// Reusable requests are HTTP steps that workflows can link to and share across an
 	// account.
 	ReusableRequests ReusableRequestService
+	AuditLogs        AuditLogService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -129,6 +130,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Billing = NewBillingService(opts...)
 	r.PreferenceCategories = NewPreferenceCategoryService(opts...)
 	r.ReusableRequests = NewReusableRequestService(opts...)
+	r.AuditLogs = NewAuditLogService(opts...)
 
 	return
 }
