@@ -4,6 +4,8 @@ package knockmapi
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -39,6 +41,16 @@ func NewAssetService(opts ...option.RequestOption) (r AssetService) {
 	return
 }
 
+// Records a library asset after the file has been uploaded to the key from an
+// upload request. The asset is always a library asset. Assets are account-wide and
+// do not require an environment parameter.
+func (r *AssetService) New(ctx context.Context, body AssetNewParams, opts ...option.RequestOption) (res *Asset, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "v1/assets"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Returns a paginated list of active account assets. Assets are account-wide and
 // do not require an environment parameter.
 func (r *AssetService) List(ctx context.Context, query AssetListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[Asset], err error) {
@@ -62,6 +74,31 @@ func (r *AssetService) List(ctx context.Context, query AssetListParams, opts ...
 // do not require an environment parameter.
 func (r *AssetService) ListAutoPaging(ctx context.Context, query AssetListParams, opts ...option.RequestOption) *pagination.EntriesCursorAutoPager[Asset] {
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
+}
+
+// Archives a library or template image asset by id. The stored file remains at its
+// URL. Other asset types, unknown ids, and already archived assets are not found.
+// Assets are account-wide and do not require an environment parameter.
+func (r *AssetService) Delete(ctx context.Context, assetID string, opts ...option.RequestOption) (res *AssetDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if assetID == "" {
+		err = errors.New("missing required asset_id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/assets/%s", assetID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	return res, err
+}
+
+// Returns a time-limited URL for uploading an asset file. PUT the file bytes to
+// upload_url with Content-Type and Content-Length from this response, then create
+// the asset with the returned key. This request does not store an asset. Assets
+// are account-wide and do not require an environment parameter.
+func (r *AssetService) Uploads(ctx context.Context, body AssetUploadsParams, opts ...option.RequestOption) (res *AssetUploadsResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "v1/assets/uploads"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
 }
 
 // An uploaded asset file for an account.
@@ -100,6 +137,74 @@ func (r *Asset) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The response from archiving an asset.
+type AssetDeleteResponse struct {
+	// The result of the archive operation.
+	Result string `json:"result" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Result      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AssetDeleteResponse) RawJSON() string { return r.JSON.raw }
+func (r *AssetDeleteResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A time-limited permission to upload an asset file directly to storage.
+type AssetUploadsResponse struct {
+	// The byte length the PUT must send as Content-Length.
+	ContentLength int64 `json:"content_length" api:"required"`
+	// Seconds until the upload URL expires.
+	ExpiresIn int64 `json:"expires_in" api:"required"`
+	// The storage key to send when creating the asset.
+	Key string `json:"key" api:"required"`
+	// The MIME type the PUT must send as Content-Type.
+	MimeType string `json:"mime_type" api:"required"`
+	// The URL to PUT the file bytes to. The signature covers Content-Type and
+	// Content-Length, and the PUT must send both.
+	UploadURL string `json:"upload_url" api:"required"`
+	// The filename from the request, when one was sent.
+	Filename string `json:"filename" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContentLength respjson.Field
+		ExpiresIn     respjson.Field
+		Key           respjson.Field
+		MimeType      respjson.Field
+		UploadURL     respjson.Field
+		Filename      respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AssetUploadsResponse) RawJSON() string { return r.JSON.raw }
+func (r *AssetUploadsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type AssetNewParams struct {
+	// The display name for this asset.
+	Filename string `json:"filename" api:"required"`
+	// The storage key from the upload request. The file must already be uploaded.
+	Key string `json:"key" api:"required"`
+	paramObj
+}
+
+func (r AssetNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow AssetNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AssetNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type AssetListParams struct {
 	// The cursor to fetch entries after.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
@@ -116,4 +221,24 @@ func (r AssetListParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type AssetUploadsParams struct {
+	// The file size in bytes. Maximum is 5 MB. The upload URL is signed for this
+	// length.
+	ContentLength int64 `json:"content_length" api:"required"`
+	// The MIME type of the file. One of image/jpeg, image/png, or image/gif.
+	MimeType string `json:"mime_type" api:"required"`
+	// The display name to echo back. The upload request does not store it. Send it
+	// again when creating the asset.
+	Filename param.Opt[string] `json:"filename,omitzero"`
+	paramObj
+}
+
+func (r AssetUploadsParams) MarshalJSON() (data []byte, err error) {
+	type shadow AssetUploadsParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AssetUploadsParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
