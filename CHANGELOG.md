@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.11.0...v0.12.0) (2026-10-21)
+
+
+### Features
+
+* Add asset creation, upload requests, and archiving (v0.1.1711) ([23f2119](https://github.com/knocklabs/knock-mgmt-go/commit/23f2119d3446c34513d8f95fbcb002479cfe8c88))
+* Add webhook management and workflow trigger events to the SDK (v0.1.1716) ([c78f6ac](https://github.com/knocklabs/knock-mgmt-go/commit/c78f6acd71e0c1192131c910d645421750d8e7dc))
+* update mapi spec to v0.1.1692 ([1936c3e](https://github.com/knocklabs/knock-mgmt-go/commit/1936c3e55e457794439250a4b7b4e3c4a1504f04))
+* update mapi spec to v0.1.1696 ([60a36b7](https://github.com/knocklabs/knock-mgmt-go/commit/60a36b7b5dee7ecb4ac8c9340a4b0b7d1af14824))
+* update mapi spec to v0.1.1700 ([72565e4](https://github.com/knocklabs/knock-mgmt-go/commit/72565e482ef6f2b6851c38d11fb100f038e5e19b))
+* update mapi spec to v0.1.1702 ([751b420](https://github.com/knocklabs/knock-mgmt-go/commit/751b420983b3c7143ef8944dffdc29467564f546))
+
 ## [0.11.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.10.0...v0.11.0) (2026-10-13)
 
 
