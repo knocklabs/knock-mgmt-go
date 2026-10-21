@@ -21,6 +21,7 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
 	"github.com/knocklabs/knock-mgmt-go/shared"
+	"github.com/knocklabs/knock-mgmt-go/shared/constant"
 )
 
 // Workflows let you express your cross-channel notification logic.
@@ -688,6 +689,11 @@ type Workflow struct {
 	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema"`
+	// Events that automatically trigger this workflow: audience triggers (a user
+	// enters an audience) or source event triggers (an event is received from an
+	// integration source). All entries must share the same `type`. Omit or pass an
+	// empty list for workflows triggered via the API.
+	TriggerEvents []WorkflowTriggerEventsUnion `json:"trigger_events"`
 	// The frequency at which the workflow should be triggered. One of:
 	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
 	// to `every_trigger`. Read more in
@@ -714,6 +720,7 @@ type Workflow struct {
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
+		TriggerEvents         respjson.Field
 		TriggerFrequency      respjson.Field
 		ExtraFields           map[string]respjson.Field
 		raw                   string
@@ -2449,6 +2456,11 @@ type WorkflowRequestParam struct {
 	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema,omitzero"`
+	// Events that automatically trigger this workflow: audience triggers (a user
+	// enters an audience) or source event triggers (an event is received from an
+	// integration source). All entries must share the same `type`. Omit or pass an
+	// empty list for workflows triggered via the API.
+	TriggerEvents []WorkflowTriggerEventsUnionParam `json:"trigger_events,omitzero"`
 	// The frequency at which the workflow should be triggered. One of:
 	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
 	// to `every_trigger`. Read more in
@@ -6365,6 +6377,387 @@ func (r *WorkflowThrottleStepSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// WorkflowTriggerEventsUnion contains all possible properties and values from
+// [WorkflowTriggerEventsAudience], [WorkflowTriggerEventsSourceEvent].
+//
+// Use the [WorkflowTriggerEventsUnion.AsAny] method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type WorkflowTriggerEventsUnion struct {
+	// This field is from variant [WorkflowTriggerEventsAudience].
+	AudienceActionType string `json:"audience_action_type"`
+	// This field is from variant [WorkflowTriggerEventsAudience].
+	AudienceKey string `json:"audience_key"`
+	// Any of "audience", "source_event".
+	Type string `json:"type"`
+	// This field is from variant [WorkflowTriggerEventsSourceEvent].
+	EventName string `json:"event_name"`
+	// This field is from variant [WorkflowTriggerEventsSourceEvent].
+	EventType string `json:"event_type"`
+	// This field is from variant [WorkflowTriggerEventsSourceEvent].
+	IntegrationSourceID string `json:"integration_source_id"`
+	// This field is from variant [WorkflowTriggerEventsSourceEvent].
+	TriggerParameters WorkflowTriggerEventsSourceEventTriggerParameters `json:"trigger_parameters"`
+	JSON              struct {
+		AudienceActionType  respjson.Field
+		AudienceKey         respjson.Field
+		Type                respjson.Field
+		EventName           respjson.Field
+		EventType           respjson.Field
+		IntegrationSourceID respjson.Field
+		TriggerParameters   respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// anyWorkflowTriggerEvents is implemented by each variant of
+// [WorkflowTriggerEventsUnion] to add type safety for the return type of
+// [WorkflowTriggerEventsUnion.AsAny]
+type anyWorkflowTriggerEvents interface {
+	implWorkflowTriggerEventsUnion()
+}
+
+func (WorkflowTriggerEventsAudience) implWorkflowTriggerEventsUnion()    {}
+func (WorkflowTriggerEventsSourceEvent) implWorkflowTriggerEventsUnion() {}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := WorkflowTriggerEventsUnion.AsAny().(type) {
+//	case knockmapi.WorkflowTriggerEventsAudience:
+//	case knockmapi.WorkflowTriggerEventsSourceEvent:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u WorkflowTriggerEventsUnion) AsAny() anyWorkflowTriggerEvents {
+	switch u.Type {
+	case "audience":
+		return u.AsAudience()
+	case "source_event":
+		return u.AsSourceEvent()
+	}
+	return nil
+}
+
+func (u WorkflowTriggerEventsUnion) AsAudience() (v WorkflowTriggerEventsAudience) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u WorkflowTriggerEventsUnion) AsSourceEvent() (v WorkflowTriggerEventsSourceEvent) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u WorkflowTriggerEventsUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *WorkflowTriggerEventsUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowTriggerEventsUnion to a
+// WorkflowTriggerEventsUnionParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowTriggerEventsUnionParam.Overrides()
+func (r WorkflowTriggerEventsUnion) ToParam() WorkflowTriggerEventsUnionParam {
+	return param.Override[WorkflowTriggerEventsUnionParam](json.RawMessage(r.RawJSON()))
+}
+
+// An audience trigger that automatically triggers the workflow when a user enters
+// an audience. Read more in the
+// [docs](https://docs.knock.app/send-notifications/triggering-workflows/audiences).
+type WorkflowTriggerEventsAudience struct {
+	// The action type that triggers the workflow.
+	//
+	// Any of "member_added".
+	AudienceActionType string `json:"audience_action_type" api:"required"`
+	// The unique key of the audience that triggers the workflow.
+	AudienceKey string `json:"audience_key" api:"required"`
+	// The trigger event type.
+	Type constant.Audience `json:"type" default:"audience"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AudienceActionType respjson.Field
+		AudienceKey        respjson.Field
+		Type               respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowTriggerEventsAudience) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowTriggerEventsAudience) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A source event trigger that triggers the workflow when an event is received from
+// an integration source. Read more in the
+// [docs](https://docs.knock.app/integrations/sources/overview).
+type WorkflowTriggerEventsSourceEvent struct {
+	// The name of the event that triggers the workflow.
+	EventName string `json:"event_name" api:"required"`
+	// The type of event. Currently only 'track' is supported.
+	//
+	// Any of "track".
+	EventType string `json:"event_type" api:"required"`
+	// The ID of the integration source that emits the event.
+	IntegrationSourceID string `json:"integration_source_id" api:"required" format:"uuid"`
+	// The trigger event type.
+	Type constant.SourceEvent `json:"type" default:"source_event"`
+	// Optional parameters to customize the triggered workflow run.
+	TriggerParameters WorkflowTriggerEventsSourceEventTriggerParameters `json:"trigger_parameters" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventName           respjson.Field
+		EventType           respjson.Field
+		IntegrationSourceID respjson.Field
+		Type                respjson.Field
+		TriggerParameters   respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowTriggerEventsSourceEvent) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowTriggerEventsSourceEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Optional parameters to customize the triggered workflow run.
+type WorkflowTriggerEventsSourceEventTriggerParameters struct {
+	// A liquid template string that will be evaluated to determine the actor.
+	Actor string `json:"actor" api:"nullable"`
+	// A liquid template string that will be evaluated to determine the cancellation
+	// key.
+	CancellationKey string `json:"cancellation_key" api:"nullable"`
+	// A liquid template string that will be evaluated and passed as the data payload.
+	Data string `json:"data" api:"nullable"`
+	// A liquid template string that will be evaluated to determine recipients.
+	Recipients string `json:"recipients" api:"nullable"`
+	// A liquid template string that will be evaluated to determine the tenant.
+	Tenant string `json:"tenant" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Actor           respjson.Field
+		CancellationKey respjson.Field
+		Data            respjson.Field
+		Recipients      respjson.Field
+		Tenant          respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowTriggerEventsSourceEventTriggerParameters) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowTriggerEventsSourceEventTriggerParameters) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func WorkflowTriggerEventsParamOfAudience(audienceActionType string, audienceKey string) WorkflowTriggerEventsUnionParam {
+	var audience WorkflowTriggerEventsAudienceParam
+	audience.AudienceActionType = audienceActionType
+	audience.AudienceKey = audienceKey
+	return WorkflowTriggerEventsUnionParam{OfAudience: &audience}
+}
+
+func WorkflowTriggerEventsParamOfSourceEvent(eventName string, eventType string, integrationSourceID string) WorkflowTriggerEventsUnionParam {
+	var sourceEvent WorkflowTriggerEventsSourceEventParam
+	sourceEvent.EventName = eventName
+	sourceEvent.EventType = eventType
+	sourceEvent.IntegrationSourceID = integrationSourceID
+	return WorkflowTriggerEventsUnionParam{OfSourceEvent: &sourceEvent}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type WorkflowTriggerEventsUnionParam struct {
+	OfAudience    *WorkflowTriggerEventsAudienceParam    `json:",omitzero,inline"`
+	OfSourceEvent *WorkflowTriggerEventsSourceEventParam `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u WorkflowTriggerEventsUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfAudience, u.OfSourceEvent)
+}
+func (u *WorkflowTriggerEventsUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *WorkflowTriggerEventsUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfAudience) {
+		return u.OfAudience
+	} else if !param.IsOmitted(u.OfSourceEvent) {
+		return u.OfSourceEvent
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetAudienceActionType() *string {
+	if vt := u.OfAudience; vt != nil {
+		return &vt.AudienceActionType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetAudienceKey() *string {
+	if vt := u.OfAudience; vt != nil {
+		return &vt.AudienceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetEventName() *string {
+	if vt := u.OfSourceEvent; vt != nil {
+		return &vt.EventName
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetEventType() *string {
+	if vt := u.OfSourceEvent; vt != nil {
+		return &vt.EventType
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetIntegrationSourceID() *string {
+	if vt := u.OfSourceEvent; vt != nil {
+		return &vt.IntegrationSourceID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetTriggerParameters() *WorkflowTriggerEventsSourceEventTriggerParametersParam {
+	if vt := u.OfSourceEvent; vt != nil {
+		return &vt.TriggerParameters
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u WorkflowTriggerEventsUnionParam) GetType() *string {
+	if vt := u.OfAudience; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfSourceEvent; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[WorkflowTriggerEventsUnionParam](
+		"type",
+		apijson.Discriminator[WorkflowTriggerEventsAudienceParam]("audience"),
+		apijson.Discriminator[WorkflowTriggerEventsSourceEventParam]("source_event"),
+	)
+}
+
+// An audience trigger that automatically triggers the workflow when a user enters
+// an audience. Read more in the
+// [docs](https://docs.knock.app/send-notifications/triggering-workflows/audiences).
+//
+// The properties AudienceActionType, AudienceKey, Type are required.
+type WorkflowTriggerEventsAudienceParam struct {
+	// The action type that triggers the workflow.
+	//
+	// Any of "member_added".
+	AudienceActionType string `json:"audience_action_type,omitzero" api:"required"`
+	// The unique key of the audience that triggers the workflow.
+	AudienceKey string `json:"audience_key" api:"required"`
+	// The trigger event type.
+	//
+	// This field can be elided, and will marshal its zero value as "audience".
+	Type constant.Audience `json:"type" default:"audience"`
+	paramObj
+}
+
+func (r WorkflowTriggerEventsAudienceParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowTriggerEventsAudienceParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowTriggerEventsAudienceParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowTriggerEventsAudienceParam](
+		"audience_action_type", "member_added",
+	)
+}
+
+// A source event trigger that triggers the workflow when an event is received from
+// an integration source. Read more in the
+// [docs](https://docs.knock.app/integrations/sources/overview).
+//
+// The properties EventName, EventType, IntegrationSourceID, Type are required.
+type WorkflowTriggerEventsSourceEventParam struct {
+	// The name of the event that triggers the workflow.
+	EventName string `json:"event_name" api:"required"`
+	// The type of event. Currently only 'track' is supported.
+	//
+	// Any of "track".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	// The ID of the integration source that emits the event.
+	IntegrationSourceID string `json:"integration_source_id" api:"required" format:"uuid"`
+	// Optional parameters to customize the triggered workflow run.
+	TriggerParameters WorkflowTriggerEventsSourceEventTriggerParametersParam `json:"trigger_parameters,omitzero"`
+	// The trigger event type.
+	//
+	// This field can be elided, and will marshal its zero value as "source_event".
+	Type constant.SourceEvent `json:"type" default:"source_event"`
+	paramObj
+}
+
+func (r WorkflowTriggerEventsSourceEventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowTriggerEventsSourceEventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowTriggerEventsSourceEventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[WorkflowTriggerEventsSourceEventParam](
+		"event_type", "track",
+	)
+}
+
+// Optional parameters to customize the triggered workflow run.
+type WorkflowTriggerEventsSourceEventTriggerParametersParam struct {
+	// A liquid template string that will be evaluated to determine the actor.
+	Actor param.Opt[string] `json:"actor,omitzero"`
+	// A liquid template string that will be evaluated to determine the cancellation
+	// key.
+	CancellationKey param.Opt[string] `json:"cancellation_key,omitzero"`
+	// A liquid template string that will be evaluated and passed as the data payload.
+	Data param.Opt[string] `json:"data,omitzero"`
+	// A liquid template string that will be evaluated to determine recipients.
+	Recipients param.Opt[string] `json:"recipients,omitzero"`
+	// A liquid template string that will be evaluated to determine the tenant.
+	Tenant param.Opt[string] `json:"tenant,omitzero"`
+	paramObj
+}
+
+func (r WorkflowTriggerEventsSourceEventTriggerParametersParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowTriggerEventsSourceEventTriggerParametersParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowTriggerEventsSourceEventTriggerParametersParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A workflow trigger function step. Read more in the
 // [docs](https://docs.knock.app/designing-workflows/trigger-workflow-function).
 type WorkflowTriggerWorkflowStep struct {
@@ -7227,6 +7620,11 @@ type WorkflowGetResponse struct {
 	// trigger requests. Read more in the
 	// [docs](https://docs.knock.app/developer-tools/validating-trigger-data).
 	TriggerDataJsonSchema map[string]any `json:"trigger_data_json_schema"`
+	// Events that automatically trigger this workflow: audience triggers (a user
+	// enters an audience) or source event triggers (an event is received from an
+	// integration source). All entries must share the same `type`. Omit or pass an
+	// empty list for workflows triggered via the API.
+	TriggerEvents []WorkflowTriggerEventsUnion `json:"trigger_events"`
 	// The frequency at which the workflow should be triggered. One of:
 	// `once_per_recipient`, `once_per_recipient_per_tenant`, `every_trigger`. Defaults
 	// to `every_trigger`. Read more in
@@ -7257,6 +7655,7 @@ type WorkflowGetResponse struct {
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
+		TriggerEvents         respjson.Field
 		TriggerFrequency      respjson.Field
 		UpdatedBy             respjson.Field
 		ExtraFields           map[string]respjson.Field

@@ -71,6 +71,7 @@ type Client struct {
 	// account.
 	ReusableRequests ReusableRequestService
 	AuditLogs        AuditLogService
+	Webhooks         WebhookService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -131,6 +132,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.PreferenceCategories = NewPreferenceCategoryService(opts...)
 	r.ReusableRequests = NewReusableRequestService(opts...)
 	r.AuditLogs = NewAuditLogService(opts...)
+	r.Webhooks = NewWebhookService(opts...)
 
 	return
 }

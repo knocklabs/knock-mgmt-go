@@ -233,6 +233,12 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
+				TriggerEvents: []knockmapi.WorkflowTriggerEventsUnionParam{{
+					OfAudience: &knockmapi.WorkflowTriggerEventsAudienceParam{
+						AudienceActionType: "member_added",
+						AudienceKey:        "pro-users",
+					},
+				}},
 				TriggerFrequency: knockmapi.WorkflowRequestTriggerFrequencyEveryTrigger,
 			},
 			AllowEmpty:    knockmapi.Bool(true),
@@ -332,6 +338,12 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 				TriggerDataJsonSchema: map[string]any{
 					"foo": "bar",
 				},
+				TriggerEvents: []knockmapi.WorkflowTriggerEventsUnionParam{{
+					OfAudience: &knockmapi.WorkflowTriggerEventsAudienceParam{
+						AudienceActionType: "member_added",
+						AudienceKey:        "pro-users",
+					},
+				}},
 				TriggerFrequency: knockmapi.WorkflowRequestTriggerFrequencyEveryTrigger,
 			},
 			Branch:      knockmapi.String("feature-branch"),

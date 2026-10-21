@@ -90,6 +90,23 @@ func (r *ReusableRequestService) Archive(ctx context.Context, reusableRequestKey
 	return res, err
 }
 
+// Unarchives a reusable request by key, with every copy archived alongside it in
+// other environments.
+//
+// Returns a 404 when the key isn't archived, including when an earlier or
+// concurrent request already restored it. Returns a 422 with the code `key_in_use`
+// when a live reusable request uses the key.
+func (r *ReusableRequestService) UpdateUnarchive(ctx context.Context, reusableRequestKey string, body ReusableRequestUpdateUnarchiveParams, opts ...option.RequestOption) (res *ReusableRequestUpdateUnarchiveResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if reusableRequestKey == "" {
+		err = errors.New("missing required reusable_request_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/reusable_requests/%s/unarchive", reusableRequestKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // Updates a reusable request of a given key, or creates a new one if it does not
 // yet exist.
 //
@@ -543,6 +560,24 @@ func (r *ReusableRequestArchiveResponse) UnmarshalJSON(data []byte) error {
 }
 
 // Wraps the ReusableRequest response under the `reusable_request` key.
+type ReusableRequestUpdateUnarchiveResponse struct {
+	// A reusable HTTP request that workflows can link to.
+	ReusableRequest ReusableRequest `json:"reusable_request" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReusableRequest respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ReusableRequestUpdateUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *ReusableRequestUpdateUnarchiveResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the ReusableRequest response under the `reusable_request` key.
 type ReusableRequestUpsertResponse struct {
 	// A reusable HTTP request that workflows can link to.
 	ReusableRequest ReusableRequest `json:"reusable_request" api:"required"`
@@ -641,6 +676,21 @@ type ReusableRequestArchiveParams struct {
 // URLQuery serializes [ReusableRequestArchiveParams]'s query parameters as
 // `url.Values`.
 func (r ReusableRequestArchiveParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ReusableRequestUpdateUnarchiveParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ReusableRequestUpdateUnarchiveParams]'s query parameters as
+// `url.Values`.
+func (r ReusableRequestUpdateUnarchiveParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
