@@ -1508,7 +1508,9 @@ func (r *BroadcastRunParamsRecipient) UnmarshalJSON(data []byte) error {
 
 // Settings that control how the broadcast run executes.
 type BroadcastRunParamsSettings struct {
-	// Whether to generate messages without sending them to downstream providers.
+	// Whether to generate messages without sending them to downstream providers. When
+	// omitted, each channel's sandbox mode setting in the environment applies. When
+	// false, messages are sent even through channels in sandbox mode.
 	SandboxMode param.Opt[bool] `json:"sandbox_mode,omitzero"`
 	// Whether to skip delay steps during the run.
 	SkipDelay param.Opt[bool] `json:"skip_delay,omitzero"`
