@@ -1460,6 +1460,9 @@ func (r BroadcastCancelParams) URLQuery() (v url.Values, err error) {
 type BroadcastRunParams struct {
 	// The user to run the broadcast for.
 	Recipient BroadcastRunParamsRecipient `json:"recipient,omitzero" api:"required"`
+	// When set, runs only this message-sending channel step. Guide steps, legacy
+	// in-app steps, and unknown ids are rejected.
+	StepID param.Opt[string] `json:"step_id,omitzero" format:"uuid"`
 	// The tenant to associate the broadcast run with. Must not contain whitespace.
 	Tenant param.Opt[string] `json:"tenant,omitzero"`
 	// The slug of a branch to use. When `environment` is omitted, the branch is

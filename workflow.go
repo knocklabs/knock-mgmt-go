@@ -7866,6 +7866,9 @@ type WorkflowRunParams struct {
 	Recipients []WorkflowRunParamsRecipientUnion `json:"recipients,omitzero" api:"required"`
 	// A key to cancel the workflow run.
 	CancellationKey param.Opt[string] `json:"cancellation_key,omitzero"`
+	// When set, runs only this message-sending channel step. Guide steps, legacy
+	// in-app steps, and unknown ids are rejected.
+	StepID param.Opt[string] `json:"step_id,omitzero" format:"uuid"`
 	// The slug of a branch to use. When `environment` is omitted, the branch is
 	// resolved from Development after the account default is injected. When
 	// `environment` is supplied, it must be `"development"`.

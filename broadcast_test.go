@@ -135,6 +135,7 @@ func TestBroadcastRunWithOptionalParams(t *testing.T) {
 				SandboxMode: knockmapi.Bool(true),
 				SkipDelay:   knockmapi.Bool(true),
 			},
+			StepID: knockmapi.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Tenant: knockmapi.String("tenant_1"),
 		},
 	)
