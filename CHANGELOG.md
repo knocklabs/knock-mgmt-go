@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.12.0...v0.13.0) (2026-10-23)
+
+
+### Features
+
+* Run a broadcast or workflow for a single message-sending channel step (v0.1.1732) ([2fba47f](https://github.com/knocklabs/knock-mgmt-go/commit/2fba47ff843d38e564e339caea61c4c19ccd1eb0))
+* update mapi spec to v0.1.1727 ([50d92af](https://github.com/knocklabs/knock-mgmt-go/commit/50d92af722c3015b999bd1732d115d8e0c26fbc7))
+
 ## [0.12.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.11.0...v0.12.0) (2026-10-21)
 
 
