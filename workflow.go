@@ -1011,7 +1011,7 @@ type WorkflowBatchStepSettings struct {
 	// Any of "asc", "desc".
 	BatchOrder string `json:"batch_order" api:"nullable"`
 	// The data path to resolve the batch window. The resolved value must be an
-	// ISO-8601 timestamp.
+	// ISO-8601 timestamp 90 days or less from when the batch opens.
 	BatchUntilFieldPath string `json:"batch_until_field_path" api:"nullable"`
 	// A duration of time, represented as a unit and a value.
 	BatchWindow Duration `json:"batch_window" api:"nullable"`
@@ -1098,7 +1098,7 @@ type WorkflowBatchStepSettingsParam struct {
 	// The data property to use to batch notifications per recipient.
 	BatchKey param.Opt[string] `json:"batch_key,omitzero"`
 	// The data path to resolve the batch window. The resolved value must be an
-	// ISO-8601 timestamp.
+	// ISO-8601 timestamp 90 days or less from when the batch opens.
 	BatchUntilFieldPath param.Opt[string] `json:"batch_until_field_path,omitzero"`
 	// The execution mode of the batch step. One of: `accumulate` or `flush_leading`.
 	// When set to `flush_leading`, the first item in the batch will be executed
@@ -1471,7 +1471,8 @@ type WorkflowDelayStepSettings struct {
 	// A duration of time, represented as a unit and a value.
 	DelayFor Duration `json:"delay_for" api:"nullable"`
 	// When set will use the path to resolve the delay into a timestamp from the
-	// property referenced
+	// property referenced. The resolved timestamp must be 365 days or less from when
+	// the step runs.
 	DelayUntilFieldPath string `json:"delay_until_field_path"`
 	// A weekly schedule of when the delay can resume. Must include one window per day,
 	// and at least one day must be open. Cannot be combined with `delay_for` or
@@ -1581,7 +1582,8 @@ func (r *WorkflowDelayStepParam) UnmarshalJSON(data []byte) error {
 // `delay_until_time_windows` to wait until a weekly schedule is open.
 type WorkflowDelayStepSettingsParam struct {
 	// When set will use the path to resolve the delay into a timestamp from the
-	// property referenced
+	// property referenced. The resolved timestamp must be 365 days or less from when
+	// the step runs.
 	DelayUntilFieldPath param.Opt[string] `json:"delay_until_field_path,omitzero"`
 	// A weekly schedule of when the delay can resume. Must include one window per day,
 	// and at least one day must be open. Cannot be combined with `delay_for` or
