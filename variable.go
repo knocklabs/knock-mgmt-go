@@ -194,8 +194,9 @@ const (
 
 type VariableDeleteParams struct {
 	// The environment slug. When provided, only the variable's override for this
-	// environment is cleared. When omitted, the whole variable is deleted and the
-	// account's default environment is used for authorization.
+	// environment is cleared. When omitted, the whole variable is deleted, which
+	// requires `variables:manage` in the account's default environment and in every
+	// environment with an override.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
