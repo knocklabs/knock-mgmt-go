@@ -677,7 +677,13 @@ type Workflow struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
@@ -2440,7 +2446,13 @@ type WorkflowRequestParam struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
 	// A list of
 	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
@@ -7610,7 +7622,13 @@ type WorkflowGetResponse struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`

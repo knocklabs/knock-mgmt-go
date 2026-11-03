@@ -170,7 +170,13 @@ type Guide struct {
 	// An arbitrary string attached to a guide object. Useful for adding notes about
 	// the guide for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description" api:"nullable"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A group of conditions to be evaluated.
 	GuideAudienceConditions ConditionGroupUnion `json:"guide_audience_conditions" api:"nullable"`
@@ -315,7 +321,13 @@ type GuideRequestParam struct {
 	// The key of the target audience for the guide. When not set, will default to
 	// targeting all users.
 	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
 	// A list of activation url patterns that describe when the guide should be shown.
 	ActivationURLPatterns []GuideActivationURLPatternParam `json:"activation_url_patterns,omitzero"`

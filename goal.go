@@ -32,6 +32,9 @@ import (
 // the [NewGoalService] method instead.
 type GoalService struct {
 	Options []option.RequestOption
+	// Goals define event conditions that are tracked and attributed to messaging
+	// resources.
+	Attachments GoalAttachmentService
 }
 
 // NewGoalService generates a new service that applies the given options to each
@@ -40,6 +43,7 @@ type GoalService struct {
 func NewGoalService(opts ...option.RequestOption) (r GoalService) {
 	r = GoalService{}
 	r.Options = opts
+	r.Attachments = NewGoalAttachmentService(opts...)
 	return
 }
 
@@ -78,8 +82,8 @@ func (r *GoalService) ListAutoPaging(ctx context.Context, query GoalListParams, 
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
-// Archives a given goal across all environments. Refuses if any workflow, guide,
-// or broadcast is attached to the goal.
+// Archives a given goal in this environment. Refuses if a workflow, guide, or
+// broadcast in this environment is attached to the goal.
 func (r *GoalService) Archive(ctx context.Context, goalKey string, body GoalArchiveParams, opts ...option.RequestOption) (res *GoalArchiveResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if goalKey == "" {

@@ -16,7 +16,13 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+// Deprecated: attach goals with
+// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+// accounts on the new goal attachments, saves that include this field are rejected
+// with a 422 and responses omit it.
+//
+// Deprecated: deprecated
 type GoalAttachment struct {
 	// The key of the goal to attach.
 	GoalKey string `json:"goal_key" api:"required"`
@@ -47,7 +53,13 @@ func (r GoalAttachment) ToParam() GoalAttachmentParam {
 	return param.Override[GoalAttachmentParam](json.RawMessage(r.RawJSON()))
 }
 
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+// Deprecated: attach goals with
+// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+// accounts on the new goal attachments, saves that include this field are rejected
+// with a 422 and responses omit it.
+//
+// Deprecated: deprecated
 //
 // The property GoalKey is required.
 type GoalAttachmentParam struct {

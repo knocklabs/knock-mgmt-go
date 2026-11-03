@@ -173,7 +173,13 @@ type Broadcast struct {
 	// An arbitrary string attached to a broadcast object. Useful for adding notes
 	// about the broadcast for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// The timestamp of when the broadcast is scheduled to be sent.
 	ScheduledAt time.Time `json:"scheduled_at" api:"nullable" format:"date-time"`
@@ -526,7 +532,13 @@ type BroadcastRequestParam struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The key of the audience to target for this broadcast.
 	TargetAudienceKey param.Opt[string] `json:"target_audience_key,omitzero"`
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+	// Deprecated: attach goals with
+	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+	// accounts on the new goal attachments, saves that include this field are rejected
+	// with a 422 and responses omit it.
+	//
+	// Deprecated: deprecated
 	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
 	// A list of categories that the broadcast belongs to.
 	Categories []string `json:"categories,omitzero"`

@@ -16,12 +16,20 @@ type paramObj = param.APIObject
 
 type Error = apierror.Error
 
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+// Deprecated: attach goals with
+// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+// accounts on the new goal attachments, saves that include this field are rejected
+// with a 422 and responses omit it.
 //
 // This is an alias to an internal type.
 type GoalAttachment = shared.GoalAttachment
 
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking.
+// Deprecated: attach goals with
+// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
+// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
+// accounts on the new goal attachments, saves that include this field are rejected
+// with a 422 and responses omit it.
 //
 // This is an alias to an internal type.
 type GoalAttachmentParam = shared.GoalAttachmentParam
