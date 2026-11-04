@@ -375,6 +375,22 @@ Methods:
 - <code title="get /v1/environments/{environment_slug}">client.Environments.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, environmentSlug <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Environment">Environment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/environments">client.Environments.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentListParams">EnvironmentListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Environment">Environment</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+## Defaults
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaultsPreferenceSetParam">EnvironmentDefaultsPreferenceSetParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaults">EnvironmentDefaults</a>
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaultsPreferenceSet">EnvironmentDefaultsPreferenceSet</a>
+
+Methods:
+
+- <code title="put /v1/environments/{environment_slug}/defaults">client.Environments.Defaults.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaultService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, environmentSlug <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaultUpdateParams">EnvironmentDefaultUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaults">EnvironmentDefaults</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/environments/{environment_slug}/defaults">client.Environments.Defaults.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaultService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, environmentSlug <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#EnvironmentDefaults">EnvironmentDefaults</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Variables
 
 Response Types:

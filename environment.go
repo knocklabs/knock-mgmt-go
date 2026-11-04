@@ -31,6 +31,9 @@ import (
 // the [NewEnvironmentService] method instead.
 type EnvironmentService struct {
 	Options []option.RequestOption
+	// Environments are isolated instances of your account that map to your
+	// infrastructure.
+	Defaults EnvironmentDefaultService
 }
 
 // NewEnvironmentService generates a new service that applies the given options to
@@ -39,6 +42,7 @@ type EnvironmentService struct {
 func NewEnvironmentService(opts ...option.RequestOption) (r EnvironmentService) {
 	r = EnvironmentService{}
 	r.Options = opts
+	r.Defaults = NewEnvironmentDefaultService(opts...)
 	return
 }
 
