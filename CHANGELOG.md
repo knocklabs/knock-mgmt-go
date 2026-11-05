@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.14.0...v0.15.0) (2026-11-05)
+
+
+### Features
+
+* Exchange for API key accepts an optional type query parameter (v0.1.1768) ([74046e0](https://github.com/knocklabs/knock-mgmt-go/commit/74046e0ccc9e0d8c6f0509d67e780c071a5eace2))
+
 ## [0.14.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.13.0...v0.14.0) (2026-11-04)
 
 
