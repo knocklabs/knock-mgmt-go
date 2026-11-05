@@ -13,7 +13,6 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
-	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestBroadcastGetWithOptionalParams(t *testing.T) {
@@ -237,10 +236,6 @@ func TestBroadcastUpsertWithOptionalParams(t *testing.T) {
 				}},
 				Categories:  []string{"announcement"},
 				Description: knockmapi.String("A broadcast to all users"),
-				GoalAttachment: shared.GoalAttachmentParam{
-					GoalKey:               "trial-conversion",
-					AttributionWindowDays: knockmapi.Int(7),
-				},
 				ScheduledAt: knockmapi.Time(time.Now()),
 				Settings: knockmapi.BroadcastRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(true),
@@ -321,10 +316,6 @@ func TestBroadcastValidateWithOptionalParams(t *testing.T) {
 				}},
 				Categories:  []string{"announcement"},
 				Description: knockmapi.String("A broadcast to all users"),
-				GoalAttachment: shared.GoalAttachmentParam{
-					GoalKey:               "trial-conversion",
-					AttributionWindowDays: knockmapi.Int(7),
-				},
 				ScheduledAt: knockmapi.Time(time.Now()),
 				Settings: knockmapi.BroadcastRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(true),

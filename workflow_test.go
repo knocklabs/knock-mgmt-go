@@ -12,7 +12,6 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
-	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestWorkflowGetWithOptionalParams(t *testing.T) {
@@ -222,10 +221,6 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
-				GoalAttachment: shared.GoalAttachmentParam{
-					GoalKey:               "trial-conversion",
-					AttributionWindowDays: knockmapi.Int(7),
-				},
 				Settings: knockmapi.WorkflowRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
@@ -327,10 +322,6 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
-				GoalAttachment: shared.GoalAttachmentParam{
-					GoalKey:               "trial-conversion",
-					AttributionWindowDays: knockmapi.Int(7),
-				},
 				Settings: knockmapi.WorkflowRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),

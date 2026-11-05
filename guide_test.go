@@ -12,7 +12,6 @@ import (
 	"github.com/knocklabs/knock-mgmt-go"
 	"github.com/knocklabs/knock-mgmt-go/internal/testutil"
 	"github.com/knocklabs/knock-mgmt-go/option"
-	"github.com/knocklabs/knock-mgmt-go/shared"
 )
 
 func TestGuideGetWithOptionalParams(t *testing.T) {
@@ -173,10 +172,6 @@ func TestGuideUpsertWithOptionalParams(t *testing.T) {
 				ArchivedAt:  knockmapi.Time(time.Now()),
 				DeletedAt:   knockmapi.Time(time.Now()),
 				Description: knockmapi.String("A guide to help users get started with the application"),
-				GoalAttachment: shared.GoalAttachmentParam{
-					GoalKey:               "trial-conversion",
-					AttributionWindowDays: knockmapi.Int(7),
-				},
 				GuideAudienceConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{
@@ -254,10 +249,6 @@ func TestGuideValidateWithOptionalParams(t *testing.T) {
 				ArchivedAt:  knockmapi.Time(time.Now()),
 				DeletedAt:   knockmapi.Time(time.Now()),
 				Description: knockmapi.String("A guide to help users get started with the application"),
-				GoalAttachment: shared.GoalAttachmentParam{
-					GoalKey:               "trial-conversion",
-					AttributionWindowDays: knockmapi.Int(7),
-				},
 				GuideAudienceConditions: knockmapi.ConditionGroupUnionParam{
 					OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
 						All: []knockmapi.ConditionParam{{

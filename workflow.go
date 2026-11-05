@@ -20,7 +20,6 @@ import (
 	"github.com/knocklabs/knock-mgmt-go/packages/pagination"
 	"github.com/knocklabs/knock-mgmt-go/packages/param"
 	"github.com/knocklabs/knock-mgmt-go/packages/respjson"
-	"github.com/knocklabs/knock-mgmt-go/shared"
 	"github.com/knocklabs/knock-mgmt-go/shared/constant"
 )
 
@@ -677,14 +676,6 @@ type Workflow struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
-	// Deprecated: attach goals with
-	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
-	// accounts on the new goal attachments, saves that include this field are rejected
-	// with a 422 and responses omit it.
-	//
-	// Deprecated: deprecated
-	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -722,7 +713,6 @@ type Workflow struct {
 		Conditions            respjson.Field
 		DeletedAt             respjson.Field
 		Description           respjson.Field
-		GoalAttachment        respjson.Field
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
@@ -2446,14 +2436,6 @@ type WorkflowRequestParam struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// Deprecated: attach goals with
-	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
-	// accounts on the new goal attachments, saves that include this field are rejected
-	// with a 422 and responses omit it.
-	//
-	// Deprecated: deprecated
-	GoalAttachment shared.GoalAttachmentParam `json:"goal_attachment,omitzero"`
 	// A list of
 	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
 	// the workflow belongs to.
@@ -7622,14 +7604,6 @@ type WorkflowGetResponse struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
-	// Deprecated: attach goals with
-	// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
-	// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
-	// accounts on the new goal attachments, saves that include this field are rejected
-	// with a 422 and responses omit it.
-	//
-	// Deprecated: deprecated
-	GoalAttachment shared.GoalAttachment `json:"goal_attachment" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -7671,7 +7645,6 @@ type WorkflowGetResponse struct {
 		CreatedBy             respjson.Field
 		DeletedAt             respjson.Field
 		Description           respjson.Field
-		GoalAttachment        respjson.Field
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field

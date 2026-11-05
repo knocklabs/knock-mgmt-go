@@ -16,69 +16,6 @@ type paramUnion = param.APIUnion
 // aliased to make [param.APIObject] private when embedding
 type paramObj = param.APIObject
 
-// Deprecated: attach goals with
-// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
-// accounts on the new goal attachments, saves that include this field are rejected
-// with a 422 and responses omit it.
-//
-// Deprecated: deprecated
-type GoalAttachment struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays int64 `json:"attribution_window_days"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		GoalKey               respjson.Field
-		AttributionWindowDays respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r GoalAttachment) RawJSON() string { return r.JSON.raw }
-func (r *GoalAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this GoalAttachment to a GoalAttachmentParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// GoalAttachmentParam.Overrides()
-func (r GoalAttachment) ToParam() GoalAttachmentParam {
-	return param.Override[GoalAttachmentParam](json.RawMessage(r.RawJSON()))
-}
-
-// Deprecated: attach goals with
-// `PUT /v1/goals/{goal_key}/attachments/{resource_type}/{resource_key}` instead.
-// Attaches a goal to a workflow, guide, or broadcast for attribution tracking. For
-// accounts on the new goal attachments, saves that include this field are rejected
-// with a 422 and responses omit it.
-//
-// Deprecated: deprecated
-//
-// The property GoalKey is required.
-type GoalAttachmentParam struct {
-	// The key of the goal to attach.
-	GoalKey string `json:"goal_key" api:"required"`
-	// The number of days to attribute conversions after the notification is sent. Must
-	// be between 1 and 30. Defaults to 7.
-	AttributionWindowDays param.Opt[int64] `json:"attribution_window_days,omitzero"`
-	paramObj
-}
-
-func (r GoalAttachmentParam) MarshalJSON() (data []byte, err error) {
-	type shadow GoalAttachmentParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GoalAttachmentParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A boolean field used in a message type.
 type MessageTypeBooleanField struct {
 	// The unique key of the field.

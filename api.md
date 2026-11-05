@@ -1,6 +1,5 @@
 # Shared Params Types
 
-- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#GoalAttachmentParam">GoalAttachmentParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeBooleanFieldParam">MessageTypeBooleanFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeButtonFieldParam">MessageTypeButtonFieldParam</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeColorFieldParam">MessageTypeColorFieldParam</a>
@@ -18,7 +17,6 @@
 
 # Shared Response Types
 
-- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#GoalAttachment">GoalAttachment</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeBooleanField">MessageTypeBooleanField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeButtonField">MessageTypeButtonField</a>
 - <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/shared#MessageTypeColorField">MessageTypeColorField</a>
