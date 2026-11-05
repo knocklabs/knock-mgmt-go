@@ -28,6 +28,7 @@ func TestAPIKeyExchangeWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.APIKeys.Exchange(context.TODO(), knockmapi.APIKeyExchangeParams{
 		Environment: knockmapi.String("development"),
+		Type:        knockmapi.APIKeyExchangeParamsTypeSecret,
 	})
 	if err != nil {
 		var apierr *knockmapi.Error

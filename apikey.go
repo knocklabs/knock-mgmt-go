@@ -35,8 +35,10 @@ func NewAPIKeyService(opts ...option.RequestOption) (r APIKeyService) {
 	return
 }
 
-// Given an authenticated service token, exchanges it for a secret API key that can
-// be used to make requests to the public API.
+// Given an authenticated service token, exchanges it for an API key that can be
+// used to make requests to the public API. Returns the environment's secret key by
+// default. Pass `type=public` to get its public key instead, for client-side
+// integrations.
 func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams, opts ...option.RequestOption) (res *APIKeyExchangeResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/api_keys/exchange"
@@ -46,7 +48,7 @@ func (r *APIKeyService) Exchange(ctx context.Context, body APIKeyExchangeParams,
 
 // Returns an API key that can be used to make requests to the public API.
 type APIKeyExchangeResponse struct {
-	// The secret API key exchanged from the service token.
+	// The API key exchanged from the service token, of the requested `type`.
 	APIKey string `json:"api_key" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -65,6 +67,10 @@ func (r *APIKeyExchangeResponse) UnmarshalJSON(data []byte) error {
 type APIKeyExchangeParams struct {
 	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	// The type of API key to return: `secret` or `public`.
+	//
+	// Any of "secret", "public".
+	Type APIKeyExchangeParamsType `query:"type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -75,3 +81,11 @@ func (r APIKeyExchangeParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+// The type of API key to return: `secret` or `public`.
+type APIKeyExchangeParamsType string
+
+const (
+	APIKeyExchangeParamsTypeSecret APIKeyExchangeParamsType = "secret"
+	APIKeyExchangeParamsTypePublic APIKeyExchangeParamsType = "public"
+)
