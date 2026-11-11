@@ -218,9 +218,10 @@ type VariableUpsertParams struct {
 	// The description of the variable. When omitted or null on an update, the existing
 	// description is kept. An empty string clears it.
 	Description param.Opt[string] `json:"description,omitzero"`
-	// The default value of the variable. Required when creating a variable. When
-	// omitted or null on an update, the existing value is kept. An empty string clears
-	// the default value.
+	// The default value of the variable. Required when creating a variable, unless
+	// `environment_values` sets a value for at least one environment. When omitted or
+	// null on an update, the existing value is kept. An empty string clears the
+	// default value.
 	Value param.Opt[string] `json:"value,omitzero"`
 	// A map of root environment slugs to override values. An environment that is
 	// omitted or null is left unchanged. An empty string clears the override, so the

@@ -6491,7 +6491,7 @@ func (r *WorkflowTriggerEventsAudience) UnmarshalJSON(data []byte) error {
 
 // A source event trigger that triggers the workflow when an event is received from
 // an integration source. Read more in the
-// [docs](https://docs.knock.app/integrations/sources/overview).
+// [docs](https://docs.knock.app/integrations/sources/streams).
 type WorkflowTriggerEventsSourceEvent struct {
 	// The name of the event that triggers the workflow.
 	EventName string `json:"event_name" api:"required"`
@@ -6695,7 +6695,7 @@ func init() {
 
 // A source event trigger that triggers the workflow when an event is received from
 // an integration source. Read more in the
-// [docs](https://docs.knock.app/integrations/sources/overview).
+// [docs](https://docs.knock.app/integrations/sources/streams).
 //
 // The properties EventName, EventType, IntegrationSourceID, Type are required.
 type WorkflowTriggerEventsSourceEventParam struct {

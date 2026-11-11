@@ -72,6 +72,14 @@ type Client struct {
 	ReusableRequests ReusableRequestService
 	AuditLogs        AuditLogService
 	Webhooks         WebhookService
+	// Warehouse syncs read rows from a warehouse on a schedule and write them to
+	// Knock.
+	WarehouseSyncs WarehouseSyncService
+	// Headless accounts let an agent create a Knock account on its own and hand it to
+	// a person to claim.
+	HeadlessAccounts HeadlessAccountService
+	// Warehouses are the databases in your data warehouse that Knock reads from.
+	Warehouses WarehouseService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -133,6 +141,9 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ReusableRequests = NewReusableRequestService(opts...)
 	r.AuditLogs = NewAuditLogService(opts...)
 	r.Webhooks = NewWebhookService(opts...)
+	r.WarehouseSyncs = NewWarehouseSyncService(opts...)
+	r.HeadlessAccounts = NewHeadlessAccountService(opts...)
+	r.Warehouses = NewWarehouseService(opts...)
 
 	return
 }
