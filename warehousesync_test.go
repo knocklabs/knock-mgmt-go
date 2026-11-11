@@ -43,7 +43,7 @@ func TestWarehouseSyncGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestWarehouseSyncUpdateWithOptionalParams(t *testing.T) {
+func TestWarehouseSyncListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -56,10 +56,128 @@ func TestWarehouseSyncUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.WarehouseSyncs.Update(
+	_, err := client.WarehouseSyncs.List(context.TODO(), knockmapi.WarehouseSyncListParams{
+		After:                  knockmapi.String("after"),
+		Before:                 knockmapi.String("before"),
+		Environment:            knockmapi.String("development"),
+		HideUncommittedChanges: knockmapi.Bool(true),
+		Limit:                  knockmapi.Int(0),
+	})
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWarehouseSyncListRunsWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.WarehouseSyncs.ListRuns(
 		context.TODO(),
 		"warehouse_sync_key",
-		knockmapi.WarehouseSyncUpdateParams{
+		knockmapi.WarehouseSyncListRunsParams{
+			Environment: knockmapi.String("development"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWarehouseSyncRunWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.WarehouseSyncs.Run(
+		context.TODO(),
+		"warehouse_sync_key",
+		knockmapi.WarehouseSyncRunParams{
+			Environment: knockmapi.String("development"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWarehouseSyncUpdateSettingsWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.WarehouseSyncs.UpdateSettings(
+		context.TODO(),
+		"warehouse_sync_key",
+		knockmapi.WarehouseSyncUpdateSettingsParams{
+			Environment:      knockmapi.String("development"),
+			Enabled:          knockmapi.Bool(false),
+			FrequencyMinutes: 1440,
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWarehouseSyncUpsertWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.WarehouseSyncs.Upsert(
+		context.TODO(),
+		"warehouse_sync_key",
+		knockmapi.WarehouseSyncUpsertParams{
 			WarehouseSync: knockmapi.WarehouseSyncRequestParam{
 				ChangeTracking: knockmapi.WarehouseSyncChangeTrackingParam{
 					IsDeletedColumn:    knockmapi.String("is_deleted"),
@@ -105,7 +223,7 @@ func TestWarehouseSyncUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestWarehouseSyncListWithOptionalParams(t *testing.T) {
+func TestWarehouseSyncValidateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -118,128 +236,10 @@ func TestWarehouseSyncListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.WarehouseSyncs.List(context.TODO(), knockmapi.WarehouseSyncListParams{
-		After:                  knockmapi.String("after"),
-		Before:                 knockmapi.String("before"),
-		Environment:            knockmapi.String("development"),
-		HideUncommittedChanges: knockmapi.Bool(true),
-		Limit:                  knockmapi.Int(0),
-	})
-	if err != nil {
-		var apierr *knockmapi.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestWarehouseSyncGetRunsWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := knockmapi.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithServiceToken("My Service Token"),
-	)
-	_, err := client.WarehouseSyncs.GetRuns(
+	_, err := client.WarehouseSyncs.Validate(
 		context.TODO(),
 		"warehouse_sync_key",
-		knockmapi.WarehouseSyncGetRunsParams{
-			Environment: knockmapi.String("development"),
-		},
-	)
-	if err != nil {
-		var apierr *knockmapi.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestWarehouseSyncUpdateRunWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := knockmapi.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithServiceToken("My Service Token"),
-	)
-	_, err := client.WarehouseSyncs.UpdateRun(
-		context.TODO(),
-		"warehouse_sync_key",
-		knockmapi.WarehouseSyncUpdateRunParams{
-			Environment: knockmapi.String("development"),
-		},
-	)
-	if err != nil {
-		var apierr *knockmapi.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestWarehouseSyncUpdateSettingsWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := knockmapi.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithServiceToken("My Service Token"),
-	)
-	_, err := client.WarehouseSyncs.UpdateSettings(
-		context.TODO(),
-		"warehouse_sync_key",
-		knockmapi.WarehouseSyncUpdateSettingsParams{
-			Environment:      knockmapi.String("development"),
-			Enabled:          knockmapi.Bool(false),
-			FrequencyMinutes: 1440,
-		},
-	)
-	if err != nil {
-		var apierr *knockmapi.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestWarehouseSyncUpdateValidateWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := knockmapi.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithServiceToken("My Service Token"),
-	)
-	_, err := client.WarehouseSyncs.UpdateValidate(
-		context.TODO(),
-		"warehouse_sync_key",
-		knockmapi.WarehouseSyncUpdateValidateParams{
+		knockmapi.WarehouseSyncValidateParams{
 			WarehouseSync: knockmapi.WarehouseSyncRequestParam{
 				ChangeTracking: knockmapi.WarehouseSyncChangeTrackingParam{
 					IsDeletedColumn:    knockmapi.String("is_deleted"),

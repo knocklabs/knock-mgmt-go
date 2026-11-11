@@ -56,20 +56,6 @@ func (r *WarehouseSyncService) Get(ctx context.Context, warehouseSyncKey string,
 	return res, err
 }
 
-// Creates a warehouse sync, or saves a new draft of it if it exists. Fields left
-// out keep their current values. Pass `commit=true` to publish the draft. A draft
-// that fails to publish stays saved.
-func (r *WarehouseSyncService) Update(ctx context.Context, warehouseSyncKey string, params WarehouseSyncUpdateParams, opts ...option.RequestOption) (res *WarehouseSyncUpdateResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if warehouseSyncKey == "" {
-		err = errors.New("missing required warehouse_sync_key parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("v1/warehouse_syncs/%s", warehouseSyncKey)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
-	return res, err
-}
-
 // Returns a paginated list of warehouse syncs for the given environment.
 func (r *WarehouseSyncService) List(ctx context.Context, query WarehouseSyncListParams, opts ...option.RequestOption) (res *pagination.EntriesCursor[WarehouseSync], err error) {
 	var raw *http.Response
@@ -94,7 +80,7 @@ func (r *WarehouseSyncService) ListAutoPaging(ctx context.Context, query Warehou
 }
 
 // Returns the most recent runs of a warehouse sync, newest first.
-func (r *WarehouseSyncService) GetRuns(ctx context.Context, warehouseSyncKey string, query WarehouseSyncGetRunsParams, opts ...option.RequestOption) (res *WarehouseSyncGetRunsResponse, err error) {
+func (r *WarehouseSyncService) ListRuns(ctx context.Context, warehouseSyncKey string, query WarehouseSyncListRunsParams, opts ...option.RequestOption) (res *WarehouseSyncListRunsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if warehouseSyncKey == "" {
 		err = errors.New("missing required warehouse_sync_key parameter")
@@ -107,7 +93,7 @@ func (r *WarehouseSyncService) GetRuns(ctx context.Context, warehouseSyncKey str
 
 // Starts a run of the published warehouse sync now, instead of waiting for its
 // schedule. Refused while a run is in progress.
-func (r *WarehouseSyncService) UpdateRun(ctx context.Context, warehouseSyncKey string, body WarehouseSyncUpdateRunParams, opts ...option.RequestOption) (res *WarehouseSyncUpdateRunResponse, err error) {
+func (r *WarehouseSyncService) Run(ctx context.Context, warehouseSyncKey string, body WarehouseSyncRunParams, opts ...option.RequestOption) (res *WarehouseSyncRunResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if warehouseSyncKey == "" {
 		err = errors.New("missing required warehouse_sync_key parameter")
@@ -131,9 +117,23 @@ func (r *WarehouseSyncService) UpdateSettings(ctx context.Context, warehouseSync
 	return res, err
 }
 
+// Creates a warehouse sync, or saves a new draft of it if it exists. Fields left
+// out keep their current values. Pass `commit=true` to publish the draft. A draft
+// that fails to publish stays saved.
+func (r *WarehouseSyncService) Upsert(ctx context.Context, warehouseSyncKey string, params WarehouseSyncUpsertParams, opts ...option.RequestOption) (res *WarehouseSyncUpsertResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if warehouseSyncKey == "" {
+		err = errors.New("missing required warehouse_sync_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/warehouse_syncs/%s", warehouseSyncKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
 // Checks a warehouse sync payload the way an upsert would, without saving it.
 // Returns the payload as sent.
-func (r *WarehouseSyncService) UpdateValidate(ctx context.Context, warehouseSyncKey string, params WarehouseSyncUpdateValidateParams, opts ...option.RequestOption) (res *WarehouseSyncUpdateValidateResponse, err error) {
+func (r *WarehouseSyncService) Validate(ctx context.Context, warehouseSyncKey string, params WarehouseSyncValidateParams, opts ...option.RequestOption) (res *WarehouseSyncValidateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if warehouseSyncKey == "" {
 		err = errors.New("missing required warehouse_sync_key parameter")
@@ -648,30 +648,11 @@ func (r *WarehouseSyncTargetParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Wraps the WarehouseSync response under the `warehouse_sync` key.
-type WarehouseSyncUpdateResponse struct {
-	// A warehouse sync reads rows from a warehouse on a schedule and writes them to
-	// Knock as users, tenants, objects, audience members, or subscriptions.
-	WarehouseSync WarehouseSync `json:"warehouse_sync" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		WarehouseSync respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WarehouseSyncUpdateResponse) RawJSON() string { return r.JSON.raw }
-func (r *WarehouseSyncUpdateResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A paginated list of WarehouseSyncRun. Contains a list of entries and page
 // information.
-type WarehouseSyncGetRunsResponse struct {
+type WarehouseSyncListRunsResponse struct {
 	// A list of entries.
-	Entries []WarehouseSyncGetRunsResponseEntry `json:"entries" api:"required"`
+	Entries []WarehouseSyncListRunsResponseEntry `json:"entries" api:"required"`
 	// The information about a paginated result.
 	PageInfo shared.PageInfo `json:"page_info" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -684,14 +665,14 @@ type WarehouseSyncGetRunsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WarehouseSyncGetRunsResponse) RawJSON() string { return r.JSON.raw }
-func (r *WarehouseSyncGetRunsResponse) UnmarshalJSON(data []byte) error {
+func (r WarehouseSyncListRunsResponse) RawJSON() string { return r.JSON.raw }
+func (r *WarehouseSyncListRunsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // One run of a warehouse sync: reading changed rows from the warehouse, then
 // applying them in Knock.
-type WarehouseSyncGetRunsResponseEntry struct {
+type WarehouseSyncListRunsResponseEntry struct {
 	// The ID of the run.
 	ID string `json:"id" api:"required"`
 	// The status of the run.
@@ -701,7 +682,7 @@ type WarehouseSyncGetRunsResponseEntry struct {
 	// When the run ended.
 	EndedAt time.Time `json:"ended_at" api:"nullable" format:"date-time"`
 	// Why the run failed.
-	Error WarehouseSyncGetRunsResponseEntryError `json:"error" api:"nullable"`
+	Error WarehouseSyncListRunsResponseEntryError `json:"error" api:"nullable"`
 	// The ID of the delivery of rows to Knock. Null when the run hasn't sent rows yet,
 	// failed before sending them, or found no changes.
 	LoadID string `json:"load_id" api:"nullable"`
@@ -736,13 +717,13 @@ type WarehouseSyncGetRunsResponseEntry struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WarehouseSyncGetRunsResponseEntry) RawJSON() string { return r.JSON.raw }
-func (r *WarehouseSyncGetRunsResponseEntry) UnmarshalJSON(data []byte) error {
+func (r WarehouseSyncListRunsResponseEntry) RawJSON() string { return r.JSON.raw }
+func (r *WarehouseSyncListRunsResponseEntry) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Why the run failed.
-type WarehouseSyncGetRunsResponseEntryError struct {
+type WarehouseSyncListRunsResponseEntryError struct {
 	// What went wrong.
 	Message string `json:"message"`
 	// Where the run failed.
@@ -759,13 +740,13 @@ type WarehouseSyncGetRunsResponseEntryError struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WarehouseSyncGetRunsResponseEntryError) RawJSON() string { return r.JSON.raw }
-func (r *WarehouseSyncGetRunsResponseEntryError) UnmarshalJSON(data []byte) error {
+func (r WarehouseSyncListRunsResponseEntryError) RawJSON() string { return r.JSON.raw }
+func (r *WarehouseSyncListRunsResponseEntryError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Wraps the WarehouseSync response under the `warehouse_sync` key.
-type WarehouseSyncUpdateRunResponse struct {
+type WarehouseSyncRunResponse struct {
 	// A warehouse sync reads rows from a warehouse on a schedule and writes them to
 	// Knock as users, tenants, objects, audience members, or subscriptions.
 	WarehouseSync WarehouseSync `json:"warehouse_sync" api:"required"`
@@ -778,8 +759,8 @@ type WarehouseSyncUpdateRunResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WarehouseSyncUpdateRunResponse) RawJSON() string { return r.JSON.raw }
-func (r *WarehouseSyncUpdateRunResponse) UnmarshalJSON(data []byte) error {
+func (r WarehouseSyncRunResponse) RawJSON() string { return r.JSON.raw }
+func (r *WarehouseSyncRunResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -802,8 +783,27 @@ func (r *WarehouseSyncUpdateSettingsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Wraps the WarehouseSync response under the `warehouse_sync` key.
+type WarehouseSyncUpsertResponse struct {
+	// A warehouse sync reads rows from a warehouse on a schedule and writes them to
+	// Knock as users, tenants, objects, audience members, or subscriptions.
+	WarehouseSync WarehouseSync `json:"warehouse_sync" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		WarehouseSync respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WarehouseSyncUpsertResponse) RawJSON() string { return r.JSON.raw }
+func (r *WarehouseSyncUpsertResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Wraps the WarehouseSyncRequest response under the `warehouse_sync` key.
-type WarehouseSyncUpdateValidateResponse struct {
+type WarehouseSyncValidateResponse struct {
 	// A warehouse sync payload for upsert or validate. Fields left out keep their
 	// current values. `warehouse_key`, `target_type`, and `target` are required to
 	// create a sync and can't change after. Change `enabled` and `frequency_minutes`
@@ -818,8 +818,8 @@ type WarehouseSyncUpdateValidateResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r WarehouseSyncUpdateValidateResponse) RawJSON() string { return r.JSON.raw }
-func (r *WarehouseSyncUpdateValidateResponse) UnmarshalJSON(data []byte) error {
+func (r WarehouseSyncValidateResponse) RawJSON() string { return r.JSON.raw }
+func (r *WarehouseSyncValidateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -834,38 +834,6 @@ type WarehouseSyncGetParams struct {
 
 // URLQuery serializes [WarehouseSyncGetParams]'s query parameters as `url.Values`.
 func (r WarehouseSyncGetParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type WarehouseSyncUpdateParams struct {
-	// A warehouse sync payload for upsert or validate. Fields left out keep their
-	// current values. `warehouse_key`, `target_type`, and `target` are required to
-	// create a sync and can't change after. Change `enabled` and `frequency_minutes`
-	// with the settings endpoint.
-	WarehouseSync WarehouseSyncRequestParam `json:"warehouse_sync,omitzero" api:"required"`
-	// Whether to commit the resource at the same time as modifying it.
-	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
-	// The message to commit the resource with, only used if `commit` is `true`.
-	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
-	// The environment slug. When omitted, the account's default environment is used.
-	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
-	paramObj
-}
-
-func (r WarehouseSyncUpdateParams) MarshalJSON() (data []byte, err error) {
-	type shadow WarehouseSyncUpdateParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WarehouseSyncUpdateParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// URLQuery serializes [WarehouseSyncUpdateParams]'s query parameters as
-// `url.Values`.
-func (r WarehouseSyncUpdateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -896,30 +864,29 @@ func (r WarehouseSyncListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-type WarehouseSyncGetRunsParams struct {
+type WarehouseSyncListRunsParams struct {
 	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [WarehouseSyncGetRunsParams]'s query parameters as
+// URLQuery serializes [WarehouseSyncListRunsParams]'s query parameters as
 // `url.Values`.
-func (r WarehouseSyncGetRunsParams) URLQuery() (v url.Values, err error) {
+func (r WarehouseSyncListRunsParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type WarehouseSyncUpdateRunParams struct {
+type WarehouseSyncRunParams struct {
 	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [WarehouseSyncUpdateRunParams]'s query parameters as
-// `url.Values`.
-func (r WarehouseSyncUpdateRunParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [WarehouseSyncRunParams]'s query parameters as `url.Values`.
+func (r WarehouseSyncRunParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -955,7 +922,39 @@ func (r WarehouseSyncUpdateSettingsParams) URLQuery() (v url.Values, err error) 
 	})
 }
 
-type WarehouseSyncUpdateValidateParams struct {
+type WarehouseSyncUpsertParams struct {
+	// A warehouse sync payload for upsert or validate. Fields left out keep their
+	// current values. `warehouse_key`, `target_type`, and `target` are required to
+	// create a sync and can't change after. Change `enabled` and `frequency_minutes`
+	// with the settings endpoint.
+	WarehouseSync WarehouseSyncRequestParam `json:"warehouse_sync,omitzero" api:"required"`
+	// Whether to commit the resource at the same time as modifying it.
+	Commit param.Opt[bool] `query:"commit,omitzero" json:"-"`
+	// The message to commit the resource with, only used if `commit` is `true`.
+	CommitMessage param.Opt[string] `query:"commit_message,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+func (r WarehouseSyncUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow WarehouseSyncUpsertParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WarehouseSyncUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URLQuery serializes [WarehouseSyncUpsertParams]'s query parameters as
+// `url.Values`.
+func (r WarehouseSyncUpsertParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type WarehouseSyncValidateParams struct {
 	// A warehouse sync payload for upsert or validate. Fields left out keep their
 	// current values. `warehouse_key`, `target_type`, and `target` are required to
 	// create a sync and can't change after. Change `enabled` and `frequency_minutes`
@@ -966,17 +965,17 @@ type WarehouseSyncUpdateValidateParams struct {
 	paramObj
 }
 
-func (r WarehouseSyncUpdateValidateParams) MarshalJSON() (data []byte, err error) {
-	type shadow WarehouseSyncUpdateValidateParams
+func (r WarehouseSyncValidateParams) MarshalJSON() (data []byte, err error) {
+	type shadow WarehouseSyncValidateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *WarehouseSyncUpdateValidateParams) UnmarshalJSON(data []byte) error {
+func (r *WarehouseSyncValidateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// URLQuery serializes [WarehouseSyncUpdateValidateParams]'s query parameters as
+// URLQuery serializes [WarehouseSyncValidateParams]'s query parameters as
 // `url.Values`.
-func (r WarehouseSyncUpdateValidateParams) URLQuery() (v url.Values, err error) {
+func (r WarehouseSyncValidateParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
