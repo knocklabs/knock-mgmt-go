@@ -79,6 +79,47 @@ func (r *PartialService) ListAutoPaging(ctx context.Context, query PartialListPa
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives a partial by key across all environments, not only the one in the
+// request. The token needs the `partials:manage` permission in every environment
+// that holds a copy of the partial.
+//
+// Archiving renames the partial's key in every environment, so a new partial can
+// use the key. Templates that reference the archived partial keep using it until
+// their workflow is next committed, and it can't be added to new templates.
+// Restore it with the unarchive endpoint, using its original key.
+//
+// Returns a 422 with the code `partial_in_use` while a workflow or an unsent
+// broadcast in any environment uses the partial. Remove it from them first.
+// Returns a 404 when no live partial has the key, including when it's already
+// archived.
+func (r *PartialService) Delete(ctx context.Context, partialKey string, body PartialDeleteParams, opts ...option.RequestOption) (res *PartialDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if partialKey == "" {
+		err = errors.New("missing required partial_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/partials/%s", partialKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
+	return res, err
+}
+
+// Discards the uncommitted changes to a partial in a given environment, returning
+// it to its last committed version. Other environments aren't changed.
+//
+// Returns the partial unchanged when it has no uncommitted changes. Returns a 422
+// when the partial has never been committed, or can't be changed in the
+// environment.
+func (r *PartialService) Discard(ctx context.Context, partialKey string, body PartialDiscardParams, opts ...option.RequestOption) (res *PartialDiscardResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if partialKey == "" {
+		err = errors.New("missing required partial_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/partials/%s/discard", partialKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // Renders a partial in isolation, without requiring the partial to be persisted in
 // Knock.
 //
@@ -88,6 +129,27 @@ func (r *PartialService) Preview(ctx context.Context, params PartialPreviewParam
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/partials/preview"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return res, err
+}
+
+// Restores an archived partial by its original key, with every copy archived
+// alongside it in other environments. The token needs the `partials:manage`
+// permission in every environment that holds a copy of the archived partial.
+//
+// When the key was archived more than once, the most recent archive in the
+// environment is restored.
+//
+// Returns a 404 when the key isn't archived in the environment, including when an
+// earlier or concurrent request already restored it. Returns a 422 with the code
+// `key_in_use` when a live partial uses the key.
+func (r *PartialService) Unarchive(ctx context.Context, partialKey string, body PartialUnarchiveParams, opts ...option.RequestOption) (res *PartialUnarchiveResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if partialKey == "" {
+		err = errors.New("missing required partial_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/partials/%s/unarchive", partialKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
 }
 
@@ -979,6 +1041,42 @@ func (u PartialRequestInputSchemaUnionParam) GetAction() *shared.MessageTypeText
 	return nil
 }
 
+// The response from archiving a partial.
+type PartialDeleteResponse struct {
+	// The result of the archive operation.
+	Result string `json:"result" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Result      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialDeleteResponse) RawJSON() string { return r.JSON.raw }
+func (r *PartialDeleteResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Partial response under the `partial` key.
+type PartialDiscardResponse struct {
+	// A partial is a reusable piece of content that can be used in a template.
+	Partial Partial `json:"partial" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Partial     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialDiscardResponse) RawJSON() string { return r.JSON.raw }
+func (r *PartialDiscardResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A response to a partial preview request.
 type PartialPreviewResponse struct {
 	// The result of the preview.
@@ -1045,6 +1143,24 @@ type PartialPreviewResponseError struct {
 // Returns the unmodified JSON received from the API
 func (r PartialPreviewResponseError) RawJSON() string { return r.JSON.raw }
 func (r *PartialPreviewResponseError) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Partial response under the `partial` key.
+type PartialUnarchiveResponse struct {
+	// A partial is a reusable piece of content that can be used in a template.
+	Partial Partial `json:"partial" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Partial     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PartialUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *PartialUnarchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1136,6 +1252,38 @@ func (r PartialListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+type PartialDeleteParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [PartialDeleteParams]'s query parameters as `url.Values`.
+func (r PartialDeleteParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type PartialDiscardParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [PartialDiscardParams]'s query parameters as `url.Values`.
+func (r PartialDiscardParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
 type PartialPreviewParams struct {
 	// A partial object with attributes to update or create a partial.
 	Partial PartialRequestParam `json:"partial,omitzero" api:"required"`
@@ -1184,6 +1332,20 @@ func (r PartialPreviewParamsLayout) MarshalJSON() (data []byte, err error) {
 }
 func (r *PartialPreviewParamsLayout) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type PartialUnarchiveParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [PartialUnarchiveParams]'s query parameters as `url.Values`.
+func (r PartialUnarchiveParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type PartialUpsertParams struct {
