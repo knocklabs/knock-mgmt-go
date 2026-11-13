@@ -77,6 +77,35 @@ func TestWorkflowListWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestWorkflowDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Workflows.Delete(
+		context.TODO(),
+		"workflow_key",
+		knockmapi.WorkflowDeleteParams{
+			Environment: knockmapi.String("development"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestWorkflowActivateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -95,6 +124,36 @@ func TestWorkflowActivateWithOptionalParams(t *testing.T) {
 		"workflow_key",
 		knockmapi.WorkflowActivateParams{
 			Status:      true,
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWorkflowDiscardWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Workflows.Discard(
+		context.TODO(),
+		"workflow_key",
+		knockmapi.WorkflowDiscardParams{
 			Branch:      knockmapi.String("feature-branch"),
 			Environment: knockmapi.String("development"),
 		},
@@ -143,6 +202,35 @@ func TestWorkflowRunWithOptionalParams(t *testing.T) {
 			},
 			StepID: knockmapi.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Tenant: knockmapi.String("tenant"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWorkflowUnarchiveWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Workflows.Unarchive(
+		context.TODO(),
+		"workflow_key",
+		knockmapi.WorkflowUnarchiveParams{
+			Environment: knockmapi.String("development"),
 		},
 	)
 	if err != nil {
@@ -221,6 +309,40 @@ func TestWorkflowUpsertWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
+				ExitCriteria: []knockmapi.ExitCriteriaItemsParam{{
+					Event: knockmapi.ExitCriteriaItemsEventUnionParam{
+						OfGoalCompletedEvent: &knockmapi.ExitCriteriaItemsEventGoalCompletedEventParam{
+							EventType: "goal_completed",
+						},
+					},
+					MatchConditions: []knockmapi.ConditionGroupUnionParam{{
+						OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
+							All: []knockmapi.ConditionParam{{
+								Operator: knockmapi.ConditionOperatorEqualTo,
+								Variable: "recipient.property",
+								Argument: knockmapi.String("some_property"),
+							}},
+						},
+					}},
+				}, {
+					Event: knockmapi.ExitCriteriaItemsEventUnionParam{
+						OfExitCriteriaIntegrationSourceEvent: &knockmapi.ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam{
+							EventKey:             "payment.failed",
+							EventType:            "integration_source",
+							IntegrationSourceKey: "shopify",
+							RecipientPath:        "body.userId",
+						},
+					},
+					MatchConditions: []knockmapi.ConditionGroupUnionParam{{
+						OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
+							All: []knockmapi.ConditionParam{{
+								Operator: knockmapi.ConditionOperatorEqualTo,
+								Variable: "recipient.property",
+								Argument: knockmapi.String("some_property"),
+							}},
+						},
+					}},
+				}},
 				Settings: knockmapi.WorkflowRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),
@@ -322,6 +444,40 @@ func TestWorkflowValidateWithOptionalParams(t *testing.T) {
 					},
 				},
 				Description: knockmapi.String("description"),
+				ExitCriteria: []knockmapi.ExitCriteriaItemsParam{{
+					Event: knockmapi.ExitCriteriaItemsEventUnionParam{
+						OfGoalCompletedEvent: &knockmapi.ExitCriteriaItemsEventGoalCompletedEventParam{
+							EventType: "goal_completed",
+						},
+					},
+					MatchConditions: []knockmapi.ConditionGroupUnionParam{{
+						OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
+							All: []knockmapi.ConditionParam{{
+								Operator: knockmapi.ConditionOperatorEqualTo,
+								Variable: "recipient.property",
+								Argument: knockmapi.String("some_property"),
+							}},
+						},
+					}},
+				}, {
+					Event: knockmapi.ExitCriteriaItemsEventUnionParam{
+						OfExitCriteriaIntegrationSourceEvent: &knockmapi.ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam{
+							EventKey:             "payment.failed",
+							EventType:            "integration_source",
+							IntegrationSourceKey: "shopify",
+							RecipientPath:        "body.userId",
+						},
+					},
+					MatchConditions: []knockmapi.ConditionGroupUnionParam{{
+						OfConditionGroupAllMatch: &knockmapi.ConditionGroupAllMatchParam{
+							All: []knockmapi.ConditionParam{{
+								Operator: knockmapi.ConditionOperatorEqualTo,
+								Variable: "recipient.property",
+								Argument: knockmapi.String("some_property"),
+							}},
+						},
+					}},
+				}},
 				Settings: knockmapi.WorkflowRequestSettingsParam{
 					IsCommercial:        knockmapi.Bool(false),
 					OverridePreferences: knockmapi.Bool(false),

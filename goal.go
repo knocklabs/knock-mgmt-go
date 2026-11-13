@@ -210,7 +210,7 @@ func (r GoalCondition) ToParam() GoalConditionParam {
 
 // GoalConditionEventUnion contains all possible properties and values from
 // [GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent],
-// [GoalConditionEventWorkflowWaitForEventAudienceEvent].
+// [WorkflowWaitForEventAudienceEvent].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type GoalConditionEventUnion struct {
@@ -222,8 +222,7 @@ type GoalConditionEventUnion struct {
 	// This field is from variant
 	// [GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent].
 	RecipientPath string `json:"recipient_path"`
-	// This field is from variant
-	// [GoalConditionEventWorkflowWaitForEventAudienceEvent].
+	// This field is from variant [WorkflowWaitForEventAudienceEvent].
 	AudienceKey string `json:"audience_key"`
 	JSON        struct {
 		EventKey             respjson.Field
@@ -240,7 +239,7 @@ func (u GoalConditionEventUnion) AsWorkflowWaitForEventIntegrationSourceEvent() 
 	return
 }
 
-func (u GoalConditionEventUnion) AsWorkflowWaitForEventAudienceEvent() (v GoalConditionEventWorkflowWaitForEventAudienceEvent) {
+func (u GoalConditionEventUnion) AsWorkflowWaitForEventAudienceEvent() (v WorkflowWaitForEventAudienceEvent) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -285,35 +284,6 @@ func (r *GoalConditionEventWorkflowWaitForEventIntegrationSourceEvent) Unmarshal
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// An audience membership event to wait for when a recipient enters or exits an
-// audience.
-type GoalConditionEventWorkflowWaitForEventAudienceEvent struct {
-	// The key of the audience to wait for membership changes.
-	AudienceKey string `json:"audience_key" api:"required"`
-	// The audience membership transition to wait for.
-	//
-	// Any of "enter", "exit".
-	EventKey string `json:"event_key" api:"required"`
-	// The type of event to wait for.
-	//
-	// Any of "audience".
-	EventType string `json:"event_type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AudienceKey respjson.Field
-		EventKey    respjson.Field
-		EventType   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r GoalConditionEventWorkflowWaitForEventAudienceEvent) RawJSON() string { return r.JSON.raw }
-func (r *GoalConditionEventWorkflowWaitForEventAudienceEvent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A goal condition consisting of a polymorphic event and optional match
 // conditions.
 //
@@ -340,7 +310,7 @@ func (r *GoalConditionParam) UnmarshalJSON(data []byte) error {
 // Use [param.IsOmitted] to confirm if a field is set.
 type GoalConditionEventUnionParam struct {
 	OfWorkflowWaitForEventIntegrationSourceEvent *GoalConditionEventWorkflowWaitForEventIntegrationSourceEventParam `json:",omitzero,inline"`
-	OfWorkflowWaitForEventAudienceEvent          *GoalConditionEventWorkflowWaitForEventAudienceEventParam          `json:",omitzero,inline"`
+	OfWorkflowWaitForEventAudienceEvent          *WorkflowWaitForEventAudienceEventParam                            `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -437,41 +407,6 @@ func init() {
 	)
 }
 
-// An audience membership event to wait for when a recipient enters or exits an
-// audience.
-//
-// The properties AudienceKey, EventKey, EventType are required.
-type GoalConditionEventWorkflowWaitForEventAudienceEventParam struct {
-	// The key of the audience to wait for membership changes.
-	AudienceKey string `json:"audience_key" api:"required"`
-	// The audience membership transition to wait for.
-	//
-	// Any of "enter", "exit".
-	EventKey string `json:"event_key,omitzero" api:"required"`
-	// The type of event to wait for.
-	//
-	// Any of "audience".
-	EventType string `json:"event_type,omitzero" api:"required"`
-	paramObj
-}
-
-func (r GoalConditionEventWorkflowWaitForEventAudienceEventParam) MarshalJSON() (data []byte, err error) {
-	type shadow GoalConditionEventWorkflowWaitForEventAudienceEventParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *GoalConditionEventWorkflowWaitForEventAudienceEventParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[GoalConditionEventWorkflowWaitForEventAudienceEventParam](
-		"event_key", "enter", "exit",
-	)
-	apijson.RegisterFieldValidator[GoalConditionEventWorkflowWaitForEventAudienceEventParam](
-		"event_type", "audience",
-	)
-}
-
 // A goal payload for upsert or validate.
 //
 // The properties Condition, Name are required.
@@ -492,6 +427,86 @@ func (r GoalRequestParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *GoalRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An audience membership event to wait for when a recipient enters or exits an
+// audience.
+type WorkflowWaitForEventAudienceEvent struct {
+	// The key of the audience to wait for membership changes.
+	AudienceKey string `json:"audience_key" api:"required"`
+	// The audience membership transition to wait for.
+	//
+	// Any of "enter", "exit".
+	EventKey WorkflowWaitForEventAudienceEventEventKey `json:"event_key" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "audience".
+	EventType WorkflowWaitForEventAudienceEventEventType `json:"event_type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AudienceKey respjson.Field
+		EventKey    respjson.Field
+		EventType   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowWaitForEventAudienceEvent) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowWaitForEventAudienceEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this WorkflowWaitForEventAudienceEvent to a
+// WorkflowWaitForEventAudienceEventParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// WorkflowWaitForEventAudienceEventParam.Overrides()
+func (r WorkflowWaitForEventAudienceEvent) ToParam() WorkflowWaitForEventAudienceEventParam {
+	return param.Override[WorkflowWaitForEventAudienceEventParam](json.RawMessage(r.RawJSON()))
+}
+
+// The audience membership transition to wait for.
+type WorkflowWaitForEventAudienceEventEventKey string
+
+const (
+	WorkflowWaitForEventAudienceEventEventKeyEnter WorkflowWaitForEventAudienceEventEventKey = "enter"
+	WorkflowWaitForEventAudienceEventEventKeyExit  WorkflowWaitForEventAudienceEventEventKey = "exit"
+)
+
+// The type of event to wait for.
+type WorkflowWaitForEventAudienceEventEventType string
+
+const (
+	WorkflowWaitForEventAudienceEventEventTypeAudience WorkflowWaitForEventAudienceEventEventType = "audience"
+)
+
+// An audience membership event to wait for when a recipient enters or exits an
+// audience.
+//
+// The properties AudienceKey, EventKey, EventType are required.
+type WorkflowWaitForEventAudienceEventParam struct {
+	// The key of the audience to wait for membership changes.
+	AudienceKey string `json:"audience_key" api:"required"`
+	// The audience membership transition to wait for.
+	//
+	// Any of "enter", "exit".
+	EventKey WorkflowWaitForEventAudienceEventEventKey `json:"event_key,omitzero" api:"required"`
+	// The type of event to wait for.
+	//
+	// Any of "audience".
+	EventType WorkflowWaitForEventAudienceEventEventType `json:"event_type,omitzero" api:"required"`
+	paramObj
+}
+
+func (r WorkflowWaitForEventAudienceEventParam) MarshalJSON() (data []byte, err error) {
+	type shadow WorkflowWaitForEventAudienceEventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *WorkflowWaitForEventAudienceEventParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

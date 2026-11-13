@@ -84,6 +84,28 @@ func (r *WorkflowService) ListAutoPaging(ctx context.Context, query WorkflowList
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives a workflow by key across all environments, not only the one in the
+// request. The token needs the `workflows:manage` permission in every environment
+// that holds a copy of the workflow.
+//
+// Archiving renames the workflow's key in every environment, so a new workflow can
+// use the key. The archived workflow is deactivated and read-only, and the
+// response returns it with its archived key. Restore it with the unarchive
+// endpoint, using its original key.
+//
+// Returns a 404 when no live workflow has the key, including when it's already
+// archived.
+func (r *WorkflowService) Delete(ctx context.Context, workflowKey string, body WorkflowDeleteParams, opts ...option.RequestOption) (res *WorkflowDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if workflowKey == "" {
+		err = errors.New("missing required workflow_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/workflows/%s", workflowKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
+	return res, err
+}
+
 // Activates (or deactivates) a workflow in a given environment. Read more in the
 // [docs](https://docs.knock.app/concepts/workflows#workflow-status).
 //
@@ -100,6 +122,23 @@ func (r *WorkflowService) Activate(ctx context.Context, workflowKey string, para
 	return res, err
 }
 
+// Discards the uncommitted changes to a workflow in a given environment, returning
+// it to its last committed version. Other environments aren't changed.
+//
+// Returns the workflow unchanged when it has no uncommitted changes. Returns a 422
+// when the workflow has never been committed, or can't be changed in the
+// environment.
+func (r *WorkflowService) Discard(ctx context.Context, workflowKey string, body WorkflowDiscardParams, opts ...option.RequestOption) (res *WorkflowDiscardResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if workflowKey == "" {
+		err = errors.New("missing required workflow_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/workflows/%s/discard", workflowKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // Runs the latest version of a committed workflow in a given environment using the
 // params provided.
 func (r *WorkflowService) Run(ctx context.Context, workflowKey string, params WorkflowRunParams, opts ...option.RequestOption) (res *WorkflowRunResponse, err error) {
@@ -110,6 +149,28 @@ func (r *WorkflowService) Run(ctx context.Context, workflowKey string, params Wo
 	}
 	path := fmt.Sprintf("v1/workflows/%s/run", workflowKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
+// Restores an archived workflow by its original key, with every copy archived
+// alongside it in other environments. The token needs the `workflows:manage`
+// permission in every environment that holds a copy of the archived workflow.
+//
+// The workflow comes back inactive with its original key, so activate it to run it
+// again. When the key was archived more than once, the most recent archive in the
+// environment is restored.
+//
+// Returns a 404 when the key isn't archived in the environment, including when an
+// earlier or concurrent request already restored it. Returns a 422 with the code
+// `key_in_use` when a live workflow uses the key.
+func (r *WorkflowService) Unarchive(ctx context.Context, workflowKey string, body WorkflowUnarchiveParams, opts ...option.RequestOption) (res *WorkflowUnarchiveResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if workflowKey == "" {
+		err = errors.New("missing required workflow_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/workflows/%s/unarchive", workflowKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
 }
 
@@ -528,6 +589,290 @@ func (r *DurationParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A goal condition: an event plus optional match conditions.
+type ExitCriteriaItems struct {
+	// The event to track. Supports goal_completed, integration_source, and audience.
+	Event ExitCriteriaItemsEventUnion `json:"event" api:"required"`
+	// Optional list of condition groups. The rule matches when any group matches, and
+	// a group matches when all of its conditions match. Must be empty for
+	// goal_completed.
+	MatchConditions []ConditionGroupUnion `json:"match_conditions"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event           respjson.Field
+		MatchConditions respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ExitCriteriaItems) RawJSON() string { return r.JSON.raw }
+func (r *ExitCriteriaItems) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ExitCriteriaItems to a ExitCriteriaItemsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ExitCriteriaItemsParam.Overrides()
+func (r ExitCriteriaItems) ToParam() ExitCriteriaItemsParam {
+	return param.Override[ExitCriteriaItemsParam](json.RawMessage(r.RawJSON()))
+}
+
+// ExitCriteriaItemsEventUnion contains all possible properties and values from
+// [ExitCriteriaItemsEventGoalCompletedEvent],
+// [ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent],
+// [WorkflowWaitForEventAudienceEvent].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ExitCriteriaItemsEventUnion struct {
+	EventType string `json:"event_type"`
+	EventKey  string `json:"event_key"`
+	// This field is from variant
+	// [ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent].
+	IntegrationSourceKey string `json:"integration_source_key"`
+	// This field is from variant
+	// [ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent].
+	RecipientPath string `json:"recipient_path"`
+	// This field is from variant [WorkflowWaitForEventAudienceEvent].
+	AudienceKey string `json:"audience_key"`
+	JSON        struct {
+		EventType            respjson.Field
+		EventKey             respjson.Field
+		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
+		AudienceKey          respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+func (u ExitCriteriaItemsEventUnion) AsGoalCompletedEvent() (v ExitCriteriaItemsEventGoalCompletedEvent) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ExitCriteriaItemsEventUnion) AsExitCriteriaIntegrationSourceEvent() (v ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ExitCriteriaItemsEventUnion) AsWorkflowWaitForEventAudienceEvent() (v WorkflowWaitForEventAudienceEvent) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ExitCriteriaItemsEventUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ExitCriteriaItemsEventUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The workflow's attached goal completed.
+type ExitCriteriaItemsEventGoalCompletedEvent struct {
+	// The type of event.
+	//
+	// Any of "goal_completed".
+	EventType string `json:"event_type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ExitCriteriaItemsEventGoalCompletedEvent) RawJSON() string { return r.JSON.raw }
+func (r *ExitCriteriaItemsEventGoalCompletedEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An integration source event that exits the run.
+type ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent struct {
+	// The name of the event.
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event.
+	//
+	// Any of "integration_source".
+	EventType string `json:"event_type" api:"required"`
+	// The key of the integration source that emits the event.
+	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON path into the source event that yields the recipient user ID, for example,
+	// body.userId. For legacy sources, use the field name without prefixing body.
+	RecipientPath string `json:"recipient_path" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventKey             respjson.Field
+		EventType            respjson.Field
+		IntegrationSourceKey respjson.Field
+		RecipientPath        respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent) RawJSON() string { return r.JSON.raw }
+func (r *ExitCriteriaItemsEventExitCriteriaIntegrationSourceEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A goal condition: an event plus optional match conditions.
+//
+// The property Event is required.
+type ExitCriteriaItemsParam struct {
+	// The event to track. Supports goal_completed, integration_source, and audience.
+	Event ExitCriteriaItemsEventUnionParam `json:"event,omitzero" api:"required"`
+	// Optional list of condition groups. The rule matches when any group matches, and
+	// a group matches when all of its conditions match. Must be empty for
+	// goal_completed.
+	MatchConditions []ConditionGroupUnionParam `json:"match_conditions,omitzero"`
+	paramObj
+}
+
+func (r ExitCriteriaItemsParam) MarshalJSON() (data []byte, err error) {
+	type shadow ExitCriteriaItemsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ExitCriteriaItemsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ExitCriteriaItemsEventUnionParam struct {
+	OfGoalCompletedEvent                 *ExitCriteriaItemsEventGoalCompletedEventParam                 `json:",omitzero,inline"`
+	OfExitCriteriaIntegrationSourceEvent *ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam `json:",omitzero,inline"`
+	OfWorkflowWaitForEventAudienceEvent  *WorkflowWaitForEventAudienceEventParam                        `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ExitCriteriaItemsEventUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfGoalCompletedEvent, u.OfExitCriteriaIntegrationSourceEvent, u.OfWorkflowWaitForEventAudienceEvent)
+}
+func (u *ExitCriteriaItemsEventUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ExitCriteriaItemsEventUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfGoalCompletedEvent) {
+		return u.OfGoalCompletedEvent
+	} else if !param.IsOmitted(u.OfExitCriteriaIntegrationSourceEvent) {
+		return u.OfExitCriteriaIntegrationSourceEvent
+	} else if !param.IsOmitted(u.OfWorkflowWaitForEventAudienceEvent) {
+		return u.OfWorkflowWaitForEventAudienceEvent
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ExitCriteriaItemsEventUnionParam) GetIntegrationSourceKey() *string {
+	if vt := u.OfExitCriteriaIntegrationSourceEvent; vt != nil {
+		return &vt.IntegrationSourceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ExitCriteriaItemsEventUnionParam) GetRecipientPath() *string {
+	if vt := u.OfExitCriteriaIntegrationSourceEvent; vt != nil {
+		return &vt.RecipientPath
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ExitCriteriaItemsEventUnionParam) GetAudienceKey() *string {
+	if vt := u.OfWorkflowWaitForEventAudienceEvent; vt != nil {
+		return &vt.AudienceKey
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ExitCriteriaItemsEventUnionParam) GetEventType() *string {
+	if vt := u.OfGoalCompletedEvent; vt != nil {
+		return (*string)(&vt.EventType)
+	} else if vt := u.OfExitCriteriaIntegrationSourceEvent; vt != nil {
+		return (*string)(&vt.EventType)
+	} else if vt := u.OfWorkflowWaitForEventAudienceEvent; vt != nil {
+		return (*string)(&vt.EventType)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ExitCriteriaItemsEventUnionParam) GetEventKey() *string {
+	if vt := u.OfExitCriteriaIntegrationSourceEvent; vt != nil {
+		return (*string)(&vt.EventKey)
+	} else if vt := u.OfWorkflowWaitForEventAudienceEvent; vt != nil {
+		return (*string)(&vt.EventKey)
+	}
+	return nil
+}
+
+// The workflow's attached goal completed.
+//
+// The property EventType is required.
+type ExitCriteriaItemsEventGoalCompletedEventParam struct {
+	// The type of event.
+	//
+	// Any of "goal_completed".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	paramObj
+}
+
+func (r ExitCriteriaItemsEventGoalCompletedEventParam) MarshalJSON() (data []byte, err error) {
+	type shadow ExitCriteriaItemsEventGoalCompletedEventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ExitCriteriaItemsEventGoalCompletedEventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ExitCriteriaItemsEventGoalCompletedEventParam](
+		"event_type", "goal_completed",
+	)
+}
+
+// An integration source event that exits the run.
+//
+// The properties EventKey, EventType, IntegrationSourceKey, RecipientPath are
+// required.
+type ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam struct {
+	// The name of the event.
+	EventKey string `json:"event_key" api:"required"`
+	// The type of event.
+	//
+	// Any of "integration_source".
+	EventType string `json:"event_type,omitzero" api:"required"`
+	// The key of the integration source that emits the event.
+	IntegrationSourceKey string `json:"integration_source_key" api:"required"`
+	// JSON path into the source event that yields the recipient user ID, for example,
+	// body.userId. For legacy sources, use the field name without prefixing body.
+	RecipientPath string `json:"recipient_path" api:"required"`
+	paramObj
+}
+
+func (r ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam) MarshalJSON() (data []byte, err error) {
+	type shadow ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ExitCriteriaItemsEventExitCriteriaIntegrationSourceEventParam](
+		"event_type", "integration_source",
+	)
+}
+
 // A user recipient with optional identify properties. When email or name are
 // provided, the user is created or updated as part of the workflow run. The
 // collection is always `$users` and should not be sent.
@@ -676,6 +1021,9 @@ type Workflow struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
+	// Exits in-flight workflow runs when any entry matches. Each entry is a goal
+	// condition. At most five entries.
+	ExitCriteria []ExitCriteriaItems `json:"exit_criteria" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -713,6 +1061,7 @@ type Workflow struct {
 		Conditions            respjson.Field
 		DeletedAt             respjson.Field
 		Description           respjson.Field
+		ExitCriteria          respjson.Field
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
@@ -2436,6 +2785,9 @@ type WorkflowRequestParam struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description param.Opt[string] `json:"description,omitzero"`
+	// Exits in-flight workflow runs when any entry matches. Each entry is a goal
+	// condition. At most five entries.
+	ExitCriteria []ExitCriteriaItemsParam `json:"exit_criteria,omitzero"`
 	// A list of
 	// [categories](https://docs.knock.app/concepts/workflows#workflow-categories) that
 	// the workflow belongs to.
@@ -2989,7 +3341,7 @@ type WorkflowStepUnionSettings struct {
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject3Event],
-	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event],
+	// [WorkflowWaitForEventAudienceEvent],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject5Event]
 	Event WorkflowStepUnionSettingsEvent `json:"event"`
 	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettingsUnion].
@@ -3123,8 +3475,7 @@ type WorkflowStepUnionSettingsEvent struct {
 	// This field is from variant
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event].
 	SourceType string `json:"source_type"`
-	// This field is from variant
-	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event].
+	// This field is from variant [WorkflowWaitForEventAudienceEvent].
 	AudienceKey string `json:"audience_key"`
 	JSON        struct {
 		EventKey             respjson.Field
@@ -3251,7 +3602,7 @@ type WorkflowStepWorkflowWaitForEventStepSettingsUnion struct {
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObjectEvent],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject3Event],
-	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event],
+	// [WorkflowWaitForEventAudienceEvent],
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject5Event]
 	Event WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent `json:"event"`
 	// This field is from variant [WorkflowStepWorkflowWaitForEventStepSettingsObject].
@@ -3327,8 +3678,7 @@ type WorkflowStepWorkflowWaitForEventStepSettingsUnionEvent struct {
 	// This field is from variant
 	// [WorkflowStepWorkflowWaitForEventStepSettingsObject2Event].
 	SourceType string `json:"source_type"`
-	// This field is from variant
-	// [WorkflowStepWorkflowWaitForEventStepSettingsObject4Event].
+	// This field is from variant [WorkflowWaitForEventAudienceEvent].
 	AudienceKey string `json:"audience_key"`
 	JSON        struct {
 		EventKey             respjson.Field
@@ -3672,7 +4022,7 @@ func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject3MatchCondition) Unma
 type WorkflowStepWorkflowWaitForEventStepSettingsObject4 struct {
 	// An audience membership event to wait for when a recipient enters or exits an
 	// audience.
-	Event WorkflowStepWorkflowWaitForEventStepSettingsObject4Event `json:"event" api:"required"`
+	Event WorkflowWaitForEventAudienceEvent `json:"event" api:"required"`
 	// A duration of time, represented as a unit and a value.
 	ExpiresAfter Duration `json:"expires_after" api:"nullable"`
 	// A list of condition groups the incoming event must match to resolve the wait.
@@ -3700,35 +4050,6 @@ type WorkflowStepWorkflowWaitForEventStepSettingsObject4 struct {
 // Returns the unmodified JSON received from the API
 func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4) RawJSON() string { return r.JSON.raw }
 func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An audience membership event to wait for when a recipient enters or exits an
-// audience.
-type WorkflowStepWorkflowWaitForEventStepSettingsObject4Event struct {
-	// The key of the audience to wait for membership changes.
-	AudienceKey string `json:"audience_key" api:"required"`
-	// The audience membership transition to wait for.
-	//
-	// Any of "enter", "exit".
-	EventKey string `json:"event_key" api:"required"`
-	// The type of event to wait for.
-	//
-	// Any of "audience".
-	EventType string `json:"event_type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AudienceKey respjson.Field
-		EventKey    respjson.Field
-		EventType   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4Event) RawJSON() string { return r.JSON.raw }
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4Event) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -5319,7 +5640,7 @@ func (u workflowStepUnionParamSettings) GetEvent() (res workflowStepUnionParamSe
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam],
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam],
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam],
-// [*WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam],
+// [*WorkflowWaitForEventAudienceEventParam],
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam]
 type workflowStepUnionParamSettingsEvent struct{ any }
 
@@ -5329,7 +5650,7 @@ type workflowStepUnionParamSettingsEvent struct{ any }
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
-//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+//	case *knockmapi.WorkflowWaitForEventAudienceEventParam:
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
 //	default:
 //	    fmt.Errorf("not present")
@@ -5366,7 +5687,7 @@ func (u workflowStepUnionParamSettingsEvent) GetSourceType() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepUnionParamSettingsEvent) GetAudienceKey() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+	case *WorkflowWaitForEventAudienceEventParam:
 		return &vt.AudienceKey
 	}
 	return nil
@@ -5381,7 +5702,7 @@ func (u workflowStepUnionParamSettingsEvent) GetEventKey() *string {
 		return (*string)(&vt.EventKey)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
 		return (*string)(&vt.EventKey)
-	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+	case *WorkflowWaitForEventAudienceEventParam:
 		return (*string)(&vt.EventKey)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
 		return (*string)(&vt.EventKey)
@@ -5398,7 +5719,7 @@ func (u workflowStepUnionParamSettingsEvent) GetEventType() *string {
 		return (*string)(&vt.EventType)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
 		return (*string)(&vt.EventType)
-	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+	case *WorkflowWaitForEventAudienceEventParam:
 		return (*string)(&vt.EventType)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
 		return (*string)(&vt.EventType)
@@ -5588,7 +5909,7 @@ func (u WorkflowStepWorkflowWaitForEventStepSettingsUnionParam) GetEvent() (res 
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam],
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam],
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam],
-// [*WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam],
+// [*WorkflowWaitForEventAudienceEventParam],
 // [*WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam]
 type workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent struct{ any }
 
@@ -5598,7 +5919,7 @@ type workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent struct{ any }
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObjectEventParam:
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject2EventParam:
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
-//	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+//	case *knockmapi.WorkflowWaitForEventAudienceEventParam:
 //	case *knockmapi.WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
 //	default:
 //	    fmt.Errorf("not present")
@@ -5635,7 +5956,7 @@ func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetSourceTy
 // Returns a pointer to the underlying variant's property, if present.
 func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetAudienceKey() *string {
 	switch vt := u.any.(type) {
-	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+	case *WorkflowWaitForEventAudienceEventParam:
 		return &vt.AudienceKey
 	}
 	return nil
@@ -5650,7 +5971,7 @@ func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetEventKey
 		return (*string)(&vt.EventKey)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
 		return (*string)(&vt.EventKey)
-	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+	case *WorkflowWaitForEventAudienceEventParam:
 		return (*string)(&vt.EventKey)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
 		return (*string)(&vt.EventKey)
@@ -5667,7 +5988,7 @@ func (u workflowStepWorkflowWaitForEventStepSettingsUnionParamEvent) GetEventTyp
 		return (*string)(&vt.EventType)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject3EventParam:
 		return (*string)(&vt.EventType)
-	case *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam:
+	case *WorkflowWaitForEventAudienceEventParam:
 		return (*string)(&vt.EventType)
 	case *WorkflowStepWorkflowWaitForEventStepSettingsObject5EventParam:
 		return (*string)(&vt.EventType)
@@ -6049,7 +6370,7 @@ func init() {
 type WorkflowStepWorkflowWaitForEventStepSettingsObject4Param struct {
 	// An audience membership event to wait for when a recipient enters or exits an
 	// audience.
-	Event WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam `json:"event,omitzero" api:"required"`
+	Event WorkflowWaitForEventAudienceEventParam `json:"event,omitzero" api:"required"`
 	// A duration of time, represented as a unit and a value.
 	ExpiresAfter DurationParam `json:"expires_after,omitzero"`
 	// A list of condition groups the incoming event must match to resolve the wait.
@@ -6079,41 +6400,6 @@ func init() {
 	)
 	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4Param](
 		"on_timeout", "continue", "halt",
-	)
-}
-
-// An audience membership event to wait for when a recipient enters or exits an
-// audience.
-//
-// The properties AudienceKey, EventKey, EventType are required.
-type WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam struct {
-	// The key of the audience to wait for membership changes.
-	AudienceKey string `json:"audience_key" api:"required"`
-	// The audience membership transition to wait for.
-	//
-	// Any of "enter", "exit".
-	EventKey string `json:"event_key,omitzero" api:"required"`
-	// The type of event to wait for.
-	//
-	// Any of "audience".
-	EventType string `json:"event_type,omitzero" api:"required"`
-	paramObj
-}
-
-func (r WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam) MarshalJSON() (data []byte, err error) {
-	type shadow WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam](
-		"event_key", "enter", "exit",
-	)
-	apijson.RegisterFieldValidator[WorkflowStepWorkflowWaitForEventStepSettingsObject4EventParam](
-		"event_type", "audience",
 	)
 }
 
@@ -7604,6 +7890,9 @@ type WorkflowGetResponse struct {
 	// An arbitrary string attached to a workflow object. Useful for adding notes about
 	// the workflow for internal purposes. Maximum of 280 characters allowed.
 	Description string `json:"description"`
+	// Exits in-flight workflow runs when any entry matches. Each entry is a goal
+	// condition. At most five entries.
+	ExitCriteria []ExitCriteriaItems `json:"exit_criteria" api:"nullable"`
 	// A map of workflow settings.
 	Settings WorkflowGetResponseSettings `json:"settings"`
 	// Use tags to organize resources internally within your account. For example, by
@@ -7645,6 +7934,7 @@ type WorkflowGetResponse struct {
 		CreatedBy             respjson.Field
 		DeletedAt             respjson.Field
 		Description           respjson.Field
+		ExitCriteria          respjson.Field
 		Settings              respjson.Field
 		Tags                  respjson.Field
 		TriggerDataJsonSchema respjson.Field
@@ -7698,6 +7988,25 @@ const (
 )
 
 // Wraps the Workflow response under the `workflow` key.
+type WorkflowDeleteResponse struct {
+	// A workflow object. Read more in the
+	// [docs](https://docs.knock.app/concepts/workflows).
+	Workflow Workflow `json:"workflow" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Workflow    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowDeleteResponse) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowDeleteResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Workflow response under the `workflow` key.
 type WorkflowActivateResponse struct {
 	// A workflow object. Read more in the
 	// [docs](https://docs.knock.app/concepts/workflows).
@@ -7716,6 +8025,25 @@ func (r *WorkflowActivateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Wraps the Workflow response under the `workflow` key.
+type WorkflowDiscardResponse struct {
+	// A workflow object. Read more in the
+	// [docs](https://docs.knock.app/concepts/workflows).
+	Workflow Workflow `json:"workflow" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Workflow    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowDiscardResponse) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowDiscardResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A response to a run workflow request.
 type WorkflowRunResponse struct {
 	// The ID of the workflow run.
@@ -7731,6 +8059,25 @@ type WorkflowRunResponse struct {
 // Returns the unmodified JSON received from the API
 func (r WorkflowRunResponse) RawJSON() string { return r.JSON.raw }
 func (r *WorkflowRunResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Workflow response under the `workflow` key.
+type WorkflowUnarchiveResponse struct {
+	// A workflow object. Read more in the
+	// [docs](https://docs.knock.app/concepts/workflows).
+	Workflow Workflow `json:"workflow" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Workflow    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WorkflowUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *WorkflowUnarchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -7824,6 +8171,20 @@ func (r WorkflowListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+type WorkflowDeleteParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [WorkflowDeleteParams]'s query parameters as `url.Values`.
+func (r WorkflowDeleteParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
 type WorkflowActivateParams struct {
 	// Whether to activate or deactivate the workflow. Set to `true` by default, which
 	// will activate the workflow.
@@ -7847,6 +8208,24 @@ func (r *WorkflowActivateParams) UnmarshalJSON(data []byte) error {
 
 // URLQuery serializes [WorkflowActivateParams]'s query parameters as `url.Values`.
 func (r WorkflowActivateParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type WorkflowDiscardParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [WorkflowDiscardParams]'s query parameters as `url.Values`.
+func (r WorkflowDiscardParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -8056,6 +8435,21 @@ func (r WorkflowRunParamsActorObjectRecipientReference) MarshalJSON() (data []by
 }
 func (r *WorkflowRunParamsActorObjectRecipientReference) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type WorkflowUnarchiveParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [WorkflowUnarchiveParams]'s query parameters as
+// `url.Values`.
+func (r WorkflowUnarchiveParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type WorkflowUpsertParams struct {

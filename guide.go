@@ -106,6 +106,23 @@ func (r *GuideService) Archive(ctx context.Context, guideKey string, opts ...opt
 	return res, err
 }
 
+// Unarchives the newest archive of a guide by key, with every copy archived
+// alongside it in other environments. Each restored copy comes back inactive.
+//
+// Returns a 404 when the key isn't archived, including when an earlier or
+// concurrent request already restored it. Returns a 422 with the code `key_in_use`
+// when a live guide uses the key.
+func (r *GuideService) Unarchive(ctx context.Context, guideKey string, body GuideUnarchiveParams, opts ...option.RequestOption) (res *GuideUnarchiveResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if guideKey == "" {
+		err = errors.New("missing required guide_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/guides/%s/unarchive", guideKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // Updates a guide of a given key, or creates a new one if it does not yet exist.
 //
 // The write targets the environment in the request. Accounts that allow writes in
@@ -442,6 +459,25 @@ func (r *GuideArchiveResponse) UnmarshalJSON(data []byte) error {
 }
 
 // Wraps the Guide response under the `guide` key.
+type GuideUnarchiveResponse struct {
+	// A guide defines an in-app guide that can be displayed to users based on priority
+	// and other conditions.
+	Guide Guide `json:"guide" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Guide       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r GuideUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *GuideUnarchiveResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Guide response under the `guide` key.
 type GuideUpsertResponse struct {
 	// A guide defines an in-app guide that can be displayed to users based on priority
 	// and other conditions.
@@ -604,6 +640,20 @@ func (r GuideActivateParamsBodyGuideScheduledActivationParams) MarshalJSON() (da
 }
 func (r *GuideActivateParamsBodyGuideScheduledActivationParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type GuideUnarchiveParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [GuideUnarchiveParams]'s query parameters as `url.Values`.
+func (r GuideUnarchiveParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type GuideUpsertParams struct {
