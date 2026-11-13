@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.16.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.15.0...v0.16.0) (2026-11-13)
+
+
+### Features
+
+* Add archive, unarchive, and discard changes for partials (v0.1.1793) ([e9acda0](https://github.com/knocklabs/knock-mgmt-go/commit/e9acda03f00e1880130fcc27b2d9230cc478b791))
+* Add headless account creation and warehouse sync management (v0.1.1788) ([de43c4a](https://github.com/knocklabs/knock-mgmt-go/commit/de43c4a65fb5db012b659345d155bdd4cddbee9f))
+* Archive, unarchive, and discard changes for workflows and guides, plus exit criteria on workflows (v0.1.1792) ([b853ee4](https://github.com/knocklabs/knock-mgmt-go/commit/b853ee49875d054f6b87d0232f8caa6308932c2c))
+
+
+### Bug Fixes
+
+* remove goal attachment from guides, broadcasts, and workflows (v0.1.1771) ([f4ce36d](https://github.com/knocklabs/knock-mgmt-go/commit/f4ce36dcbe75b25b75a98b3939802993cbbada5e))
+
+
+### Chores
+
+* rename warehouse sync SDK methods to match other resources ([f952549](https://github.com/knocklabs/knock-mgmt-go/commit/f952549986594fd21130de4de615dd808af47a1b))
+
 ## [0.15.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.14.0...v0.15.0) (2026-11-05)
 
 
