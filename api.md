@@ -749,3 +749,13 @@ Methods:
 
 - <code title="get /v1/warehouses/{warehouse_key}">client.Warehouses.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WarehouseService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, warehouseKey <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WarehouseGetParams">WarehouseGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Warehouse">Warehouse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/warehouses">client.Warehouses.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WarehouseService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#WarehouseListParams">WarehouseListParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go/packages/pagination#EntriesCursor">EntriesCursor</a>[<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#Warehouse">Warehouse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Feedback
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#FeedbackNewResponse">FeedbackNewResponse</a>
+
+Methods:
+
+- <code title="post /v1/feedback">client.Feedback.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#FeedbackService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#FeedbackNewParams">FeedbackNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go">knockmapi</a>.<a href="https://pkg.go.dev/github.com/knocklabs/knock-mgmt-go#FeedbackNewResponse">FeedbackNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>

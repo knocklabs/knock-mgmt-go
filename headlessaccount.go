@@ -59,8 +59,9 @@ func (r *HeadlessAccountService) Claim(ctx context.Context, body HeadlessAccount
 }
 
 // Returns whether the headless account is still being set up, waiting to be
-// claimed, claimed by a person, or past its claim window. Agents poll this
-// endpoint to find out when a person has claimed the account.
+// claimed, claimed by a person, or past its claim window, and the monthly usage
+// limits it has until it is claimed. Agents poll this endpoint to find out when a
+// person has claimed the account.
 func (r *HeadlessAccountService) GetStatus(ctx context.Context, opts ...option.RequestOption) (res *HeadlessAccountGetStatusResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/headless_accounts/status"
@@ -139,10 +140,15 @@ type HeadlessAccountGetStatusResponse struct {
 	//
 	// Any of "provisioning", "unclaimed", "claimed", "expired".
 	Status HeadlessAccountGetStatusResponseStatus `json:"status" api:"required"`
+	// How much the account can use per UTC calendar month until a person claims it.
+	// Each limit is null when there is none, which is always the case once the account
+	// is claimed.
+	UsageLimits HeadlessAccountGetStatusResponseUsageLimits `json:"usage_limits" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ExpiresAt   respjson.Field
 		Status      respjson.Field
+		UsageLimits respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -164,6 +170,29 @@ const (
 	HeadlessAccountGetStatusResponseStatusClaimed      HeadlessAccountGetStatusResponseStatus = "claimed"
 	HeadlessAccountGetStatusResponseStatusExpired      HeadlessAccountGetStatusResponseStatus = "expired"
 )
+
+// How much the account can use per UTC calendar month until a person claims it.
+// Each limit is null when there is none, which is always the case once the account
+// is claimed.
+type HeadlessAccountGetStatusResponseUsageLimits struct {
+	// How many messages the account can send.
+	MessageLimit int64 `json:"message_limit" api:"required"`
+	// How many workflow runs, one per recipient, the account can trigger.
+	WorkflowRunLimit int64 `json:"workflow_run_limit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		MessageLimit     respjson.Field
+		WorkflowRunLimit respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r HeadlessAccountGetStatusResponseUsageLimits) RawJSON() string { return r.JSON.raw }
+func (r *HeadlessAccountGetStatusResponseUsageLimits) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type HeadlessAccountClaimParams struct {
 	// The email of the person who will own the account. Only they can finish the

@@ -80,6 +80,8 @@ type Client struct {
 	HeadlessAccounts HeadlessAccountService
 	// Warehouses are the databases in your data warehouse that Knock reads from.
 	Warehouses WarehouseService
+	// Feedback lets you report bugs, friction, and feature requests to Knock.
+	Feedback FeedbackService
 }
 
 // DefaultClientOptions read from the environment (KNOCK_SERVICE_TOKEN,
@@ -144,6 +146,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.WarehouseSyncs = NewWarehouseSyncService(opts...)
 	r.HeadlessAccounts = NewHeadlessAccountService(opts...)
 	r.Warehouses = NewWarehouseService(opts...)
+	r.Feedback = NewFeedbackService(opts...)
 
 	return
 }
