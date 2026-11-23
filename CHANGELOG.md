@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.16.0...v0.17.0) (2026-11-23)
+
+
+### Features
+
+* add discard, revert, archive, and proof-of-work account creation (v0.1.1812) ([ca6b921](https://github.com/knocklabs/knock-mgmt-go/commit/ca6b921969c403188e789e03f6a1d799571e5289))
+* Create, update, and delete environments and delete sources via the SDK (v0.1.1813) ([5d6c2d9](https://github.com/knocklabs/knock-mgmt-go/commit/5d6c2d99d6c055c6066836caa8b94060096a624e))
+
 ## [0.16.0](https://github.com/knocklabs/knock-mgmt-go/compare/v0.15.0...v0.16.0) (2026-11-17)
 
 
