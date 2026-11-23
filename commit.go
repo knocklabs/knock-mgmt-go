@@ -108,6 +108,23 @@ func (r *CommitService) PromoteOne(ctx context.Context, id string, opts ...optio
 	return res, err
 }
 
+// Reverts a commit in the given environment. Creates and commits a new version of
+// the resource that matches its version before the commit, and returns that new
+// commit. Uncommitted changes to the resource are discarded.
+//
+// Most resources can only be reverted in the development environment or a branch,
+// unless writes are allowed in every environment.
+func (r *CommitService) Revert(ctx context.Context, id string, body CommitRevertParams, opts ...option.RequestOption) (res *CommitRevertResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/commits/%s/revert", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // A commit is a change to a resource within an environment, made by an author.
 type Commit struct {
 	// The unique identifier for the commit.
@@ -180,10 +197,13 @@ type CommitResource struct {
 	// Any of "audience", "email_layout", "guide", "message_type", "partial",
 	// "reusable_request", "translation", "workflow".
 	Type string `json:"type" api:"required"`
+	// Details about the translation a commit changed.
+	Metadata CommitResourceMetadata `json:"metadata" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier  respjson.Field
 		Type        respjson.Field
+		Metadata    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -192,6 +212,30 @@ type CommitResource struct {
 // Returns the unmodified JSON received from the API
 func (r CommitResource) RawJSON() string { return r.JSON.raw }
 func (r *CommitResource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Details about the translation a commit changed.
+type CommitResourceMetadata struct {
+	// The locale code of the translation.
+	LocaleCode string `json:"locale_code" api:"required"`
+	// The namespace of the translation, or null if it has none.
+	Namespace string `json:"namespace" api:"required"`
+	// The tenant the translation is scoped to, or null if it isn't tenant-scoped.
+	Tenant string `json:"tenant" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		LocaleCode  respjson.Field
+		Namespace   respjson.Field
+		Tenant      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CommitResourceMetadata) RawJSON() string { return r.JSON.raw }
+func (r *CommitResourceMetadata) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -323,6 +367,24 @@ type CommitPromoteOneResponse struct {
 // Returns the unmodified JSON received from the API
 func (r CommitPromoteOneResponse) RawJSON() string { return r.JSON.raw }
 func (r *CommitPromoteOneResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The response from reverting a commit, with the new commit under `commit`.
+type CommitRevertResponse struct {
+	// A commit is a change to a resource within an environment, made by an author.
+	Commit Commit `json:"commit" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Commit      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CommitRevertResponse) RawJSON() string { return r.JSON.raw }
+func (r *CommitRevertResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -529,3 +591,21 @@ const (
 	CommitPromoteAllParamsResourceTypeStringTranslation     CommitPromoteAllParamsResourceTypeString = "translation"
 	CommitPromoteAllParamsResourceTypeStringWorkflow        CommitPromoteAllParamsResourceTypeString = "workflow"
 )
+
+type CommitRevertParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [CommitRevertParams]'s query parameters as `url.Values`.
+func (r CommitRevertParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}

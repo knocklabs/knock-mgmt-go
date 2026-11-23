@@ -90,13 +90,30 @@ func (r *ReusableRequestService) Archive(ctx context.Context, reusableRequestKey
 	return res, err
 }
 
+// Discards the uncommitted changes to a reusable request in a given environment,
+// returning it to its last committed version. Other environments aren't changed.
+//
+// Returns the reusable request unchanged when it has no uncommitted changes.
+// Returns a 422 when the reusable request has never been committed, or can't be
+// changed in the environment.
+func (r *ReusableRequestService) Discard(ctx context.Context, reusableRequestKey string, body ReusableRequestDiscardParams, opts ...option.RequestOption) (res *ReusableRequestDiscardResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if reusableRequestKey == "" {
+		err = errors.New("missing required reusable_request_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/reusable_requests/%s/discard", reusableRequestKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // Unarchives a reusable request by key, with every copy archived alongside it in
 // other environments.
 //
 // Returns a 404 when the key isn't archived, including when an earlier or
 // concurrent request already restored it. Returns a 422 with the code `key_in_use`
 // when a live reusable request uses the key.
-func (r *ReusableRequestService) UpdateUnarchive(ctx context.Context, reusableRequestKey string, body ReusableRequestUpdateUnarchiveParams, opts ...option.RequestOption) (res *ReusableRequestUpdateUnarchiveResponse, err error) {
+func (r *ReusableRequestService) Unarchive(ctx context.Context, reusableRequestKey string, body ReusableRequestUnarchiveParams, opts ...option.RequestOption) (res *ReusableRequestUnarchiveResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if reusableRequestKey == "" {
 		err = errors.New("missing required reusable_request_key parameter")
@@ -560,7 +577,7 @@ func (r *ReusableRequestArchiveResponse) UnmarshalJSON(data []byte) error {
 }
 
 // Wraps the ReusableRequest response under the `reusable_request` key.
-type ReusableRequestUpdateUnarchiveResponse struct {
+type ReusableRequestDiscardResponse struct {
 	// A reusable HTTP request that workflows can link to.
 	ReusableRequest ReusableRequest `json:"reusable_request" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -572,8 +589,26 @@ type ReusableRequestUpdateUnarchiveResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ReusableRequestUpdateUnarchiveResponse) RawJSON() string { return r.JSON.raw }
-func (r *ReusableRequestUpdateUnarchiveResponse) UnmarshalJSON(data []byte) error {
+func (r ReusableRequestDiscardResponse) RawJSON() string { return r.JSON.raw }
+func (r *ReusableRequestDiscardResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the ReusableRequest response under the `reusable_request` key.
+type ReusableRequestUnarchiveResponse struct {
+	// A reusable HTTP request that workflows can link to.
+	ReusableRequest ReusableRequest `json:"reusable_request" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReusableRequest respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ReusableRequestUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *ReusableRequestUnarchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -682,15 +717,34 @@ func (r ReusableRequestArchiveParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-type ReusableRequestUpdateUnarchiveParams struct {
+type ReusableRequestDiscardParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
 	// The environment slug. When omitted, the account's default environment is used.
 	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [ReusableRequestUpdateUnarchiveParams]'s query parameters as
+// URLQuery serializes [ReusableRequestDiscardParams]'s query parameters as
 // `url.Values`.
-func (r ReusableRequestUpdateUnarchiveParams) URLQuery() (v url.Values, err error) {
+func (r ReusableRequestDiscardParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ReusableRequestUnarchiveParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ReusableRequestUnarchiveParams]'s query parameters as
+// `url.Values`.
+func (r ReusableRequestUnarchiveParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

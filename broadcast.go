@@ -78,6 +78,27 @@ func (r *BroadcastService) ListAutoPaging(ctx context.Context, query BroadcastLi
 	return pagination.NewEntriesCursorAutoPager(r.List(ctx, query, opts...))
 }
 
+// Archives a broadcast in a given environment. A broadcast lives in one
+// environment, so no other environment is changed.
+//
+// Archiving renames the broadcast's key, so a new broadcast can use the key. It
+// also cancels a scheduled send, returning the broadcast to draft, and detaches
+// its goal. A sent broadcast can be archived too. Restore it with the unarchive
+// endpoint, using its original key.
+//
+// Returns a 404 when no live broadcast has the key, including when it's already
+// archived.
+func (r *BroadcastService) Delete(ctx context.Context, broadcastKey string, body BroadcastDeleteParams, opts ...option.RequestOption) (res *BroadcastDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if broadcastKey == "" {
+		err = errors.New("missing required broadcast_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/broadcasts/%s", broadcastKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
+	return res, err
+}
+
 // Cancels sending a scheduled broadcast. The broadcast will return to draft
 // status.
 func (r *BroadcastService) Cancel(ctx context.Context, broadcastKey string, body BroadcastCancelParams, opts ...option.RequestOption) (res *BroadcastCancelResponse, err error) {
@@ -113,6 +134,26 @@ func (r *BroadcastService) Send(ctx context.Context, broadcastKey string, params
 	}
 	path := fmt.Sprintf("v1/broadcasts/%s/send", broadcastKey)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, params, &res, opts...)
+	return res, err
+}
+
+// Restores an archived broadcast in a given environment by its original key. When
+// the key was archived more than once, the most recent archive is restored.
+//
+// A broadcast that was scheduled when it was archived comes back as a draft, and a
+// sent broadcast stays sent.
+//
+// Returns a 404 when the key isn't archived in the environment, including when an
+// earlier or concurrent request already restored it. Returns a 422 with the code
+// `key_in_use` when a live broadcast uses the key.
+func (r *BroadcastService) Unarchive(ctx context.Context, broadcastKey string, body BroadcastUnarchiveParams, opts ...option.RequestOption) (res *BroadcastUnarchiveResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if broadcastKey == "" {
+		err = errors.New("missing required broadcast_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/broadcasts/%s/unarchive", broadcastKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
 }
 
@@ -1288,6 +1329,24 @@ func (r *BroadcastRequestSettingsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The response from archiving a broadcast.
+type BroadcastDeleteResponse struct {
+	// The result of the archive operation.
+	Result string `json:"result" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Result      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BroadcastDeleteResponse) RawJSON() string { return r.JSON.raw }
+func (r *BroadcastDeleteResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Wraps the Broadcast response under the `broadcast` key.
 type BroadcastCancelResponse struct {
 	// A broadcast object.
@@ -1342,6 +1401,24 @@ type BroadcastSendResponse struct {
 // Returns the unmodified JSON received from the API
 func (r BroadcastSendResponse) RawJSON() string { return r.JSON.raw }
 func (r *BroadcastSendResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Broadcast response under the `broadcast` key.
+type BroadcastUnarchiveResponse struct {
+	// A broadcast object.
+	Broadcast Broadcast `json:"broadcast" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Broadcast   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r BroadcastUnarchiveResponse) RawJSON() string { return r.JSON.raw }
+func (r *BroadcastUnarchiveResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1427,6 +1504,24 @@ type BroadcastListParams struct {
 
 // URLQuery serializes [BroadcastListParams]'s query parameters as `url.Values`.
 func (r BroadcastListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type BroadcastDeleteParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [BroadcastDeleteParams]'s query parameters as `url.Values`.
+func (r BroadcastDeleteParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -1546,6 +1641,25 @@ func (r *BroadcastSendParams) UnmarshalJSON(data []byte) error {
 
 // URLQuery serializes [BroadcastSendParams]'s query parameters as `url.Values`.
 func (r BroadcastSendParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type BroadcastUnarchiveParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [BroadcastUnarchiveParams]'s query parameters as
+// `url.Values`.
+func (r BroadcastUnarchiveParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

@@ -95,14 +95,30 @@ func (r *GuideService) Activate(ctx context.Context, guideKey string, params Gui
 }
 
 // Archives a given guide across all environments.
-func (r *GuideService) Archive(ctx context.Context, guideKey string, opts ...option.RequestOption) (res *GuideArchiveResponse, err error) {
+func (r *GuideService) Archive(ctx context.Context, guideKey string, body GuideArchiveParams, opts ...option.RequestOption) (res *GuideArchiveResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if guideKey == "" {
 		err = errors.New("missing required guide_key parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/guides/%s", guideKey)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
+	return res, err
+}
+
+// Discards the uncommitted changes to a guide in a given environment, returning it
+// to its last committed version. Other environments aren't changed.
+//
+// Returns the guide unchanged when it has no uncommitted changes. Returns a 422
+// when the guide has never been committed, or can't be changed in the environment.
+func (r *GuideService) Discard(ctx context.Context, guideKey string, body GuideDiscardParams, opts ...option.RequestOption) (res *GuideDiscardResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if guideKey == "" {
+		err = errors.New("missing required guide_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/guides/%s/discard", guideKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return res, err
 }
 
@@ -442,7 +458,7 @@ func (r *GuideActivateResponse) UnmarshalJSON(data []byte) error {
 
 // The response from archiving a guide.
 type GuideArchiveResponse struct {
-	// The result of the promote operation.
+	// The result of the archive operation.
 	Result string `json:"result" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -455,6 +471,25 @@ type GuideArchiveResponse struct {
 // Returns the unmodified JSON received from the API
 func (r GuideArchiveResponse) RawJSON() string { return r.JSON.raw }
 func (r *GuideArchiveResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Guide response under the `guide` key.
+type GuideDiscardResponse struct {
+	// A guide defines an in-app guide that can be displayed to users based on priority
+	// and other conditions.
+	Guide Guide `json:"guide" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Guide       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r GuideDiscardResponse) RawJSON() string { return r.JSON.raw }
+func (r *GuideDiscardResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -640,6 +675,38 @@ func (r GuideActivateParamsBodyGuideScheduledActivationParams) MarshalJSON() (da
 }
 func (r *GuideActivateParamsBodyGuideScheduledActivationParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type GuideArchiveParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [GuideArchiveParams]'s query parameters as `url.Values`.
+func (r GuideArchiveParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type GuideDiscardParams struct {
+	// The slug of a branch to use. When `environment` is omitted, the branch is
+	// resolved from Development after the account default is injected. When
+	// `environment` is supplied, it must be `"development"`.
+	Branch param.Opt[string] `query:"branch,omitzero" json:"-"`
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [GuideDiscardParams]'s query parameters as `url.Values`.
+func (r GuideDiscardParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type GuideUnarchiveParams struct {

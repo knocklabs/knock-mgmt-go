@@ -106,7 +106,7 @@ func TestReusableRequestArchiveWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestReusableRequestUpdateUnarchiveWithOptionalParams(t *testing.T) {
+func TestReusableRequestDiscardWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -119,10 +119,40 @@ func TestReusableRequestUpdateUnarchiveWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.ReusableRequests.UpdateUnarchive(
+	_, err := client.ReusableRequests.Discard(
 		context.TODO(),
 		"fetch-user",
-		knockmapi.ReusableRequestUpdateUnarchiveParams{
+		knockmapi.ReusableRequestDiscardParams{
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestReusableRequestUnarchiveWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.ReusableRequests.Unarchive(
+		context.TODO(),
+		"fetch-user",
+		knockmapi.ReusableRequestUnarchiveParams{
 			Environment: knockmapi.String("development"),
 		},
 	)

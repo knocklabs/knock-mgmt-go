@@ -391,16 +391,19 @@ type ChannelGroupUpsertParamsChannelGroupChannelRule struct {
 	//
 	// Any of "if", "unless", "always".
 	RuleType string `json:"rule_type,omitzero" api:"required"`
-	// For conditional rules, the value to compare against. For `is_in_random_cohort`,
-	// a 0–100 percentage with at most one decimal place.
+	// For conditional rules, the value to compare against. Required for `if` and
+	// `unless` rules unless the operator takes no value, such as `exists`. For
+	// `is_in_random_cohort`, a 0–100 percentage with at most one decimal place.
 	Argument param.Opt[string] `json:"argument,omitzero"`
-	// For conditional rules, the variable to evaluate. For `is_in_random_cohort`, must
-	// be `recipient.id`.
+	// For conditional rules, the variable to evaluate. Required for `if` and `unless`
+	// rules, except with an audience operator. For `is_in_random_cohort`, must be
+	// `recipient.id`.
 	Variable param.Opt[string] `json:"variable,omitzero"`
 	// The order index of this rule within the channel group.
 	Index param.Opt[int64] `json:"index,omitzero"`
-	// For conditional rules, the operator to apply. For `is_in_random_cohort`,
-	// `variable` must be `recipient.id` and `argument` is a 0–100 percentage.
+	// For conditional rules, the operator to apply. Required for `if` and `unless`
+	// rules. For `is_in_random_cohort`, `variable` must be `recipient.id` and
+	// `argument` is a 0–100 percentage.
 	//
 	// Any of "equal_to", "not_equal_to", "greater_than", "less_than",
 	// "greater_than_or_equal_to", "less_than_or_equal_to", "contains", "not_contains",

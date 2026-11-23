@@ -111,7 +111,7 @@ func TestGuideActivateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestGuideArchive(t *testing.T) {
+func TestGuideArchiveWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -124,7 +124,43 @@ func TestGuideArchive(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithServiceToken("My Service Token"),
 	)
-	_, err := client.Guides.Archive(context.TODO(), "guide_key")
+	_, err := client.Guides.Archive(
+		context.TODO(),
+		"guide_key",
+		knockmapi.GuideArchiveParams{
+			Environment: knockmapi.String("development"),
+		},
+	)
+	if err != nil {
+		var apierr *knockmapi.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestGuideDiscardWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := knockmapi.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithServiceToken("My Service Token"),
+	)
+	_, err := client.Guides.Discard(
+		context.TODO(),
+		"guide_key",
+		knockmapi.GuideDiscardParams{
+			Branch:      knockmapi.String("feature-branch"),
+			Environment: knockmapi.String("development"),
+		},
+	)
 	if err != nil {
 		var apierr *knockmapi.Error
 		if errors.As(err, &apierr) {

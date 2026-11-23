@@ -89,9 +89,9 @@ func (r *WorkflowService) ListAutoPaging(ctx context.Context, query WorkflowList
 // that holds a copy of the workflow.
 //
 // Archiving renames the workflow's key in every environment, so a new workflow can
-// use the key. The archived workflow is deactivated and read-only, and the
-// response returns it with its archived key. Restore it with the unarchive
-// endpoint, using its original key.
+// use the key. The archived workflow is deactivated and read-only. The response
+// returns `result` with the value `success`, and the workflow with its archived
+// key. Restore it with the unarchive endpoint, using its original key.
 //
 // Returns a 404 when no live workflow has the key, including when it's already
 // archived.
@@ -7987,13 +7987,16 @@ const (
 	WorkflowGetResponseTriggerFrequencyOncePerRecipientPerTenant WorkflowGetResponseTriggerFrequency = "once_per_recipient_per_tenant"
 )
 
-// Wraps the Workflow response under the `workflow` key.
+// The response from archiving a workflow.
 type WorkflowDeleteResponse struct {
+	// The result of the archive operation.
+	Result string `json:"result" api:"required"`
 	// A workflow object. Read more in the
 	// [docs](https://docs.knock.app/concepts/workflows).
 	Workflow Workflow `json:"workflow" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Result      respjson.Field
 		Workflow    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string

@@ -90,6 +90,23 @@ func (r *AudienceService) Archive(ctx context.Context, audienceKey string, body 
 	return res, err
 }
 
+// Discards the uncommitted changes to an audience in a given environment,
+// returning it to its last committed version. Other environments aren't changed.
+//
+// Returns the audience unchanged when it has no uncommitted changes. Returns a 422
+// when the audience has never been committed, or can't be changed in the
+// environment. Audiences aren't branched, so passing a `branch` returns a 422.
+func (r *AudienceService) Discard(ctx context.Context, audienceKey string, body AudienceDiscardParams, opts ...option.RequestOption) (res *AudienceDiscardResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if audienceKey == "" {
+		err = errors.New("missing required audience_key parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("v1/audiences/%s/discard", audienceKey)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
+	return res, err
+}
+
 // Updates an audience of a given key, or creates a new one if it does not yet
 // exist.
 func (r *AudienceService) Upsert(ctx context.Context, audienceKey string, params AudienceUpsertParams, opts ...option.RequestOption) (res *AudienceUpsertResponse, err error) {
@@ -578,6 +595,26 @@ func (r *AudienceArchiveResponse) UnmarshalJSON(data []byte) error {
 }
 
 // Wraps the Audience response under the `audience` key.
+type AudienceDiscardResponse struct {
+	// An audience defines a set of users that can be targeted for notifications. Can
+	// be either a `StaticAudience` (members explicitly added/removed) or a
+	// `DynamicAudience` (members determined by segment conditions).
+	Audience AudienceUnion `json:"audience" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Audience    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AudienceDiscardResponse) RawJSON() string { return r.JSON.raw }
+func (r *AudienceDiscardResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Wraps the Audience response under the `audience` key.
 type AudienceUpsertResponse struct {
 	// An audience defines a set of users that can be targeted for notifications. Can
 	// be either a `StaticAudience` (members explicitly added/removed) or a
@@ -677,6 +714,20 @@ type AudienceArchiveParams struct {
 
 // URLQuery serializes [AudienceArchiveParams]'s query parameters as `url.Values`.
 func (r AudienceArchiveParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type AudienceDiscardParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [AudienceDiscardParams]'s query parameters as `url.Values`.
+func (r AudienceDiscardParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
