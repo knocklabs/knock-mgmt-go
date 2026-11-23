@@ -57,6 +57,30 @@ func (r *DataSourceService) Get(ctx context.Context, key string, query DataSourc
 	return res, err
 }
 
+// Deletes a source by key from every environment in the project, not only the one
+// in the request. The token needs the `sources:manage` permission in every
+// environment. Sources aren't branched, so the `branch` parameter isn't accepted.
+//
+// Deleting removes the source's settings in every environment and deactivates its
+// event mappings, so its events stop triggering workflows. The workflows
+// themselves are kept. The key is freed for a new source. A deleted source can't
+// be restored.
+//
+// Returns a 422 with the code `source_in_use` while a goal, or a workflow's exit
+// criteria, references the source in any environment. Archive those goals or
+// remove those exit criteria first. Returns a 404 when no source has the key.
+func (r *DataSourceService) Delete(ctx context.Context, key string, body DataSourceDeleteParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if key == "" {
+		err = errors.New("missing required key parameter")
+		return err
+	}
+	path := fmt.Sprintf("v1/sources/%s", key)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, nil, opts...)
+	return err
+}
+
 // Returns known unique events received by a source in the requested environment.
 func (r *DataSourceService) ListEvents(ctx context.Context, key string, query DataSourceListEventsParams, opts ...option.RequestOption) (res *SourceEventsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -1150,6 +1174,20 @@ type DataSourceGetParams struct {
 
 // URLQuery serializes [DataSourceGetParams]'s query parameters as `url.Values`.
 func (r DataSourceGetParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type DataSourceDeleteParams struct {
+	// The environment slug. When omitted, the account's default environment is used.
+	Environment param.Opt[string] `query:"environment,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [DataSourceDeleteParams]'s query parameters as `url.Values`.
+func (r DataSourceDeleteParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
